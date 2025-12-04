@@ -92,7 +92,7 @@ export default function Reviews() {
       business: 'Urban Boutique',
       industry: 'Retail',
       location: 'New York, NY',
-      quote: 'Inventory funding for the holiday season was a game-changer. OnTrak's quick process meant I could stock up early and have my best season ever!',
+      quote: "Inventory funding for the holiday season was a game-changer. OnTrak's quick process meant I could stock up early and have my best season ever!",
       rating: 5,
       amount: '$40,000',
       image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop'

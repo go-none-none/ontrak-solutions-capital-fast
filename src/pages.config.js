@@ -5,6 +5,7 @@ import UseCases from './pages/UseCases';
 import Industries from './pages/Industries';
 import Reviews from './pages/Reviews';
 import Application from './pages/Application';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -20,4 +21,5 @@ export const PAGES = {
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
+    Layout: __Layout,
 };
