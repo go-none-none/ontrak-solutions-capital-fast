@@ -1,46 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Slider } from "@/components/ui/slider";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from 'framer-motion';
 import { DollarSign, TrendingUp, Calendar, Percent } from 'lucide-react';
 
 export default function FundingCalculator({ compact = false }) {
   const [fundingAmount, setFundingAmount] = useState(50000);
   const [monthlyRevenue, setMonthlyRevenue] = useState(50000);
-  const [timeInBusiness, setTimeInBusiness] = useState('1_to_2_years');
+  const [termMonths, setTermMonths] = useState(12);
   const [results, setResults] = useState(null);
+
+  const factorRate = 1.22; // Fixed factor rate
 
   useEffect(() => {
     calculateFunding();
-  }, [fundingAmount, monthlyRevenue, timeInBusiness]);
+  }, [fundingAmount, monthlyRevenue, termMonths]);
 
   const calculateFunding = () => {
-    // Factor rate based on time in business
-    const factorRates = {
-      'less_than_6_months': 1.35,
-      '6_to_12_months': 1.28,
-      '1_to_2_years': 1.22,
-      '2_to_5_years': 1.18,
-      '5_plus_years': 1.15
-    };
-
-    const factorRate = factorRates[timeInBusiness];
-    
     // Calculate max funding (typically 100-150% of monthly revenue)
-    const revenueMultiplier = timeInBusiness === '5_plus_years' ? 1.5 : 
-                              timeInBusiness === '2_to_5_years' ? 1.3 : 1.1;
-    const maxFunding = Math.min(monthlyRevenue * revenueMultiplier, 500000);
+    const maxFunding = Math.min(monthlyRevenue * 1.3, 500000);
     
     // Adjusted funding amount
     const adjustedFunding = Math.min(fundingAmount, maxFunding);
     
-    // Fixed 12 month term
-    const termMonths = 12;
-    
     // Total repayment based on factor rate
     const totalRepayment = adjustedFunding * factorRate;
     
-    // Weekly payment
+    // Weekly payment based on selected term
     const weeklyPayment = totalRepayment / (termMonths * 4.33);
     
     // Daily payment option
@@ -66,13 +51,7 @@ export default function FundingCalculator({ compact = false }) {
     }).format(value);
   };
 
-  const timeOptions = [
-    { value: 'less_than_6_months', label: 'Less than 6 months' },
-    { value: '6_to_12_months', label: '6-12 months' },
-    { value: '1_to_2_years', label: '1-2 years' },
-    { value: '2_to_5_years', label: '2-5 years' },
-    { value: '5_plus_years', label: '5+ years' }
-  ];
+
 
   return (
     <div className={`bg-white rounded-3xl shadow-2xl ${compact ? 'p-6' : 'p-8 lg:p-10'} h-full flex flex-col`}>
@@ -122,21 +101,24 @@ export default function FundingCalculator({ compact = false }) {
           </div>
         </div>
 
-        {/* Time in Business */}
+        {/* Term Slider */}
         <div>
-          <label className={`text-sm font-medium text-slate-700 ${compact ? 'mb-2' : 'mb-3'} block`}>Time in Business</label>
-          <Select value={timeInBusiness} onValueChange={setTimeInBusiness}>
-            <SelectTrigger className="w-full h-12 rounded-xl border-slate-200">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {timeOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className={`flex justify-between items-center ${compact ? 'mb-2' : 'mb-4'}`}>
+            <label className="text-sm font-medium text-slate-700">Term Length</label>
+            <span className={`${compact ? 'text-lg' : 'text-2xl'} font-bold text-[#08708E]`}>{termMonths} months</span>
+          </div>
+          <Slider
+            value={[termMonths]}
+            onValueChange={(val) => setTermMonths(val[0])}
+            min={1}
+            max={12}
+            step={1}
+            className="[&_[role=slider]]:bg-[#08708E] [&_[role=slider]]:border-[#08708E] [&_[role=slider]]:w-5 [&_[role=slider]]:h-5 [&_.relative]:bg-slate-200"
+          />
+          <div className="flex justify-between text-xs text-slate-400 mt-2">
+            <span>1 mo</span>
+            <span>12 mo</span>
+          </div>
         </div>
 
         <div className="flex-1" />
