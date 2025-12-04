@@ -4,6 +4,7 @@ import Contact from './pages/Contact';
 import UseCases from './pages/UseCases';
 import Industries from './pages/Industries';
 import Reviews from './pages/Reviews';
+import Application from './pages/Application';
 
 
 export const PAGES = {
@@ -13,6 +14,7 @@ export const PAGES = {
     "UseCases": UseCases,
     "Industries": Industries,
     "Reviews": Reviews,
+    "Application": Application,
 }
 
 export const pagesConfig = {
