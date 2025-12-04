@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check, ArrowRight, Zap, Clock, Shield } from 'lucide-react';
+import { Zap, Clock, Shield } from 'lucide-react';
 import FundingCalculator from '../calculator/FundingCalculator';
-import QuickApplicationForm from '../forms/QuickApplicationForm';
+import SalesforceWebToLeadForm from '../forms/SalesforceWebToLeadForm';
 
 export default function HeroSection() {
   const benefits = [
@@ -24,15 +24,16 @@ export default function HeroSection() {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left Content */}
+        <div className="space-y-12">
+          {/* Top Content - Headlines */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className="text-center"
           >
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm mb-6">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               Trusted by 10,000+ Businesses
             </div>
@@ -47,14 +48,14 @@ export default function HeroSection() {
               </span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-white/70 mb-10 leading-relaxed max-w-xl">
+            <p className="text-lg sm:text-xl text-white/70 mb-8 leading-relaxed max-w-3xl mx-auto">
               Fast, flexible funding solutions with no hidden fees. 
               Apply in minutes, get approved the same day, and receive 
               funds in as little as 24 hours.
             </p>
 
             {/* Benefits */}
-            <div className="flex flex-wrap gap-6 mb-10">
+            <div className="flex flex-wrap justify-center gap-6 mb-8">
               {benefits.map((benefit, i) => (
                 <motion.div
                   key={i}
@@ -72,7 +73,7 @@ export default function HeroSection() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-10 border-t border-white/10">
+            <div className="flex justify-center gap-12">
               {[
                 { value: '$500M+', label: 'Funded' },
                 { value: '10K+', label: 'Businesses' },
@@ -83,6 +84,7 @@ export default function HeroSection() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.6 + i * 0.1 }}
+                  className="text-center"
                 >
                   <div className="text-2xl sm:text-3xl font-bold text-white">{stat.value}</div>
                   <div className="text-sm text-white/50">{stat.label}</div>
@@ -91,18 +93,15 @@ export default function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Right - Calculator & Form Tabs */}
+          {/* Right - Calculator & Form Side by Side */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-6"
+            className="grid md:grid-cols-2 gap-6"
           >
-            <FundingCalculator />
-            <div className="text-center">
-              <p className="text-white/60 text-sm">or</p>
-            </div>
-            <QuickApplicationForm />
+            <FundingCalculator compact />
+            <SalesforceWebToLeadForm />
           </motion.div>
         </div>
       </div>

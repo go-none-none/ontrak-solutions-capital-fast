@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { motion } from 'framer-motion';
 import { DollarSign, TrendingUp, Calendar, Percent } from 'lucide-react';
 
-export default function FundingCalculator() {
+export default function FundingCalculator({ compact = false }) {
   const [fundingAmount, setFundingAmount] = useState(50000);
   const [monthlyRevenue, setMonthlyRevenue] = useState(50000);
   const [timeInBusiness, setTimeInBusiness] = useState('1_to_2_years');
@@ -34,11 +34,11 @@ export default function FundingCalculator() {
     // Adjusted funding amount
     const adjustedFunding = Math.min(fundingAmount, maxFunding);
     
-    // Total repayment
-    const totalRepayment = adjustedFunding * factorRate;
+    // Fixed 12 month term
+    const termMonths = 12;
     
-    // Estimated term (6-18 months based on amount)
-    const termMonths = Math.min(18, Math.max(6, Math.round(adjustedFunding / monthlyRevenue * 12)));
+    // Total repayment based on factor rate
+    const totalRepayment = adjustedFunding * factorRate;
     
     // Weekly payment
     const weeklyPayment = totalRepayment / (termMonths * 4.33);
@@ -75,18 +75,18 @@ export default function FundingCalculator() {
   ];
 
   return (
-    <div className="bg-white rounded-3xl shadow-2xl p-8 lg:p-10">
-      <div className="mb-8">
-        <h3 className="text-2xl font-bold text-slate-900 mb-2">Funding Calculator</h3>
-        <p className="text-slate-500">See your estimated funding in seconds</p>
+    <div className={`bg-white rounded-3xl shadow-2xl ${compact ? 'p-6' : 'p-8 lg:p-10'} h-full flex flex-col`}>
+      <div className={compact ? 'mb-4' : 'mb-8'}>
+        <h3 className={`${compact ? 'text-xl' : 'text-2xl'} font-bold text-slate-900 mb-1`}>Funding Calculator</h3>
+        <p className="text-slate-500 text-sm">See your estimated funding in seconds</p>
       </div>
 
-      <div className="space-y-8">
+      <div className={`${compact ? 'space-y-4' : 'space-y-8'} flex-1 flex flex-col`}>
         {/* Funding Amount Slider */}
         <div>
-          <div className="flex justify-between items-center mb-4">
-            <label className="text-sm font-medium text-slate-700">Desired Funding Amount</label>
-            <span className="text-2xl font-bold text-[#08708E]">{formatCurrency(fundingAmount)}</span>
+          <div className={`flex justify-between items-center ${compact ? 'mb-2' : 'mb-4'}`}>
+            <label className="text-sm font-medium text-slate-700">Desired Funding</label>
+            <span className={`${compact ? 'text-lg' : 'text-2xl'} font-bold text-[#08708E]`}>{formatCurrency(fundingAmount)}</span>
           </div>
           <Slider
             value={[fundingAmount]}
@@ -104,9 +104,9 @@ export default function FundingCalculator() {
 
         {/* Monthly Revenue Slider */}
         <div>
-          <div className="flex justify-between items-center mb-4">
+          <div className={`flex justify-between items-center ${compact ? 'mb-2' : 'mb-4'}`}>
             <label className="text-sm font-medium text-slate-700">Monthly Revenue</label>
-            <span className="text-2xl font-bold text-[#08708E]">{formatCurrency(monthlyRevenue)}</span>
+            <span className={`${compact ? 'text-lg' : 'text-2xl'} font-bold text-[#08708E]`}>{formatCurrency(monthlyRevenue)}</span>
           </div>
           <Slider
             value={[monthlyRevenue]}
@@ -124,7 +124,7 @@ export default function FundingCalculator() {
 
         {/* Time in Business */}
         <div>
-          <label className="text-sm font-medium text-slate-700 mb-3 block">Time in Business</label>
+          <label className={`text-sm font-medium text-slate-700 ${compact ? 'mb-2' : 'mb-3'} block`}>Time in Business</label>
           <Select value={timeInBusiness} onValueChange={setTimeInBusiness}>
             <SelectTrigger className="w-full h-12 rounded-xl border-slate-200">
               <SelectValue />
@@ -139,46 +139,48 @@ export default function FundingCalculator() {
           </Select>
         </div>
 
+        <div className="flex-1" />
+
         {/* Results */}
         {results && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl p-6 text-white"
+            className={`bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl ${compact ? 'p-4' : 'p-6'} text-white`}
           >
-            <div className="text-center mb-6">
-              <p className="text-sm text-white/70 mb-1">Estimated Funding Amount</p>
-              <p className="text-4xl font-bold">{formatCurrency(results.approvedAmount)}</p>
+            <div className={`text-center ${compact ? 'mb-3' : 'mb-6'}`}>
+              <p className="text-xs text-white/70 mb-1">Estimated Funding Amount</p>
+              <p className={`${compact ? 'text-2xl' : 'text-4xl'} font-bold`}>{formatCurrency(results.approvedAmount)}</p>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/10 rounded-xl p-4">
-                <div className="flex items-center gap-2 text-white/70 text-xs mb-1">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-white/10 rounded-xl p-3">
+                <div className="flex items-center gap-1 text-white/70 text-xs mb-1">
                   <DollarSign className="w-3 h-3" />
-                  Weekly Payment
+                  Weekly
                 </div>
-                <p className="text-lg font-semibold">{formatCurrency(results.weeklyPayment)}</p>
+                <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold`}>{formatCurrency(results.weeklyPayment)}</p>
               </div>
-              <div className="bg-white/10 rounded-xl p-4">
-                <div className="flex items-center gap-2 text-white/70 text-xs mb-1">
+              <div className="bg-white/10 rounded-xl p-3">
+                <div className="flex items-center gap-1 text-white/70 text-xs mb-1">
                   <Calendar className="w-3 h-3" />
-                  Est. Term
+                  Term
                 </div>
-                <p className="text-lg font-semibold">{results.termMonths} months</p>
+                <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold`}>{results.termMonths} months</p>
               </div>
-              <div className="bg-white/10 rounded-xl p-4">
-                <div className="flex items-center gap-2 text-white/70 text-xs mb-1">
+              <div className="bg-white/10 rounded-xl p-3">
+                <div className="flex items-center gap-1 text-white/70 text-xs mb-1">
                   <Percent className="w-3 h-3" />
-                  Factor Rate
+                  Factor
                 </div>
-                <p className="text-lg font-semibold">{results.factorRate.toFixed(2)}</p>
+                <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold`}>{results.factorRate.toFixed(2)}</p>
               </div>
-              <div className="bg-white/10 rounded-xl p-4">
-                <div className="flex items-center gap-2 text-white/70 text-xs mb-1">
+              <div className="bg-white/10 rounded-xl p-3">
+                <div className="flex items-center gap-1 text-white/70 text-xs mb-1">
                   <TrendingUp className="w-3 h-3" />
-                  Total Repayment
+                  Total
                 </div>
-                <p className="text-lg font-semibold">{formatCurrency(results.totalRepayment)}</p>
+                <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold`}>{formatCurrency(results.totalRepayment)}</p>
               </div>
             </div>
           </motion.div>
