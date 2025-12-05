@@ -10,13 +10,13 @@ export default function SalesforceWebToLeadForm() {
       </div>
 
       <form 
-        action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DHs00000EL3pu" 
+        action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dam00001TLTFV" 
         method="POST"
         className="space-y-4 flex-1 flex flex-col"
       >
         {/* Salesforce hidden fields */}
-        <input type="hidden" name="oid" value="00DHs00000EL3pu" />
-        <input type="hidden" name="retURL" value={typeof window !== 'undefined' ? window.location.href : ''} />
+        <input type="hidden" name="oid" value="00Dam00001TLTFV" />
+        <input type="hidden" name="retURL" value="http://ontrak.co" />
 
         <div>
           <input
@@ -53,8 +53,8 @@ export default function SalesforceWebToLeadForm() {
 
         <div>
           <input
-            id="phone"
-            name="phone"
+            id="mobile"
+            name="mobile"
             type="tel"
             placeholder="Phone Number"
             required
@@ -74,18 +74,13 @@ export default function SalesforceWebToLeadForm() {
         </div>
 
         <div>
-          <select
-            id="00NHs00000etEGm"
-            name="00NHs00000etEGm"
-            className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent text-slate-500"
-          >
-            <option value="">Monthly Revenue</option>
-            <option value="$10K - $25K">$10K - $25K</option>
-            <option value="$25K - $50K">$25K - $50K</option>
-            <option value="$50K - $100K">$50K - $100K</option>
-            <option value="$100K - $250K">$100K - $250K</option>
-            <option value="$250K+">$250K+</option>
-          </select>
+          <input
+            id="revenue"
+            name="revenue"
+            type="text"
+            placeholder="Annual Revenue"
+            className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
+          />
         </div>
 
         <div className="flex-1" />
