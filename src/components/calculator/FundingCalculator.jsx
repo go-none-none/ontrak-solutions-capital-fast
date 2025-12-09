@@ -57,6 +57,21 @@ export default function FundingCalculator({ compact = false }) {
       </div>
 
       <div className={`${compact ? 'space-y-4' : 'space-y-8'} flex-1 flex flex-col`}>
+        {/* Headline & CTA */}
+        <div className="text-center py-4">
+          <h4 className="text-xl font-bold text-slate-900 mb-2">
+            Slide to Explore Funding Options
+          </h4>
+          <p className="text-sm text-slate-600 mb-4">
+            See your real-time estimated payments — No credit pull required
+          </p>
+          <Link to={createPageUrl('Application')}>
+            <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-6 py-2 rounded-full">
+              Get Started <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
+        </div>
+
         {/* Funding Amount Slider */}
         <div>
           <div className={`flex justify-between items-center ${compact ? 'mb-2' : 'mb-4'}`}>
@@ -101,21 +116,6 @@ export default function FundingCalculator({ compact = false }) {
 
         <div className="flex-1" />
 
-        {/* Headline & CTA */}
-        <div className="text-center py-4">
-          <h4 className="text-xl font-bold text-slate-900 mb-2">
-            Slide to Explore Funding Options
-          </h4>
-          <p className="text-sm text-slate-600 mb-4">
-            See your real-time estimated payments — No credit pull required
-          </p>
-          <Link to={createPageUrl('Application')}>
-            <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-6 py-2 rounded-full">
-              Get Started <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
-        </div>
-
         {/* Results */}
         {results && (
           <motion.div
@@ -123,33 +123,27 @@ export default function FundingCalculator({ compact = false }) {
             animate={{ opacity: 1, y: 0 }}
             className={`bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl ${compact ? 'p-4' : 'p-6'} text-white`}
           >
-            <div className={`text-center ${compact ? 'mb-4 py-4' : 'mb-8 py-6'}`}>
-              <p className="text-sm text-white/70 mb-2">Total Payment <span className="opacity-70">(Factor Rate: {factorRate.toFixed(2)})</span></p>
-              <p className={`${compact ? 'text-3xl' : 'text-5xl'} font-bold`}>{formatCurrency(results.totalPayment)}</p>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-2 text-white/70 text-xs mb-2">
+                  <DollarSign className="w-4 h-4" />
+                  Estimated Daily
+                </div>
+                <p className={`${compact ? 'text-2xl' : 'text-3xl'} font-bold`}>{formatCurrency(results.dailyPayment)}</p>
+              </div>
+              <div className="bg-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-2 text-white/70 text-xs mb-2">
+                  <DollarSign className="w-4 h-4" />
+                  Estimated Weekly
+                </div>
+                <p className={`${compact ? 'text-2xl' : 'text-3xl'} font-bold`}>{formatCurrency(results.weeklyPayment)}</p>
+              </div>
             </div>
             
-            <div className="grid grid-cols-3 gap-2">
-              <div className="bg-white/10 rounded-xl p-3">
-                <div className="flex items-center gap-1 text-white/70 text-xs mb-1">
-                  <DollarSign className="w-3 h-3" />
-                  Daily
-                </div>
-                <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold`}>{formatCurrency(results.dailyPayment)}</p>
-              </div>
-              <div className="bg-white/10 rounded-xl p-3">
-                <div className="flex items-center gap-1 text-white/70 text-xs mb-1">
-                  <DollarSign className="w-3 h-3" />
-                  Weekly
-                </div>
-                <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold`}>{formatCurrency(results.weeklyPayment)}</p>
-              </div>
-              <div className="bg-white/10 rounded-xl p-3">
-                <div className="flex items-center gap-1 text-white/70 text-xs mb-1">
-                  <Calendar className="w-3 h-3" />
-                  Term
-                </div>
-                <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold`}>{results.termMonths} mo</p>
-              </div>
+            <div className="text-center pt-4 border-t border-white/20">
+              <p className="text-xs text-white/60 mb-1">Total Payment • {results.termMonths} month term</p>
+              <p className={`${compact ? 'text-xl' : 'text-2xl'} font-bold`}>{formatCurrency(results.totalPayment)}</p>
+              <p className="text-xs text-white/50 mt-1">Factor Rate: {factorRate.toFixed(2)}</p>
             </div>
           </motion.div>
         )}
