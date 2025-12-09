@@ -18,57 +18,57 @@ export default function Navigation() {
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: createPageUrl('Home') },
-    { name: 'About Us', href: createPageUrl('About') },
-    { name: 'Use Cases', href: createPageUrl('UseCases') },
-    { name: 'Industries', href: createPageUrl('Industries') },
-    { name: 'Reviews', href: createPageUrl('Reviews') },
-    { name: 'Contact', href: createPageUrl('Contact') },
-  ];
+  { name: 'Home', href: createPageUrl('Home') },
+  { name: 'About Us', href: createPageUrl('About') },
+  { name: 'Use Cases', href: createPageUrl('UseCases') },
+  { name: 'Industries', href: createPageUrl('Industries') },
+  { name: 'Reviews', href: createPageUrl('Reviews') },
+  { name: 'Contact', href: createPageUrl('Contact') }];
+
 
   return (
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'}`
+      }>
+        <div className="bg-[#08708e] text-gray-50 mx-auto px-4 max-w-7xl sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link to={createPageUrl('Home')} className="flex items-center">
-              <img 
+              <img
                 src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png"
                 alt="OnTrak Solutions"
                 className={`h-10 w-auto transition-all duration-300 ${
-                  isScrolled ? '' : 'brightness-0 invert'
-                }`}
-              />
+                isScrolled ? '' : 'brightness-0 invert'}`
+                } />
+
             </Link>
 
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className={`text-sm font-medium transition-all duration-300 hover:opacity-70 ${
-                    isScrolled ? 'text-slate-700' : 'text-white'
-                  }`}
-                >
+              {navLinks.map((link) =>
+              <Link
+                key={link.name}
+                to={link.href}
+                className={`text-sm font-medium transition-all duration-300 hover:opacity-70 ${
+                isScrolled ? 'text-slate-700' : 'text-white'}`
+                }>
+
                   {link.name}
                 </Link>
-              ))}
+              )}
             </div>
 
             {/* CTA Button */}
             <div className="hidden lg:block">
               <Link to={createPageUrl('Application')}>
-                <Button 
+                <Button
                   className={`px-6 py-2.5 rounded-full font-semibold transition-all duration-300 ${
-                    isScrolled 
-                      ? 'bg-[#08708E] hover:bg-[#065a72] text-white' 
-                      : 'bg-white text-[#08708E] hover:bg-white/90'
-                  }`}
-                >
+                  isScrolled ?
+                  'bg-[#08708E] hover:bg-[#065a72] text-white' :
+                  'bg-white text-[#08708E] hover:bg-white/90'}`
+                  }>
+
                   Get Funds Today
                 </Button>
               </Link>
@@ -77,13 +77,13 @@ export default function Navigation() {
             {/* Mobile Menu Button */}
             <button
               className="lg:hidden p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? (
-                <X className={`w-6 h-6 ${isScrolled ? 'text-slate-700' : 'text-white'}`} />
-              ) : (
-                <Menu className={`w-6 h-6 ${isScrolled ? 'text-slate-700' : 'text-white'}`} />
-              )}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+
+              {mobileMenuOpen ?
+              <X className={`w-6 h-6 ${isScrolled ? 'text-slate-700' : 'text-white'}`} /> :
+
+              <Menu className={`w-6 h-6 ${isScrolled ? 'text-slate-700' : 'text-white'}`} />
+              }
             </button>
           </div>
         </div>
@@ -91,24 +91,24 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-white pt-24 px-6 lg:hidden"
-          >
+        {mobileMenuOpen &&
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="fixed inset-0 z-40 bg-white pt-24 px-6 lg:hidden">
+
             <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-lg font-medium text-slate-700 py-3 border-b border-slate-100"
-                >
+              {navLinks.map((link) =>
+            <Link
+              key={link.name}
+              to={link.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-lg font-medium text-slate-700 py-3 border-b border-slate-100">
+
                   {link.name}
                 </Link>
-              ))}
+            )}
               <Link to={createPageUrl('Application')} onClick={() => setMobileMenuOpen(false)}>
                 <Button className="w-full mt-4 bg-[#08708E] hover:bg-[#065a72] text-white py-6 rounded-full text-lg">
                   Get Funds Today
@@ -116,8 +116,8 @@ export default function Navigation() {
               </Link>
             </div>
           </motion.div>
-        )}
+        }
       </AnimatePresence>
-    </>
-  );
+    </>);
+
 }
