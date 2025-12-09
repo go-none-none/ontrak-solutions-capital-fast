@@ -71,7 +71,7 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="w-4 h-4 text-[#08708E] mt-1" />
-                <span className="text-slate-400 text-sm">info@ontrak.co</span>
+                <a href="mailto:info@ontrak.co" className="text-slate-400 hover:text-white transition-colors text-sm">info@ontrak.co</a>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-[#08708E] mt-1" />
