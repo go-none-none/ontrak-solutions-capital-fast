@@ -123,7 +123,7 @@ export default function FAQ() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative min-h-[600px] pt-32 pb-20 bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
+      <section className="relative h-[300px] pt-20 pb-12 bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
