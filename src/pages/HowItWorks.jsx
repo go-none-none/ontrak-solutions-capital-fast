@@ -173,7 +173,7 @@ export default function HowItWorks() {
               className="hidden lg:block"
             >
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/2b3e7f95c_Gemini_Generated_Image_93aulw93aulw93au.png" 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/aaa5af2e5_OnTrak-HIW.png" 
                 alt="Business Funding Process"
                 className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
