@@ -29,33 +29,24 @@ export default function ReviewSubmissionForm() {
     setSubmitting(true);
 
     try {
-      const emailBody = `
-New Customer Review Submitted
-================================
-
-Rating: ${'★'.repeat(rating)}${'☆'.repeat(5 - rating)} (${rating}/5)
-
-Name: ${formData.name}
-Business: ${formData.business}
-Location: ${formData.location}
-Funding Amount: ${formData.fundingAmount}
-
-Review:
-${formData.review}
-
-================================
-Submitted: ${new Date().toLocaleString()}
-      `;
-
-      await base44.integrations.Core.SendEmail({
-        to: 'reviews@ontrak.co',
-        subject: `New ${rating}-Star Review from ${formData.name}`,
-        body: emailBody
+      await base44.entities.Review.create({
+        name: formData.name,
+        business: formData.business,
+        location: formData.location,
+        funding_amount: formData.fundingAmount,
+        rating: rating,
+        review: formData.review,
+        approved: true
       });
 
       setSubmitted(true);
       setFormData({ name: '', business: '', location: '', fundingAmount: '', review: '' });
       setRating(0);
+      
+      // Reload page after 2 seconds to show new review
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       alert('There was an error submitting your review. Please try again.');
     } finally {

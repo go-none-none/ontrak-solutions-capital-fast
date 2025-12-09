@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
 import ReviewSubmissionForm from '../components/reviews/ReviewSubmissionForm';
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 
 function StatCounter({ stat, delay }) {
   const [count, setCount] = useState(0);
@@ -100,7 +102,12 @@ function StatCounter({ stat, delay }) {
 export default function Reviews() {
   const [visibleCount, setVisibleCount] = React.useState(9);
 
-  const testimonials = [
+  const { data: userReviews = [] } = useQuery({
+    queryKey: ['reviews'],
+    queryFn: () => base44.entities.Review.filter({ approved: true }, '-created_date')
+  });
+
+  const hardcodedTestimonials = [
     {
       name: 'Sarah Johnson',
       business: 'The Rustic Kitchen',
@@ -532,6 +539,19 @@ export default function Reviews() {
       image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop'
     }
   ];
+
+  const userReviewsFormatted = userReviews.map(review => ({
+    name: review.name,
+    business: review.business,
+    industry: '',
+    location: review.location,
+    quote: review.review,
+    rating: review.rating,
+    amount: review.funding_amount || '',
+    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop'
+  }));
+
+  const testimonials = [...userReviewsFormatted, ...hardcodedTestimonials];
 
   const stats = [
     { value: '4.9/5', label: 'Average Rating' },
