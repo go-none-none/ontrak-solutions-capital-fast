@@ -38,7 +38,9 @@ export default function Navigation() {
               <img 
                 src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png"
                 alt="OnTrak Solutions"
-                className="h-10 w-auto"
+                className={`h-10 w-auto transition-all duration-300 ${
+                  isScrolled ? '' : 'brightness-0 invert'
+                }`}
               />
             </Link>
 
