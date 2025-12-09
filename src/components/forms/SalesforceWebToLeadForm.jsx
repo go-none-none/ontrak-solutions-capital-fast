@@ -5,7 +5,7 @@ export default function SalesforceWebToLeadForm() {
   return (
     <div className="bg-white rounded-3xl shadow-2xl p-8 h-full flex flex-col">
       <div className="mb-6">
-        <h3 className="text-2xl font-bold text-slate-900 mb-2">Get Your Free Quote</h3>
+        <h3 className="text-2xl font-bold text-slate-900 mb-2 text-center">Discover Your Funding Options</h3>
         <p className="text-slate-500">Takes less than 60 seconds</p>
       </div>
 
