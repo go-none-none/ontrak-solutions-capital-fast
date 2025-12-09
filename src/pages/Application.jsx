@@ -56,7 +56,7 @@ export default function Application() {
                   style={{
                     minWidth: '100%',
                     maxWidth: '100%',
-                    height: '2000px',
+                    height: '1200px',
                     border: 'none'
                   }}
                   scrolling="no"
