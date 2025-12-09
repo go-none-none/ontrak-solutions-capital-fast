@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle, Clock, Shield, TrendingUp } from 'lucide-react';
+import { CheckCircle, Clock, Shield, TrendingUp, Phone } from 'lucide-react';
 
 export default function Application() {
   const [jotformUrl, setJotformUrl] = useState('');
@@ -88,7 +88,7 @@ export default function Application() {
                   Questions? Our funding specialists are here to help.
                 </p>
                 <div className="space-y-2">
-                  <p className="font-semibold">📞 (302) 520-5200</p>
+                  <p className="font-semibold flex items-center gap-2"><Phone className="w-4 h-4 text-white" /> (302) 520-5200</p>
                   <p className="text-sm text-white/80">Mon-Fri 9am - 6pm EST</p>
                 </div>
               </div>
