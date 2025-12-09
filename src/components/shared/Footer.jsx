@@ -107,8 +107,8 @@ export default function Footer() {
             © {new Date().getFullYear()} OnTrak Solutions LLC. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-white text-sm transition-colors">Privacy Policy</Link>
-            <Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-white text-sm transition-colors">Terms of Service</Link>
+            <Link to={createPageUrl('PrivacyPolicy')} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white text-sm transition-colors">Privacy Policy</Link>
+            <Link to={createPageUrl('TermsOfService')} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white text-sm transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

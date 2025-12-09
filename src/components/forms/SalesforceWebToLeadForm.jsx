@@ -96,9 +96,9 @@ export default function SalesforceWebToLeadForm() {
           />
           <span>
             I consent to receive texts and agree to the{' '}
-            <Link to={createPageUrl('TermsOfService')} className="text-[#08708E] hover:underline">Terms & Conditions</Link>
+            <Link to={createPageUrl('TermsOfService')} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline">Terms & Conditions</Link>
             {' '}and{' '}
-            <Link to={createPageUrl('PrivacyPolicy')} className="text-[#08708E] hover:underline">Privacy Policy</Link>.
+            <Link to={createPageUrl('PrivacyPolicy')} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline">Privacy Policy</Link>.
           </span>
         </label>
 
