@@ -208,11 +208,11 @@ export default function Contact() {
                       className="mt-1 w-4 h-4 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
                     />
                     <span className="text-xs text-slate-600">
-                      I consent to receive texts and agree to the <Link to={createPageUrl('TermsOfService')} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline">Terms & Conditions</Link> and <Link to={createPageUrl('PrivacyPolicy')} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline">Privacy Policy</Link>.
+                      I consent to receive texts and agree to the <Link to={createPageUrl('TermsOfService')} className="text-[#08708E] hover:underline">Terms & Conditions</Link> and <Link to={createPageUrl('PrivacyPolicy')} className="text-[#08708E] hover:underline">Privacy Policy</Link>.
                     </span>
                   </label>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    By submitting your phone number, you agree to receive recurring SMS messages from OnTrak Solutions LLC regarding your account and service updates. Message frequency may vary. Message and data rates may apply. Reply STOP to opt out or HELP for help. Your information will not be sold or shared. View our <Link to={createPageUrl('PrivacyPolicy')} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline">Privacy Policy</Link> and <Link to={createPageUrl('TermsOfService')} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline">Terms of Service</Link>. Consent is not a condition of service.
+                    By submitting your phone number, you agree to receive recurring SMS messages from OnTrak Solutions LLC regarding your account and service updates. Message frequency may vary. Message and data rates may apply. Reply STOP to opt out or HELP for help. Your information will not be sold or shared. View our <Link to={createPageUrl('PrivacyPolicy')} className="text-[#08708E] hover:underline">Privacy Policy</Link> and <Link to={createPageUrl('TermsOfService')} className="text-[#08708E] hover:underline">Terms of Service</Link>. Consent is not a condition of service.
                   </p>
                 </div>
 
