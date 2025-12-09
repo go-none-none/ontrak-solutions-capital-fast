@@ -1,8 +1,94 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Clock, Shield } from 'lucide-react';
 import FundingCalculator from '../calculator/FundingCalculator';
 import SalesforceWebToLeadForm from '../forms/SalesforceWebToLeadForm';
+
+function HeroStatCounter({ stat, delay }) {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const duration = 2000;
+    const steps = 60;
+    const increment = duration / steps;
+    
+    let target;
+    if (stat.value.includes('M+')) {
+      target = parseFloat(stat.value.replace('$', '').replace('M+', ''));
+    } else if (stat.value.includes('K+')) {
+      target = parseFloat(stat.value.replace('K+', ''));
+    } else if (stat.value.includes('hrs')) {
+      target = parseFloat(stat.value.replace('hrs', ''));
+    } else {
+      target = parseFloat(stat.value.replace(/[^0-9.]/g, ''));
+    }
+
+    let current = 0;
+    const step = target / steps;
+
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      setCount(current);
+    }, increment);
+
+    return () => clearInterval(timer);
+  }, [isVisible, stat.value]);
+
+  const formatValue = (val) => {
+    if (stat.value.includes('M+')) {
+      return `$${val.toFixed(0)}M+`;
+    } else if (stat.value.includes('K+')) {
+      return `${val.toFixed(0)}K+`;
+    } else if (stat.value.includes('hrs')) {
+      return `${val.toFixed(0)}hrs`;
+    }
+    return val.toFixed(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay }}
+      className="text-center"
+    >
+      <div className="text-3xl sm:text-5xl font-bold text-white" style={{ textShadow: '1px 1px 8px rgba(0,0,0,0.9)' }}>
+        {formatValue(count)}
+      </div>
+      <div className="text-sm text-white/50" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>{stat.label}</div>
+    </motion.div>
+  );
+}
 
 export default function HeroSection() {
   const benefits = [
@@ -84,16 +170,7 @@ export default function HeroSection() {
                 { value: '1K+', label: 'Businesses' },
                 { value: '24hrs', label: 'Avg. Funding' }
               ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 + i * 0.1 }}
-                  className="text-center"
-                >
-                  <div className="text-2xl sm:text-3xl font-bold text-white" style={{ textShadow: '1px 1px 8px rgba(0,0,0,0.9)' }}>{stat.value}</div>
-                  <div className="text-sm text-white/50" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>{stat.label}</div>
-                </motion.div>
+                <HeroStatCounter key={i} stat={stat} delay={0.6 + i * 0.1} />
               ))}
             </div>
           </motion.div>
