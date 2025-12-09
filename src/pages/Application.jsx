@@ -144,9 +144,11 @@ export default function Application() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <script type="text/javascript" dangerouslySetInnerHTML={{__html: `
+          </div>
+          </div>
+          </section>
+
+          <script type="text/javascript" dangerouslySetInnerHTML={{__html: `
         var ifr = document.getElementById("JotFormIFrame-252957146872065");
         if (ifr) {
           var src = ifr.src;
