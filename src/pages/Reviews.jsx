@@ -244,9 +244,9 @@ export default function Reviews() {
               className="hidden lg:block"
             >
               <img 
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=600&fit=crop" 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/11ed6a527_OnTrak-Reviews.png" 
                 alt="Client Reviews"
-                className="rounded-2xl shadow-2xl h-64 w-full object-cover"
+                className="rounded-2xl shadow-2xl h-64 w-full object-contain"
               />
             </motion.div>
           </div>
