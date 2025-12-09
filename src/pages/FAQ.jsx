@@ -151,9 +151,49 @@ export default function FAQ() {
         </div>
       </section>
 
+      {/* Stats Banner */}
+      <section className="py-16 bg-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { value: '24hrs', label: 'Fast Funding' },
+              { value: '95%', label: 'Approval Rate' },
+              { value: '$5K-$500K', label: 'Funding Range' },
+              { value: '1,000+', label: 'Happy Clients' }
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="text-center"
+              >
+                <div className="text-3xl sm:text-4xl font-bold text-white mb-2">{stat.value}</div>
+                <div className="text-sm text-white/60">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Sections */}
       <section className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              Common Questions
+            </h2>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Find answers to the most frequently asked questions about our funding process
+            </p>
+          </motion.div>
+
           <div className="space-y-12">
             {faqSections.map((section, sectionIndex) => (
               <motion.div
@@ -215,6 +255,40 @@ export default function FAQ() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Info Banner */}
+      <section className="py-16 bg-slate-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white rounded-3xl p-8 md:p-12 shadow-lg text-center"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-[#08708E] flex items-center justify-center mx-auto mb-6">
+              <HelpCircle className="w-8 h-8 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-4">
+              Need More Information?
+            </h3>
+            <p className="text-slate-600 mb-6">
+              Our funding specialists are available to answer any questions and guide you through the entire process.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="tel:(302) 520-5200" className="inline-flex items-center justify-center gap-2 text-[#08708E] font-semibold">
+                <div className="w-10 h-10 rounded-full bg-[#08708E]/10 flex items-center justify-center">
+                  📞
+                </div>
+                (302) 520-5200
+              </a>
+              <span className="text-slate-400 hidden sm:block">|</span>
+              <div className="text-slate-600">
+                Mon-Fri 9am - 6pm EST
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
