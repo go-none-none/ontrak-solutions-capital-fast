@@ -45,21 +45,23 @@ export default function Application() {
           {/* Main Form */}
           <div className="lg:col-span-2">
             {jotformUrl && (
-              <iframe
-                id="JotFormIFrame-252957146872065"
-                title="OnTrak Business Funding Application"
-                allowFullScreen
-                allow="geolocation; microphone; camera; fullscreen"
-                src={jotformUrl}
-                frameBorder="0"
-                style={{
-                  minWidth: '100%',
-                  maxWidth: '100%',
-                  height: '2000px',
-                  border: 'none'
-                }}
-                scrolling="no"
-              />
+              <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <iframe
+                  id="JotFormIFrame-252957146872065"
+                  title="OnTrak Business Funding Application"
+                  allowFullScreen
+                  allow="geolocation; microphone; camera; fullscreen"
+                  src={jotformUrl}
+                  frameBorder="0"
+                  style={{
+                    minWidth: '100%',
+                    maxWidth: '100%',
+                    height: '2000px',
+                    border: 'none'
+                  }}
+                  scrolling="no"
+                />
+              </div>
             )}
           </div>
 
