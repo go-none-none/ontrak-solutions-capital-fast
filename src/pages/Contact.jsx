@@ -11,19 +11,15 @@ export default function Contact() {
       icon: Phone,
       title: 'Phone',
       value: '(302) 520-5200',
+      link: 'tel:+13025205200',
       description: 'Mon-Fri 9am to 6pm EST'
     },
     {
       icon: Mail,
       title: 'Email',
       value: 'info@ontrak.co',
+      link: 'mailto:info@ontrak.co',
       description: 'We respond within 24 hours'
-    },
-    {
-      icon: MapPin,
-      title: 'Office',
-      value: '1019 Ave P, STE 305',
-      description: 'Brooklyn, NY 11223'
     },
     {
       icon: Clock,
@@ -68,7 +64,7 @@ export default function Contact() {
       {/* Contact Info Cards */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {contactInfo.map((info, i) => (
               <motion.div
                 key={i}
@@ -82,7 +78,13 @@ export default function Contact() {
                   <info.icon className="w-5 h-5 text-white" />
                 </div>
                 <h3 className="font-semibold text-slate-900 mb-1">{info.title}</h3>
-                <p className="text-[#08708E] font-medium mb-1">{info.value}</p>
+                {info.link ? (
+                  <a href={info.link} className="text-[#08708E] font-medium mb-1 hover:underline block">
+                    {info.value}
+                  </a>
+                ) : (
+                  <p className="text-[#08708E] font-medium mb-1">{info.value}</p>
+                )}
                 <p className="text-sm text-slate-500">{info.description}</p>
               </motion.div>
             ))}
