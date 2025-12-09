@@ -122,7 +122,7 @@ export default function Industries() {
               className="hidden lg:block"
             >
               <img 
-                src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=800&h=600&fit=crop" 
+                src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&h=600&fit=crop" 
                 alt="Industries We Serve"
                 className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
