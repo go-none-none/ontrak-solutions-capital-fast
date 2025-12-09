@@ -52,7 +52,7 @@ export default function Navigation() {
                 <Link
                   key={link.name}
                   to={link.href}
-                  className={`text-base font-medium transition-all duration-300 hover:opacity-70 ${
+                  className={`text-base font-normal transition-all duration-300 hover:opacity-70 ${
                     isScrolled ? 'text-slate-700' : 'text-white'
                   }`}
                 >
