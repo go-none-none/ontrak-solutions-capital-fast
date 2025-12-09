@@ -87,7 +87,7 @@ export default function PrivacyPolicy() {
               Privacy Policy
             </h1>
             <p className="text-xl text-white/70">
-              Last Updated: January 1, 2025
+              Last Updated: December 1, 2025
             </p>
           </motion.div>
         </div>
