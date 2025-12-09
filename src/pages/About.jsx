@@ -30,8 +30,8 @@ export default function About() {
   ];
 
   const stats = [
-    { value: '$500M+', label: 'Total Funded' },
-    { value: '10,000+', label: 'Businesses Served' },
+    { value: '$50M+', label: 'Total Funded' },
+    { value: '1,000+', label: 'Businesses Served' },
     { value: '95%', label: 'Approval Rate' },
     { value: '24hrs', label: 'Average Funding Time' }
   ];
