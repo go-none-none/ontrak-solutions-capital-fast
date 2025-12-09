@@ -51,7 +51,17 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-6 text-white">Industries</h4>
             <ul className="space-y-3">
-              {['Restaurants', 'Retail', 'Healthcare', 'Construction', 'Transportation'].map((industry) => (
+              {[
+                'Restaurants & Food Service',
+                'Retail',
+                'Healthcare & Medical',
+                'Construction',
+                'Transportation & Logistics',
+                'Beauty & Wellness',
+                'Fitness & Recreation',
+                'Auto Services',
+                'Professional Services'
+              ].map((industry) => (
                 <li key={industry}>
                   <Link 
                     to={createPageUrl('Industries')} 
