@@ -122,7 +122,7 @@ export default function Industries() {
               className="hidden lg:block"
             >
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/06f49a98d_OnTrak-Industries.png" 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/d5130936a_OnTrak-Industries.png" 
                 alt="Industries We Serve"
                 className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
