@@ -142,7 +142,7 @@ export default function HowItWorks() {
               animate={{ opacity: 1, x: 0 }}
             >
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
-                Securing Business Funding: Simplified
+                Business Funding Made Easy
               </h1>
               <p className="text-base text-white/70 mb-4">
                 Quick, transparent, and hassle-free funding so you can focus on your business.
