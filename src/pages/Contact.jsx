@@ -89,12 +89,13 @@ export default function Contact() {
       {/* Contact Form */}
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
+          <div className="grid lg:grid-cols-2 gap-16 items-stretch">
             {/* Left - Info */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              className="flex flex-col"
             >
               <span className="text-[#08708E] font-semibold text-sm uppercase tracking-wider">Get In Touch</span>
               <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mt-4 mb-6">
@@ -105,7 +106,7 @@ export default function Contact() {
                 Fill out the form and one of our specialists will get back to you within 24 hours.
               </p>
 
-              <div className="bg-[#08708E] rounded-2xl p-8 text-white">
+              <div className="bg-[#08708E] rounded-2xl p-8 text-white flex-1">
                 <h3 className="text-xl font-bold mb-4">Why Choose OnTrak?</h3>
                 <ul className="space-y-4">
                   {[
@@ -128,11 +129,12 @@ export default function Contact() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
+              className="flex"
             >
               <form 
                 action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dam00001TLTFV" 
                 method="POST"
-                className="bg-white rounded-3xl shadow-xl p-10 space-y-6"
+                className="bg-white rounded-3xl shadow-xl p-10 space-y-6 w-full flex flex-col"
               >
                 <input type="hidden" name="oid" value="00Dam00001TLTFV" />
                 <input type="hidden" name="retURL" value="http://ontrak.co" />
@@ -218,7 +220,7 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="w-full h-14 bg-[#08708E] hover:bg-[#065a72] text-white rounded-xl text-lg font-semibold transition-colors duration-200"
+                  className="w-full h-14 bg-[#08708E] hover:bg-[#065a72] text-white rounded-xl text-lg font-semibold transition-colors duration-200 mt-auto"
                 >
                   Send Message
                 </button>
