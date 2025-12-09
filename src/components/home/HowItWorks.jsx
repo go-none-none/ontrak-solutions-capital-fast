@@ -93,7 +93,7 @@ export default function HowItWorks() {
         >
           <Link to={createPageUrl('Application')}>
             <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-10 py-6 rounded-full text-lg font-semibold">
-              Start Your Application
+              My Business Deserves More
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </Link>
