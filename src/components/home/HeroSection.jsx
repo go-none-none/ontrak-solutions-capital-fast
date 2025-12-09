@@ -38,12 +38,12 @@ export default function HeroSection() {
             className="text-center"
           >
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm mb-6" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               Trusted by 10,000+ Businesses
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6" style={{ textShadow: '2px 2px 12px rgba(0,0,0,0.9)' }}>
               Capital Your Business
               <span className="relative">
                 <span className="relative z-10"> Deserves</span>
@@ -53,7 +53,7 @@ export default function HeroSection() {
               </span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-white/70 mb-8 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-white/70 mb-8 leading-relaxed max-w-3xl mx-auto" style={{ textShadow: '1px 1px 8px rgba(0,0,0,0.9)' }}>
               Fast, flexible funding solutions with no hidden fees. 
               Apply in minutes, get approved the same day, and receive 
               funds in as little as 24 hours.
@@ -72,7 +72,7 @@ export default function HeroSection() {
                   <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
                     <benefit.icon className="w-4 h-4" />
                   </div>
-                  <span className="text-sm font-medium">{benefit.text}</span>
+                  <span className="text-sm font-medium" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>{benefit.text}</span>
                 </motion.div>
               ))}
             </div>
@@ -91,8 +91,8 @@ export default function HeroSection() {
                   transition={{ delay: 0.6 + i * 0.1 }}
                   className="text-center"
                 >
-                  <div className="text-2xl sm:text-3xl font-bold text-white">{stat.value}</div>
-                  <div className="text-sm text-white/50">{stat.label}</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-white" style={{ textShadow: '1px 1px 8px rgba(0,0,0,0.9)' }}>{stat.value}</div>
+                  <div className="text-sm text-white/50" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>{stat.label}</div>
                 </motion.div>
               ))}
             </div>
