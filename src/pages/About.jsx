@@ -36,23 +36,7 @@ export default function About() {
     { value: '24hrs', label: 'Average Funding Time' }
   ];
 
-  const team = [
-    {
-      name: 'David Mitchell',
-      role: 'CEO & Founder',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop'
-    },
-    {
-      name: 'Jennifer Hayes',
-      role: 'Chief Operations Officer',
-      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=300&fit=crop'
-    },
-    {
-      name: 'Marcus Thompson',
-      role: 'VP of Business Development',
-      image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop'
-    }
-  ];
+
 
   return (
     <div className="min-h-screen">
@@ -73,7 +57,7 @@ export default function About() {
               Empowering Businesses<br />to Achieve More
             </h1>
             <p className="text-xl text-white/70 max-w-2xl mx-auto">
-              Since 2015, OnTrak has been helping small and medium businesses access the capital they need to grow, expand, and thrive.
+              With over 10 years of experience, OnTrak has been helping small and medium businesses access the capital they need to grow, expand, and thrive.
             </p>
           </motion.div>
         </div>
@@ -180,7 +164,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Team */}
+      {/* Process */}
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -189,35 +173,110 @@ export default function About() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="text-[#08708E] font-semibold text-sm uppercase tracking-wider">Leadership</span>
+            <span className="text-[#08708E] font-semibold text-sm uppercase tracking-wider">Our Approach</span>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mt-4">
-              Meet Our Team
+              How We're Different
             </h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {team.map((member, i) => (
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'Technology-Driven',
+                description: 'Our advanced platform enables fast approvals and seamless funding experiences, getting you capital when you need it most.',
+                icon: '🚀'
+              },
+              {
+                title: 'Relationship-Focused',
+                description: 'Every client gets a dedicated funding advisor who understands your business and is committed to your long-term success.',
+                icon: '🤝'
+              },
+              {
+                title: 'Industry Expertise',
+                description: 'With over 10 years of experience, we understand the unique challenges businesses face and tailor solutions accordingly.',
+                icon: '💼'
+              }
+            ].map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="text-center"
+                className="bg-white rounded-2xl p-8 text-center shadow-lg"
               >
-                <div className="relative mb-6 inline-block">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-40 h-40 rounded-full object-cover mx-auto"
-                  />
-                  <div className="absolute inset-0 rounded-full ring-4 ring-[#08708E]/20 ring-offset-4" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-900">{member.name}</h3>
-                <p className="text-[#08708E]">{member.role}</p>
+                <div className="text-5xl mb-4">{item.icon}</div>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
+                <p className="text-slate-600">{item.description}</p>
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Trust Indicators */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="text-[#08708E] font-semibold text-sm uppercase tracking-wider">Trust & Recognition</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mt-4">
+              Recognized Excellence
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { label: 'BBB Rating', value: 'A+', icon: '⭐' },
+              { label: 'Client Retention', value: '92%', icon: '🔄' },
+              { label: 'Average Rating', value: '4.8/5', icon: '⭐' },
+              { label: 'Years in Business', value: '10+', icon: '📅' }
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-slate-50 rounded-2xl p-6 text-center"
+              >
+                <div className="text-4xl mb-3">{item.icon}</div>
+                <div className="text-3xl font-bold text-[#08708E] mb-2">{item.value}</div>
+                <div className="text-sm text-slate-600">{item.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Commitment */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
+              Our Commitment to You
+            </h2>
+            <div className="bg-white rounded-3xl p-10 shadow-xl">
+              <p className="text-lg text-slate-600 leading-relaxed mb-6">
+                At OnTrak, we're more than just a funding provider — we're your growth partner. 
+                We understand that behind every business are real people with real dreams, and we're 
+                committed to providing the financial solutions that help turn those dreams into reality.
+              </p>
+              <p className="text-lg text-slate-600 leading-relaxed">
+                Whether you're looking to expand operations, purchase equipment, manage cash flow, 
+                or seize a new opportunity, we're here to provide fast, transparent, and flexible 
+                funding solutions tailored to your unique needs.
+              </p>
+            </div>
+          </motion.div>
         </div>
       </section>
 
