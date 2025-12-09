@@ -131,7 +131,7 @@ export default function FundingCalculator({ compact = false }) {
               <div className="bg-white/10 rounded-xl p-3">
                 <div className="flex items-center gap-1 text-white/70 text-xs mb-1">
                   <DollarSign className="w-3 h-3" />
-                  Daily
+                  Estimated Daily
                 </div>
                 <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold`}>{formatCurrency(results.dailyPayment)}</p>
               </div>
