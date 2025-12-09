@@ -97,6 +97,8 @@ function StatCounter({ stat, delay }) {
 }
 
 export default function Reviews() {
+  const [visibleCount, setVisibleCount] = React.useState(9);
+
   const testimonials = [
     {
       name: 'Sarah Johnson',
@@ -187,6 +189,346 @@ export default function Reviews() {
       rating: 5,
       amount: '$40,000',
       image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Kevin Brown',
+      business: 'Brown Plumbing Services',
+      industry: 'Home Services',
+      location: 'Atlanta, GA',
+      quote: 'Needed to expand my team during peak season. OnTrak provided the funds quickly with no hassle. Business has been booming ever since!',
+      rating: 5,
+      amount: '$95,000',
+      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Rachel Kim',
+      business: 'Kim\'s Bakery',
+      industry: 'Food & Beverage',
+      location: 'Seattle, WA',
+      quote: 'Opening my second bakery location seemed impossible. OnTrak made it a reality with their flexible funding. The application was so easy!',
+      rating: 5,
+      amount: '$70,000',
+      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Marcus Johnson',
+      business: 'Johnson Electric',
+      industry: 'Electrical Services',
+      location: 'Dallas, TX',
+      quote: 'The team at OnTrak understood my business needs perfectly. Got approved fast and the terms were better than I expected.',
+      rating: 5,
+      amount: '$110,000',
+      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Nicole Davis',
+      business: 'Davis Hair Studio',
+      industry: 'Beauty',
+      location: 'Las Vegas, NV',
+      quote: 'Renovating my salon was a dream come true thanks to OnTrak. The process was smooth and my clients love the new space!',
+      rating: 5,
+      amount: '$55,000',
+      image: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Brian White',
+      business: 'White Security Systems',
+      industry: 'Security',
+      location: 'Boston, MA',
+      quote: 'OnTrak helped me purchase new equipment and hire additional staff. My business has grown 40% since getting funded!',
+      rating: 5,
+      amount: '$130,000',
+      image: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Angela Martinez',
+      business: 'Martinez Landscaping',
+      industry: 'Landscaping',
+      location: 'Portland, OR',
+      quote: 'Seasonal business can be tough. OnTrak understood my needs and provided funding that works with my cash flow. Highly recommend!',
+      rating: 5,
+      amount: '$80,000',
+      image: 'https://images.unsplash.com/photo-1479936343636-73cdc5aae0c3?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Steven Lee',
+      business: 'Lee\'s Auto Body',
+      industry: 'Automotive',
+      location: 'San Diego, CA',
+      quote: 'After a rough year, I needed capital to get back on track. OnTrak believed in my business when others didn\'t. Forever grateful!',
+      rating: 5,
+      amount: '$90,000',
+      image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Patricia Garcia',
+      business: 'Garcia Catering',
+      industry: 'Catering',
+      location: 'Miami, FL',
+      quote: 'The funding came at the perfect time to upgrade my kitchen equipment. OnTrak made the entire process stress-free!',
+      rating: 5,
+      amount: '$65,000',
+      image: 'https://images.unsplash.com/photo-1551843073-4a9a5b6fcd5f?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Daniel Taylor',
+      business: 'Taylor HVAC',
+      industry: 'HVAC',
+      location: 'Nashville, TN',
+      quote: 'Needed to replace aging equipment. OnTrak provided fast funding with great terms. My efficiency has improved dramatically!',
+      rating: 5,
+      amount: '$105,000',
+      image: 'https://images.unsplash.com/photo-1558203728-00f45181dd84?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Karen Wilson',
+      business: 'Wilson Dental Practice',
+      industry: 'Healthcare',
+      location: 'Charlotte, NC',
+      quote: 'Upgrading to digital equipment was expensive but necessary. OnTrak made it affordable with flexible repayment terms.',
+      rating: 5,
+      amount: '$140,000',
+      image: 'https://images.unsplash.com/photo-1589156229687-496a31ad1d1f?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Christopher Moore',
+      business: 'Moore Painting Co',
+      industry: 'Painting',
+      location: 'Indianapolis, IN',
+      quote: 'OnTrak helped me buy new trucks and equipment for my crew. The approval process was incredibly fast and straightforward!',
+      rating: 5,
+      amount: '$75,000',
+      image: 'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Michelle Thomas',
+      business: 'Thomas Pet Grooming',
+      industry: 'Pet Services',
+      location: 'Austin, TX',
+      quote: 'Growing my pet grooming business was made possible by OnTrak. Their team was supportive and understanding throughout!',
+      rating: 5,
+      amount: '$45,000',
+      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Jason Jackson',
+      business: 'Jackson Roofing',
+      industry: 'Roofing',
+      location: 'Tampa, FL',
+      quote: 'After storm season, I needed to hire more workers fast. OnTrak delivered the funding I needed within 24 hours!',
+      rating: 5,
+      amount: '$125,000',
+      image: 'https://images.unsplash.com/photo-1557862921-37829c790f19?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Laura Harris',
+      business: 'Harris Coffee Shop',
+      industry: 'Coffee Shop',
+      location: 'Minneapolis, MN',
+      quote: 'Opening my coffee shop was a dream. OnTrak helped make it happen with funding for equipment and initial inventory!',
+      rating: 5,
+      amount: '$60,000',
+      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Timothy Clark',
+      business: 'Clark Insurance Agency',
+      industry: 'Insurance',
+      location: 'Columbus, OH',
+      quote: 'Expanding my insurance agency required capital. OnTrak provided excellent service and quick funding. Very professional!',
+      rating: 5,
+      amount: '$95,000',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Sandra Lewis',
+      business: 'Lewis Photography',
+      industry: 'Photography',
+      location: 'San Antonio, TX',
+      quote: 'Investing in new camera equipment was crucial. OnTrak understood my creative business and funded me quickly!',
+      rating: 5,
+      amount: '$35,000',
+      image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Gary Robinson',
+      business: 'Robinson Carpentry',
+      industry: 'Carpentry',
+      location: 'Philadelphia, PA',
+      quote: 'OnTrak helped me purchase the tools I needed to take on bigger projects. My business revenue has doubled!',
+      rating: 5,
+      amount: '$70,000',
+      image: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Betty Walker',
+      business: 'Walker Cleaning Services',
+      industry: 'Cleaning',
+      location: 'San Jose, CA',
+      quote: 'Growing my cleaning business required hiring more staff. OnTrak made it easy with their flexible funding options!',
+      rating: 5,
+      amount: '$50,000',
+      image: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Ronald Young',
+      business: 'Young Appliance Repair',
+      industry: 'Appliance Repair',
+      location: 'Jacksonville, FL',
+      quote: 'I needed a van and tools to expand my service area. OnTrak provided the capital quickly with no hassle!',
+      rating: 5,
+      amount: '$55,000',
+      image: 'https://images.unsplash.com/photo-1522556189639-b150ed9c4330?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Donna Hall',
+      business: 'Hall Event Planning',
+      industry: 'Event Planning',
+      location: 'Fort Worth, TX',
+      quote: 'OnTrak helped me invest in equipment and marketing. My event planning business is now fully booked months in advance!',
+      rating: 5,
+      amount: '$65,000',
+      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Frank Allen',
+      business: 'Allen Pool Service',
+      industry: 'Pool Service',
+      location: 'Phoenix, AZ',
+      quote: 'Seasonal business needs flexible funding. OnTrak understood this and gave me terms that work perfectly with my cash flow!',
+      rating: 5,
+      amount: '$80,000',
+      image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Carol King',
+      business: 'King Florist',
+      industry: 'Florist',
+      location: 'Charlotte, NC',
+      quote: 'Opening a second location seemed risky, but OnTrak made it possible. The funding process was seamless and fast!',
+      rating: 5,
+      amount: '$45,000',
+      image: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Edward Wright',
+      business: 'Wright Pest Control',
+      industry: 'Pest Control',
+      location: 'Memphis, TN',
+      quote: 'Expanding my pest control routes required new equipment and vehicles. OnTrak delivered exactly what I needed!',
+      rating: 5,
+      amount: '$85,000',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Nancy Lopez',
+      business: 'Lopez Jewelry',
+      industry: 'Jewelry',
+      location: 'San Francisco, CA',
+      quote: 'Inventory for my jewelry store is expensive. OnTrak provided the working capital I needed to stock up for the holidays!',
+      rating: 5,
+      amount: '$75,000',
+      image: 'https://images.unsplash.com/photo-1509783236416-c9ad59bae472?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Kenneth Hill',
+      business: 'Hill Locksmith',
+      industry: 'Locksmith',
+      location: 'Detroit, MI',
+      quote: 'OnTrak helped me modernize my locksmith business with new technology. The approval was fast and terms were fair!',
+      rating: 5,
+      amount: '$40,000',
+      image: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Barbara Scott',
+      business: 'Scott Yoga Studio',
+      industry: 'Fitness',
+      location: 'Denver, CO',
+      quote: 'My yoga studio needed renovations to attract more clients. OnTrak made it happen with their quick funding process!',
+      rating: 5,
+      amount: '$55,000',
+      image: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Paul Green',
+      business: 'Green Computer Repair',
+      industry: 'Technology',
+      location: 'Baltimore, MD',
+      quote: 'Upgrading my computer repair shop was crucial for staying competitive. OnTrak provided the capital I needed quickly!',
+      rating: 5,
+      amount: '$50,000',
+      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Helen Adams',
+      business: 'Adams Massage Therapy',
+      industry: 'Wellness',
+      location: 'Portland, OR',
+      quote: 'OnTrak believed in my massage therapy business from day one. Their funding helped me create a peaceful sanctuary for clients!',
+      rating: 5,
+      amount: '$45,000',
+      image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Mark Baker',
+      business: 'Baker Print Shop',
+      industry: 'Printing',
+      location: 'Milwaukee, WI',
+      quote: 'Investing in new printing equipment was expensive but necessary. OnTrak made it affordable with great repayment terms!',
+      rating: 5,
+      amount: '$95,000',
+      image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Sharon Nelson',
+      business: 'Nelson Daycare',
+      industry: 'Childcare',
+      location: 'Las Vegas, NV',
+      quote: 'Expanding my daycare to accommodate more children was made possible by OnTrak. They truly care about small businesses!',
+      rating: 5,
+      amount: '$70,000',
+      image: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Joshua Carter',
+      business: 'Carter Moving Company',
+      industry: 'Moving',
+      location: 'Oklahoma City, OK',
+      quote: 'I needed more trucks to handle growing demand. OnTrak came through with fast funding and transparent terms!',
+      rating: 5,
+      amount: '$120,000',
+      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Deborah Mitchell',
+      business: 'Mitchell Tax Services',
+      industry: 'Accounting',
+      location: 'Raleigh, NC',
+      quote: 'OnTrak helped me open a second office location during tax season. Their team was professional and responsive throughout!',
+      rating: 5,
+      amount: '$65,000',
+      image: 'https://images.unsplash.com/photo-1590086782957-93c06ef21604?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Jeffrey Perez',
+      business: 'Perez Landscaping Design',
+      industry: 'Landscaping',
+      location: 'Tucson, AZ',
+      quote: 'My landscaping business needed new equipment for larger projects. OnTrak delivered the funding quickly with no hassle!',
+      rating: 5,
+      amount: '$90,000',
+      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop'
+    },
+    {
+      name: 'Dorothy Roberts',
+      business: 'Roberts Alterations',
+      industry: 'Tailoring',
+      location: 'New Orleans, LA',
+      quote: 'OnTrak helped me purchase industrial sewing machines. My alterations business has grown tremendously since then!',
+      rating: 5,
+      amount: '$35,000',
+      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop'
     }
   ];
 
@@ -268,7 +610,7 @@ export default function Reviews() {
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, i) => (
+            {testimonials.slice(0, visibleCount).map((testimonial, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
@@ -310,6 +652,23 @@ export default function Reviews() {
               </motion.div>
             ))}
           </div>
+
+          {visibleCount < testimonials.length && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex justify-center mt-12"
+            >
+              <Button
+                onClick={() => setVisibleCount(prev => Math.min(prev + 9, testimonials.length))}
+                className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-6 rounded-full text-lg font-semibold"
+              >
+                Load More Reviews
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </motion.div>
+          )}
         </div>
       </section>
 
