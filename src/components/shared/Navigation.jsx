@@ -98,21 +98,21 @@ export default function Navigation() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-white pt-24 px-6 lg:hidden"
+            className="fixed inset-0 z-40 bg-white pt-20 px-6 lg:hidden overflow-y-auto"
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2 py-4 pb-24">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="text-lg font-medium text-slate-700 py-3 border-b border-slate-100"
+                  className="text-base font-medium text-slate-700 py-2.5 border-b border-slate-100"
                 >
                   {link.name}
                 </Link>
               ))}
               <Link to={createPageUrl('Application')} onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full mt-4 bg-[#08708E] hover:bg-[#065a72] text-white py-6 rounded-full text-lg">
+                <Button className="w-full mt-4 bg-[#08708E] hover:bg-[#065a72] text-white py-5 rounded-full text-base">
                   Get Funds Today
                 </Button>
               </Link>
