@@ -57,21 +57,6 @@ export default function FundingCalculator({ compact = false }) {
       </div>
 
       <div className={`${compact ? 'space-y-4' : 'space-y-8'} flex-1 flex flex-col`}>
-        {/* Headline & CTA */}
-        <div className="text-center py-4">
-          <h4 className="text-xl font-bold text-slate-900 mb-2">
-            Slide to Explore Funding Options
-          </h4>
-          <p className="text-sm text-slate-600 mb-4">
-            See your real-time estimated payments — No credit pull required
-          </p>
-          <Link to={createPageUrl('Application')}>
-            <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-6 py-2 rounded-full">
-              Get Started <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
-        </div>
-
         {/* Funding Amount Slider */}
         <div>
           <div className={`flex justify-between items-center ${compact ? 'mb-2' : 'mb-4'}`}>
@@ -110,6 +95,21 @@ export default function FundingCalculator({ compact = false }) {
             <span>1 mo</span>
             <span>12 mo</span>
           </div>
+        </div>
+
+        {/* Headline & CTA */}
+        <div className="text-center py-4">
+          <h4 className="text-xl font-bold text-slate-900 mb-2">
+            Slide to Explore Funding Options
+          </h4>
+          <p className="text-sm text-slate-600 mb-4">
+            See your real-time estimated payments — No credit pull required
+          </p>
+          <Link to={createPageUrl('Application')}>
+            <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-6 py-2 rounded-full">
+              Get Started <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
         </div>
 
 
