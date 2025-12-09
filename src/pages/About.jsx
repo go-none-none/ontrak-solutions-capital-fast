@@ -236,7 +236,7 @@ export default function About() {
               { label: 'BBB Rating', value: 'A+', icon: Award },
               { label: 'Client Retention', value: '92%', icon: RotateCw },
               { label: 'Average Rating', value: '4.8/5', icon: Star },
-              { label: 'Years in Business', value: '10+', icon: Calendar }
+              { label: 'Years Experience', value: '10+', icon: Calendar }
             ].map((item, i) => (
               <motion.div
                 key={i}
