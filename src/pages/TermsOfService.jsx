@@ -93,9 +93,9 @@ export default function TermsOfService() {
                 If you have questions about these Terms, contact us at:
               </p>
               <div className="text-sm space-y-1">
-                <p className="font-semibold">OnTrak Solutions</p>
-                <p className="text-white/90">Email: info@ontrakcap.com</p>
-                <p className="text-white/90">Address: 1019 Ave. P, STE 305, Brooklyn, NY 11223</p>
+                <p className="font-semibold">OnTrak Solutions LLC</p>
+                <p className="text-white/90">Email: info@ontrak.co</p>
+                <p className="text-white/90">Address: 1019 Ave P, STE 305, Brooklyn, NY 11223</p>
               </div>
             </motion.div>
           </div>

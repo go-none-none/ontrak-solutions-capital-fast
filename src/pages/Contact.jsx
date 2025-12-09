@@ -8,26 +8,26 @@ export default function Contact() {
     {
       icon: Phone,
       title: 'Phone',
-      value: '(800) 123-4567',
-      description: 'Mon-Fri 8am to 6pm EST'
+      value: '(302) 520-5200',
+      description: 'Mon-Fri 9am to 6pm EST'
     },
     {
       icon: Mail,
       title: 'Email',
-      value: 'info@ontrakfunding.com',
+      value: 'info@ontrak.co',
       description: 'We respond within 24 hours'
     },
     {
       icon: MapPin,
       title: 'Office',
-      value: '123 Business Ave, Suite 500',
-      description: 'New York, NY 10001'
+      value: '1019 Ave P, STE 305',
+      description: 'Brooklyn, NY 11223'
     },
     {
       icon: Clock,
       title: 'Business Hours',
       value: 'Monday - Friday',
-      description: '8:00 AM - 6:00 PM EST'
+      description: '9:00 AM - 6:00 PM EST'
     }
   ];
 

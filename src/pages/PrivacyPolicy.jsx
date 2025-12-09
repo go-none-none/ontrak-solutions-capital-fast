@@ -28,7 +28,7 @@ export default function PrivacyPolicy() {
             {[
               {
                 title: "Who we are",
-                content: "Our website address is: https://ontrakcap.com."
+                content: "Our website address is: https://ontrak.co."
               },
               {
                 title: "Comments",

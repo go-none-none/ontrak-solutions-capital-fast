@@ -14,63 +14,63 @@ export default function Industries() {
       icon: Utensils,
       name: 'Restaurants & Food Service',
       description: 'From equipment upgrades to expansion, we help restaurants thrive with flexible funding.',
-      stats: '$2.5M+ funded',
+      stats: '$50K - $250K',
       image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop'
     },
     {
       icon: ShoppingCart,
       name: 'Retail',
       description: 'Stock inventory, renovate your store, or launch marketing campaigns to boost sales.',
-      stats: '$5M+ funded',
+      stats: '$75K - $400K',
       image: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800&h=600&fit=crop'
     },
     {
       icon: Stethoscope,
       name: 'Healthcare & Medical',
       description: 'Purchase equipment, expand facilities, or manage cash flow for medical practices.',
-      stats: '$8M+ funded',
+      stats: '$100K - $500K',
       image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=600&fit=crop'
     },
     {
       icon: HardHat,
       name: 'Construction',
       description: 'Fund equipment, materials, and payroll for construction and contracting businesses.',
-      stats: '$15M+ funded',
+      stats: '$150K - $500K',
       image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop'
     },
     {
       icon: Truck,
       name: 'Transportation & Logistics',
       description: 'Expand your fleet, cover fuel costs, or manage seasonal fluctuations.',
-      stats: '$10M+ funded',
+      stats: '$100K - $500K',
       image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop'
     },
     {
       icon: Scissors,
       name: 'Beauty & Wellness',
       description: 'Renovate your salon, buy equipment, or open a new location.',
-      stats: '$1.5M+ funded',
+      stats: '$50K - $200K',
       image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=600&fit=crop'
     },
     {
       icon: Dumbbell,
       name: 'Fitness & Recreation',
       description: 'Purchase equipment, expand your gym, or launch new programs.',
-      stats: '$2M+ funded',
+      stats: '$75K - $300K',
       image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop'
     },
     {
       icon: Wrench,
       name: 'Auto Services',
       description: 'Buy lifts, diagnostic equipment, or expand your auto repair shop.',
-      stats: '$3M+ funded',
+      stats: '$50K - $250K',
       image: 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=800&h=600&fit=crop'
     },
     {
       icon: Building2,
       name: 'Professional Services',
       description: 'Fund growth initiatives for accounting, legal, consulting, and other service firms.',
-      stats: '$4M+ funded',
+      stats: '$75K - $400K',
       image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop'
     }
   ];

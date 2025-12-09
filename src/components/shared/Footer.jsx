@@ -67,15 +67,15 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <Phone className="w-4 h-4 text-[#08708E] mt-1" />
-                <span className="text-slate-400 text-sm">(800) 123-4567</span>
+                <span className="text-slate-400 text-sm">(302) 520-5200</span>
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="w-4 h-4 text-[#08708E] mt-1" />
-                <span className="text-slate-400 text-sm">info@ontrakfunding.com</span>
+                <span className="text-slate-400 text-sm">info@ontrak.co</span>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-[#08708E] mt-1" />
-                <span className="text-slate-400 text-sm">123 Business Ave<br />New York, NY 10001</span>
+                <span className="text-slate-400 text-sm">1019 Ave P, STE 305<br />Brooklyn, NY 11223</span>
               </li>
             </ul>
           </div>
@@ -83,7 +83,7 @@ export default function Footer() {
 
         <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-slate-500 text-sm">
-            © {new Date().getFullYear()} OnTrak Funding. All rights reserved.
+            © {new Date().getFullYear()} OnTrak Solutions LLC. All rights reserved.
           </p>
           <div className="flex gap-6">
             <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-white text-sm transition-colors">Privacy Policy</Link>
