@@ -40,7 +40,7 @@ export default function HeroSection() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm mb-6" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              Trusted by 10,000+ Businesses
+              Trusted by 1,000+ Businesses
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6" style={{ textShadow: '2px 2px 12px rgba(0,0,0,0.9)' }}>
@@ -80,8 +80,8 @@ export default function HeroSection() {
             {/* Stats */}
             <div className="flex justify-center gap-12">
               {[
-                { value: '$500M+', label: 'Funded' },
-                { value: '10K+', label: 'Businesses' },
+                { value: '$50M+', label: 'Funded' },
+                { value: '1K+', label: 'Businesses' },
                 { value: '24hrs', label: 'Avg. Funding' }
               ].map((stat, i) => (
                 <motion.div
