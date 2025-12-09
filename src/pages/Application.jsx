@@ -39,11 +39,40 @@ export default function Application() {
   ];
 
   return (
-    <div className="bg-slate-50 pt-32 pb-2">
+    <div className="bg-slate-50 pb-2">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-3 gap-8">
+          {/* Hero */}
+          <section className="relative pt-32 pb-20 bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
+            <div className="absolute inset-0">
+              <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
+            </div>
+
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: -30 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
+                  Apply for Funding
+                </h1>
+                <p className="text-xl text-white/70 mb-8 max-w-3xl mx-auto">
+                  Complete your application in minutes and get a decision within 24 hours.
+                </p>
+              </motion.div>
+            </div>
+
+            {/* Wave */}
+            <div className="absolute bottom-0 left-0 right-0">
+              <svg viewBox="0 0 1440 120" fill="none" className="w-full">
+                <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H0Z" fill="white"/>
+              </svg>
+            </div>
+          </section>
+
           {/* Main Form */}
-          <div className="lg:col-span-2">
+              <div className="lg:col-span-2">
             {jotformUrl && (
               <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
                 <iframe
