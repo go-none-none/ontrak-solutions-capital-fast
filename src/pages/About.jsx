@@ -238,8 +238,7 @@ export default function About() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <span className="text-[#22d3ee] font-semibold text-sm uppercase tracking-wider">About OnTrak</span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
               Empowering Businesses<br />to Achieve More
             </h1>
             <p className="text-xl text-white/70 max-w-2xl mx-auto">
