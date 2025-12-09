@@ -272,7 +272,7 @@ export default function About() {
               className="hidden lg:block"
             >
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/75fb99a2c_pexels-goumbik-590020.jpg" 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/a1ca35955_Gemini_Generated_Image_lhtva3lhtva3lhtv.png" 
                 alt="About OnTrak"
                 className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
