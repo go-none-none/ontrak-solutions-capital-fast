@@ -90,7 +90,7 @@ export default function Industries() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
                 Funding for Every Industry
               </h1>
               <p className="text-base text-white/70 mb-4">
