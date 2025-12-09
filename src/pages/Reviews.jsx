@@ -244,7 +244,7 @@ export default function Reviews() {
               className="hidden lg:block"
             >
               <img 
-                src="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800&h=600&fit=crop" 
+                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=600&fit=crop" 
                 alt="Client Reviews"
                 className="rounded-3xl shadow-2xl"
               />
