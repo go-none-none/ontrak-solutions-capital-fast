@@ -27,7 +27,7 @@ export default function TermsOfService() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="prose prose-slate max-w-none"
+            className="prose prose-sm prose-slate max-w-none prose-headings:text-[#08708E] prose-headings:font-semibold prose-a:text-[#08708E] prose-a:no-underline hover:prose-a:underline"
           >
             <h2>1. Agreement to Terms</h2>
             <p>
