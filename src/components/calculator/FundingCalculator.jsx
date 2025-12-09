@@ -103,11 +103,11 @@ export default function FundingCalculator({ compact = false }) {
 
         {/* Headline & CTA */}
         <div className="text-center py-4">
-          <h4 className="text-lg font-bold text-slate-900 mb-2">
-            See Your Real-Time Estimated Offer — No Credit Pull
+          <h4 className="text-xl font-bold text-slate-900 mb-2">
+            Instant Funding Estimate: Adjust the Sliders to See Your Best Terms
           </h4>
           <p className="text-sm text-slate-600 mb-4">
-            Adjust the sliders to see your best terms in seconds
+            Find out what your business qualifies for in seconds — No credit pull required
           </p>
           <Link to={createPageUrl('Application')}>
             <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-6 py-2 rounded-full">
