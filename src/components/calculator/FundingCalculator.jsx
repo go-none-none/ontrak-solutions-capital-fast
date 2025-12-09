@@ -122,8 +122,14 @@ export default function FundingCalculator({ compact = false }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className={`bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl ${compact ? 'p-4' : 'p-6'} text-white`}
-          >
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            >
+            <div className="text-center mb-6 pb-6 border-b border-white/20">
+              <p className="text-xs text-white/60 mb-2">Total Payment • {results.termMonths} month term</p>
+              <p className={`${compact ? 'text-4xl' : 'text-5xl'} font-bold mb-1`}>{formatCurrency(results.totalPayment)}</p>
+              <p className="text-xs text-white/50">Factor Rate: {factorRate.toFixed(2)}</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="bg-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-2 text-white/70 text-xs mb-2">
                   <DollarSign className="w-4 h-4" />
@@ -138,12 +144,6 @@ export default function FundingCalculator({ compact = false }) {
                 </div>
                 <p className={`${compact ? 'text-2xl' : 'text-3xl'} font-bold`}>{formatCurrency(results.weeklyPayment)}</p>
               </div>
-            </div>
-            
-            <div className="text-center pt-4 border-t border-white/20">
-              <p className="text-xs text-white/60 mb-1">Total Payment • {results.termMonths} month term</p>
-              <p className={`${compact ? 'text-xl' : 'text-2xl'} font-bold`}>{formatCurrency(results.totalPayment)}</p>
-              <p className="text-xs text-white/50 mt-1">Factor Rate: {factorRate.toFixed(2)}</p>
             </div>
           </motion.div>
         )}
