@@ -11,7 +11,7 @@ export default function Application() {
     
     // Build JotForm URL with rep ID parameter
     const baseUrl = 'https://form.jotform.com/252957146872065';
-    const url = repId ? `${baseUrl}?q103_rep=${encodeURIComponent(repId)}` : baseUrl;
+    const url = repId ? `${baseUrl}?103=${encodeURIComponent(repId)}` : baseUrl;
     
     setJotformUrl(url);
   }, []);
