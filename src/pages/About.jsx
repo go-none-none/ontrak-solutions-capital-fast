@@ -273,7 +273,7 @@ export default function About() {
             >
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/a1ca35955_Gemini_Generated_Image_lhtva3lhtva3lhtv.png" 
-                alt="About OnTrak"
+                alt="OnTrak-About"
                 className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
             </motion.div>
