@@ -13,7 +13,7 @@ export default function Footer() {
             <img 
               src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png"
               alt="OnTrak Solutions"
-              className="h-10 w-auto invert"
+              className="h-10 w-auto brightness-0 invert"
             />
             <p className="text-slate-400 text-sm leading-relaxed">
               Fast, flexible business funding solutions designed to help your company grow. 
