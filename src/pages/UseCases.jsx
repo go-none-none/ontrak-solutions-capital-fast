@@ -69,7 +69,7 @@ export default function UseCases() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
                 How Businesses Use OnTrak Funding
               </h1>
               <p className="text-base text-white/70 mb-4">
@@ -103,7 +103,7 @@ export default function UseCases() {
               <img 
                 src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop" 
                 alt="Business Use Cases"
-                className="rounded-2xl shadow-2xl h-48 w-full object-cover"
+                className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
             </motion.div>
           </div>

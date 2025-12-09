@@ -135,7 +135,7 @@ export default function FAQ() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
                 Frequently Asked Questions
               </h1>
               <p className="text-base text-white/70 mb-4">
@@ -169,7 +169,7 @@ export default function FAQ() {
               <img 
                 src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=600&fit=crop" 
                 alt="FAQ"
-                className="rounded-2xl shadow-2xl h-48 w-full object-cover"
+                className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
             </motion.div>
           </div>

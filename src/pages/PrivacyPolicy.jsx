@@ -84,7 +84,7 @@ export default function PrivacyPolicy() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center w-full"
           >
-            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3">
               Privacy Policy
             </h1>
             <p className="text-sm text-white/70">
