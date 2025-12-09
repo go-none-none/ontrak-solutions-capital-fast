@@ -4,17 +4,22 @@ import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react
 
 export default function Application() {
   useEffect(() => {
-    // Get rep ID from URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const repId = urlParams.get('repId') || '';
+    // Load JotForm script
+    const script = document.createElement('script');
+    script.src = 'https://form.jotform.com/jsform/252957146872065';
+    script.type = 'text/javascript';
     
-    // Set iframe src directly with rep parameter
-    const iframe = document.getElementById('JotFormIFrame-252957146872065');
-    if (iframe && repId) {
-      iframe.src = `https://form.jotform.com/252957146872065?rep=${encodeURIComponent(repId)}`;
-    } else if (iframe) {
-      iframe.src = 'https://form.jotform.com/252957146872065';
+    const container = document.getElementById('jotform-container');
+    if (container) {
+      container.appendChild(script);
     }
+
+    return () => {
+      // Cleanup script on unmount
+      if (container && script.parentNode) {
+        container.removeChild(script);
+      }
+    };
   }, []);
 
   const reasons = [
@@ -94,21 +99,8 @@ export default function Application() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Form */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-                <iframe
-                  id="JotFormIFrame-252957146872065"
-                  title="OnTrak Business Funding Application"
-                  allowFullScreen
-                  allow="geolocation; microphone; camera; fullscreen"
-                  src="https://form.jotform.com/252957146872065"
-                  frameBorder="0"
-                  className="w-full border-0"
-                  style={{
-                    minHeight: '2000px',
-                    height: 'auto'
-                  }}
-                  scrolling="yes"
-                />
+              <div id="jotform-container" className="bg-white rounded-3xl shadow-xl overflow-hidden p-8">
+                {/* JotForm will load here via script */}
               </div>
           </div>
 
