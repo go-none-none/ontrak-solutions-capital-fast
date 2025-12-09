@@ -77,7 +77,7 @@ export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative h-[300px] pt-20 pb-12 bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
+      <section className="relative h-[400px] bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

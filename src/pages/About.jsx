@@ -227,7 +227,7 @@ export default function About() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative h-[300px] pt-20 pb-12 bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
+      <section className="relative h-[400px] bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
@@ -239,7 +239,7 @@ export default function About() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
                 Empowering Businesses to Achieve More
               </h1>
               <p className="text-base text-white/70 mb-4">
@@ -273,7 +273,7 @@ export default function About() {
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/75fb99a2c_pexels-goumbik-590020.jpg" 
                 alt="About OnTrak"
-                className="rounded-2xl shadow-2xl h-48 w-full object-cover"
+                className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
             </motion.div>
           </div>
