@@ -145,7 +145,6 @@ export default function TermsOfService() {
                 <p className="font-semibold">OnTrak Solutions LLC</p>
                 <p className="text-white/90">Phone: (302) 520-5200</p>
                 <p className="text-white/90">Email: info@ontrak.co</p>
-                <p className="text-white/90">Address: 1019 Ave P, STE 305, Brooklyn, NY 11223</p>
               </div>
             </motion.div>
 
