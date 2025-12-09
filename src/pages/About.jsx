@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Target, Eye, Heart, Users, Award, TrendingUp, ArrowRight } from 'lucide-react';
+import { Target, Eye, Heart, Users, Award, TrendingUp, ArrowRight, Rocket, Handshake, Briefcase, Star, RotateCw, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
@@ -184,17 +184,17 @@ export default function About() {
               {
                 title: 'Technology-Driven',
                 description: 'Our advanced platform enables fast approvals and seamless funding experiences, getting you capital when you need it most.',
-                icon: '🚀'
+                icon: Rocket
               },
               {
                 title: 'Relationship-Focused',
                 description: 'Every client gets a dedicated funding advisor who understands your business and is committed to your long-term success.',
-                icon: '🤝'
+                icon: Handshake
               },
               {
                 title: 'Industry Expertise',
                 description: 'With over 10 years of experience, we understand the unique challenges businesses face and tailor solutions accordingly.',
-                icon: '💼'
+                icon: Briefcase
               }
             ].map((item, i) => (
               <motion.div
@@ -205,7 +205,9 @@ export default function About() {
                 transition={{ delay: i * 0.1 }}
                 className="bg-white rounded-2xl p-8 text-center shadow-lg"
               >
-                <div className="text-5xl mb-4">{item.icon}</div>
+                <div className="w-16 h-16 rounded-2xl bg-[#08708E]/10 flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="w-8 h-8 text-[#08708E]" />
+                </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
                 <p className="text-slate-600">{item.description}</p>
               </motion.div>
@@ -231,10 +233,10 @@ export default function About() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { label: 'BBB Rating', value: 'A+', icon: '⭐' },
-              { label: 'Client Retention', value: '92%', icon: '🔄' },
-              { label: 'Average Rating', value: '4.8/5', icon: '⭐' },
-              { label: 'Years in Business', value: '10+', icon: '📅' }
+              { label: 'BBB Rating', value: 'A+', icon: Award },
+              { label: 'Client Retention', value: '92%', icon: RotateCw },
+              { label: 'Average Rating', value: '4.8/5', icon: Star },
+              { label: 'Years in Business', value: '10+', icon: Calendar }
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -244,7 +246,9 @@ export default function About() {
                 transition={{ delay: i * 0.1 }}
                 className="bg-slate-50 rounded-2xl p-6 text-center"
               >
-                <div className="text-4xl mb-3">{item.icon}</div>
+                <div className="w-14 h-14 rounded-xl bg-[#08708E]/10 flex items-center justify-center mx-auto mb-3">
+                  <item.icon className="w-7 h-7 text-[#08708E]" />
+                </div>
                 <div className="text-3xl font-bold text-[#08708E] mb-2">{item.value}</div>
                 <div className="text-sm text-slate-600">{item.label}</div>
               </motion.div>
