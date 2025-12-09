@@ -69,7 +69,7 @@ export default function Navigation() {
                       : 'bg-white text-[#08708E] hover:bg-white/90'
                   }`}
                 >
-                  Get Started
+                  Get Funded Today
                 </Button>
               </Link>
             </div>
@@ -111,7 +111,7 @@ export default function Navigation() {
               ))}
               <Link to={createPageUrl('Application')} onClick={() => setMobileMenuOpen(false)}>
                 <Button className="w-full mt-4 bg-[#08708E] hover:bg-[#065a72] text-white py-6 rounded-full text-lg">
-                  Get Started
+                  Get Funded Today
                 </Button>
               </Link>
             </div>
