@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Target, Eye, Heart, Users, Award, TrendingUp, ArrowRight, Rocket, Handshake, Briefcase, Star, RotateCw, Calendar } from 'lucide-react';
+import { Target, Eye, Heart, Users, Award, TrendingUp, ArrowRight, Rocket, Handshake, Briefcase, Star, RotateCw, Calendar, CheckCircle, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
@@ -245,6 +245,24 @@ export default function About() {
               <p className="text-xl text-white/70 mb-8">
                 With over 10 years of experience, OnTrak has been helping small and medium businesses access the capital they need to grow, expand, and thrive.
               </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link to={createPageUrl('Application')}>
+                  <Button className="bg-white text-[#08708E] hover:bg-white/90 px-8 py-6 rounded-full text-lg font-semibold">
+                    Apply Now
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+                <div className="flex items-center gap-4 text-white/90">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-[#22d3ee]" />
+                    <span className="text-sm">A+ BBB Rating</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-[#22d3ee]" />
+                    <span className="text-sm">24hr Funding</span>
+                  </div>
+                </div>
+              </div>
             </motion.div>
 
             <motion.div

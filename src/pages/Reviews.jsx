@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Star, Quote, ArrowRight } from 'lucide-react';
+import { Star, Quote, ArrowRight, CheckCircle, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
@@ -219,6 +219,24 @@ export default function Reviews() {
               <p className="text-xl text-white/70 mb-8">
                 Don't just take our word for it. See what business owners across the country have to say about their experience with OnTrak.
               </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link to={createPageUrl('Application')}>
+                  <Button className="bg-white text-[#08708E] hover:bg-white/90 px-8 py-6 rounded-full text-lg font-semibold">
+                    Apply Now
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+                <div className="flex items-center gap-4 text-white/90">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-[#22d3ee]" />
+                    <span className="text-sm">A+ BBB Rating</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-[#22d3ee]" />
+                    <span className="text-sm">24hr Funding</span>
+                  </div>
+                </div>
+              </div>
             </motion.div>
 
             <motion.div
