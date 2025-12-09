@@ -86,7 +86,7 @@ export default function FAQ() {
         },
         {
           question: 'What if I have bad or limited credit?',
-          answer: 'Your personal credit usually isn\'t a barrier. We focus on business performance and cash flow, so many businesses with less-than-perfect credit qualify.'
+          answer: 'Bad credit is not a problem at all! We don\'t use your personal credit score in our evaluation. We focus solely on your business performance and cash flow, so businesses with any credit history can qualify.'
         }
       ]
     },
