@@ -167,7 +167,7 @@ export default function FAQ() {
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
               How Do We Get You Funded, Faster
             </h2>
-            <p className="text-slate-600">Get funded in three simple steps</p>
+            <p className="text-slate-600">In three simple steps, you'll be on your way to prosperity</p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
