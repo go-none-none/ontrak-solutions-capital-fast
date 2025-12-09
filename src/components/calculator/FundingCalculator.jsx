@@ -8,7 +8,8 @@ export default function FundingCalculator({ compact = false }) {
   const [termMonths, setTermMonths] = useState(12);
   const [results, setResults] = useState(null);
 
-  const factorRate = 1.25;
+  // Factor rate increases with term length
+  const factorRate = 1.25 + ((termMonths - 1) * 0.01);
 
   useEffect(() => {
     calculateFunding();
@@ -105,7 +106,7 @@ export default function FundingCalculator({ compact = false }) {
             className={`bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl ${compact ? 'p-4' : 'p-6'} text-white`}
           >
             <div className={`text-center ${compact ? 'mb-4 py-4' : 'mb-8 py-6'}`}>
-              <p className="text-sm text-white/70 mb-2">Total Payment <span className="opacity-70">(Factor Rate: {factorRate})</span></p>
+              <p className="text-sm text-white/70 mb-2">Total Payment <span className="opacity-70">(Factor Rate: {factorRate.toFixed(2)})</span></p>
               <p className={`${compact ? 'text-3xl' : 'text-5xl'} font-bold`}>{formatCurrency(results.totalPayment)}</p>
             </div>
             
