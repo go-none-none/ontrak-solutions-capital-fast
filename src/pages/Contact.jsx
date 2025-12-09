@@ -77,7 +77,7 @@ export default function Contact() {
               className="hidden lg:block"
             >
               <img 
-                src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&h=600&fit=crop" 
+                src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&h=600&fit=crop" 
                 alt="Contact Us"
                 className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
