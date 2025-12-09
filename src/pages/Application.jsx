@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { CheckCircle, Clock, Shield, TrendingUp } from 'lucide-react';
 
 export default function Application() {
   const [jotformUrl, setJotformUrl] = useState('');
@@ -14,26 +15,86 @@ export default function Application() {
     setJotformUrl(url);
   }, []);
 
+  const reasons = [
+    {
+      icon: Clock,
+      title: 'Fast Funding',
+      description: 'Get approved and funded in as little as 24 hours'
+    },
+    {
+      icon: CheckCircle,
+      title: '95% Approval Rate',
+      description: 'We work with businesses across all industries'
+    },
+    {
+      icon: Shield,
+      title: 'Transparent Terms',
+      description: 'No hidden fees, clear and straightforward pricing'
+    },
+    {
+      icon: TrendingUp,
+      title: 'Flexible Options',
+      description: 'Customized funding solutions that fit your needs'
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="w-full">
-        {jotformUrl && (
-          <iframe
-            id="JotFormIFrame-252957146872065"
-            title="OnTrak Business Funding Application"
-            allowFullScreen
-            allow="geolocation; microphone; camera; fullscreen"
-            src={jotformUrl}
-            frameBorder="0"
-            style={{
-              minWidth: '100%',
-              maxWidth: '100%',
-              height: '2000px',
-              border: 'none'
-            }}
-            scrolling="no"
-          />
-        )}
+    <div className="bg-slate-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Main Form */}
+          <div className="lg:col-span-2">
+            {jotformUrl && (
+              <iframe
+                id="JotFormIFrame-252957146872065"
+                title="OnTrak Business Funding Application"
+                allowFullScreen
+                allow="geolocation; microphone; camera; fullscreen"
+                src={jotformUrl}
+                frameBorder="0"
+                style={{
+                  minWidth: '100%',
+                  maxWidth: '100%',
+                  height: '2000px',
+                  border: 'none'
+                }}
+                scrolling="no"
+              />
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="bg-[#08708E] rounded-2xl p-8 text-white sticky top-8">
+              <h3 className="text-2xl font-bold mb-6">Why Choose OnTrak?</h3>
+              <div className="space-y-6">
+                {reasons.map((reason, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                        <reason.icon className="w-6 h-6 text-[#22d3ee]" />
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">{reason.title}</h4>
+                      <p className="text-sm text-white/80">{reason.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-8 pt-8 border-t border-white/20">
+                <p className="text-sm text-white/80 mb-4">
+                  Questions? Our funding specialists are here to help.
+                </p>
+                <div className="space-y-2">
+                  <p className="font-semibold">📞 (302) 520-5200</p>
+                  <p className="text-sm text-white/80">Mon-Fri 9am - 6pm EST</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <script type="text/javascript" dangerouslySetInnerHTML={{__html: `
         var ifr = document.getElementById("JotFormIFrame-252957146872065");
