@@ -44,7 +44,7 @@ export default function HeroSection() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Get the Working Capital Your Business
+              Capital Your Business
               <span className="relative">
                 <span className="relative z-10"> Deserves</span>
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
