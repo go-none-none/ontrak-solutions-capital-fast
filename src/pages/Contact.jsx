@@ -113,7 +113,11 @@ export default function Contact() {
                     'Fast funding in as little as 24 hours',
                     '95% approval rate across all industries',
                     'Transparent terms with no hidden fees',
-                    'Dedicated funding advisor for your account'
+                    'Dedicated funding advisor for your account',
+                    'Flexible repayment options that work with your cash flow',
+                    'No prepayment penalties - pay off early if you want',
+                    'Simple online application process',
+                    'Multiple funding options from $10K to $500K'
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-[#22d3ee] flex-shrink-0 mt-0.5" />
