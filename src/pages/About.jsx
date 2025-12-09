@@ -107,6 +107,30 @@ export default function About() {
         </div>
       </section>
 
+      {/* CTA 1 */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="text-2xl font-bold text-slate-900 mb-4">
+              Ready to Get Started?
+            </h3>
+            <p className="text-slate-600 mb-6">
+              See how much funding you qualify for in just 60 seconds.
+            </p>
+            <Link to={createPageUrl('Application')}>
+              <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-3 rounded-full font-semibold">
+                Apply Now
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Stats */}
       <section className="py-20 bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -213,6 +237,35 @@ export default function About() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* CTA 2 */}
+      <section className="py-16 bg-gradient-to-r from-[#08708E] to-[#065a72]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="flex flex-col md:flex-row items-center justify-between gap-6"
+          >
+            <div className="text-white text-center md:text-left">
+              <h3 className="text-2xl font-bold mb-2">Have Questions?</h3>
+              <p className="text-white/80">Our funding specialists are ready to help you find the perfect solution.</p>
+            </div>
+            <div className="flex gap-4">
+              <Link to={createPageUrl('Contact')}>
+                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-[#08708E] px-6 py-3 rounded-full font-semibold">
+                  Contact Us
+                </Button>
+              </Link>
+              <a href="tel:+13025205200">
+                <Button className="bg-white text-[#08708E] hover:bg-white/90 px-6 py-3 rounded-full font-semibold">
+                  Call (302) 520-5200
+                </Button>
+              </a>
+            </div>
+          </motion.div>
         </div>
       </section>
 
