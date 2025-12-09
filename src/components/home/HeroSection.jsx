@@ -76,7 +76,7 @@ export default function HeroSection() {
             <div className="flex justify-center gap-12">
               {[
                 { value: '$15M+', label: 'Funded' },
-                { value: '10K+', label: 'Businesses' },
+                { value: 'Thousands', label: 'of Businesses' },
                 { value: '24hrs', label: 'Avg. Funding' }
               ].map((stat, i) => (
                 <motion.div
