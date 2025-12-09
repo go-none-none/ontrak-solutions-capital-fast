@@ -130,13 +130,14 @@ export default function HeroSection() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6" style={{ textShadow: '2px 2px 12px rgba(0,0,0,0.9)' }}>
-              Capital Your Business
+              Your business{' '}
               <span className="relative">
-                <span className="relative z-10"> Deserves</span>
+                <span className="relative z-10">deserves</span>
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
                   <path d="M2 10C60 3 140 3 198 10" stroke="#22d3ee" strokeWidth="4" strokeLinecap="round"/>
                 </svg>
               </span>
+              {' '}more
             </h1>
 
             <p className="text-lg sm:text-xl text-white/70 mb-8 leading-relaxed max-w-3xl mx-auto" style={{ textShadow: '1px 1px 8px rgba(0,0,0,0.9)' }}>
