@@ -93,7 +93,7 @@ export default function Footer() {
             </ul>
             <div className="mt-6 pt-6 border-t border-slate-800">
               <p className="text-slate-400 text-sm leading-relaxed">
-                Since our founding, OnTrak Solutions has funded over $500M to thousands of small and 
+                Since our founding, OnTrak Solutions has funded over $50M to over 1,000+ small and 
                 medium-sized businesses nationwide. With a 95% approval rate and an A+ BBB rating, 
                 we've become a trusted partner for entrepreneurs seeking fast, flexible business funding. 
                 Our mission is to empower businesses with the capital they need to succeed.
