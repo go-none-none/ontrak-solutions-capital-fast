@@ -255,7 +255,7 @@ export default function About() {
             </div>
             <div className="flex gap-4">
               <Link to={createPageUrl('Contact')}>
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-[#08708E] px-6 py-3 rounded-full font-semibold">
+                <Button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#08708E] px-6 py-3 rounded-full font-semibold">
                   Contact Us
                 </Button>
               </Link>
