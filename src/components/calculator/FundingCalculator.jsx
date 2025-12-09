@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
-import { DollarSign, TrendingUp, Calendar, Percent } from 'lucide-react';
+import { DollarSign, TrendingUp, Calendar, Percent, ArrowRight } from 'lucide-react';
 
 export default function FundingCalculator({ compact = false }) {
   const [fundingAmount, setFundingAmount] = useState(50000);
@@ -97,6 +100,21 @@ export default function FundingCalculator({ compact = false }) {
 
 
         <div className="flex-1" />
+
+        {/* Headline & CTA */}
+        <div className="text-center py-4">
+          <h4 className="text-lg font-bold text-slate-900 mb-2">
+            See Your Real-Time Estimated Offer — No Credit Pull
+          </h4>
+          <p className="text-sm text-slate-600 mb-4">
+            Adjust the sliders to see your best terms in seconds
+          </p>
+          <Link to={createPageUrl('Application')}>
+            <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-6 py-2 rounded-full">
+              Get Started <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
+        </div>
 
         {/* Results */}
         {results && (
