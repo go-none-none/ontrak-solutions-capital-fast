@@ -4,9 +4,19 @@ import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react
 
 export default function Application() {
   useEffect(() => {
+    // Get rep ID from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const repId = urlParams.get('repId');
+    
+    // Build JotForm script URL with parameters
+    let scriptUrl = 'https://form.jotform.com/jsform/252957146872065';
+    if (repId) {
+      scriptUrl += `?rep=${encodeURIComponent(repId)}`;
+    }
+    
     // Load JotForm script
     const script = document.createElement('script');
-    script.src = 'https://form.jotform.com/jsform/252957146872065';
+    script.src = scriptUrl;
     script.type = 'text/javascript';
     
     const container = document.getElementById('jotform-container');
