@@ -239,11 +239,7 @@ export default function About() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm mb-6">
-                <Award className="w-4 h-4" />
-                About OnTrak
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
                 Empowering Businesses<br />to Achieve More
               </h1>
               <p className="text-xl text-white/70 mb-8">
