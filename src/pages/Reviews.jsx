@@ -672,6 +672,33 @@ export default function Reviews() {
         </div>
       </section>
 
+      {/* Submit Review */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              Share Your Experience
+            </h2>
+            <p className="text-slate-600 text-lg">
+              We'd love to hear about your funding experience with OnTrak
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <ReviewSubmissionForm />
+          </motion.div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-24 bg-[#08708E]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
