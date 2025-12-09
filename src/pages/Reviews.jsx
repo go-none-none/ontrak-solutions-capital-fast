@@ -246,7 +246,7 @@ export default function Reviews() {
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/b54d8d041_OnTrak-Reviews.png" 
                 alt="Client Reviews"
-                className="rounded-2xl shadow-2xl h-64 w-full object-contain"
+                className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
             </motion.div>
           </div>
