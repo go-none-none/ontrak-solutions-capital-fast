@@ -52,7 +52,7 @@ export default function FundingCalculator({ compact = false }) {
   return (
     <div className={`bg-white rounded-3xl shadow-2xl ${compact ? 'p-6' : 'p-8 lg:p-10'} h-full flex flex-col`}>
       <div className={compact ? 'mb-4' : 'mb-8'}>
-        <h3 className={`${compact ? 'text-xl' : 'text-2xl'} font-bold text-slate-900 mb-1`}>Funding Calculator</h3>
+        <h3 className={`${compact ? 'text-xl' : 'text-2xl'} font-bold text-slate-900 mb-1 text-center`}>Instant Funding Calculator</h3>
         <p className="text-slate-500 text-sm">See your estimated funding in seconds</p>
       </div>
 
