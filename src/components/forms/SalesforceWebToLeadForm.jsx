@@ -1,5 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function SalesforceWebToLeadForm() {
   return (
@@ -84,6 +86,21 @@ export default function SalesforceWebToLeadForm() {
         </div>
 
         <div className="flex-1" />
+
+        <label className="flex items-start gap-2 cursor-pointer text-xs text-slate-600">
+          <input
+            type="checkbox"
+            name="consent"
+            required
+            className="mt-0.5 w-4 h-4 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+          />
+          <span>
+            I consent to receive texts and agree to the{' '}
+            <Link to={createPageUrl('TermsOfService')} className="text-[#08708E] hover:underline">Terms & Conditions</Link>
+            {' '}and{' '}
+            <Link to={createPageUrl('PrivacyPolicy')} className="text-[#08708E] hover:underline">Privacy Policy</Link>.
+          </span>
+        </label>
 
         <button
           type="submit"
