@@ -21,7 +21,6 @@ export default function Application() {
           <iframe
             id="JotFormIFrame-252957146872065"
             title="OnTrak Business Funding Application"
-            onLoad={() => window.parent.scrollTo(0,0)}
             allowFullScreen
             allow="geolocation; microphone; camera; fullscreen"
             src={jotformUrl}
