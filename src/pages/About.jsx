@@ -271,7 +271,7 @@ export default function About() {
               className="hidden lg:block"
             >
               <img 
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop" 
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop" 
                 alt="About OnTrak"
                 className="rounded-3xl shadow-2xl"
               />
