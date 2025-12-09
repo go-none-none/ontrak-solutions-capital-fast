@@ -70,7 +70,7 @@ export default function UseCases() {
               animate={{ opacity: 1, x: 0 }}
             >
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
-                How Businesses Use OnTrak Funding
+                OnTrak Funding at Work
               </h1>
               <p className="text-base text-white/70 mb-4">
                 From equipment purchases to expansion projects, flexible funding solutions for your goals.
