@@ -39,7 +39,7 @@ export default function Application() {
   ];
 
   return (
-    <div className="bg-slate-50 pt-8 pb-2">
+    <div className="bg-slate-50 pt-32 pb-2">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Form */}
