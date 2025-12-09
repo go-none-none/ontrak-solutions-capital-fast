@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
-import { DollarSign, TrendingUp, Calendar, Percent, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
+import { DollarSign, TrendingUp, Calendar, Percent } from 'lucide-react';
 
 export default function FundingCalculator({ compact = false }) {
   const [fundingAmount, setFundingAmount] = useState(50000);
@@ -99,21 +96,7 @@ export default function FundingCalculator({ compact = false }) {
 
 
 
-        {/* CTA Section */}
-        <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-2xl p-6 text-center border border-slate-200">
-          <p className="text-slate-900 font-semibold text-lg mb-2">
-            See Your Real-Time Estimated Offer
-          </p>
-          <p className="text-slate-600 text-sm mb-4">
-            No Credit Pull • Instant Approval • Find Out What Your Business Qualifies For
-          </p>
-          <Link to={createPageUrl('Application')}>
-            <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-6 py-3 rounded-full font-semibold">
-              Get Your Offer Now
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
-        </div>
+        <div className="flex-1" />
 
         {/* Results */}
         {results && (
@@ -131,14 +114,14 @@ export default function FundingCalculator({ compact = false }) {
               <div className="bg-white/10 rounded-xl p-3">
                 <div className="flex items-center gap-1 text-white/70 text-xs mb-1">
                   <DollarSign className="w-3 h-3" />
-                  Estimated Daily
+                  Daily
                 </div>
                 <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold`}>{formatCurrency(results.dailyPayment)}</p>
               </div>
               <div className="bg-white/10 rounded-xl p-3">
                 <div className="flex items-center gap-1 text-white/70 text-xs mb-1">
                   <DollarSign className="w-3 h-3" />
-                  Estimated Weekly
+                  Weekly
                 </div>
                 <p className={`${compact ? 'text-sm' : 'text-lg'} font-semibold`}>{formatCurrency(results.weeklyPayment)}</p>
               </div>
