@@ -3,26 +3,18 @@ import { motion } from 'framer-motion';
 import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react';
 
 export default function Application() {
-  const [jotformUrl, setJotformUrl] = useState('');
   useEffect(() => {
-    // Get all URL parameters from current page
+    // Get rep ID from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
+    const repId = urlParams.get('repId') || '';
     
-    // Build JotForm URL with parameters
-    const baseUrl = 'https://form.jotform.com/252957146872065';
-    const params = new URLSearchParams();
-    
-    // Add repId if present
-    const repId = urlParams.get('repId');
-    if (repId) {
-      params.append('rep', repId);
+    // Set iframe src directly with rep parameter
+    const iframe = document.getElementById('JotFormIFrame-252957146872065');
+    if (iframe && repId) {
+      iframe.src = `https://form.jotform.com/252957146872065?rep=${encodeURIComponent(repId)}`;
+    } else if (iframe) {
+      iframe.src = 'https://form.jotform.com/252957146872065';
     }
-    
-    // Add iframe embed parameter
-    params.append('isIframeEmbed', '1');
-    
-    const url = `${baseUrl}?${params.toString()}`;
-    setJotformUrl(url);
   }, []);
 
   const reasons = [
@@ -102,14 +94,13 @@ export default function Application() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Form */}
             <div className="lg:col-span-2">
-            {jotformUrl && (
               <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
                 <iframe
                   id="JotFormIFrame-252957146872065"
                   title="OnTrak Business Funding Application"
                   allowFullScreen
                   allow="geolocation; microphone; camera; fullscreen"
-                  src={jotformUrl}
+                  src="https://form.jotform.com/252957146872065"
                   frameBorder="0"
                   className="w-full border-0"
                   style={{
@@ -119,7 +110,6 @@ export default function Application() {
                   scrolling="yes"
                 />
               </div>
-            )}
           </div>
 
           {/* Sidebar */}
