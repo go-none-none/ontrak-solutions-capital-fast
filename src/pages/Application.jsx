@@ -65,7 +65,7 @@ export default function Application() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-[#08708E] rounded-2xl p-8 text-white sticky top-8">
+            <div className="bg-[#08708E] rounded-2xl p-8 text-white sticky top-24">
               <h3 className="text-2xl font-bold mb-6">Why Choose OnTrak?</h3>
               <div className="space-y-6">
                 {reasons.map((reason, i) => (
