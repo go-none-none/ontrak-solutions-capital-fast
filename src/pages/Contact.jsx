@@ -1,36 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Clock, Send, Loader2, CheckCircle } from 'lucide-react';
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { base44 } from '@/api/base44Client';
+import { Phone, Mail, MapPin, Clock, CheckCircle } from 'lucide-react';
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    business_name: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    await base44.entities.Lead.create({
-      ...formData,
-      source: 'quick_form',
-      notes: formData.message,
-      status: 'new'
-    });
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-  };
 
   const contactInfo = [
     {
@@ -159,88 +131,83 @@ export default function Contact() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              {isSubmitted ? (
-                <div className="bg-white rounded-3xl shadow-xl p-10 text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle className="w-8 h-8 text-green-600" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-3">Message Sent!</h3>
-                  <p className="text-slate-500">
-                    Thank you for reaching out. One of our funding specialists will contact you within 24 hours.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-xl p-10 space-y-6">
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Your Name</label>
-                      <Input
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        required
-                        className="h-12 rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Business Name</label>
-                      <Input
-                        value={formData.business_name}
-                        onChange={(e) => setFormData({...formData, business_name: e.target.value})}
-                        className="h-12 rounded-xl border-slate-200"
-                      />
-                    </div>
-                  </div>
+              <form 
+                action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dam00001TLTFV" 
+                method="POST"
+                className="bg-white rounded-3xl shadow-xl p-10 space-y-6"
+              >
+                <input type="hidden" name="oid" value="00Dam00001TLTFV" />
+                <input type="hidden" name="retURL" value="http://ontrak.co" />
 
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                      <Input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        required
-                        className="h-12 rounded-xl border-slate-200"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">Phone</label>
-                      <Input
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        required
-                        className="h-12 rounded-xl border-slate-200"
-                      />
-                    </div>
-                  </div>
-
+                <div className="grid sm:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Message</label>
-                    <Textarea
-                      value={formData.message}
-                      onChange={(e) => setFormData({...formData, message: e.target.value})}
-                      rows={5}
-                      className="rounded-xl border-slate-200"
-                      placeholder="Tell us about your funding needs..."
+                    <label htmlFor="first_name" className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
+                    <input
+                      id="first_name"
+                      name="first_name"
+                      type="text"
+                      maxLength="40"
+                      required
+                      className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
                     />
                   </div>
+                  <div>
+                    <label htmlFor="last_name" className="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
+                    <input
+                      id="last_name"
+                      name="last_name"
+                      type="text"
+                      maxLength="80"
+                      required
+                      className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
+                    />
+                  </div>
+                </div>
 
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full h-14 bg-[#08708E] hover:bg-[#065a72] text-white rounded-xl text-lg font-semibold"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <>
-                        Send Message
-                        <Send className="w-5 h-5 ml-2" />
-                      </>
-                    )}
-                  </Button>
-                </form>
-              )}
+                <div>
+                  <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">Company</label>
+                  <input
+                    id="company"
+                    name="company"
+                    type="text"
+                    maxLength="40"
+                    required
+                    className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
+                  />
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      maxLength="80"
+                      required
+                      className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="mobile" className="block text-sm font-medium text-slate-700 mb-2">Mobile</label>
+                    <input
+                      id="mobile"
+                      name="mobile"
+                      type="tel"
+                      maxLength="40"
+                      required
+                      className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full h-14 bg-[#08708E] hover:bg-[#065a72] text-white rounded-xl text-lg font-semibold transition-colors duration-200"
+                >
+                  Send Message
+                </button>
+              </form>
             </motion.div>
           </div>
         </div>
