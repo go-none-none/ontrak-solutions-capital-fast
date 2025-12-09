@@ -31,12 +31,12 @@ export default function CTASection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to={createPageUrl('Application')}>
               <Button className="bg-white text-[#08708E] hover:bg-white/90 px-10 py-6 rounded-full text-lg font-semibold w-full sm:w-auto">
-                Apply Now
+                Get Funding Today
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
             <Link to={createPageUrl('Contact')}>
-              <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 px-10 py-6 rounded-full text-lg font-semibold w-full sm:w-auto">
+              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-[#08708E] px-10 py-6 rounded-full text-lg font-semibold w-full sm:w-auto">
                 <Phone className="w-5 h-5 mr-2" />
                 Contact Us
               </Button>
