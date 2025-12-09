@@ -27,7 +27,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {[
                 { name: 'About Us', href: 'About' },
-                { name: 'How It Works', href: 'UseCases' },
+                { name: 'How It Works', href: 'HowItWorks' },
                 { name: 'Industries', href: 'Industries' },
                 { name: 'Reviews', href: 'Reviews' },
                 { name: 'Apply Now', href: 'Application' },
