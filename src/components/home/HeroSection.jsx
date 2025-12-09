@@ -13,8 +13,18 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900" />
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full">
+        <iframe
+          className="absolute inset-0 w-full h-full object-cover"
+          src="https://www.youtube.com/embed/videoseries?list=PLPFdYy9MIsqQYbYKUxkTNAY5Ln3RpF4-K&autoplay=1&mute=1&loop=1&controls=0&showinfo=0&modestbranding=1&playlist=PLPFdYy9MIsqQYbYKUxkTNAY5Ln3RpF4-K"
+          title="Business Funding Background"
+          frameBorder="0"
+          allow="autoplay; encrypted-media"
+          style={{ pointerEvents: 'none' }}
+        />
+        <div className="absolute inset-0 bg-[#08708E]/80" />
+      </div>
       
       {/* Abstract shapes */}
       <div className="absolute inset-0 overflow-hidden">
@@ -90,28 +100,6 @@ export default function HeroSection() {
                   <div className="text-sm text-white/50">{stat.label}</div>
                 </motion.div>
               ))}
-            </div>
-          </motion.div>
-
-          {/* Video Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="max-w-4xl mx-auto"
-          >
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10">
-              <div className="aspect-video">
-                <iframe
-                  className="w-full h-full"
-                  src="https://www.youtube.com/embed/videoseries?list=PLPFdYy9MIsqQYbYKUxkTNAY5Ln3RpF4-K"
-                  title="Business Funding Solutions"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-              <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-white/10 rounded-3xl" />
             </div>
           </motion.div>
 
