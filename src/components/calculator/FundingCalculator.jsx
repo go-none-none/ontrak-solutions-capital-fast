@@ -104,9 +104,9 @@ export default function FundingCalculator({ compact = false }) {
             animate={{ opacity: 1, y: 0 }}
             className={`bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl ${compact ? 'p-4' : 'p-6'} text-white`}
           >
-            <div className={`text-center ${compact ? 'mb-3' : 'mb-6'}`}>
-              <p className="text-xs text-white/70 mb-1">Total Payment <span className="opacity-70">(Factor Rate: {factorRate})</span></p>
-              <p className={`${compact ? 'text-2xl' : 'text-4xl'} font-bold`}>{formatCurrency(results.totalPayment)}</p>
+            <div className={`text-center ${compact ? 'mb-4 py-4' : 'mb-8 py-6'}`}>
+              <p className="text-sm text-white/70 mb-2">Total Payment <span className="opacity-70">(Factor Rate: {factorRate})</span></p>
+              <p className={`${compact ? 'text-3xl' : 'text-5xl'} font-bold`}>{formatCurrency(results.totalPayment)}</p>
             </div>
             
             <div className="grid grid-cols-3 gap-2">
