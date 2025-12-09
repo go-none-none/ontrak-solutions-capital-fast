@@ -175,7 +175,7 @@ export default function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="text-center p-6"
+                className="text-center p-6 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 <div className="w-14 h-14 rounded-2xl bg-[#08708E]/10 flex items-center justify-center mx-auto mb-6">
                   <value.icon className="w-7 h-7 text-[#08708E]" />
