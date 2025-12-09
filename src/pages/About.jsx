@@ -1,9 +1,101 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Target, Eye, Heart, Users, Award, TrendingUp, ArrowRight, Rocket, Handshake, Briefcase, Star, RotateCw, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
+
+function StatCounter({ stat, delay }) {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const duration = 2000;
+    const steps = 60;
+    const increment = duration / steps;
+    
+    // Parse the target value
+    let target;
+    if (stat.value.includes('M')) {
+      target = parseFloat(stat.value.replace('$', '').replace('M+', ''));
+    } else if (stat.value.includes('K')) {
+      target = parseFloat(stat.value.replace('K+', '').replace(',', ''));
+    } else if (stat.value.includes('%')) {
+      target = parseFloat(stat.value.replace('%', ''));
+    } else if (stat.value.includes('hrs')) {
+      target = parseFloat(stat.value.replace('hrs', ''));
+    } else {
+      target = parseFloat(stat.value.replace(/[^0-9.]/g, ''));
+    }
+
+    let current = 0;
+    const step = target / steps;
+
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      setCount(current);
+    }, increment);
+
+    return () => clearInterval(timer);
+  }, [isVisible, stat.value]);
+
+  const formatValue = (val) => {
+    if (stat.value.includes('M')) {
+      return `$${val.toFixed(0)}M+`;
+    } else if (stat.value.includes('K')) {
+      return `${val.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}+`;
+    } else if (stat.value.includes('%')) {
+      return `${val.toFixed(0)}%`;
+    } else if (stat.value.includes('hrs')) {
+      return `${val.toFixed(0)}hrs`;
+    }
+    return val.toFixed(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+      className="text-center"
+    >
+      <div className="text-4xl sm:text-5xl font-bold text-white mb-2">
+        {formatValue(count)}
+      </div>
+      <div className="text-slate-400">{stat.label}</div>
+    </motion.div>
+  );
+}
 
 export default function About() {
   const values = [
@@ -139,17 +231,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center"
-              >
-                <div className="text-4xl sm:text-5xl font-bold text-white mb-2">{stat.value}</div>
-                <div className="text-slate-400">{stat.label}</div>
-              </motion.div>
+              <StatCounter key={i} stat={stat} delay={i * 0.1} />
             ))}
           </div>
         </div>
