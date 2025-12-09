@@ -96,24 +96,25 @@ export default function PrivacyPolicy() {
       {/* Content */}
       <section className="py-16 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-lg space-y-10">
+          <div className="space-y-6">
             {sections.map((section, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
+                className="bg-white rounded-2xl p-6 shadow-sm"
               >
-                <h2 className="text-2xl font-bold text-slate-900 mb-4">{section.title}</h2>
+                <h2 className="text-lg font-semibold text-[#08708E] mb-3">{section.title}</h2>
                 {section.content && (
-                  <p className="text-slate-600 whitespace-pre-line leading-relaxed">{section.content}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{section.content}</p>
                 )}
                 {section.subsections && (
-                  <div className="space-y-6 mt-4">
+                  <div className="space-y-4 mt-4">
                     {section.subsections.map((subsection, subIndex) => (
                       <div key={subIndex}>
-                        <h3 className="text-lg font-semibold text-slate-800 mb-2">{subsection.subtitle}</h3>
-                        <p className="text-slate-600 whitespace-pre-line leading-relaxed">{subsection.content}</p>
+                        <h3 className="text-sm font-semibold text-slate-800 mb-2">{subsection.subtitle}</h3>
+                        <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{subsection.content}</p>
                       </div>
                     ))}
                   </div>
@@ -121,11 +122,16 @@ export default function PrivacyPolicy() {
               </motion.div>
             ))}
 
-            <div className="pt-6 border-t border-slate-200">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="bg-white rounded-2xl p-6 shadow-sm border-t-4 border-slate-200"
+            >
               <p className="text-sm text-slate-500 italic">
                 Important Notice: This Privacy Policy is provided for informational purposes and should be reviewed by qualified legal counsel to ensure compliance with applicable laws and regulations in your jurisdiction.
               </p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
