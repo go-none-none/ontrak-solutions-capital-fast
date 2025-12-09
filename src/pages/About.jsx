@@ -238,6 +238,7 @@ export default function About() {
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
+              className="flex flex-col justify-center"
             >
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
                 Empowering Businesses to Achieve More
