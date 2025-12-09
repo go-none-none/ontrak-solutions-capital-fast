@@ -165,7 +165,7 @@ export default function FAQ() {
             className="text-center mb-12"
           >
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
-              How OnTrak Works
+              How Do We Get You Funded, Faster
             </h2>
             <p className="text-slate-600">Get funded in three simple steps</p>
           </motion.div>
