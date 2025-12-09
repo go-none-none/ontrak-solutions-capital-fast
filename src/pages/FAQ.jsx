@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, DollarSign, FileCheck, Clock, Shield, HelpCircle, ArrowRight } from 'lucide-react';
+import { ChevronDown, DollarSign, FileCheck, Clock, Shield, HelpCircle, ArrowRight, Edit, Search, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ export default function FAQ() {
     {
       title: 'Funding Basics',
       icon: DollarSign,
+      description: 'Learn about business cash advances, funding amounts, and how quickly you can access capital.',
       faqs: [
         {
           question: 'What is a business cash advance?',
@@ -38,6 +39,7 @@ export default function FAQ() {
     {
       title: 'Eligibility & Requirements',
       icon: FileCheck,
+      description: 'Find out if your business qualifies and what documents you\'ll need to apply.',
       faqs: [
         {
           question: 'What are the eligibility requirements?',
@@ -64,6 +66,7 @@ export default function FAQ() {
     {
       title: 'Repayment & Costs',
       icon: Clock,
+      description: 'Understand how repayments work, pricing transparency, and flexible payment options.',
       faqs: [
         {
           question: 'How is repayment calculated?',
@@ -90,6 +93,7 @@ export default function FAQ() {
     {
       title: 'Application & Support',
       icon: Shield,
+      description: 'Get answers about the application process, approval timeline, and our dedicated support.',
       faqs: [
         {
           question: 'Will applying affect my credit score?',
@@ -151,6 +155,46 @@ export default function FAQ() {
         </div>
       </section>
 
+      {/* Quick Process Overview */}
+      <section className="py-16 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+              How OnTrak Works
+            </h2>
+            <p className="text-slate-600">Get funded in three simple steps</p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {[
+              { icon: Edit, title: 'Apply Online', description: '5-10 minute application with basic business info' },
+              { icon: Search, title: 'Quick Review', description: 'We analyze your business and provide options' },
+              { icon: CheckCircle, title: 'Get Funded', description: 'Receive funds in your account within 24 hours' }
+            ].map((step, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="text-center"
+              >
+                <div className="w-14 h-14 rounded-xl bg-[#08708E] flex items-center justify-center mx-auto mb-4">
+                  <step.icon className="w-7 h-7 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{step.title}</h3>
+                <p className="text-sm text-slate-600">{step.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Sections */}
       <section className="py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -164,11 +208,14 @@ export default function FAQ() {
                 transition={{ delay: sectionIndex * 0.1 }}
               >
                 {/* Section Header */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center">
-                    <section.icon className="w-6 h-6 text-white" />
+                <div className="mb-6">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center">
+                      <section.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-900">{section.title}</h2>
                   </div>
-                  <h2 className="text-2xl font-bold text-slate-900">{section.title}</h2>
+                  <p className="text-slate-600 ml-16">{section.description}</p>
                 </div>
 
                 {/* FAQs */}
