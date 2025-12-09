@@ -2,17 +2,35 @@ import React, { useEffect, useState } from 'react';
 import { CheckCircle, Clock, Shield, TrendingUp, Phone } from 'lucide-react';
 
 export default function Application() {
-  const [jotformUrl, setJotformUrl] = useState('');
   useEffect(() => {
     // Get rep ID from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const repId = urlParams.get('repId') || '';
     
-    // Build JotForm URL with rep ID parameter
-    const baseUrl = 'https://form.jotform.com/252957146872065';
-    const url = repId ? `${baseUrl}?q103_rep=${encodeURIComponent(repId)}` : baseUrl;
+    // Load JotForm script
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://form.jotform.com/jsform/252957146872065';
+    script.async = true;
     
-    setJotformUrl(url);
+    // Add rep ID as query parameter to the form after it loads
+    script.onload = () => {
+      if (repId && window.JotForm) {
+        const form = document.querySelector('[data-form-id="252957146872065"]');
+        if (form) {
+          const input = form.querySelector('[name="q103_rep"]');
+          if (input) {
+            input.value = repId;
+          }
+        }
+      }
+    };
+    
+    document.body.appendChild(script);
+    
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
 
   const reasons = [
@@ -44,24 +62,9 @@ export default function Application() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Form */}
           <div className="lg:col-span-2">
-            {jotformUrl && (
-              <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-                <iframe
-                  id="JotFormIFrame-252957146872065"
-                  title="OnTrak Business Funding Application"
-                  allowFullScreen
-                  allow="geolocation; microphone; camera; fullscreen"
-                  src={jotformUrl}
-                  frameBorder="0"
-                  className="w-full border-0"
-                  style={{
-                    minHeight: '2000px',
-                    height: 'auto'
-                  }}
-                  scrolling="yes"
-                />
-              </div>
-            )}
+            <div className="bg-white rounded-3xl shadow-xl overflow-hidden p-6">
+              <div id="jotform-container"></div>
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -97,89 +100,6 @@ export default function Application() {
           </div>
         </div>
       </div>
-      <script type="text/javascript" dangerouslySetInnerHTML={{__html: `
-        var ifr = document.getElementById("JotFormIFrame-252957146872065");
-        if (ifr) {
-          var src = ifr.src;
-          var iframeParams = [];
-          if (window.location.href && window.location.href.indexOf("?") > -1) {
-            iframeParams = iframeParams.concat(window.location.href.substr(window.location.href.indexOf("?") + 1).split('&'));
-          }
-          if (src && src.indexOf("?") > -1) {
-            iframeParams = iframeParams.concat(src.substr(src.indexOf("?") + 1).split("&"));
-            src = src.substr(0, src.indexOf("?"))
-          }
-          iframeParams.push("isIframeEmbed=1");
-          ifr.src = src + "?" + iframeParams.join('&');
-        }
-        window.handleIFrameMessage = function(e) {
-          if (typeof e.data === 'object') { return; }
-          var args = e.data.split(":");
-          if (args.length > 2) { iframe = document.getElementById("JotFormIFrame-" + args[(args.length - 1)]); } else { iframe = document.getElementById("JotFormIFrame"); }
-          if (!iframe) { return; }
-          switch (args[0]) {
-            case "scrollIntoView":
-              iframe.scrollIntoView();
-              break;
-            case "setHeight":
-              iframe.style.height = args[1] + "px";
-              if (!isNaN(args[1]) && parseInt(iframe.style.minHeight) > parseInt(args[1])) {
-                iframe.style.minHeight = args[1] + "px";
-              }
-              break;
-            case "collapseErrorPage":
-              if (iframe.clientHeight > window.innerHeight) {
-                iframe.style.height = window.innerHeight + "px";
-              }
-              break;
-            case "reloadPage":
-              window.location.reload();
-              break;
-            case "loadScript":
-              if( !window.isPermitted(e.origin, ['jotform.com', 'jotform.pro']) ) { break; }
-              var src = args[1];
-              if (args.length > 3) {
-                  src = args[1] + ':' + args[2];
-              }
-              var script = document.createElement('script');
-              script.src = src;
-              script.type = 'text/javascript';
-              document.body.appendChild(script);
-              break;
-            case "exitFullscreen":
-              if (window.document.exitFullscreen) window.document.exitFullscreen();
-              else if (window.document.mozCancelFullScreen) window.document.mozCancelFullScreen();
-              else if (window.document.mozCancelFullscreen) window.document.mozCancelFullScreen();
-              else if (window.document.webkitExitFullscreen) window.document.webkitExitFullscreen();
-              else if (window.document.msExitFullscreen) window.document.msExitFullscreen();
-              break;
-          }
-          var isJotForm = (e.origin.indexOf("jotform") > -1) ? true : false;
-          if(isJotForm && "contentWindow" in iframe && "postMessage" in iframe.contentWindow) {
-            var urls = {"docurl":encodeURIComponent(document.URL),"referrer":encodeURIComponent(document.referrer)};
-            iframe.contentWindow.postMessage(JSON.stringify({"type":"urls","value":urls}), "*");
-          }
-        };
-        window.isPermitted = function(originUrl, whitelisted_domains) {
-          var url = document.createElement('a');
-          url.href = originUrl;
-          var hostname = url.hostname;
-          var result = false;
-          if( typeof hostname !== 'undefined' ) {
-            whitelisted_domains.forEach(function(element) {
-                if( hostname.slice((-1 * element.length - 1)) === '.'.concat(element) ||  hostname === element ) {
-                    result = true;
-                }
-            });
-            return result;
-          }
-        };
-        if (window.addEventListener) {
-          window.addEventListener("message", handleIFrameMessage, false);
-        } else if (window.attachEvent) {
-          window.attachEvent("onmessage", handleIFrameMessage);
-        }
-      `}} />
     </div>
   );
 }
