@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Phone, Mail, MapPin, Linkedin, Twitter, Facebook } from 'lucide-react';
+import { Phone, Mail, MapPin } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -19,17 +19,6 @@ export default function Footer() {
               Fast, flexible business funding solutions designed to help your company grow. 
               Get capital in as little as 24 hours.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#08708E] transition-colors">
-                <Linkedin className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#08708E] transition-colors">
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#08708E] transition-colors">
-                <Facebook className="w-4 h-4" />
-              </a>
-            </div>
           </div>
 
           {/* Quick Links */}
