@@ -6,7 +6,7 @@ export default function SalesforceWebToLeadForm() {
     <div className="bg-white rounded-3xl shadow-2xl p-8 h-full flex flex-col">
       <div className="mb-6">
         <h3 className="text-2xl font-bold text-slate-900 mb-2 text-center">Discover Your Funding Options</h3>
-        <p className="text-slate-500">Takes less than 60 seconds</p>
+        <p className="text-slate-500 text-center">Fast, simple, and takes just 30 seconds</p>
       </div>
 
       <form 
