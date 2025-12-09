@@ -86,37 +86,6 @@ export default function Contact() {
         </div>
             </section>
 
-      {/* Contact Info Cards */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {contactInfo.map((info, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-slate-50 rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300 text-center"
-              >
-                <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center mb-4 mx-auto">
-                  <info.icon className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="font-semibold text-slate-900 mb-1">{info.title}</h3>
-                {info.link ? (
-                  <a href={info.link} className="text-[#08708E] font-medium mb-1 hover:underline block">
-                    {info.value}
-                  </a>
-                ) : (
-                  <p className="text-[#08708E] font-medium mb-1">{info.value}</p>
-                )}
-                <p className="text-sm text-slate-500">{info.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Contact Form */}
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -255,9 +224,40 @@ export default function Contact() {
                 </button>
               </form>
             </motion.div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
+            </div>
+            </div>
+            </section>
+
+            {/* Contact Info Cards */}
+            <section className="py-16 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {contactInfo.map((info, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-slate-50 rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300 text-center"
+              >
+                <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center mb-4 mx-auto">
+                  <info.icon className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="font-semibold text-slate-900 mb-1">{info.title}</h3>
+                {info.link ? (
+                  <a href={info.link} className="text-[#08708E] font-medium mb-1 hover:underline block">
+                    {info.value}
+                  </a>
+                ) : (
+                  <p className="text-[#08708E] font-medium mb-1">{info.value}</p>
+                )}
+                <p className="text-sm text-slate-500">{info.description}</p>
+              </motion.div>
+            ))}
+            </div>
+            </div>
+            </section>
+            </div>
+            );
+            }
