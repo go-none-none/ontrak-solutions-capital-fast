@@ -15,7 +15,7 @@ export default function TermsOfService() {
               Terms of Service
             </h1>
             <p className="text-xl text-white/70">
-              Effective Date: January 1, 2025
+              Effective Date: December 1, 2025
             </p>
           </motion.div>
         </div>
