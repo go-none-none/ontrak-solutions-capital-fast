@@ -106,18 +106,14 @@ export default function Contact() {
                 Fill out the form and one of our specialists will get back to you within 24 hours.
               </p>
 
-              <div className="bg-[#08708E] rounded-2xl p-8 text-white flex-1">
+              <div className="bg-[#08708E] rounded-2xl p-8 text-white flex-1 flex flex-col">
                 <h3 className="text-xl font-bold mb-4">Why Choose OnTrak?</h3>
-                <ul className="space-y-4">
+                <ul className="space-y-4 mb-8">
                   {[
                     'Fast funding in as little as 24 hours',
                     '95% approval rate across all industries',
                     'Transparent terms with no hidden fees',
-                    'Dedicated funding advisor for your account',
-                    'Flexible repayment options that work with your cash flow',
-                    'No prepayment penalties - pay off early if you want',
-                    'Simple online application process',
-                    'Multiple funding options from $10K to $500K'
+                    'Dedicated funding advisor for your account'
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-[#22d3ee] flex-shrink-0 mt-0.5" />
@@ -125,6 +121,17 @@ export default function Contact() {
                     </li>
                   ))}
                 </ul>
+                <div className="mt-auto pt-6 border-t border-white/20">
+                  <p className="text-white/80 mb-4">
+                    Ready to get started? Skip the contact form and apply directly.
+                  </p>
+                  <Link to={createPageUrl('Application')}>
+                    <Button className="w-full bg-white text-[#08708E] hover:bg-white/90 font-semibold h-12 rounded-xl">
+                      Apply Now
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </motion.div>
 
