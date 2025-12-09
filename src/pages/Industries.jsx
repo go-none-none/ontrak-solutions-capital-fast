@@ -90,8 +90,7 @@ export default function Industries() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <span className="text-[#22d3ee] font-semibold text-sm uppercase tracking-wider">Industries We Serve</span>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
                 Funding for<br />Every Industry
               </h1>
               <p className="text-xl text-white/70 mb-8">
