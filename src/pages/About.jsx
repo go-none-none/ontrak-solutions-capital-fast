@@ -233,18 +233,32 @@ export default function About() {
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-              Empowering Businesses<br />to Achieve More
-            </h1>
-            <p className="text-xl text-white/70 max-w-2xl mx-auto">
-              With over 10 years of experience, OnTrak has been helping small and medium businesses access the capital they need to grow, expand, and thrive.
-            </p>
-          </motion.div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
+                Empowering Businesses<br />to Achieve More
+              </h1>
+              <p className="text-xl text-white/70 mb-8">
+                With over 10 years of experience, OnTrak has been helping small and medium businesses access the capital they need to grow, expand, and thrive.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="hidden lg:block"
+            >
+              <img 
+                src="https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=800&h=600&fit=crop" 
+                alt="About OnTrak"
+                className="rounded-3xl shadow-2xl"
+              />
+            </motion.div>
+          </div>
         </div>
 
         {/* Wave */}
