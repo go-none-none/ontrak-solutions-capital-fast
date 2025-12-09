@@ -101,7 +101,7 @@ export default function Reviews() {
 
   const stats = [
     { value: '4.9/5', label: 'Average Rating' },
-    { value: '10,000+', label: 'Happy Customers' },
+    { value: '1,000+', label: 'Happy Customers' },
     { value: '98%', label: 'Would Recommend' },
     { value: '24hrs', label: 'Avg. Response Time' }
   ];
