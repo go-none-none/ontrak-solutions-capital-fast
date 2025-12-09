@@ -34,12 +34,12 @@ export default function Navigation() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link to={createPageUrl('Home')} className="flex items-center gap-2">
-              <div className={`text-2xl font-bold tracking-tight transition-colors duration-300 ${
-                isScrolled ? 'text-[#08708E]' : 'text-white'
-              }`}>
-                <span className="font-black">On</span>Trak
-              </div>
+            <Link to={createPageUrl('Home')} className="flex items-center">
+              <img 
+                src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png"
+                alt="OnTrak Solutions"
+                className="h-10 w-auto"
+              />
             </Link>
 
             {/* Desktop Nav */}
