@@ -97,6 +97,100 @@ function StatCounter({ stat, delay }) {
   );
 }
 
+function TrustIndicator({ item, delay }) {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const duration = 2000;
+    const steps = 60;
+    const increment = duration / steps;
+    
+    let target;
+    if (item.value === 'A+') {
+      return; // Don't animate letter grades
+    } else if (item.value.includes('/')) {
+      target = parseFloat(item.value.split('/')[0]);
+    } else if (item.value.includes('+')) {
+      target = parseFloat(item.value.replace('+', ''));
+    } else if (item.value.includes('%')) {
+      target = parseFloat(item.value.replace('%', ''));
+    } else {
+      target = parseFloat(item.value.replace(/[^0-9.]/g, ''));
+    }
+
+    let current = 0;
+    const step = target / steps;
+
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      setCount(current);
+    }, increment);
+
+    return () => clearInterval(timer);
+  }, [isVisible, item.value]);
+
+  const formatValue = (val) => {
+    if (item.value === 'A+') {
+      return 'A+';
+    } else if (item.value.includes('/5')) {
+      return `${val.toFixed(1)}/5`;
+    } else if (item.value.includes('+')) {
+      return `${val.toFixed(0)}+`;
+    } else if (item.value.includes('%')) {
+      return `${val.toFixed(0)}%`;
+    }
+    return val.toFixed(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, scale: 0.9 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+      className="bg-slate-50 rounded-2xl p-6 text-center hover:bg-white hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
+    >
+      <div className="w-14 h-14 rounded-xl bg-[#08708E]/10 flex items-center justify-center mx-auto mb-3">
+        <item.icon className="w-7 h-7 text-[#08708E]" />
+      </div>
+      <div className="text-3xl font-bold text-[#08708E] mb-2">
+        {formatValue(count)}
+      </div>
+      <div className="text-sm text-slate-600">{item.label}</div>
+    </motion.div>
+  );
+}
+
 export default function About() {
   const values = [
     {
@@ -376,20 +470,7 @@ export default function About() {
               { label: 'Average Rating', value: '4.9/5', icon: Star },
               { label: 'Years Experience', value: '10+', icon: Calendar }
             ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-slate-50 rounded-2xl p-6 text-center hover:bg-white hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
-              >
-                <div className="w-14 h-14 rounded-xl bg-[#08708E]/10 flex items-center justify-center mx-auto mb-3">
-                  <item.icon className="w-7 h-7 text-[#08708E]" />
-                </div>
-                <div className="text-3xl font-bold text-[#08708E] mb-2">{item.value}</div>
-                <div className="text-sm text-slate-600">{item.label}</div>
-              </motion.div>
+              <TrustIndicator key={i} item={item} delay={i * 0.1} />
             ))}
           </div>
         </div>
