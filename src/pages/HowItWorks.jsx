@@ -111,8 +111,8 @@ export default function HowItWorks() {
     },
     {
       icon: Shield,
-      title: 'No Perfect Credit Required',
-      description: 'We focus on your business performance, not just your credit score.'
+      title: 'Bad Credit? No Problem!',
+      description: 'We don\'t use your personal credit score at all - we focus solely on your business performance.'
     },
     {
       icon: Eye,
