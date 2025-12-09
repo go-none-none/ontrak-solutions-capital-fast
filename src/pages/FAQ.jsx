@@ -176,20 +176,21 @@ export default function FAQ() {
               { icon: Search, title: 'Quick Review', description: 'We analyze your business and provide options' },
               { icon: CheckCircle, title: 'Get Funded', description: 'Receive funds in your account within 24 hours' }
             ].map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center p-6 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
-              >
-                <div className="w-14 h-14 rounded-xl bg-[#08708E] flex items-center justify-center mx-auto mb-4">
-                  <step.icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2">{step.title}</h3>
-                <p className="text-sm text-slate-600">{step.description}</p>
-              </motion.div>
+              <Link key={i} to={createPageUrl('Application')}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="text-center p-6 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
+                >
+                  <div className="w-14 h-14 rounded-xl bg-[#08708E] flex items-center justify-center mx-auto mb-4">
+                    <step.icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">{step.title}</h3>
+                  <p className="text-sm text-slate-600">{step.description}</p>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
