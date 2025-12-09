@@ -5,14 +5,23 @@ import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react
 export default function Application() {
   const [jotformUrl, setJotformUrl] = useState('');
   useEffect(() => {
-    // Get rep ID from URL parameters
+    // Get all URL parameters from current page
     const urlParams = new URLSearchParams(window.location.search);
-    const repId = urlParams.get('repId') || '';
     
-    // Build JotForm URL with rep ID parameter
+    // Build JotForm URL with parameters
     const baseUrl = 'https://form.jotform.com/252957146872065';
-    const url = repId ? `${baseUrl}?rep=${encodeURIComponent(repId)}` : baseUrl;
+    const params = new URLSearchParams();
     
+    // Add repId if present
+    const repId = urlParams.get('repId');
+    if (repId) {
+      params.append('rep', repId);
+    }
+    
+    // Add iframe embed parameter
+    params.append('isIframeEmbed', '1');
+    
+    const url = `${baseUrl}?${params.toString()}`;
     setJotformUrl(url);
   }, []);
 
