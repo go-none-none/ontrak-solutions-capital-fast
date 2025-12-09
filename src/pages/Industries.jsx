@@ -84,19 +84,33 @@ export default function Industries() {
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <span className="text-[#22d3ee] font-semibold text-sm uppercase tracking-wider">Industries We Serve</span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
-              Funding for<br />Every Industry
-            </h1>
-            <p className="text-xl text-white/70 max-w-2xl mx-auto">
-              We work with businesses across all industries. No matter your sector, we have funding solutions tailored to your unique needs.
-            </p>
-          </motion.div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
+              <span className="text-[#22d3ee] font-semibold text-sm uppercase tracking-wider">Industries We Serve</span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
+                Funding for<br />Every Industry
+              </h1>
+              <p className="text-xl text-white/70 mb-8">
+                We work with businesses across all industries. No matter your sector, we have funding solutions tailored to your unique needs.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="hidden lg:block"
+            >
+              <img 
+                src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&h=600&fit=crop" 
+                alt="Industries We Serve"
+                className="rounded-3xl shadow-2xl"
+              />
+            </motion.div>
+          </div>
         </div>
 
         {/* Wave */}

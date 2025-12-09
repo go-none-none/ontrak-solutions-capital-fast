@@ -63,19 +63,33 @@ export default function UseCases() {
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <span className="text-[#22d3ee] font-semibold text-sm uppercase tracking-wider">Use Cases</span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
-              How Businesses Use<br />OnTrak Funding
-            </h1>
-            <p className="text-xl text-white/70 max-w-2xl mx-auto">
-              From equipment purchases to expansion projects, discover how our flexible funding solutions help businesses achieve their goals.
-            </p>
-          </motion.div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
+              <span className="text-[#22d3ee] font-semibold text-sm uppercase tracking-wider">Use Cases</span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
+                How Businesses Use<br />OnTrak Funding
+              </h1>
+              <p className="text-xl text-white/70 mb-8">
+                From equipment purchases to expansion projects, discover how our flexible funding solutions help businesses achieve their goals.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="hidden lg:block"
+            >
+              <img 
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop" 
+                alt="Business Use Cases"
+                className="rounded-3xl shadow-2xl"
+              />
+            </motion.div>
+          </div>
         </div>
 
         {/* Wave */}
