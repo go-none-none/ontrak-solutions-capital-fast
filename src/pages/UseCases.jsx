@@ -101,7 +101,7 @@ export default function UseCases() {
               className="hidden lg:block"
             >
               <img 
-                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop" 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/c3ffd28e2_OnTrak-UseCases.png" 
                 alt="Business Use Cases"
                 className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
