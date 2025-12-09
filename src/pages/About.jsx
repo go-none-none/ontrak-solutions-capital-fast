@@ -203,7 +203,7 @@ export default function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-2xl p-8 text-center shadow-lg"
+                className="bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 <div className="w-16 h-16 rounded-2xl bg-[#08708E]/10 flex items-center justify-center mx-auto mb-4">
                   <item.icon className="w-8 h-8 text-[#08708E]" />
@@ -244,7 +244,7 @@ export default function About() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-slate-50 rounded-2xl p-6 text-center"
+                className="bg-slate-50 rounded-2xl p-6 text-center hover:bg-white hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 <div className="w-14 h-14 rounded-xl bg-[#08708E]/10 flex items-center justify-center mx-auto mb-3">
                   <item.icon className="w-7 h-7 text-[#08708E]" />
