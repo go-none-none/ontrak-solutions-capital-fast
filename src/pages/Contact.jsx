@@ -46,7 +46,7 @@ export default function Contact() {
               animate={{ opacity: 1, x: 0 }}
             >
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
-                Let's Talk About Your Funding Needs
+                Your Funding, Our Help
               </h1>
               <p className="text-base text-white/70 mb-4">
                 Our team of funding specialists is ready to help you find the perfect solution.
