@@ -16,8 +16,12 @@ export default function Footer() {
               className="h-10 w-auto brightness-0 invert"
             />
             <p className="text-slate-400 text-sm leading-relaxed">
-              Fast, flexible business funding solutions designed to help your company grow. 
-              Get capital in as little as 24 hours.
+              OnTrak Solutions provides fast, flexible business funding and merchant cash advances 
+              for small to medium-sized businesses across all industries. From working capital and 
+              equipment financing to inventory purchases and business expansion, we offer customized 
+              funding solutions with quick approvals and same-day funding. Get the capital your business 
+              needs in as little as 24 hours with transparent terms, no hidden fees, and flexible 
+              repayment options that adapt to your cash flow.
             </p>
           </div>
 
