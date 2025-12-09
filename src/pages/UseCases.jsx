@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   Wrench, Package, Truck, Users, TrendingUp, Building, 
-  ShoppingBag, RefreshCw, ArrowRight, CheckCircle
+  ShoppingBag, RefreshCw, ArrowRight, CheckCircle, Zap
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -69,13 +69,32 @@ export default function UseCases() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
+              <span className="text-[#22d3ee] font-semibold text-sm uppercase tracking-wider">Use Cases</span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
                 How Businesses Use<br />OnTrak Funding
               </h1>
               <p className="text-xl text-white/70 mb-8">
                 From equipment purchases to expansion projects, discover how our flexible funding solutions help businesses achieve their goals.
               </p>
-            </motion.div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link to={createPageUrl('Application')}>
+                  <Button className="bg-white text-[#08708E] hover:bg-white/90 px-8 py-6 rounded-full text-lg font-semibold">
+                    Apply Now
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+                <div className="flex items-center gap-4 text-white/90">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-[#22d3ee]" />
+                    <span className="text-sm">A+ BBB Rating</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-[#22d3ee]" />
+                    <span className="text-sm">24hr Funding</span>
+                  </div>
+                </div>
+              </div>
+              </motion.div>
 
             <motion.div
               initial={{ opacity: 0, x: 30 }}
