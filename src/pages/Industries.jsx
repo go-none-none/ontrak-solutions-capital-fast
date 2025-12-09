@@ -96,7 +96,7 @@ export default function Industries() {
               <p className="text-base text-white/70 mb-4">
                 We work with businesses across all industries with tailored funding solutions.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 items-start">
+              <div className="flex flex-col sm:flex-row gap-3 items-center">
                 <Link to={createPageUrl('Application')}>
                   <Button className="bg-white text-[#08708E] hover:bg-white/90 px-6 py-3 rounded-full font-semibold">
                     Apply Now
