@@ -124,8 +124,8 @@ export default function HeroSection() {
             className="text-center"
           >
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm mb-6" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-base mb-6" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>
+              <span className="w-2 h-2 bg-[#22d3ee] rounded-full animate-pulse" />
               Trusted by 1,000+ Businesses
             </div>
 
