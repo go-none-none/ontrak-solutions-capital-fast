@@ -114,15 +114,18 @@ export default function About() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="flex flex-col md:flex-row items-center justify-between gap-6"
           >
-            <h3 className="text-2xl font-bold text-slate-900 mb-4">
-              Ready to Get Started?
-            </h3>
-            <p className="text-slate-600 mb-6">
-              See how much funding you qualify for in just 60 seconds.
-            </p>
+            <div className="text-center md:text-left">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                Ready to Get Started?
+              </h3>
+              <p className="text-slate-600">
+                See how much funding you qualify for in just 60 seconds.
+              </p>
+            </div>
             <Link to={createPageUrl('Application')}>
-              <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-3 rounded-full font-semibold">
+              <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-3 rounded-full font-semibold whitespace-nowrap">
                 Apply Now
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
