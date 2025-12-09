@@ -93,11 +93,33 @@ export default function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Right - Calculator & Form Side by Side */}
+          {/* Video Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10">
+              <div className="aspect-video">
+                <iframe
+                  className="w-full h-full"
+                  src="https://www.youtube.com/embed/videoseries?list=PLPFdYy9MIsqQYbYKUxkTNAY5Ln3RpF4-K"
+                  title="Business Funding Solutions"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+              <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-white/10 rounded-3xl" />
+            </div>
+          </motion.div>
+
+          {/* Calculator & Form Side by Side */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             className="grid md:grid-cols-2 gap-6"
           >
             <FundingCalculator compact />
