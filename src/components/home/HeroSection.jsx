@@ -13,18 +13,8 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen overflow-hidden">
-      {/* Video Background */}
-      <div className="absolute inset-0 w-full h-full">
-        <iframe
-          className="absolute inset-0 w-full h-full object-cover"
-          src="https://www.youtube.com/embed/videoseries?list=PLPFdYy9MIsqQYbYKUxkTNAY5Ln3RpF4-K&autoplay=1&mute=1&loop=1&controls=0&showinfo=0&modestbranding=1&playlist=PLPFdYy9MIsqQYbYKUxkTNAY5Ln3RpF4-K"
-          title="Business Funding Background"
-          frameBorder="0"
-          allow="autoplay; encrypted-media"
-          style={{ pointerEvents: 'none' }}
-        />
-        <div className="absolute inset-0 bg-[#08708E]/80" />
-      </div>
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900" />
       
       {/* Abstract shapes */}
       <div className="absolute inset-0 overflow-hidden">
@@ -103,11 +93,11 @@ export default function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Calculator & Form Side by Side */}
+          {/* Right - Calculator & Form Side by Side */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="grid md:grid-cols-2 gap-6"
           >
             <FundingCalculator compact />
