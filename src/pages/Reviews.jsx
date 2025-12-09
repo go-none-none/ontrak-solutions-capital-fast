@@ -4,6 +4,7 @@ import { Star, Quote, ArrowRight, CheckCircle, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
+import ReviewSubmissionForm from '../components/reviews/ReviewSubmissionForm';
 
 function StatCounter({ stat, delay }) {
   const [count, setCount] = useState(0);
