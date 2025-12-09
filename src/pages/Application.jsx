@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle, Clock, Shield, TrendingUp, Phone } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react';
 
 export default function Application() {
   const [jotformUrl, setJotformUrl] = useState('');
