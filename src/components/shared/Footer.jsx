@@ -10,9 +10,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="space-y-6">
-            <div className="text-2xl font-bold">
-              <span className="font-black">On</span>Trak
-            </div>
+            <img 
+              src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png"
+              alt="OnTrak Solutions"
+              className="h-10 w-auto"
+            />
             <p className="text-slate-400 text-sm leading-relaxed">
               Fast, flexible business funding solutions designed to help your company grow. 
               Get capital in as little as 24 hours.
