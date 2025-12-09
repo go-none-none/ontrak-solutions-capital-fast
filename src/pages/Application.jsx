@@ -53,13 +53,12 @@ export default function Application() {
                   allow="geolocation; microphone; camera; fullscreen"
                   src={jotformUrl}
                   frameBorder="0"
+                  className="w-full border-0"
                   style={{
-                    minWidth: '100%',
-                    maxWidth: '100%',
-                    height: '1200px',
-                    border: 'none'
+                    minHeight: '2000px',
+                    height: 'auto'
                   }}
-                  scrolling="no"
+                  scrolling="yes"
                 />
               </div>
             )}
