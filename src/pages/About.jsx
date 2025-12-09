@@ -241,7 +241,7 @@ export default function About() {
               className="flex flex-col justify-center"
             >
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
-                Your Business, Your Growth, Our Mission
+                Your Biz, Your Growth, Our Goal
               </h1>
               <p className="text-base text-white/70 mb-4">
                 With over 10 years of experience, helping businesses grow and thrive.
