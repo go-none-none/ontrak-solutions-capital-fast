@@ -2,6 +2,78 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 export default function PrivacyPolicy() {
+  const sections = [
+    {
+      title: "Introduction",
+      content: `OnTrak Solutions LLC ("we," "us," or "our") respects your privacy and is committed to protecting your personal information. This Privacy Policy describes how we collect, use, disclose, and safeguard your information when you visit our website, use our services, or interact with us in any way.\n\nThis policy applies to information collected through our website, mobile applications, and any other electronic communications. By using our services, you consent to the data practices described in this policy.`
+    },
+    {
+      title: "Information We Collect",
+      subsections: [
+        {
+          subtitle: "Personal Information You Provide",
+          content: `We may collect personal information that you voluntarily provide to us, including:\n\n• Contact Information: Name, email address, phone number, mailing address\n• Business Information: Business name, industry, time in business, business structure\n• Financial Information: Bank statements, revenue information, credit information\n• Identity Verification: Social Security Number, driver's license, government-issued ID\n• Application Data: Information provided in funding applications\n• Communication Records: Records of communications with us`
+        },
+        {
+          subtitle: "Information Collected Automatically",
+          content: `When you visit our website, we may automatically collect:\n\n• IP address and device identifiers\n• Browser type and version\n• Pages visited and time spent on our site\n• Referring website addresses\n• Cookies and similar tracking technologies\n• Location data (with your consent)`
+        },
+        {
+          subtitle: "Information from Third Parties",
+          content: `We may receive information about you from:\n\n• Credit reporting agencies\n• Business partners and referral sources\n• Public records and databases\n• Social media platforms\n• Marketing and analytics providers`
+        }
+      ]
+    },
+    {
+      title: "How We Use Your Information",
+      content: `We use your information for the following purposes:\n\nBusiness Operations:\n• Processing funding applications and making credit decisions\n• Providing customer service and support\n• Communicating about your account and our services\n• Conducting business transactions\n• Managing risk and preventing fraud\n\nMarketing and Communications:\n• Sending promotional materials and newsletters\n• Personalizing your experience with our services\n• Conducting market research and analysis\n• Improving our website and services\n\nLegal and Compliance:\n• Complying with applicable laws and regulations\n• Responding to legal requests and court orders\n• Protecting our rights and interests\n• Ensuring security and preventing misuse`
+    },
+    {
+      title: "How We Share Your Information",
+      content: `We may share your information in the following circumstances:\n\nService Providers:\nWe may share information with third-party service providers who perform services on our behalf, including payment processors, credit reporting agencies, technology providers, and marketing services.\n\nBusiness Partners:\nWe may share information with business partners for joint marketing activities or referral programs, with your consent.\n\nLegal Requirements:\nWe may disclose information when required by law, to comply with legal processes, respond to government requests, protect our rights, or prevent fraud.\n\nBusiness Transfers:\nIn the event of a merger, acquisition, or sale of assets, your information may be transferred to the acquiring entity.`
+    },
+    {
+      title: "Your Privacy Rights",
+      content: `Depending on your location, you may have certain rights regarding your personal information:\n\nGeneral Rights:\n• Access: Request information about the personal data we have about you\n• Correction: Request correction of inaccurate or incomplete information\n• Deletion: Request deletion of your personal information (subject to legal requirements)\n• Opt-Out: Opt out of marketing communications\n\nCalifornia Residents (CCPA/CPRA):\n• Right to know what personal information is collected and how it's used\n• Right to delete personal information\n• Right to opt-out of the sale or sharing of personal information\n• Right to correct inaccurate personal information\n• Right to limit use of sensitive personal information\n• Right to non-discrimination for exercising your rights\n\nOther State Residents:\nResidents of Virginia, Colorado, Connecticut, Utah, Iowa, Delaware, New Hampshire, New Jersey, and other states with comprehensive privacy laws may have similar rights.`
+    },
+    {
+      title: "How to Exercise Your Rights",
+      content: `To exercise your privacy rights, you may:\n\n• Email us at info@ontrak.co\n• Call us at (302) 520-5200\n• Submit a request through our contact form\n\nWe will respond to your request within the timeframe required by applicable law, typically within 30-45 days.`
+    },
+    {
+      title: "Cookies and Tracking Technologies",
+      content: `We use cookies and similar tracking technologies to enhance your experience on our website:\n\nTypes of Cookies We Use:\n• Essential Cookies: Necessary for website functionality\n• Analytics Cookies: Help us understand how visitors use our site\n• Marketing Cookies: Used to deliver relevant advertisements\n• Preference Cookies: Remember your settings and preferences\n\nManaging Cookies:\nYou can control cookies through your browser settings. Note that disabling certain cookies may affect website functionality.`
+    },
+    {
+      title: "Data Security",
+      content: `We implement appropriate technical and organizational measures to protect your personal information, including:\n\n• Encryption of data in transit and at rest\n• Access controls and authentication procedures\n• Regular security assessments and updates\n• Employee training on data protection\n• Secure data centers and infrastructure\n\nWhile we strive to protect your information, no method of transmission or storage is 100% secure. We cannot guarantee absolute security.`
+    },
+    {
+      title: "Data Retention",
+      content: `We retain your personal information for as long as necessary to:\n\n• Provide our services to you\n• Comply with legal and regulatory requirements\n• Resolve disputes and enforce agreements\n• Maintain business records as required by law\n\nWhen information is no longer needed, we securely delete or anonymize it in accordance with our data retention policy.`
+    },
+    {
+      title: "International Data Transfers",
+      content: `Your information may be transferred to and processed in countries other than your country of residence. We ensure appropriate safeguards are in place for such transfers, including standard contractual clauses, adequacy decisions by relevant authorities, and certification schemes.`
+    },
+    {
+      title: "Children's Privacy",
+      content: `Our services are not intended for individuals under 18 years of age. We do not knowingly collect personal information from children under 18. If we learn that we have collected information from a child under 18, we will delete it promptly.`
+    },
+    {
+      title: "Third-Party Links",
+      content: `Our website may contain links to third-party websites. We are not responsible for the privacy practices of these external sites. We encourage you to review the privacy policies of any third-party sites you visit.`
+    },
+    {
+      title: "Changes to This Privacy Policy",
+      content: `We may update this Privacy Policy from time to time. When we make changes, we will:\n\n• Post the updated policy on our website\n• Update the "Last Updated" date\n• Notify you of significant changes via email or website notice\n\nYour continued use of our services after changes become effective constitutes acceptance of the updated policy.`
+    },
+    {
+      title: "Contact Us",
+      content: `If you have questions about this Privacy Policy or our privacy practices, please contact us:\n\nOnTrak Solutions LLC\nPrivacy Officer\nEmail: info@ontrak.co\nPhone: (302) 520-5200`
+    }
+  ];
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
@@ -15,7 +87,7 @@ export default function PrivacyPolicy() {
               Privacy Policy
             </h1>
             <p className="text-xl text-white/70">
-              How we collect, use, and protect your information
+              Last Updated: January 1, 2025
             </p>
           </motion.div>
         </div>
@@ -24,56 +96,36 @@ export default function PrivacyPolicy() {
       {/* Content */}
       <section className="py-16 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-6">
-            {[
-              {
-                title: "Who we are",
-                content: "Our website address is: https://ontrak.co."
-              },
-              {
-                title: "Comments",
-                content: "When visitors leave comments on the site we collect the data shown in the comments form, and also the visitor's IP address and browser user agent string to help spam detection. An anonymized string created from your email address (also called a hash) may be provided to the Gravatar service to see if you are using it. After approval of your comment, your profile picture is visible to the public in the context of your comment."
-              },
-              {
-                title: "Media",
-                content: "If you upload images to the website, you should avoid uploading images with embedded location data (EXIF GPS) included. Visitors to the website can download and extract any location data from images on the website."
-              },
-              {
-                title: "Cookies",
-                content: "If you leave a comment on our site you may opt-in to saving your name, email address and website in cookies. These are for your convenience so that you do not have to fill in your details again when you leave another comment. These cookies will last for one year. If you visit our login page, we will set a temporary cookie to determine if your browser accepts cookies. This cookie contains no personal data and is discarded when you close your browser."
-              },
-              {
-                title: "Embedded content from other websites",
-                content: "Articles on this site may include embedded content (e.g. videos, images, articles, etc.). Embedded content from other websites behaves in the exact same way as if the visitor has visited the other website. These websites may collect data about you, use cookies, embed additional third-party tracking, and monitor your interaction with that embedded content."
-              },
-              {
-                title: "Who we share your data with",
-                content: "If you request a password reset, your IP address will be included in the reset email."
-              },
-              {
-                title: "How long we retain your data",
-                content: "If you leave a comment, the comment and its metadata are retained indefinitely. This is so we can recognize and approve any follow-up comments automatically instead of holding them in a moderation queue. For users that register on our website, we also store the personal information they provide in their user profile. All users can see, edit, or delete their personal information at any time."
-              },
-              {
-                title: "What rights you have over your data",
-                content: "If you have an account on this site, or have left comments, you can request to receive an exported file of the personal data we hold about you, including any data you have provided to us. You can also request that we erase any personal data we hold about you. This does not include any data we are obliged to keep for administrative, legal, or security purposes."
-              },
-              {
-                title: "Where your data is sent",
-                content: "Visitor comments may be checked through an automated spam detection service."
-              }
-            ].map((section, i) => (
+          <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-lg space-y-10">
+            {sections.map((section, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="bg-white rounded-2xl p-6 shadow-sm"
               >
-                <h2 className="text-lg font-semibold text-[#08708E] mb-3">{section.title}</h2>
-                <p className="text-sm text-slate-600 leading-relaxed">{section.content}</p>
+                <h2 className="text-2xl font-bold text-slate-900 mb-4">{section.title}</h2>
+                {section.content && (
+                  <p className="text-slate-600 whitespace-pre-line leading-relaxed">{section.content}</p>
+                )}
+                {section.subsections && (
+                  <div className="space-y-6 mt-4">
+                    {section.subsections.map((subsection, subIndex) => (
+                      <div key={subIndex}>
+                        <h3 className="text-lg font-semibold text-slate-800 mb-2">{subsection.subtitle}</h3>
+                        <p className="text-slate-600 whitespace-pre-line leading-relaxed">{subsection.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </motion.div>
             ))}
+
+            <div className="pt-6 border-t border-slate-200">
+              <p className="text-sm text-slate-500 italic">
+                Important Notice: This Privacy Policy is provided for informational purposes and should be reviewed by qualified legal counsel to ensure compliance with applicable laws and regulations in your jurisdiction.
+              </p>
+            </div>
           </div>
         </div>
       </section>
