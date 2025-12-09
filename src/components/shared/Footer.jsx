@@ -78,9 +78,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* About */}
           <div>
-            <h4 className="font-semibold mb-6 text-white">Contact Us</h4>
+            <h4 className="font-semibold mb-6 text-white">About OnTrak</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <Phone className="w-4 h-4 text-[#08708E] mt-1" />
@@ -90,11 +90,15 @@ export default function Footer() {
                 <Mail className="w-4 h-4 text-[#08708E] mt-1" />
                 <a href="mailto:info@ontrak.co" className="text-slate-400 hover:text-white transition-colors text-sm">info@ontrak.co</a>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-[#08708E] mt-1" />
-                <span className="text-slate-400 text-sm">1019 Ave P, STE 305<br />Brooklyn, NY 11223</span>
-              </li>
             </ul>
+            <div className="mt-6 pt-6 border-t border-slate-800">
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Since our founding, OnTrak Solutions has funded over $500M to thousands of small and 
+                medium-sized businesses nationwide. With a 95% approval rate and an A+ BBB rating, 
+                we've become a trusted partner for entrepreneurs seeking fast, flexible business funding. 
+                Our mission is to empower businesses with the capital they need to succeed.
+              </p>
+            </div>
           </div>
         </div>
 
