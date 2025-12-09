@@ -20,7 +20,7 @@ export default function Navigation() {
   const navLinks = [
     { name: 'Home', href: createPageUrl('Home') },
     { name: 'About Us', href: createPageUrl('About') },
-    { name: 'How It Works', href: createPageUrl('HowItWorks') },
+    { name: 'FAQ', href: createPageUrl('FAQ') },
     { name: 'Use Cases', href: createPageUrl('UseCases') },
     { name: 'Industries', href: createPageUrl('Industries') },
     { name: 'Reviews', href: createPageUrl('Reviews') },
