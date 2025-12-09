@@ -52,7 +52,7 @@ export default function Contact() {
                 Our team of funding specialists is ready to help you find the perfect solution.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 items-start">
-                <Link to={createPageUrl('Application')}>
+                <Link to={createPageUrl('application')}>
                   <Button className="bg-white text-[#08708E] hover:bg-white/90 px-6 py-3 rounded-full font-semibold">
                     Apply Now
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -125,7 +125,7 @@ export default function Contact() {
                   <p className="text-white/80 mb-4">
                     Ready to get started? Skip the contact form and apply directly.
                   </p>
-                  <Link to={createPageUrl('Application')}>
+                  <Link to={createPageUrl('application')}>
                     <Button className="w-full bg-white text-[#08708E] hover:bg-white/90 font-semibold h-12 rounded-xl">
                       Apply Now
                       <ArrowRight className="w-4 h-4 ml-2" />

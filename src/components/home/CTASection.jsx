@@ -29,7 +29,7 @@ export default function CTASection() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to={createPageUrl('Application')}>
+            <Link to={createPageUrl('application')}>
               <Button className="bg-white text-[#08708E] hover:bg-white/90 px-10 py-6 rounded-full text-lg font-semibold w-full sm:w-auto">
                 Get Funding Today
                 <ArrowRight className="w-5 h-5 ml-2" />
