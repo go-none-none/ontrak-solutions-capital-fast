@@ -233,33 +233,33 @@ export default function About() {
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+          <div className="grid lg:grid-cols-2 gap-8 items-center w-full">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
-                Empowering Businesses<br />to Achieve More
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+                Empowering Businesses to Achieve More
               </h1>
-              <p className="text-xl text-white/70 mb-8">
-                With over 10 years of experience, OnTrak has been helping small and medium businesses access the capital they need to grow, expand, and thrive.
+              <p className="text-base text-white/70 mb-4">
+                With over 10 years of experience, helping businesses grow and thrive.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 items-start">
                 <Link to={createPageUrl('Application')}>
-                  <Button className="bg-white text-[#08708E] hover:bg-white/90 px-8 py-6 rounded-full text-lg font-semibold">
+                  <Button className="bg-white text-[#08708E] hover:bg-white/90 px-6 py-3 rounded-full font-semibold">
                     Apply Now
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
-                <div className="flex items-center gap-4 text-white/90">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-[#22d3ee]" />
-                    <span className="text-sm">A+ BBB Rating</span>
+                <div className="flex items-center gap-3 text-white/90">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle className="w-4 h-4 text-[#22d3ee]" />
+                    <span className="text-xs">A+ BBB Rating</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-[#22d3ee]" />
-                    <span className="text-sm">24hr Funding</span>
+                  <div className="flex items-center gap-1.5">
+                    <Zap className="w-4 h-4 text-[#22d3ee]" />
+                    <span className="text-xs">24hr Funding</span>
                   </div>
                 </div>
               </div>
@@ -273,7 +273,7 @@ export default function About() {
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/75fb99a2c_pexels-goumbik-590020.jpg" 
                 alt="About OnTrak"
-                className="rounded-3xl shadow-2xl"
+                className="rounded-2xl shadow-2xl h-48 w-full object-cover"
               />
             </motion.div>
           </div>

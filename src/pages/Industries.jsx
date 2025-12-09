@@ -84,33 +84,33 @@ export default function Industries() {
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+          <div className="grid lg:grid-cols-2 gap-8 items-center w-full">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
-                Funding for<br />Every Industry
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+                Funding for Every Industry
               </h1>
-              <p className="text-xl text-white/70 mb-8">
-                We work with businesses across all industries. No matter your sector, we have funding solutions tailored to your unique needs.
+              <p className="text-base text-white/70 mb-4">
+                We work with businesses across all industries with tailored funding solutions.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 items-start">
                 <Link to={createPageUrl('Application')}>
-                  <Button className="bg-white text-[#08708E] hover:bg-white/90 px-8 py-6 rounded-full text-lg font-semibold">
+                  <Button className="bg-white text-[#08708E] hover:bg-white/90 px-6 py-3 rounded-full font-semibold">
                     Apply Now
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
-                <div className="flex items-center gap-4 text-white/90">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-[#22d3ee]" />
-                    <span className="text-sm">A+ BBB Rating</span>
+                <div className="flex items-center gap-3 text-white/90">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle className="w-4 h-4 text-[#22d3ee]" />
+                    <span className="text-xs">A+ BBB Rating</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-[#22d3ee]" />
-                    <span className="text-sm">24hr Funding</span>
+                  <div className="flex items-center gap-1.5">
+                    <Zap className="w-4 h-4 text-[#22d3ee]" />
+                    <span className="text-xs">24hr Funding</span>
                   </div>
                 </div>
               </div>
@@ -124,7 +124,7 @@ export default function Industries() {
               <img 
                 src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&h=600&fit=crop" 
                 alt="Industries We Serve"
-                className="rounded-3xl shadow-2xl"
+                className="rounded-2xl shadow-2xl h-48 w-full object-cover"
               />
             </motion.div>
           </div>

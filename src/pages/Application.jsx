@@ -49,19 +49,30 @@ export default function Application() {
               <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
             </div>
 
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
               <motion.div
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
+                className="text-center w-full"
               >
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mt-4 mb-6">
+                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
                   Apply for Funding
                 </h1>
-                <p className="text-xl text-white/70 mb-8 max-w-3xl mx-auto">
+                <p className="text-base text-white/70 mb-4 max-w-2xl mx-auto">
                   Complete your application in minutes and get a decision within 24 hours.
                 </p>
+                <div className="flex items-center justify-center gap-4 text-white/90">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle className="w-4 h-4 text-[#22d3ee]" />
+                    <span className="text-xs">A+ BBB Rating</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Zap className="w-4 h-4 text-[#22d3ee]" />
+                    <span className="text-xs">24hr Funding</span>
+                  </div>
+                </div>
               </motion.div>
-              </div>
+            </div>
               </section>
 
           {/* Main Form */}
