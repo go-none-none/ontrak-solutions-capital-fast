@@ -11,10 +11,13 @@ export default function Layout({ children }) {
   }, [pathname]);
 
   useEffect(() => {
-    const handleLinkClick = () => {
-      setTimeout(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      }, 0);
+    const handleLinkClick = (e) => {
+      const link = e.target.closest('a');
+      if (link) {
+        setTimeout(() => {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        }, 0);
+      }
     };
 
     document.addEventListener('click', handleLinkClick);
