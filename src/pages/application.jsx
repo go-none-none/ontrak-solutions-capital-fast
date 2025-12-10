@@ -111,8 +111,8 @@ export default function Application() {
               className="hidden lg:block"
             >
               <img 
-                src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&h=600&fit=crop" 
-                alt="Apply for Funding"
+                src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&h=600&fit=crop" 
+                alt="Successful Business Application"
                 className="rounded-2xl shadow-2xl h-64 w-full object-cover"
               />
             </motion.div>
