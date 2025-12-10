@@ -160,7 +160,7 @@ export default function Application() {
                   Questions? Our funding specialists are here to help.
                 </p>
                 <div className="space-y-2">
-                  <p className="font-semibold flex items-center gap-2"><Phone className="w-4 h-4 text-white" /> (302) 520-5200</p>
+                  <a href="tel:+13025205200" className="font-semibold flex items-center gap-2 hover:text-[#22d3ee] transition-colors"><Phone className="w-4 h-4 text-white" /> (302) 520-5200</a>
                   <p className="text-sm text-white/80">Mon-Fri 9am - 6pm EST</p>
                 </div>
               </div>
