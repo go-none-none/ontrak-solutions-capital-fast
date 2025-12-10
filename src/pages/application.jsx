@@ -4,21 +4,16 @@ import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react
 
 export default function Application() {
   useEffect(() => {
-    // Get rep ID from URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const repId = urlParams.get('repId');
-    
-    // Build iframe URL with rep parameter
-    let iframeSrc = 'https://form.jotform.com/252957146872065';
-    if (repId) {
-      iframeSrc += `?rep=${encodeURIComponent(repId)}`;
-    }
-    
-    // Set iframe src
     const iframe = document.getElementById('JotFormIFrame-252957146872065');
-    if (iframe) {
-      iframe.src = iframeSrc;
+    if (!iframe) return;
+
+    // Get all URL parameters and append them to iframe src
+    const params = window.location.search;
+    let iframeSrc = 'https://form.jotform.com/252957146872065';
+    if (params) {
+      iframeSrc += params;
     }
+    iframe.src = iframeSrc;
 
     // Load JotForm embed handler script
     const embedScript = document.createElement('script');
@@ -26,7 +21,6 @@ export default function Application() {
     document.body.appendChild(embedScript);
 
     embedScript.onload = () => {
-      // Initialize embed handler
       if (window.jotformEmbedHandler) {
         window.jotformEmbedHandler("iframe[id='JotFormIFrame-252957146872065']", "https://form.jotform.com/");
       }
