@@ -47,12 +47,12 @@ export default function Navigation() {
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-4 xl:gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.href}
-                  className={`text-base font-normal transition-all duration-300 hover:opacity-70 ${
+                  className={`text-sm xl:text-base font-normal transition-all duration-300 hover:opacity-70 ${
                     isScrolled ? 'text-slate-700' : 'text-white'
                   }`}
                 >
