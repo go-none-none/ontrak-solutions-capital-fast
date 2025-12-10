@@ -56,22 +56,22 @@ export default function Footer() {
             <h4 className="font-semibold mb-6 text-white">Industries</h4>
             <ul className="space-y-3">
               {[
-                'Restaurants & Food Service',
-                'Retail',
-                'Healthcare & Medical',
-                'Construction',
-                'Transportation & Logistics',
-                'Beauty & Wellness',
-                'Fitness & Recreation',
-                'Auto Services',
-                'Professional Services'
+                { name: 'Restaurants & Food Service', page: 'IndustryRestaurants' },
+                { name: 'Retail', page: 'IndustryRetail' },
+                { name: 'Healthcare & Medical', page: 'IndustryHealthcare' },
+                { name: 'Construction', page: 'IndustryConstruction' },
+                { name: 'Transportation & Logistics', page: 'IndustryTransportation' },
+                { name: 'Beauty & Wellness', page: 'IndustryBeauty' },
+                { name: 'Fitness & Recreation', page: 'IndustryFitness' },
+                { name: 'Auto Services', page: 'IndustryAuto' },
+                { name: 'Professional Services', page: 'IndustryProfessional' }
               ].map((industry) => (
-                <li key={industry}>
+                <li key={industry.name}>
                   <Link 
-                    to={createPageUrl('Industries')} 
+                    to={createPageUrl(industry.page)} 
                     className="text-slate-400 hover:text-white transition-colors text-sm"
                   >
-                    {industry}
+                    {industry.name}
                   </Link>
                 </li>
               ))}
