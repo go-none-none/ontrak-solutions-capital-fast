@@ -4,36 +4,50 @@ import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react
 
 export default function Application() {
   useEffect(() => {
-    const iframe = document.getElementById('JotFormIFrame-252957146872065');
-    if (!iframe) return;
-
-    // Get URL parameters including repId
-    const params = new URLSearchParams(window.location.search);
-    let iframeSrc = 'https://form.jotform.com/252957146872065';
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const repId = urlParams.get('repId');
     
-    // Add all URL parameters to the iframe src
-    if (params.toString()) {
-      iframeSrc += '?' + params.toString();
+    // Build iframe src with rep parameter
+    let iframeSrc = 'https://form.jotform.com/252957146872065';
+    if (repId) {
+      iframeSrc += `?rep=${encodeURIComponent(repId)}`;
     }
     
-    iframe.src = iframeSrc;
-
-    // Load JotForm embed handler script
-    const embedScript = document.createElement('script');
-    embedScript.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
-    document.body.appendChild(embedScript);
-
-    embedScript.onload = () => {
-      if (window.jotformEmbedHandler) {
-        window.jotformEmbedHandler("iframe[id='JotFormIFrame-252957146872065']", "https://form.jotform.com/");
-      }
-    };
-
-    return () => {
-      if (embedScript.parentNode) {
-        embedScript.parentNode.removeChild(embedScript);
-      }
-    };
+    // Create and inject iframe
+    const container = document.getElementById('jotform-container');
+    if (container) {
+      container.innerHTML = `
+        <iframe
+          id="JotFormIFrame-252957146872065"
+          title="Application Form"
+          onload="window.parent.scrollTo(0,0)"
+          allowtransparency="true"
+          allow="geolocation; microphone; camera; fullscreen"
+          src="${iframeSrc}"
+          frameborder="0"
+          style="min-width:100%;max-width:100%;height:539px;border:none;"
+          scrolling="no"
+        >
+        </iframe>
+      `;
+      
+      // Load JotForm embed handler
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+      script.onload = () => {
+        if (window.jotformEmbedHandler) {
+          window.jotformEmbedHandler("iframe[id='JotFormIFrame-252957146872065']", "https://form.jotform.com/");
+        }
+      };
+      document.body.appendChild(script);
+      
+      return () => {
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      };
+    }
   }, []);
 
   const reasons = [
@@ -114,16 +128,11 @@ export default function Application() {
             {/* Main Form */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-3xl shadow-xl overflow-hidden p-6">
-                <div dangerouslySetInnerHTML={{__html: `
-                  <form class="jotform-form" action="https://submit.jotform.com/submit/252957146872065" method="post" enctype="multipart/form-data" name="form_252957146872065" id="252957146872065" accept-charset="utf-8" autocomplete="on">
-                    <input type="hidden" name="formID" value="252957146872065" />
-                    <div role="main" class="form-all">
-                      <p style="text-align: center; padding: 40px; color: #08708E; font-size: 18px;">
-                        Loading application form...
-                      </p>
-                    </div>
-                  </form>
-                `}} />
+                <div id="jotform-container">
+                  <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                    Loading application form...
+                  </p>
+                </div>
               </div>
           </div>
 
