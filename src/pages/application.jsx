@@ -88,7 +88,7 @@ export default function Application() {
               animate={{ opacity: 1, x: 0 }}
             >
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
-                Apply for Funding
+                Get The Funding You Deserve
               </h1>
               <p className="text-base text-white/70 mb-4">
                 Complete your application in minutes and get a decision within 24 hours.
