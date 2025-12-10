@@ -10,6 +10,15 @@ import FAQ from './pages/FAQ';
 import HowItWorks from './pages/HowItWorks';
 import application from './pages/application';
 import ThankYou from './pages/ThankYou';
+import IndustryRestaurants from './pages/IndustryRestaurants';
+import IndustryRetail from './pages/IndustryRetail';
+import IndustryHealthcare from './pages/IndustryHealthcare';
+import IndustryConstruction from './pages/IndustryConstruction';
+import IndustryTransportation from './pages/IndustryTransportation';
+import IndustryBeauty from './pages/IndustryBeauty';
+import IndustryFitness from './pages/IndustryFitness';
+import IndustryAuto from './pages/IndustryAuto';
+import IndustryProfessional from './pages/IndustryProfessional';
 import __Layout from './Layout.jsx';
 
 
@@ -26,6 +35,15 @@ export const PAGES = {
     "HowItWorks": HowItWorks,
     "application": application,
     "ThankYou": ThankYou,
+    "IndustryRestaurants": IndustryRestaurants,
+    "IndustryRetail": IndustryRetail,
+    "IndustryHealthcare": IndustryHealthcare,
+    "IndustryConstruction": IndustryConstruction,
+    "IndustryTransportation": IndustryTransportation,
+    "IndustryBeauty": IndustryBeauty,
+    "IndustryFitness": IndustryFitness,
+    "IndustryAuto": IndustryAuto,
+    "IndustryProfessional": IndustryProfessional,
 }
 
 export const pagesConfig = {

@@ -15,63 +15,72 @@ export default function Industries() {
       name: 'Restaurants & Food Service',
       description: 'From equipment upgrades to expansion, we help restaurants thrive with flexible funding.',
       stats: '$50K - $250K',
-      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop'
+      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop',
+      page: 'IndustryRestaurants'
     },
     {
       icon: ShoppingCart,
       name: 'Retail',
       description: 'Stock inventory, renovate your store, or launch marketing campaigns to boost sales.',
       stats: '$75K - $400K',
-      image: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800&h=600&fit=crop'
+      image: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800&h=600&fit=crop',
+      page: 'IndustryRetail'
     },
     {
       icon: Stethoscope,
       name: 'Healthcare & Medical',
       description: 'Purchase equipment, expand facilities, or manage cash flow for medical practices.',
       stats: '$100K - $500K',
-      image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=600&fit=crop'
+      image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=600&fit=crop',
+      page: 'IndustryHealthcare'
     },
     {
       icon: HardHat,
       name: 'Construction',
       description: 'Fund equipment, materials, and payroll for construction and contracting businesses.',
       stats: '$150K - $500K',
-      image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop'
+      image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop',
+      page: 'IndustryConstruction'
     },
     {
       icon: Truck,
       name: 'Transportation & Logistics',
       description: 'Expand your fleet, cover fuel costs, or manage seasonal fluctuations.',
       stats: '$100K - $500K',
-      image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop'
+      image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop',
+      page: 'IndustryTransportation'
     },
     {
       icon: Scissors,
       name: 'Beauty & Wellness',
       description: 'Renovate your salon, buy equipment, or open a new location.',
       stats: '$50K - $200K',
-      image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=600&fit=crop'
+      image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=600&fit=crop',
+      page: 'IndustryBeauty'
     },
     {
       icon: Dumbbell,
       name: 'Fitness & Recreation',
       description: 'Purchase equipment, expand your gym, or launch new programs.',
       stats: '$75K - $300K',
-      image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop'
+      image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop',
+      page: 'IndustryFitness'
     },
     {
       icon: Wrench,
       name: 'Auto Services',
       description: 'Buy lifts, diagnostic equipment, or expand your auto repair shop.',
       stats: '$50K - $250K',
-      image: 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=800&h=600&fit=crop'
+      image: 'https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=800&h=600&fit=crop',
+      page: 'IndustryAuto'
     },
     {
       icon: Building2,
       name: 'Professional Services',
       description: 'Fund growth initiatives for accounting, legal, consulting, and other service firms.',
       stats: '$75K - $400K',
-      image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop'
+      image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop',
+      page: 'IndustryProfessional'
     }
   ];
 
@@ -136,41 +145,42 @@ export default function Industries() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {industries.map((industry, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={industry.image}
-                    alt={industry.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-4 left-4">
-                    <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <industry.icon className="w-5 h-5 text-white" />
+              <Link to={createPageUrl(industry.page)} key={i}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                  className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={industry.image}
+                      alt={industry.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-4 left-4">
+                      <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <industry.icon className="w-5 h-5 text-white" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-4 right-4">
+                      <span className="text-xs font-semibold text-white bg-[#08708E] px-3 py-1 rounded-full">
+                        {industry.stats}
+                      </span>
                     </div>
                   </div>
-                  <div className="absolute bottom-4 right-4">
-                    <span className="text-xs font-semibold text-white bg-[#08708E] px-3 py-1 rounded-full">
-                      {industry.stats}
+                  
+                  <div className="p-6">
+                    <h3 className="text-lg font-bold text-slate-900 mb-2">{industry.name}</h3>
+                    <p className="text-slate-500 text-sm mb-4">{industry.description}</p>
+                    <span className="inline-flex items-center text-[#08708E] font-medium text-sm group-hover:gap-2 transition-all">
+                      Learn More <ArrowRight className="w-4 h-4 ml-1" />
                     </span>
                   </div>
-                </div>
-                
-                <div className="p-6">
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">{industry.name}</h3>
-                  <p className="text-slate-500 text-sm mb-4">{industry.description}</p>
-                  <Link to={createPageUrl('Application')} className="inline-flex items-center text-[#08708E] font-medium text-sm hover:gap-2 transition-all">
-                    Apply Now <ArrowRight className="w-4 h-4 ml-1" />
-                  </Link>
-                </div>
-              </motion.div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
