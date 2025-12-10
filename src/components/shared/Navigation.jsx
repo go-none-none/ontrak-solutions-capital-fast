@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [industriesOpen, setIndustriesOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,9 +24,21 @@ export default function Navigation() {
     { name: 'How It Works', href: createPageUrl('HowItWorks') },
     { name: 'FAQ', href: createPageUrl('FAQ') },
     { name: 'Use Cases', href: createPageUrl('UseCases') },
-    { name: 'Industries', href: createPageUrl('Industries') },
     { name: 'Reviews', href: createPageUrl('Reviews') },
     { name: 'Contact', href: createPageUrl('Contact') },
+  ];
+
+  const industries = [
+    { name: 'Restaurants & Food Service', href: createPageUrl('IndustryRestaurants') },
+    { name: 'Retail', href: createPageUrl('IndustryRetail') },
+    { name: 'Healthcare & Medical', href: createPageUrl('IndustryHealthcare') },
+    { name: 'Construction', href: createPageUrl('IndustryConstruction') },
+    { name: 'Transportation & Logistics', href: createPageUrl('IndustryTransportation') },
+    { name: 'Beauty & Wellness', href: createPageUrl('IndustryBeauty') },
+    { name: 'Fitness & Recreation', href: createPageUrl('IndustryFitness') },
+    { name: 'Auto Services', href: createPageUrl('IndustryAuto') },
+    { name: 'Professional Services', href: createPageUrl('IndustryProfessional') },
+    { name: 'View All Industries', href: createPageUrl('Industries') }
   ];
 
   return (

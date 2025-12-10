@@ -9,6 +9,10 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import FAQ from './pages/FAQ';
 import HowItWorks from './pages/HowItWorks';
 import application from './pages/application';
+import IndustryRestaurants from './pages/IndustryRestaurants';
+import IndustryRetail from './pages/IndustryRetail';
+import IndustryHealthcare from './pages/IndustryHealthcare';
+import IndustryConstruction from './pages/IndustryConstruction';
 import __Layout from './Layout.jsx';
 
 
@@ -24,6 +28,10 @@ export const PAGES = {
     "FAQ": FAQ,
     "HowItWorks": HowItWorks,
     "application": application,
+    "IndustryRestaurants": IndustryRestaurants,
+    "IndustryRetail": IndustryRetail,
+    "IndustryHealthcare": IndustryHealthcare,
+    "IndustryConstruction": IndustryConstruction,
 }
 
 export const pagesConfig = {
