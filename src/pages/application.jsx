@@ -1,69 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react';
 
 export default function Application() {
+  const [jotformUrl, setJotformUrl] = useState('');
   useEffect(() => {
-    // Load JotForm scripts
-    const scripts = [
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jquery-3.7.1.min.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.CompressorBase30.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.CompressorSVG.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.UndoButton.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jotform.signaturepad.new.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/static/prototype.forms.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/static/jotform.forms.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/maskedinput_5.0.9.min.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/punycode-1.4.1.min.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/imageinfo.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/file-uploader/fileuploader.js',
-      'https://cdn.jotfor.ms/s/umd/3cd7fdc8bce/for-widgets-server.js',
-      'https://cdn.jotfor.ms/s/umd/3cd7fdc8bce/for-live-prefill.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/smoothscroll.min.js',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/errorNavigation.js'
-    ];
-
-    // Enable event observer
-    window.enableEventObserver = true;
-
-    // Load scripts sequentially
-    scripts.forEach((src) => {
-      const script = document.createElement('script');
-      script.src = src;
-      script.type = 'text/javascript';
-      document.head.appendChild(script);
-    });
-
-    // Load CSS
-    const cssLinks = [
-      'https://cdn.jotfor.ms/stylebuilder/static/form-common.css?v=7df20c2',
-      'https://cdn.jotfor.ms/themes/CSS/defaultV2.css?v=7df20c2',
-      'https://cdn.jotfor.ms/themes/CSS/548b1325700cc48d318b4567.css?v=3.3.67259&themeRevisionID=64ff099762313412041c01ae',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/css/styles/payment/payment_styles.css?3.3.67259',
-      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/css/styles/payment/payment_feature.css?3.3.67259',
-      'https://cdn.jotfor.ms/stylebuilder/static/color-scheme.css?v=3.3.67259'
-    ];
-
-    cssLinks.forEach((href) => {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.type = 'text/css';
-      link.href = href;
-      document.head.appendChild(link);
-    });
-
-    // Pre-fill rep ID from URL if present
-    setTimeout(() => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const repId = urlParams.get('repId');
-      if (repId) {
-        const repInput = document.getElementById('input_103');
-        if (repInput) {
-          repInput.value = repId;
-        }
-      }
-    }, 1000);
+    // Get all URL parameters from current page
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Build JotForm URL with parameters
+    const baseUrl = 'https://form.jotform.com/252957146872065';
+    const params = new URLSearchParams();
+    
+    // Add repId if present
+    const repId = urlParams.get('repId');
+    if (repId) {
+      params.append('rep', repId);
+    }
+    
+    // Add iframe embed parameter
+    params.append('isIframeEmbed', '1');
+    
+    const url = `${baseUrl}?${params.toString()}`;
+    setJotformUrl(url);
   }, []);
 
   const reasons = [
@@ -143,18 +102,24 @@ export default function Application() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Form */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-3xl shadow-xl overflow-hidden p-6">
-                <div dangerouslySetInnerHTML={{__html: `
-                  <form class="jotform-form" action="https://submit.jotform.com/submit/252957146872065" method="post" enctype="multipart/form-data" name="form_252957146872065" id="252957146872065" accept-charset="utf-8" autocomplete="on">
-                    <input type="hidden" name="formID" value="252957146872065" />
-                    <div role="main" class="form-all">
-                      <p style="text-align: center; padding: 40px; color: #08708E; font-size: 18px;">
-                        Loading application form...
-                      </p>
-                    </div>
-                  </form>
-                `}} />
+            {jotformUrl && (
+              <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <iframe
+                  id="JotFormIFrame-252957146872065"
+                  title="OnTrak Business Funding Application"
+                  allowFullScreen
+                  allow="geolocation; microphone; camera; fullscreen"
+                  src={jotformUrl}
+                  frameBorder="0"
+                  className="w-full border-0"
+                  style={{
+                    minHeight: '2000px',
+                    height: 'auto'
+                  }}
+                  scrolling="yes"
+                />
               </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -191,6 +156,90 @@ export default function Application() {
         </div>
       </div>
     </section>
+
+    <script type="text/javascript" dangerouslySetInnerHTML={{__html: `
+        var ifr = document.getElementById("JotFormIFrame-252957146872065");
+        if (ifr) {
+          var src = ifr.src;
+          var iframeParams = [];
+          if (window.location.href && window.location.href.indexOf("?") > -1) {
+            iframeParams = iframeParams.concat(window.location.href.substr(window.location.href.indexOf("?") + 1).split('&'));
+          }
+          if (src && src.indexOf("?") > -1) {
+            iframeParams = iframeParams.concat(src.substr(src.indexOf("?") + 1).split("&"));
+            src = src.substr(0, src.indexOf("?"))
+          }
+          iframeParams.push("isIframeEmbed=1");
+          ifr.src = src + "?" + iframeParams.join('&');
+        }
+        window.handleIFrameMessage = function(e) {
+          if (typeof e.data === 'object') { return; }
+          var args = e.data.split(":");
+          if (args.length > 2) { iframe = document.getElementById("JotFormIFrame-" + args[(args.length - 1)]); } else { iframe = document.getElementById("JotFormIFrame"); }
+          if (!iframe) { return; }
+          switch (args[0]) {
+            case "scrollIntoView":
+              iframe.scrollIntoView();
+              break;
+            case "setHeight":
+              iframe.style.height = args[1] + "px";
+              if (!isNaN(args[1]) && parseInt(iframe.style.minHeight) > parseInt(args[1])) {
+                iframe.style.minHeight = args[1] + "px";
+              }
+              break;
+            case "collapseErrorPage":
+              if (iframe.clientHeight > window.innerHeight) {
+                iframe.style.height = window.innerHeight + "px";
+              }
+              break;
+            case "reloadPage":
+              window.location.reload();
+              break;
+            case "loadScript":
+              if( !window.isPermitted(e.origin, ['jotform.com', 'jotform.pro']) ) { break; }
+              var src = args[1];
+              if (args.length > 3) {
+                  src = args[1] + ':' + args[2];
+              }
+              var script = document.createElement('script');
+              script.src = src;
+              script.type = 'text/javascript';
+              document.body.appendChild(script);
+              break;
+            case "exitFullscreen":
+              if (window.document.exitFullscreen) window.document.exitFullscreen();
+              else if (window.document.mozCancelFullScreen) window.document.mozCancelFullScreen();
+              else if (window.document.mozCancelFullscreen) window.document.mozCancelFullScreen();
+              else if (window.document.webkitExitFullscreen) window.document.webkitExitFullscreen();
+              else if (window.document.msExitFullscreen) window.document.msExitFullscreen();
+              break;
+          }
+          var isJotForm = (e.origin.indexOf("jotform") > -1) ? true : false;
+          if(isJotForm && "contentWindow" in iframe && "postMessage" in iframe.contentWindow) {
+            var urls = {"docurl":encodeURIComponent(document.URL),"referrer":encodeURIComponent(document.referrer)};
+            iframe.contentWindow.postMessage(JSON.stringify({"type":"urls","value":urls}), "*");
+          }
+        };
+        window.isPermitted = function(originUrl, whitelisted_domains) {
+          var url = document.createElement('a');
+          url.href = originUrl;
+          var hostname = url.hostname;
+          var result = false;
+          if( typeof hostname !== 'undefined' ) {
+            whitelisted_domains.forEach(function(element) {
+                if( hostname.slice((-1 * element.length - 1)) === '.'.concat(element) ||  hostname === element ) {
+                    result = true;
+                }
+            });
+            return result;
+          }
+        };
+        if (window.addEventListener) {
+          window.addEventListener("message", handleIFrameMessage, false);
+        } else if (window.attachEvent) {
+          window.attachEvent("onmessage", handleIFrameMessage);
+        }
+      `}} />
     </div>
   );
 }
