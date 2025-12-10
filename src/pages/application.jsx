@@ -1,36 +1,69 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react';
 
 export default function Application() {
   useEffect(() => {
-    const iframe = document.getElementById('JotFormIFrame-252957146872065');
-    if (!iframe) return;
+    // Load JotForm scripts
+    const scripts = [
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jquery-3.7.1.min.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.CompressorBase30.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.CompressorSVG.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.UndoButton.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jotform.signaturepad.new.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/static/prototype.forms.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/static/jotform.forms.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/maskedinput_5.0.9.min.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/punycode-1.4.1.min.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/imageinfo.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/file-uploader/fileuploader.js',
+      'https://cdn.jotfor.ms/s/umd/3cd7fdc8bce/for-widgets-server.js',
+      'https://cdn.jotfor.ms/s/umd/3cd7fdc8bce/for-live-prefill.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/smoothscroll.min.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/errorNavigation.js'
+    ];
 
-    // Get all URL parameters and append them to iframe src
-    const params = window.location.search;
-    let iframeSrc = 'https://form.jotform.com/252957146872065';
-    if (params) {
-      iframeSrc += params;
-    }
-    iframe.src = iframeSrc;
+    // Enable event observer
+    window.enableEventObserver = true;
 
-    // Load JotForm embed handler script
-    const embedScript = document.createElement('script');
-    embedScript.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
-    document.body.appendChild(embedScript);
+    // Load scripts sequentially
+    scripts.forEach((src) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.type = 'text/javascript';
+      document.head.appendChild(script);
+    });
 
-    embedScript.onload = () => {
-      if (window.jotformEmbedHandler) {
-        window.jotformEmbedHandler("iframe[id='JotFormIFrame-252957146872065']", "https://form.jotform.com/");
+    // Load CSS
+    const cssLinks = [
+      'https://cdn.jotfor.ms/stylebuilder/static/form-common.css?v=7df20c2',
+      'https://cdn.jotfor.ms/themes/CSS/defaultV2.css?v=7df20c2',
+      'https://cdn.jotfor.ms/themes/CSS/548b1325700cc48d318b4567.css?v=3.3.67259&themeRevisionID=64ff099762313412041c01ae',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/css/styles/payment/payment_styles.css?3.3.67259',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/css/styles/payment/payment_feature.css?3.3.67259',
+      'https://cdn.jotfor.ms/stylebuilder/static/color-scheme.css?v=3.3.67259'
+    ];
+
+    cssLinks.forEach((href) => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = href;
+      document.head.appendChild(link);
+    });
+
+    // Pre-fill rep ID from URL if present
+    setTimeout(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const repId = urlParams.get('repId');
+      if (repId) {
+        const repInput = document.getElementById('input_103');
+        if (repInput) {
+          repInput.value = repId;
+        }
       }
-    };
-
-    return () => {
-      if (embedScript.parentNode) {
-        embedScript.parentNode.removeChild(embedScript);
-      }
-    };
+    }, 1000);
   }, []);
 
   const reasons = [
