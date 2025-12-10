@@ -47,12 +47,12 @@ export default function Navigation() {
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden xl:flex items-center gap-6 2xl:gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.href}
-                  className={`text-base font-normal transition-all duration-300 hover:opacity-70 ${
+                  className={`text-sm xl:text-base font-normal transition-all duration-300 hover:opacity-70 whitespace-nowrap ${
                     isScrolled ? 'text-slate-700' : 'text-white'
                   }`}
                 >
@@ -62,10 +62,10 @@ export default function Navigation() {
             </div>
 
             {/* CTA Button */}
-            <div className="hidden lg:block">
+            <div className="hidden xl:block">
               <Link to={createPageUrl('Application')}>
                 <Button 
-                  className={`px-6 py-2.5 rounded-full font-semibold transition-all duration-300 ${
+                  className={`px-4 xl:px-6 py-2.5 rounded-full font-semibold transition-all duration-300 text-sm xl:text-base ${
                     isScrolled 
                       ? 'bg-[#08708E] hover:bg-[#065a72] text-white' 
                       : 'bg-white text-[#08708E] hover:bg-white/90'
@@ -78,7 +78,7 @@ export default function Navigation() {
 
             {/* Mobile Menu Button */}
             <button
-              className="lg:hidden p-2"
+              className="xl:hidden p-2"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? (
@@ -98,7 +98,7 @@ export default function Navigation() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-white pt-20 px-6 lg:hidden overflow-y-auto"
+            className="fixed inset-0 z-40 bg-white pt-20 px-6 xl:hidden overflow-y-auto"
           >
             <div className="flex flex-col gap-2 py-4 pb-24">
               {navLinks.map((link) => (
