@@ -182,7 +182,7 @@ export default function IndustryRestaurants() {
                   <div className="text-slate-600">Approval Rate</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#08708E] mb-1">500+</div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">287</div>
                   <div className="text-slate-600">Restaurants Funded</div>
                 </div>
               </div>

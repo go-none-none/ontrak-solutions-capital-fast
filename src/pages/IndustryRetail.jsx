@@ -182,7 +182,7 @@ export default function IndustryRetail() {
                   <div className="text-slate-600">Approval Rate</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#08708E] mb-1">800+</div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">292</div>
                   <div className="text-slate-600">Retail Businesses Funded</div>
                 </div>
               </div>

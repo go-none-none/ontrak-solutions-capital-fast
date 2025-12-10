@@ -182,7 +182,7 @@ export default function IndustryAuto() {
                   <div className="text-slate-600">Approval Rate</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#08708E] mb-1">450+</div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">219</div>
                   <div className="text-slate-600">Auto Shops Funded</div>
                 </div>
               </div>

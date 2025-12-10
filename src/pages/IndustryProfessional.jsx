@@ -182,7 +182,7 @@ export default function IndustryProfessional() {
                   <div className="text-slate-600">Approval Rate</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#08708E] mb-1">550+</div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">233</div>
                   <div className="text-slate-600">Professional Firms Funded</div>
                 </div>
               </div>

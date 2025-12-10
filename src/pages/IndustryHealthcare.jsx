@@ -182,7 +182,7 @@ export default function IndustryHealthcare() {
                   <div className="text-slate-600">Approval Rate</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#08708E] mb-1">600+</div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">248</div>
                   <div className="text-slate-600">Healthcare Practices Funded</div>
                 </div>
               </div>

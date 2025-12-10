@@ -182,7 +182,7 @@ export default function IndustryTransportation() {
                   <div className="text-slate-600">Approval Rate</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#08708E] mb-1">400+</div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">201</div>
                   <div className="text-slate-600">Transportation Companies Funded</div>
                 </div>
               </div>

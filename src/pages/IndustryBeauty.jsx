@@ -182,7 +182,7 @@ export default function IndustryBeauty() {
                   <div className="text-slate-600">Approval Rate</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#08708E] mb-1">350+</div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">178</div>
                   <div className="text-slate-600">Salons & Spas Funded</div>
                 </div>
               </div>

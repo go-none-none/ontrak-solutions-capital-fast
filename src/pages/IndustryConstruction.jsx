@@ -182,7 +182,7 @@ export default function IndustryConstruction() {
                   <div className="text-slate-600">Approval Rate</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#08708E] mb-1">700+</div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">265</div>
                   <div className="text-slate-600">Construction Companies Funded</div>
                 </div>
               </div>

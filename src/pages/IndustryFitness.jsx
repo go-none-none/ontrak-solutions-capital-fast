@@ -182,7 +182,7 @@ export default function IndustryFitness() {
                   <div className="text-slate-600">Approval Rate</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#08708E] mb-1">250+</div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">142</div>
                   <div className="text-slate-600">Fitness Centers Funded</div>
                 </div>
               </div>
