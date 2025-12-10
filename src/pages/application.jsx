@@ -8,28 +8,17 @@ export default function Application() {
     const urlParams = new URLSearchParams(window.location.search);
     const repId = urlParams.get('repId');
     
-    // Build JotForm script URL with parameters
-    let scriptUrl = 'https://form.jotform.com/jsform/252957146872065';
+    // Build iframe URL with rep parameter
+    let iframeSrc = 'https://form.jotform.com/252957146872065';
     if (repId) {
-      scriptUrl += `?rep=${encodeURIComponent(repId)}`;
+      iframeSrc += `?rep=${encodeURIComponent(repId)}`;
     }
     
-    // Load JotForm script
-    const script = document.createElement('script');
-    script.src = scriptUrl;
-    script.type = 'text/javascript';
-    
-    const container = document.getElementById('jotform-container');
-    if (container) {
-      container.appendChild(script);
+    // Set iframe src
+    const iframe = document.getElementById('JotFormIFrame-252957146872065');
+    if (iframe) {
+      iframe.src = iframeSrc;
     }
-
-    return () => {
-      // Cleanup script on unmount
-      if (container && script.parentNode) {
-        container.removeChild(script);
-      }
-    };
   }, []);
 
   const reasons = [
@@ -109,8 +98,20 @@ export default function Application() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Form */}
             <div className="lg:col-span-2">
-              <div id="jotform-container" className="bg-white rounded-3xl shadow-xl overflow-hidden p-8">
-                {/* JotForm will load here via script */}
+              <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <iframe
+                  id="JotFormIFrame-252957146872065"
+                  title="OnTrak Business Funding Application"
+                  allowFullScreen
+                  allow="geolocation; microphone; camera; fullscreen"
+                  frameBorder="0"
+                  className="w-full border-0"
+                  style={{
+                    minHeight: '2000px',
+                    height: 'auto'
+                  }}
+                  scrolling="yes"
+                />
               </div>
           </div>
 
