@@ -21,7 +21,6 @@ export default function Application() {
         <iframe
           id="JotFormIFrame-252957146872065"
           title="Application Form"
-          onload="window.parent.scrollTo(0,0)"
           allowtransparency="true"
           allow="geolocation; microphone; camera; fullscreen"
           src="${iframeSrc}"
