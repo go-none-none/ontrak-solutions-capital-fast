@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { HardHat, ArrowRight, CheckCircle, DollarSign, Clock, TrendingUp, Users } from 'lucide-react';
+import { HardHat, ArrowRight, CheckCircle, DollarSign, Clock, TrendingUp, Users, Shield, Zap, ThumbsUp } from 'lucide-react';
 
 export default function IndustryConstruction() {
   const benefits = [
