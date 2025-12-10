@@ -92,8 +92,107 @@ export default function IndustryProfessional() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Common Use Cases */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              Common Funding Uses for Professional Services
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Here's how service firms are using our funding to scale and compete
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { title: 'Talent Acquisition', description: 'Hire experienced professionals, expand your team, competitive salaries, and build expertise' },
+              { title: 'Technology Investment', description: 'Practice management software, CRM systems, cloud infrastructure, and digital tools' },
+              { title: 'Office Expansion', description: 'Additional office space, conference rooms, private offices, and accommodate growth' },
+              { title: 'Marketing & Business Development', description: 'Digital marketing, content creation, networking events, and client acquisition campaigns' },
+              { title: 'Training & Certifications', description: 'Professional development, industry certifications, continuing education, and stay competitive' },
+              { title: 'Working Capital', description: 'Bridge gaps between invoicing and payment, manage payroll, and maintain operations' }
+            ].map((useCase, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{useCase.title}</h3>
+                <p className="text-slate-600 text-sm">{useCase.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
       <section className="py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
+                Why Professional Firms Trust OnTrak
+              </h2>
+              <div className="space-y-6">
+                {[
+                  { icon: Zap, title: 'Fast Funding', description: 'Get approved in hours, funded within 24-48 hours - capitalize on opportunities quickly' },
+                  { icon: Shield, title: 'Confidential Process', description: 'We understand professional discretion and maintain strict confidentiality' },
+                  { icon: ThumbsUp, title: 'Flexible Terms', description: 'Payment schedules that align with client billing cycles and revenue patterns' },
+                  { icon: CheckCircle, title: 'High Approval Rate', description: 'We work with solo practitioners and established firms - 95% approval rate' }
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-[#08708E] rounded-xl flex items-center justify-center">
+                      <item.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900 mb-1">{item.title}</h3>
+                      <p className="text-slate-600">{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white rounded-2xl p-8 shadow-xl"
+            >
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">Quick Stats</h3>
+              <div className="space-y-6">
+                <div className="border-b border-slate-200 pb-4">
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">$10K - $400K</div>
+                  <div className="text-slate-600">Funding Range</div>
+                </div>
+                <div className="border-b border-slate-200 pb-4">
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">24-48 hrs</div>
+                  <div className="text-slate-600">Average Funding Time</div>
+                </div>
+                <div className="border-b border-slate-200 pb-4">
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">95%</div>
+                  <div className="text-slate-600">Approval Rate</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">550+</div>
+                  <div className="text-slate-600">Professional Firms Funded</div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
