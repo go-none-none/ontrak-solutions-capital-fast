@@ -196,26 +196,33 @@ export default function FAQ() {
               { icon: Edit, title: 'Apply Online', description: '5-10 minute application with basic business info' },
               { icon: Search, title: 'Quick Review', description: 'We analyze your business and provide options' },
               { icon: CheckCircle, title: 'Get Funded', description: 'Receive funds in your account within 24 hours' }
-            ].map((step, i) => (
-              <Link key={i} to={createPageUrl('Application')}>
+            ].map((step, i) => {
+              const card = (
                 <motion.div
+                  key={i === 0 ? undefined : i}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="text-center p-6 bg-slate-50 rounded-2xl hover:bg-white hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
+                  className={`text-center p-6 bg-slate-50 rounded-2xl transition-all duration-300 ${i === 0 ? 'hover:bg-white hover:shadow-xl hover:scale-105 cursor-pointer' : ''}`}
                 >
                   <div className="w-14 h-14 rounded-xl bg-[#08708E] flex items-center justify-center mx-auto mb-4">
                     <step.icon className="w-7 h-7 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center justify-center gap-2">
                     {step.title}
-                    <ArrowRight className="w-4 h-4 text-[#08708E]" />
+                    {i === 0 && <ArrowRight className="w-4 h-4 text-[#08708E]" />}
                   </h3>
                   <p className="text-sm text-slate-600">{step.description}</p>
                 </motion.div>
-              </Link>
-            ))}
+              );
+
+              return i === 0 ? (
+                <Link key={i} to={createPageUrl('Application')}>
+                  {card}
+                </Link>
+              ) : card;
+            })}
           </div>
         </div>
       </section>
