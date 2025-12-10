@@ -179,9 +179,11 @@ export default function Industries() {
                       <span className="inline-flex items-center text-[#08708E] font-medium text-sm group-hover:gap-2 transition-all">
                         Learn More <ArrowRight className="w-4 h-4 ml-1" />
                       </span>
-                      <Button size="sm" className="bg-[#08708E] hover:bg-[#065a72] text-white">
-                        Apply Now
-                      </Button>
+                      <Link to={createPageUrl('application')} onClick={(e) => e.stopPropagation()}>
+                        <Button size="sm" className="bg-[#08708E] hover:bg-[#065a72] text-white">
+                          Apply Now
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>
