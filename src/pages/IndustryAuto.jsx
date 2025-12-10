@@ -52,7 +52,7 @@ export default function IndustryAuto() {
               </Link>
               <div className="flex items-center gap-2 text-white/90">
                 <CheckCircle className="w-5 h-5 text-[#22d3ee]" />
-                <span className="font-medium">$50K - $250K Available</span>
+                <span className="font-medium">$10K - $250K Available</span>
               </div>
             </div>
           </motion.div>
