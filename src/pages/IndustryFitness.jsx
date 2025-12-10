@@ -92,8 +92,107 @@ export default function IndustryFitness() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Common Use Cases */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              Common Funding Uses for Fitness
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Here's how gym and studio owners are using our funding to build thriving communities
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { title: 'Fitness Equipment', description: 'Cardio machines, free weights, resistance equipment, functional training gear, and specialized tools' },
+              { title: 'Facility Expansion', description: 'Add square footage, additional workout areas, locker rooms, and create more space for members' },
+              { title: 'Class & Programs', description: 'Launch new group fitness classes, personal training programs, and specialized offerings' },
+              { title: 'Technology & Software', description: 'Member management systems, booking software, virtual training platforms, and access control' },
+              { title: 'Marketing & Acquisition', description: 'Member acquisition campaigns, referral programs, grand opening promotions, and brand awareness' },
+              { title: 'Interior Design', description: 'Mirrors, flooring, lighting, sound systems, and create an inspiring workout environment' }
+            ].map((useCase, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{useCase.title}</h3>
+                <p className="text-slate-600 text-sm">{useCase.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
       <section className="py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
+                Why Fitness Businesses Trust OnTrak
+              </h2>
+              <div className="space-y-6">
+                {[
+                  { icon: Zap, title: 'Fast Funding', description: 'Get approved in hours, funded within 24-48 hours - launch your expansion quickly' },
+                  { icon: Shield, title: 'No Equipment Liens', description: 'Keep your equipment free and clear with unsecured funding options' },
+                  { icon: ThumbsUp, title: 'Flexible Terms', description: 'Payment structures that align with membership cycles and seasonal trends' },
+                  { icon: CheckCircle, title: 'High Approval Rate', description: 'We work with gyms, studios, and fitness centers of all sizes - 95% approval rate' }
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-[#08708E] rounded-xl flex items-center justify-center">
+                      <item.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900 mb-1">{item.title}</h3>
+                      <p className="text-slate-600">{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white rounded-2xl p-8 shadow-xl"
+            >
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">Quick Stats</h3>
+              <div className="space-y-6">
+                <div className="border-b border-slate-200 pb-4">
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">$10K - $300K</div>
+                  <div className="text-slate-600">Funding Range</div>
+                </div>
+                <div className="border-b border-slate-200 pb-4">
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">24-48 hrs</div>
+                  <div className="text-slate-600">Average Funding Time</div>
+                </div>
+                <div className="border-b border-slate-200 pb-4">
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">95%</div>
+                  <div className="text-slate-600">Approval Rate</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-[#08708E] mb-1">250+</div>
+                  <div className="text-slate-600">Fitness Centers Funded</div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
