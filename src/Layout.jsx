@@ -14,9 +14,12 @@ export default function Layout({ children }) {
     const handleLinkClick = (e) => {
       const link = e.target.closest('a');
       if (link) {
-        setTimeout(() => {
-          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-        }, 0);
+        const href = link.getAttribute('href');
+        if (href && !href.startsWith('tel:') && !href.startsWith('mailto:')) {
+          setTimeout(() => {
+            window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+          }, 0);
+        }
       }
     };
 
