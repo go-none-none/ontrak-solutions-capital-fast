@@ -9,6 +9,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import FAQ from './pages/FAQ';
 import HowItWorks from './pages/HowItWorks';
 import application from './pages/application';
+import ThankYou from './pages/ThankYou';
 import __Layout from './Layout.jsx';
 
 
@@ -24,6 +25,7 @@ export const PAGES = {
     "FAQ": FAQ,
     "HowItWorks": HowItWorks,
     "application": application,
+    "ThankYou": ThankYou,
 }
 
 export const pagesConfig = {
