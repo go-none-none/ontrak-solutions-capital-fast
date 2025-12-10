@@ -11,7 +11,7 @@ export default function HowItWorks() {
       icon: FileText,
       number: '01',
       title: 'Quick Application',
-      description: 'Fill out our simple online application in just 5 minutes. No paperwork, no hassle.'
+      description: 'Fill out our simple online application in just 2-3 minutes. No paperwork, no hassle.'
     },
     {
       icon: Search,

@@ -193,7 +193,7 @@ export default function FAQ() {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
-              { icon: Edit, title: 'Apply Online', description: '5-10 minute application with basic business info' },
+              { icon: Edit, title: 'Apply Online', description: '2-3 minute application with basic business info' },
               { icon: Search, title: 'Quick Review', description: 'We analyze your business and provide options' },
               { icon: CheckCircle, title: 'Get Funded', description: 'Receive funds in your account within 24 hours' }
             ].map((step, i) => {

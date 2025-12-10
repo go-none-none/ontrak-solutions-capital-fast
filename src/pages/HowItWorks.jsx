@@ -28,9 +28,9 @@ export default function HowItWorks() {
       icon: FileText,
       number: '01',
       title: 'Apply Online',
-      description: 'Complete our simple online application in just 5-10 minutes. We\'ll ask for basic business information and your funding needs.',
+      description: 'Complete our simple online application in just 2-3 minutes. We\'ll ask for basic business information and your funding needs.',
       features: [
-        'Quick 5-10 minute application',
+        'Quick 2-3 minute application',
         'No lengthy paperwork',
         'Secure online process',
         'Receive call back within the hour'
@@ -253,7 +253,7 @@ export default function HowItWorks() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#08708E]/10 rounded-full text-[#08708E] text-sm font-semibold mb-6">
               <Clock className="w-4 h-4" />
-              5-10 Minutes
+              2-3 Minutes
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
               What You'll Need to Apply
