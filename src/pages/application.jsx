@@ -143,21 +143,17 @@ export default function Application() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Form */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-                <iframe
-                  id="JotFormIFrame-252957146872065"
-                  title="OnTrak Solutions Business Loan Application"
-                  allowTransparency="true"
-                  allow="geolocation; microphone; camera; fullscreen; payment"
-                  frameBorder="0"
-                  style={{
-                    minWidth: '100%',
-                    maxWidth: '100%',
-                    height: '539px',
-                    border: 'none'
-                  }}
-                  scrolling="no"
-                />
+              <div className="bg-white rounded-3xl shadow-xl overflow-hidden p-6">
+                <div dangerouslySetInnerHTML={{__html: `
+                  <form class="jotform-form" action="https://submit.jotform.com/submit/252957146872065" method="post" enctype="multipart/form-data" name="form_252957146872065" id="252957146872065" accept-charset="utf-8" autocomplete="on">
+                    <input type="hidden" name="formID" value="252957146872065" />
+                    <div role="main" class="form-all">
+                      <p style="text-align: center; padding: 40px; color: #08708E; font-size: 18px;">
+                        Loading application form...
+                      </p>
+                    </div>
+                  </form>
+                `}} />
               </div>
           </div>
 
