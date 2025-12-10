@@ -43,7 +43,7 @@ export default function IndustryAuto() {
             <p className="text-xl text-white/90 mb-8">
               Buy lifts, diagnostic equipment, or expand your auto repair shop with specialized automotive funding.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 items-start">
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
               <Link to={createPageUrl('application')}>
                 <Button className="bg-white text-[#08708E] hover:bg-white/90 px-8 py-6 rounded-full font-semibold text-lg">
                   Apply Now

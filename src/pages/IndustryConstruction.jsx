@@ -43,7 +43,7 @@ export default function IndustryConstruction() {
             <p className="text-xl text-white/90 mb-8">
               Fund equipment, materials, and payroll for construction and contracting businesses with flexible financing options.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 items-start">
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
               <Link to={createPageUrl('application')}>
                 <Button className="bg-white text-[#08708E] hover:bg-white/90 px-8 py-6 rounded-full font-semibold text-lg">
                   Apply Now
