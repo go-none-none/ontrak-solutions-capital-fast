@@ -114,7 +114,6 @@ export default function Application() {
                 <iframe
                   id="JotFormIFrame-252957146872065"
                   title="OnTrak Solutions Business Loan Application"
-                  onLoad={() => window.parent.scrollTo(0,0)}
                   allowTransparency="true"
                   allow="geolocation; microphone; camera; fullscreen; payment"
                   frameBorder="0"
