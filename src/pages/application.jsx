@@ -4,32 +4,59 @@ import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react
 
 export default function Application() {
   useEffect(() => {
-    const iframe = document.getElementById('JotFormIFrame-252957146872065');
-    if (!iframe) return;
+    // Enable event observer for JotForm
+    window.enableEventObserver = true;
 
-    // Get all URL parameters and append them to iframe src
-    const params = window.location.search;
-    let iframeSrc = 'https://form.jotform.com/252957146872065';
-    if (params) {
-      iframeSrc += params;
-    }
-    iframe.src = iframeSrc;
-
-    // Load JotForm embed handler script
-    const embedScript = document.createElement('script');
-    embedScript.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
-    document.body.appendChild(embedScript);
-
-    embedScript.onload = () => {
-      if (window.jotformEmbedHandler) {
-        window.jotformEmbedHandler("iframe[id='JotFormIFrame-252957146872065']", "https://form.jotform.com/");
+    // Get URL parameters to pass to form
+    const urlParams = new URLSearchParams(window.location.search);
+    const repId = urlParams.get('repId');
+    
+    // Set rep ID if present
+    if (repId) {
+      const repInput = document.getElementById('input_103');
+      if (repInput) {
+        repInput.value = repId;
       }
-    };
+    }
+
+    // Load JotForm scripts
+    const scripts = [
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jquery-3.7.1.min.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.CompressorBase30.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.CompressorSVG.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jSignature/jSignature.UndoButton.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/jotform.signaturepad.new.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/static/prototype.forms.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/static/jotform.forms.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/maskedinput_5.0.9.min.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/punycode-1.4.1.min.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/imageinfo.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/file-uploader/fileuploader.js',
+      'https://cdn.jotfor.ms/s/umd/3cd7fdc8bce/for-widgets-server.js',
+      'https://cdn.jotfor.ms/s/umd/3cd7fdc8bce/for-live-prefill.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/vendor/smoothscroll.min.js',
+      'https://cdn.jotfor.ms/s/static/8ae8dc8556c/js/errorNavigation.js'
+    ];
+
+    scripts.forEach((src, index) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.type = 'text/javascript';
+      if (src.includes('punycode')) {
+        script.defer = true;
+      }
+      document.body.appendChild(script);
+    });
 
     return () => {
-      if (embedScript.parentNode) {
-        embedScript.parentNode.removeChild(embedScript);
-      }
+      // Cleanup scripts on unmount
+      scripts.forEach(src => {
+        const existingScript = document.querySelector(`script[src="${src}"]`);
+        if (existingScript && existingScript.parentNode) {
+          existingScript.parentNode.removeChild(existingScript);
+        }
+      });
     };
   }, []);
 
@@ -110,23 +137,30 @@ export default function Application() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Form */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-                <iframe
-                  id="JotFormIFrame-252957146872065"
-                  title="OnTrak Solutions Business Loan Application"
-                  allowTransparency="true"
-                  allow="geolocation; microphone; camera; fullscreen; payment"
-                  frameBorder="0"
-                  style={{
-                    minWidth: '100%',
-                    maxWidth: '100%',
-                    height: '539px',
-                    border: 'none'
-                  }}
-                  scrolling="no"
-                />
+              <div className="bg-white rounded-3xl shadow-xl overflow-hidden p-8">
+                <div id="jotform-container" dangerouslySetInnerHTML={{ __html: `
+                  <link type="text/css" rel="stylesheet" href="https://cdn.jotfor.ms/stylebuilder/static/form-common.css?v=7df20c2" />
+                  <link type="text/css" rel="stylesheet" href="https://cdn.jotfor.ms/themes/CSS/defaultV2.css?v=7df20c2" />
+                  <link type="text/css" rel="stylesheet" href="https://cdn.jotfor.ms/themes/CSS/548b1325700cc48d318b4567.css?v=3.3.67259&themeRevisionID=64ff099762313412041c01ae"/>
+                  <link type="text/css" rel="stylesheet" href="https://cdn.jotfor.ms/s/static/8ae8dc8556c/css/styles/payment/payment_styles.css?3.3.67259" />
+                  <link type="text/css" rel="stylesheet" href="https://cdn.jotfor.ms/s/static/8ae8dc8556c/css/styles/payment/payment_feature.css?3.3.67259" />
+
+                  <form class="jotform-form" action="https://submit.jotform.com/submit/252957146872065" method="post" enctype="multipart/form-data" name="form_252957146872065" id="252957146872065" accept-charset="utf-8" autocomplete="on">
+                    <input type="hidden" name="formID" value="252957146872065" />
+                    <input type="hidden" id="JWTContainer" value="" />
+                    <input type="hidden" id="cardinalOrderNumber" value="" />
+                    <input type="hidden" id="jsExecutionTracker" name="jsExecutionTracker" value="build-date-1765391409595" />
+                    <input type="hidden" id="submitSource" name="submitSource" value="unknown" />
+                    <input type="hidden" id="buildDate" name="buildDate" value="1765391409595" />
+                    <div role="main" class="form-all">
+                      <p style="text-align: center; font-size: 16px; color: #08708E; margin-bottom: 20px;">
+                        Complete your application and get a decision within 24 hours
+                      </p>
+                    </div>
+                  </form>
+                `}} />
               </div>
-          </div>
+            </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
@@ -160,92 +194,8 @@ export default function Application() {
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <script type="text/javascript" dangerouslySetInnerHTML={{__html: `
-        var ifr = document.getElementById("JotFormIFrame-252957146872065");
-        if (ifr) {
-          var src = ifr.src;
-          var iframeParams = [];
-          if (window.location.href && window.location.href.indexOf("?") > -1) {
-            iframeParams = iframeParams.concat(window.location.href.substr(window.location.href.indexOf("?") + 1).split('&'));
-          }
-          if (src && src.indexOf("?") > -1) {
-            iframeParams = iframeParams.concat(src.substr(src.indexOf("?") + 1).split("&"));
-            src = src.substr(0, src.indexOf("?"))
-          }
-          iframeParams.push("isIframeEmbed=1");
-          ifr.src = src + "?" + iframeParams.join('&');
-        }
-        window.handleIFrameMessage = function(e) {
-          if (typeof e.data === 'object') { return; }
-          var args = e.data.split(":");
-          if (args.length > 2) { iframe = document.getElementById("JotFormIFrame-" + args[(args.length - 1)]); } else { iframe = document.getElementById("JotFormIFrame"); }
-          if (!iframe) { return; }
-          switch (args[0]) {
-            case "scrollIntoView":
-              iframe.scrollIntoView();
-              break;
-            case "setHeight":
-              iframe.style.height = args[1] + "px";
-              if (!isNaN(args[1]) && parseInt(iframe.style.minHeight) > parseInt(args[1])) {
-                iframe.style.minHeight = args[1] + "px";
-              }
-              break;
-            case "collapseErrorPage":
-              if (iframe.clientHeight > window.innerHeight) {
-                iframe.style.height = window.innerHeight + "px";
-              }
-              break;
-            case "reloadPage":
-              window.location.reload();
-              break;
-            case "loadScript":
-              if( !window.isPermitted(e.origin, ['jotform.com', 'jotform.pro']) ) { break; }
-              var src = args[1];
-              if (args.length > 3) {
-                  src = args[1] + ':' + args[2];
-              }
-              var script = document.createElement('script');
-              script.src = src;
-              script.type = 'text/javascript';
-              document.body.appendChild(script);
-              break;
-            case "exitFullscreen":
-              if (window.document.exitFullscreen) window.document.exitFullscreen();
-              else if (window.document.mozCancelFullScreen) window.document.mozCancelFullScreen();
-              else if (window.document.mozCancelFullscreen) window.document.mozCancelFullScreen();
-              else if (window.document.webkitExitFullscreen) window.document.webkitExitFullscreen();
-              else if (window.document.msExitFullscreen) window.document.msExitFullscreen();
-              break;
-          }
-          var isJotForm = (e.origin.indexOf("jotform") > -1) ? true : false;
-          if(isJotForm && "contentWindow" in iframe && "postMessage" in iframe.contentWindow) {
-            var urls = {"docurl":encodeURIComponent(document.URL),"referrer":encodeURIComponent(document.referrer)};
-            iframe.contentWindow.postMessage(JSON.stringify({"type":"urls","value":urls}), "*");
-          }
-        };
-        window.isPermitted = function(originUrl, whitelisted_domains) {
-          var url = document.createElement('a');
-          url.href = originUrl;
-          var hostname = url.hostname;
-          var result = false;
-          if( typeof hostname !== 'undefined' ) {
-            whitelisted_domains.forEach(function(element) {
-                if( hostname.slice((-1 * element.length - 1)) === '.'.concat(element) ||  hostname === element ) {
-                    result = true;
-                }
-            });
-            return result;
-          }
-        };
-        if (window.addEventListener) {
-          window.addEventListener("message", handleIFrameMessage, false);
-        } else if (window.attachEvent) {
-          window.attachEvent("onmessage", handleIFrameMessage);
-        }
-      `}} />
-    </div>
+        </div>
+        </section>
+        </div>
   );
 }
