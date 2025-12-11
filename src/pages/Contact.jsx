@@ -177,7 +177,10 @@ export default function Contact() {
                 >
                   <input type="hidden" name="oid" value="00Dam00001TLTFV" />
                   <input type="hidden" name="retURL" value="" />
-
+                
+                {/* Lead Source for Salesforce routing */}
+                <input type="hidden" name="lead_source" value="Website" />
+                
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="first_name" className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
