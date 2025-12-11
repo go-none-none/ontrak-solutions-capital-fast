@@ -9,15 +9,26 @@ export default function SalesforceWebToLeadForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
-    const formData = new FormData(form);
     
-    fetch(form.action, {
-      method: 'POST',
-      body: formData,
-      mode: 'no-cors'
-    }).then(() => {
-      setSubmitted(true);
-    });
+    // Create a hidden iframe to submit the form
+    const iframe = document.createElement('iframe');
+    iframe.name = 'hidden_iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    
+    // Set form target to iframe
+    form.target = 'hidden_iframe';
+    
+    // Submit the form
+    form.submit();
+    
+    // Show thank you message
+    setSubmitted(true);
+    
+    // Clean up iframe after a delay
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 2000);
   };
 
   return (
