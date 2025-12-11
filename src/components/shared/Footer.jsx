@@ -10,11 +10,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="space-y-6">
+            <Link to={createPageUrl('Home')} className="inline-block">
             <img 
-              src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png"
-              alt="OnTrak Solutions"
-              className="h-10 w-auto brightness-0 invert"
+                src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png"
+                alt="OnTrak Solutions"
+                className="h-10 w-auto brightness-0 invert"
             />
+            </Link>
+
             <p className="text-slate-400 text-sm leading-relaxed">
               OnTrak Solutions provides fast, flexible business funding and merchant cash advances 
               for small to medium-sized businesses across all industries. From working capital and 
@@ -30,7 +33,6 @@ export default function Footer() {
             <h4 className="font-semibold mb-6 text-white">Quick Links</h4>
             <ul className="space-y-3">
               {[
-                { name: 'Home', href: 'Home' },
                 { name: 'About', href: 'About' },
                 { name: 'How It Works', href: 'HowItWorks' },
                 { name: 'FAQ', href: 'FAQ' },
