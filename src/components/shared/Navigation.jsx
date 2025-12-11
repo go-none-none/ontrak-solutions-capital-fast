@@ -18,7 +18,6 @@ export default function Navigation() {
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: createPageUrl('Home') },
     { name: 'About', href: createPageUrl('About') },
     { name: 'How It Works', href: createPageUrl('HowItWorks') },
     { name: 'FAQ', href: createPageUrl('FAQ') },
