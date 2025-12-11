@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion } from 'framer-motion';
@@ -6,6 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Phone, Mail, MapPin, Clock, CheckCircle, ArrowRight, Zap } from 'lucide-react';
 
 export default function Contact() {
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    
+    fetch(form.action, {
+      method: 'POST',
+      body: formData,
+      mode: 'no-cors'
+    }).then(() => {
+      setSubmitted(true);
+    });
+  };
 
   const contactInfo = [
     {
@@ -142,100 +157,119 @@ export default function Contact() {
               viewport={{ once: true }}
               className="flex"
             >
-              <form 
-                action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dam00001TLTFV" 
-                method="POST"
-                className="bg-white rounded-3xl shadow-xl p-10 space-y-6 w-full flex flex-col"
-              >
-                <input type="hidden" name="oid" value="00Dam00001TLTFV" />
-                <input type="hidden" name="retURL" value="http://ontrak.co" />
-
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="first_name" className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
-                    <input
-                      id="first_name"
-                      name="first_name"
-                      type="text"
-                      maxLength="40"
-                      required
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="last_name" className="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
-                    <input
-                      id="last_name"
-                      name="last_name"
-                      type="text"
-                      maxLength="80"
-                      required
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">Company</label>
-                  <input
-                    id="company"
-                    name="company"
-                    type="text"
-                    maxLength="40"
-                    required
-                    className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
-                  />
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      maxLength="80"
-                      required
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="mobile" className="block text-sm font-medium text-slate-700 mb-2">Mobile</label>
-                    <input
-                      id="mobile"
-                      name="mobile"
-                      type="tel"
-                      maxLength="40"
-                      required
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="consent"
-                      required
-                      className="mt-1 w-4 h-4 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                    />
-                    <span className="text-xs text-slate-600">
-                      I consent to receive texts and agree to the <Link to={createPageUrl('TermsOfService')} className="text-[#08708E] hover:underline">Terms & Conditions</Link> and <Link to={createPageUrl('PrivacyPolicy')} className="text-[#08708E] hover:underline">Privacy Policy</Link>.
-                    </span>
-                  </label>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    By submitting your phone number, you agree to receive recurring SMS messages from OnTrak Solutions LLC regarding your account and service updates. Message frequency may vary. Message and data rates may apply. Reply STOP to opt out or HELP for help. Your information will not be sold or shared. View our <Link to={createPageUrl('PrivacyPolicy')} className="text-[#08708E] hover:underline">Privacy Policy</Link> and <Link to={createPageUrl('TermsOfService')} className="text-[#08708E] hover:underline">Terms of Service</Link>. Consent is not a condition of service.
-                  </p>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full h-14 bg-[#08708E] hover:bg-[#065a72] text-white rounded-xl text-lg font-semibold transition-colors duration-200 mt-auto"
+              {!submitted ? (
+                <form 
+                  action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dam00001TLTFV" 
+                  method="POST"
+                  onSubmit={handleSubmit}
+                  className="bg-white rounded-3xl shadow-xl p-10 space-y-6 w-full flex flex-col"
                 >
-                  Send Message
-                </button>
-              </form>
+                  <input type="hidden" name="oid" value="00Dam00001TLTFV" />
+                  <input type="hidden" name="retURL" value="" />
+
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="first_name" className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
+                      <input
+                        id="first_name"
+                        name="first_name"
+                        type="text"
+                        maxLength="40"
+                        required
+                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="last_name" className="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
+                      <input
+                        id="last_name"
+                        name="last_name"
+                        type="text"
+                        maxLength="80"
+                        required
+                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">Company</label>
+                    <input
+                      id="company"
+                      name="company"
+                      type="text"
+                      maxLength="40"
+                      required
+                      className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
+                    />
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-2">Phone</label>
+                      <input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        maxLength="40"
+                        required
+                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        maxLength="80"
+                        required
+                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="consent"
+                        required
+                        className="mt-1 w-4 h-4 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                      />
+                      <span className="text-xs text-slate-600">
+                        I consent to receive texts and agree to the <Link to={createPageUrl('TermsOfService')} className="text-[#08708E] hover:underline">Terms & Conditions</Link> and <Link to={createPageUrl('PrivacyPolicy')} className="text-[#08708E] hover:underline">Privacy Policy</Link>.
+                      </span>
+                    </label>
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      By submitting your phone number, you agree to receive recurring SMS messages from OnTrak Solutions LLC regarding your account and service updates. Message frequency may vary. Message and data rates may apply. Reply STOP to opt out or HELP for help. Your information will not be sold or shared. View our <Link to={createPageUrl('PrivacyPolicy')} className="text-[#08708E] hover:underline">Privacy Policy</Link> and <Link to={createPageUrl('TermsOfService')} className="text-[#08708E] hover:underline">Terms of Service</Link>. Consent is not a condition of service.
+                    </p>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full h-14 bg-[#08708E] hover:bg-[#065a72] text-white rounded-xl text-lg font-semibold transition-colors duration-200 mt-auto"
+                  >
+                    Send Message
+                  </button>
+                </form>
+              ) : (
+                <div className="bg-white rounded-3xl shadow-xl p-10 w-full flex flex-col items-center justify-center text-center space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                    <CheckCircle className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900">Thank You!</h3>
+                  <p className="text-slate-600">
+                    Your message has been sent successfully. We'll get back to you within 24 hours.
+                  </p>
+                  <Link to={createPageUrl('application')}>
+                    <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-3 rounded-full font-semibold mt-4">
+                      Apply Now
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </motion.div>
             </div>
             </div>
