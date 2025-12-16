@@ -31,32 +31,32 @@ export default function StatusTracker({ recordType, status, stageName }) {
   const isFunded = stageName === 'closed - funded';
   
   const steps = recordType === 'Lead' ? [
-    { label: 'Application Received', step: 1 },
-    { label: 'Application Out', step: 2 },
-    { label: 'Under Review', step: 3 },
-    { label: 'Converted', step: 4 }
+    { label: '📝 Application Submitted', step: 1 },
+    { label: '🔍 Initial Review', step: 2 },
+    { label: '✅ Qualification Review', step: 3 },
+    { label: '🎉 Moving Forward', step: 4 }
   ] : [
-    { label: 'Application In', step: 1 },
-    { label: 'Under Review', step: 2 },
-    { label: 'Approved', step: 3 },
-    { label: 'Contracts Out', step: 4 },
-    { label: 'Contracts In', step: 5 },
-    { label: 'Funded', step: 6 }
+    { label: '📝 Application Received', step: 1 },
+    { label: '🔍 Under Review', step: 2 },
+    { label: '✅ Approved', step: 3 },
+    { label: '📋 Contracts Sent', step: 4 },
+    { label: '✍️ Contracts Signed', step: 5 },
+    { label: '💰 Funded', step: 6 }
   ];
   
   return (
     <div className="space-y-6">
       {/* Current Status */}
       <div className="text-center">
-        <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-full ${
-          isDeclined ? 'bg-red-100 text-red-800' :
-          isFunded ? 'bg-green-100 text-green-800' :
-          'bg-blue-100 text-blue-800'
+        <div className={`inline-flex items-center gap-3 px-8 py-4 rounded-2xl shadow-lg border-2 ${
+          isDeclined ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-300 text-red-800' :
+          isFunded ? 'bg-gradient-to-r from-green-50 to-emerald-100 border-green-300 text-green-800' :
+          'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] text-[#08708E]'
         }`}>
-          {isDeclined && <XCircle className="w-5 h-5" />}
-          {isFunded && <CheckCircle className="w-5 h-5" />}
-          {!isDeclined && !isFunded && <Clock className="w-5 h-5" />}
-          <span className="font-semibold text-lg">{statusInfo.display}</span>
+          {isDeclined && <XCircle className="w-6 h-6" />}
+          {isFunded && <CheckCircle className="w-6 h-6 animate-pulse" />}
+          {!isDeclined && !isFunded && <Clock className="w-6 h-6 animate-pulse" />}
+          <span className="font-bold text-xl">{statusInfo.display}</span>
         </div>
       </div>
       
@@ -74,29 +74,30 @@ export default function StatusTracker({ recordType, status, stageName }) {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                      isCompleted ? 'bg-[#08708E] border-[#08708E]' :
-                      isCurrent ? 'bg-white border-[#08708E]' :
+                    className={`relative w-14 h-14 rounded-full flex items-center justify-center border-3 transition-all duration-300 ${
+                      isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E] shadow-lg' :
+                      isCurrent ? 'bg-white border-[#08708E] ring-4 ring-[#08708E]/20 animate-pulse' :
                       'bg-white border-slate-300'
                     }`}
                   >
                     {isCompleted ? (
-                      <CheckCircle className="w-5 h-5 text-white" />
+                      <CheckCircle className="w-7 h-7 text-white" />
+                    ) : isCurrent ? (
+                      <div className="w-3 h-3 rounded-full bg-[#08708E] animate-pulse" />
                     ) : (
-                      <span className={`text-sm font-semibold ${
-                        isCurrent ? 'text-[#08708E]' : 'text-slate-400'
-                      }`}>{step.step}</span>
+                      <span className="text-sm font-semibold text-slate-400">{step.step}</span>
                     )}
                   </motion.div>
-                  <p className={`mt-2 text-xs text-center max-w-[100px] ${
-                    isCompleted || isCurrent ? 'text-slate-900 font-medium' : 'text-slate-400'
+                  <p className={`mt-3 text-sm text-center max-w-[120px] ${
+                    isCompleted ? 'text-[#08708E] font-semibold' :
+                    isCurrent ? 'text-slate-900 font-bold' : 'text-slate-400'
                   }`}>
                     {step.label}
                   </p>
                   
                   {index < steps.length - 1 && (
-                    <div className={`absolute top-5 h-0.5 ${
-                      statusInfo.step > step.step ? 'bg-[#08708E]' : 'bg-slate-300'
+                    <div className={`absolute top-7 h-1 rounded-full transition-all duration-500 ${
+                      statusInfo.step > step.step ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' : 'bg-slate-300'
                     }`} style={{
                       left: `${(index + 1) * (100 / steps.length)}%`,
                       width: `${100 / steps.length}%`
