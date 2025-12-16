@@ -108,19 +108,19 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
     <div className="space-y-6">
       {/* Status Tracker */}
       {!isLeadDeclined && (
-        <div className="relative flex items-start justify-between gap-2 overflow-x-auto pb-4">
+        <div className="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 sm:gap-2 sm:overflow-x-auto sm:pb-4">
           {steps.map((step, index) => {
             const isCompleted = statusInfo.step > step.step;
             const isCurrent = statusInfo.step === step.step;
             const StepIcon = step.icon;
-            
+
             return (
-              <div key={index} className="flex flex-col items-center flex-1 min-w-[120px] relative">
+              <div key={index} className="flex sm:flex-col items-center sm:items-center flex-1 sm:min-w-[120px] relative gap-4 sm:gap-0">
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className={`relative z-10 transition-all duration-300 ${
+                  className={`relative z-10 transition-all duration-300 flex-shrink-0 ${
                     isCurrent ? 'scale-125' : 'scale-100'
                   }`}
                 >
@@ -140,26 +140,35 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
                     )}
                   </div>
                 </motion.div>
-                
-                <p className={`mt-3 text-sm text-center font-medium transition-all duration-300 ${
-                  isCurrent && isOpportunityDeclined && step.step === 6 ? 'text-red-600 font-bold' :
-                  isCurrent ? 'text-[#08708E] font-bold' :
-                  isCompleted ? 'text-slate-700' :
-                  'text-slate-400'
-                }`}>
-                  {step.label}
-                </p>
-                
-                {isCurrent && isOpportunityDeclined && step.step === 6 && stageDetail && (
-                  <div className="mt-2 text-xs text-red-600 bg-red-50 px-3 py-1 rounded-lg border border-red-200">
-                    {stageDetail}
-                  </div>
-                )}
-                
+
+                <div className="flex-1">
+                  <p className={`sm:mt-3 text-sm sm:text-center font-medium transition-all duration-300 ${
+                    isCurrent && isOpportunityDeclined && step.step === 6 ? 'text-red-600 font-bold' :
+                    isCurrent ? 'text-[#08708E] font-bold' :
+                    isCompleted ? 'text-slate-700' :
+                    'text-slate-400'
+                  }`}>
+                    {step.label}
+                  </p>
+
+                  {isCurrent && isOpportunityDeclined && step.step === 6 && stageDetail && (
+                    <div className="mt-2 text-xs text-red-600 bg-red-50 px-3 py-1 rounded-lg border border-red-200 sm:text-center">
+                      {stageDetail}
+                    </div>
+                  )}
+                </div>
+
                 {index < steps.length - 1 && (
-                  <div className={`absolute top-8 left-[60%] w-full h-1 rounded-full transition-all duration-500 ${
-                    statusInfo.step > step.step ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' : 'bg-slate-200'
-                  }`} />
+                  <>
+                    {/* Mobile: Vertical line */}
+                    <div className={`sm:hidden absolute left-8 top-[72px] w-1 h-6 rounded-full transition-all duration-500 ${
+                      statusInfo.step > step.step ? 'bg-gradient-to-b from-[#08708E] to-[#065a72]' : 'bg-slate-200'
+                    }`} />
+                    {/* Desktop: Horizontal line */}
+                    <div className={`hidden sm:block absolute top-8 left-[60%] w-full h-1 rounded-full transition-all duration-500 ${
+                      statusInfo.step > step.step ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' : 'bg-slate-200'
+                    }`} />
+                  </>
                 )}
               </div>
             );
