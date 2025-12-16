@@ -70,7 +70,7 @@ export default function MissingDocs() {
     {
       icon: Clock,
       title: 'Fast Processing',
-      description: 'We\'ll review your documents within 24 hours'
+      description: 'We\'ll review your documents right away'
     }
   ];
 
