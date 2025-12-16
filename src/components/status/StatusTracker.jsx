@@ -145,7 +145,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                     transition={{ delay: index * 0.1 }}
                     className={`relative w-14 h-14 rounded-full flex items-center justify-center border-3 transition-all duration-300 ${
                       isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E] shadow-lg' :
-                      isCurrent ? 'bg-white border-[#08708E] ring-4 ring-[#08708E]/20 shadow-md' :
+                      isCurrent ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E] ring-4 ring-[#08708E]/30 shadow-xl animate-pulse' :
                       'bg-slate-50 border-slate-300'
                     }`}
                   >
@@ -153,7 +153,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                       <CheckCircle className="w-7 h-7 text-white" />
                     ) : (
                       <StepIcon className={`w-6 h-6 ${
-                        isCurrent ? 'text-[#08708E]' : 'text-slate-400'
+                        isCurrent ? 'text-white' : 'text-slate-400'
                       }`} />
                     )}
                   </motion.div>
