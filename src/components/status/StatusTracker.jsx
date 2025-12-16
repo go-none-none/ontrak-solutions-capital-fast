@@ -96,19 +96,69 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
   
   return (
     <div className="space-y-6">
-      {/* Current Status */}
-      <div className="text-center">
-        <div className={`inline-flex items-center gap-3 px-8 py-4 rounded-2xl shadow-lg border-2 ${
-          isDeclined ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-300 text-red-800' :
-          isFunded ? 'bg-gradient-to-r from-green-50 to-emerald-100 border-green-300 text-green-800' :
-          'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] text-[#08708E]'
-        }`}>
-          {isDeclined && <XCircle className="w-6 h-6" />}
-          {isFunded && <CheckCircle className="w-6 h-6 animate-pulse" />}
-          {!isDeclined && !isFunded && <Clock className="w-6 h-6 animate-pulse" />}
-          <span className="font-bold text-xl">{statusInfo.display}</span>
+      {/* Status Tracker */}
+      {!isDeclined && (
+        <div className="space-y-3">
+          {steps.map((step, index) => {
+            const isCompleted = statusInfo.step > step.step;
+            const isCurrent = statusInfo.step === step.step;
+            const StepIcon = step.icon;
+            
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className={`flex items-center gap-4 px-6 py-4 rounded-2xl border-2 transition-all duration-300 ${
+                  isCurrent ? 'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] shadow-lg scale-105' :
+                  isCompleted ? 'bg-white border-[#08708E]/30' :
+                  'bg-slate-50 border-slate-200 opacity-50'
+                }`}
+              >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                  isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72]' :
+                  isCurrent ? 'bg-[#08708E]' :
+                  'bg-slate-300'
+                }`}>
+                  {isCompleted ? (
+                    <CheckCircle className="w-6 h-6 text-white" />
+                  ) : (
+                    <StepIcon className="w-6 h-6 text-white" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className={`font-semibold ${
+                    isCurrent ? 'text-[#08708E] text-lg' :
+                    isCompleted ? 'text-slate-700' :
+                    'text-slate-400'
+                  }`}>
+                    {step.label}
+                  </p>
+                </div>
+                {isCurrent && (
+                  <div className="flex items-center gap-2 text-[#08708E]">
+                    <Clock className="w-5 h-5 animate-pulse" />
+                    <span className="text-sm font-medium">Current</span>
+                  </div>
+                )}
+                {isCompleted && (
+                  <CheckCircle className="w-5 h-5 text-[#08708E]" />
+                )}
+              </motion.div>
+            );
+          })}
         </div>
-      </div>
+      )}
+
+      {isDeclined && (
+        <div className="text-center">
+          <div className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl shadow-lg border-2 bg-gradient-to-r from-red-50 to-red-100 border-red-300 text-red-800">
+            <XCircle className="w-6 h-6" />
+            <span className="font-bold text-xl">{statusInfo.display}</span>
+          </div>
+        </div>
+      )}
       
       {/* Missing Documents Form */}
       {isMissingInfo && recordType === 'Lead' && (
