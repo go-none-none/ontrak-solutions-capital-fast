@@ -130,23 +130,26 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
 
       {/* Progress Steps */}
       {!isDeclined && (
-        <div className="relative">
-          <div className="flex justify-between items-start">
+        <div className="relative py-4">
+          {/* Connecting Line */}
+          <div className="absolute top-[38px] left-0 right-0 h-1 bg-slate-200" style={{ marginLeft: '7%', marginRight: '7%' }} />
+          
+          <div className="flex justify-between items-start relative">
             {steps.map((step, index) => {
               const isCompleted = statusInfo.step > step.step;
               const isCurrent = statusInfo.step === step.step;
               const StepIcon = step.icon;
               
               return (
-                <div key={index} className="flex flex-col items-center flex-1">
+                <div key={index} className="flex flex-col items-center flex-1 relative z-10">
                   <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`relative w-14 h-14 rounded-full flex items-center justify-center border-3 transition-all duration-300 ${
+                    className={`w-14 h-14 rounded-full flex items-center justify-center border-3 transition-all duration-300 ${
                       isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E] shadow-lg' :
                       isCurrent ? 'bg-white border-[#08708E] ring-4 ring-[#08708E]/20 shadow-md' :
-                      'bg-slate-50 border-slate-300'
+                      'bg-white border-slate-300'
                     }`}
                   >
                     {isCompleted ? (
@@ -157,6 +160,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                       }`} />
                     )}
                   </motion.div>
+                  
                   <div className={`mt-3 text-sm text-center max-w-[120px] ${
                     isCurrent ? 'bg-gradient-to-r from-[#08708E] to-[#065a72] text-white px-3 py-2 rounded-lg font-bold shadow-lg' :
                     isCompleted ? 'text-[#08708E] font-semibold' :
@@ -165,15 +169,18 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                     {step.label}
                   </div>
                   
+                  {/* Progress Bar Segment */}
                   {index < steps.length - 1 && (
-                    <div className={`absolute top-7 h-1 rounded-full transition-all duration-500 ${
-                      statusInfo.step > step.step ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' :
-                      statusInfo.step === step.step ? 'bg-gradient-to-r from-[#08708E] to-slate-300' :
-                      'bg-slate-300'
-                    }`} style={{
-                      left: `${(index + 1) * (100 / steps.length)}%`,
-                      width: `${100 / steps.length}%`
-                    }} />
+                    <div 
+                      className={`absolute top-[28px] h-1 rounded-full transition-all duration-500 ${
+                        isCompleted ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' : 'bg-transparent'
+                      }`}
+                      style={{
+                        left: '50%',
+                        width: `calc(100% / ${steps.length} * 1.86)`,
+                        transform: 'translateX(0)'
+                      }}
+                    />
                   )}
                 </div>
               );
