@@ -59,12 +59,20 @@ Deno.serve(async (req) => {
         if (oppResponse.ok) {
             const opp = await oppResponse.json();
             const missingDocsFlag = opp.StageName?.toLowerCase() === 'application missing info';
+            
+            // Try different possible field names for stage detail
+            const stageDetail = opp.Stage_Detail__c || 
+                               opp.StageDetail__c || 
+                               opp.Decline_Reason__c || 
+                               opp.DeclineReason__c ||
+                               null;
+            
             return Response.json({
                 recordType: 'Opportunity',
                 id: opp.Id,
                 businessName: opp.Name,
                 stageName: opp.StageName,
-                stageDetail: opp.Stage_Detail__c || null,
+                stageDetail: stageDetail,
                 missingDocsFlag: missingDocsFlag,
                 missingDocs: opp.Missing_Docs__c || null,
                 lastModifiedDate: opp.LastModifiedDate,
