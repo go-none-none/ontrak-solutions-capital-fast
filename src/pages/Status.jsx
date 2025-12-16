@@ -143,6 +143,7 @@ export default function Status() {
               recordType={data.recordType}
               status={data.status}
               stageName={data.stageName}
+              stageDetail={data.stageDetail}
               recordId={data.id}
               businessName={data.businessName}
               lastName={data.lastName}

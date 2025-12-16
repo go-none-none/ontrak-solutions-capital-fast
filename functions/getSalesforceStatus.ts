@@ -64,6 +64,7 @@ Deno.serve(async (req) => {
                 id: opp.Id,
                 businessName: opp.Name,
                 stageName: opp.StageName,
+                stageDetail: opp.Stage_Detail__c || null,
                 missingDocsFlag: missingDocsFlag,
                 missingDocs: opp.Missing_Docs__c || null,
                 lastModifiedDate: opp.LastModifiedDate,
