@@ -90,19 +90,6 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
   
   return (
     <div className="space-y-6">
-      {/* Current Status */}
-      <div className="text-center">
-        <div className={`inline-flex items-center gap-3 px-8 py-4 rounded-2xl shadow-lg border-2 ${
-          isDeclined ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-300 text-red-800' :
-          isFunded ? 'bg-gradient-to-r from-green-50 to-emerald-100 border-green-300 text-green-800' :
-          'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] text-[#08708E]'
-        }`}>
-          {isDeclined && <XCircle className="w-6 h-6" />}
-          {isFunded && <CheckCircle className="w-6 h-6 animate-pulse" />}
-          {!isDeclined && !isFunded && <Clock className="w-6 h-6 animate-pulse" />}
-          <span className="font-bold text-xl">{statusInfo.display}</span>
-        </div>
-      </div>
       
       {/* Missing Documents Form */}
       {isMissingInfo && recordType === 'Lead' && (
