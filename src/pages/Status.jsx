@@ -136,7 +136,7 @@ export default function Status() {
 
             <div className="flex items-center gap-2 text-sm text-slate-600 mb-8">
               <Calendar className="w-4 h-4" />
-              <span>Last Updated: {formatDate(data.lastModified)}</span>
+              <span>Last Updated: {formatDate(data.lastModifiedDate)}</span>
             </div>
 
             <StatusTracker 
