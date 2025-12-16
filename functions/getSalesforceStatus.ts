@@ -38,11 +38,12 @@ Deno.serve(async (req) => {
             const missingDocsFlag = lead.Status?.toLowerCase() === 'application missing info';
             return Response.json({
                 recordType: 'Lead',
+                id: lead.Id,
                 businessName: lead.Company,
                 status: lead.Status,
                 missingDocsFlag: missingDocsFlag,
+                missingDocs: lead.Missing_Docs__c || null,
                 lastModifiedDate: lead.LastModifiedDate,
-                leadId: lead.Id,
                 lastName: lead.LastName
             });
         }
@@ -60,11 +61,12 @@ Deno.serve(async (req) => {
             const missingDocsFlag = opp.StageName?.toLowerCase() === 'application missing info';
             return Response.json({
                 recordType: 'Opportunity',
+                id: opp.Id,
                 businessName: opp.Name,
                 stageName: opp.StageName,
                 missingDocsFlag: missingDocsFlag,
+                missingDocs: opp.Missing_Docs__c || null,
                 lastModifiedDate: opp.LastModifiedDate,
-                leadId: opp.Lead_ID__c || opp.Id,
                 lastName: opp.LastName__c || ''
             });
         }
