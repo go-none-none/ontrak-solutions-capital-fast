@@ -111,9 +111,9 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
                 className={`flex items-center gap-4 px-6 py-4 rounded-2xl border-2 transition-all duration-300 ${
-                  isCurrent ? 'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] shadow-lg scale-105' :
+                  isCurrent ? 'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] shadow-2xl scale-110 ring-4 ring-[#08708E]/20' :
                   isCompleted ? 'bg-white border-[#08708E]/30' :
-                  'bg-slate-50 border-slate-200 opacity-50'
+                  'bg-slate-50 border-slate-200 opacity-40'
                 }`}
               >
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
