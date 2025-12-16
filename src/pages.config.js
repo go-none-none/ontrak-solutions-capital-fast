@@ -22,6 +22,7 @@ import IndustryProfessional from './pages/IndustryProfessional';
 import MissingDocs from './pages/MissingDocs';
 import Status from './pages/Status';
 import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 import __Layout from './Layout.jsx';
 
 
@@ -50,6 +51,7 @@ export const PAGES = {
     "MissingDocs": MissingDocs,
     "Status": Status,
     "Blog": Blog,
+    "BlogPost": BlogPost,
 }
 
 export const pagesConfig = {
