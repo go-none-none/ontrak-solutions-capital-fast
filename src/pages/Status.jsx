@@ -31,7 +31,7 @@ export default function Status() {
           return;
         }
 
-        const result = await base44.functions.getSalesforceStatus({ recordId });
+        const result = await base44.functions.invoke('getSalesforceStatus', { recordId });
         
         if (result.error) {
           setError(result.error);
