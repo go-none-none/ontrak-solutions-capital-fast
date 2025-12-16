@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, Clock, XCircle, FileText, Search, BadgeCheck, FileSignature, PenTool, DollarSign, Upload } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -47,7 +47,46 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
   ];
   
   const isMissingInfo = currentStatus?.toLowerCase() === 'application missing info';
-  const uploadUrl = `${createPageUrl('MissingDocs')}?id149=${recordId}&cn=${encodeURIComponent(businessName || '')}&ln=${encodeURIComponent(lastName || '')}`;
+  
+  useEffect(() => {
+    if (isMissingInfo && recordType === 'Lead') {
+      const container = document.getElementById('jotform-missing-docs');
+      if (container && !container.querySelector('iframe')) {
+        let iframeSrc = 'https://form.jotform.com/253446533291155';
+        const params = [];
+        if (recordId) params.push(`id149=${encodeURIComponent(recordId)}`);
+        if (businessName) params.push(`cn=${encodeURIComponent(businessName)}`);
+        if (lastName) params.push(`ln=${encodeURIComponent(lastName)}`);
+        
+        if (params.length > 0) {
+          iframeSrc += `?${params.join('&')}`;
+        }
+        
+        container.innerHTML = `
+          <iframe
+            id="JotFormIFrame-missing-docs"
+            title="Missing Documents Upload"
+            allowtransparency="true"
+            allow="geolocation; microphone; camera; fullscreen"
+            src="${iframeSrc}"
+            frameborder="0"
+            style="min-width:100%;max-width:100%;height:539px;border:none;"
+            scrolling="no"
+          >
+          </iframe>
+        `;
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+        script.onload = () => {
+          if (window.jotformEmbedHandler) {
+            window.jotformEmbedHandler("iframe[id='JotFormIFrame-missing-docs']", "https://form.jotform.com/");
+          }
+        };
+        document.body.appendChild(script);
+      }
+    }
+  }, [isMissingInfo, recordType, recordId, businessName, lastName]);
   
   return (
     <div className="space-y-6">
@@ -65,10 +104,10 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
         </div>
       </div>
       
-      {/* Missing Documents CTA */}
+      {/* Missing Documents Form */}
       {isMissingInfo && recordType === 'Lead' && (
         <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6 mb-6">
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 mb-4">
             <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
               <Upload className="w-6 h-6 text-amber-600" />
             </div>
@@ -76,16 +115,15 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
               <h3 className="text-lg font-bold text-slate-900 mb-2">
                 Documents Required
               </h3>
-              <p className="text-slate-600 mb-4">
-                We need additional documents to continue processing your application.
+              <p className="text-slate-600">
+                Please upload the required documents below to continue processing your application.
               </p>
-              <a href={uploadUrl}>
-                <Button className="bg-[#08708E] hover:bg-[#065a72]">
-                  <Upload className="w-4 h-4 mr-2" />
-                  Upload Documents Now
-                </Button>
-              </a>
             </div>
+          </div>
+          <div id="jotform-missing-docs" className="bg-white rounded-xl overflow-hidden">
+            <p style={{textAlign: 'center', padding: '40px', color: '#08708E'}}>
+              Loading upload form...
+            </p>
           </div>
         </div>
       )}
