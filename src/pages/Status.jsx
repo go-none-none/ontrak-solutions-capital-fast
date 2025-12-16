@@ -31,12 +31,12 @@ export default function Status() {
           return;
         }
 
-        const result = await base44.functions.invoke('getSalesforceStatus', { recordId });
+        const response = await base44.functions.invoke('getSalesforceStatus', { recordId });
         
-        if (result.error) {
-          setError(result.error);
+        if (response.data.error) {
+          setError(response.data.error);
         } else {
-          setData(result);
+          setData(response.data);
         }
       } catch (err) {
         setError(err.message);
