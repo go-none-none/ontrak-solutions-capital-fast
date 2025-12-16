@@ -30,8 +30,9 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
   const normalizedStatus = currentStatus?.toLowerCase();
   const statusInfo = statusMap[normalizedStatus] || { display: currentStatus, step: 0 };
   
-  const isDeclined = statusInfo.step === -1;
-  const isFunded = stageName === 'closed - funded';
+  const isLeadDeclined = recordType === 'Lead' && statusInfo.step === -1;
+  const isOpportunityDeclined = recordType === 'Opportunity' && normalizedStatus === 'closed - declined';
+  const isFunded = normalizedStatus === 'closed - funded';
   
   const steps = recordType === 'Lead' ? [
     { label: 'Open', step: 1, icon: FileText },
@@ -45,7 +46,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
     { label: 'Approved', step: 3, icon: BadgeCheck },
     { label: 'Contracts Sent', step: 4, icon: FileSignature },
     { label: 'Contracts Signed', step: 5, icon: PenTool },
-    { label: isDeclined ? 'Declined' : 'Funded', step: 6, icon: isDeclined ? XCircle : DollarSign }
+    { label: isOpportunityDeclined ? 'Declined' : 'Funded', step: 6, icon: isOpportunityDeclined ? XCircle : DollarSign }
   ];
   
   const isMissingInfo = currentStatus?.toLowerCase() === 'application missing info';
@@ -99,7 +100,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
   return (
     <div className="space-y-6">
       {/* Status Tracker */}
-      {!(isDeclined && recordType === 'Lead') && (
+      {!isLeadDeclined && (
         <div className="relative flex items-start justify-between gap-2 overflow-x-auto pb-4">
           {steps.map((step, index) => {
             const isCompleted = statusInfo.step > step.step;
@@ -117,14 +118,16 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                   }`}
                 >
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 ${
+                    isCurrent && isOpportunityDeclined ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-500 shadow-2xl ring-4 ring-red-500/20' :
                     isCurrent ? 'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] shadow-2xl ring-4 ring-[#08708E]/20' :
                     isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E]' :
                     'bg-slate-50 border-slate-200 opacity-40'
                   }`}>
-                    {isCompleted ? (
+                    {isCompleted && !isOpportunityDeclined ? (
                       <CheckCircle className="w-7 h-7 text-white" />
                     ) : (
                       <StepIcon className={`w-7 h-7 ${
+                        isCurrent && isOpportunityDeclined ? 'text-red-600' :
                         isCurrent ? 'text-[#08708E]' : 'text-slate-400'
                       }`} />
                     )}
@@ -132,6 +135,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                 </motion.div>
                 
                 <p className={`mt-3 text-sm text-center font-medium transition-all duration-300 ${
+                  isCurrent && isOpportunityDeclined ? 'text-red-600 font-bold' :
                   isCurrent ? 'text-[#08708E] font-bold' :
                   isCompleted ? 'text-slate-700' :
                   'text-slate-400'
@@ -140,7 +144,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                 </p>
                 
                 {isCurrent && (
-                  <div className="mt-2 flex items-center gap-1 text-[#08708E] text-xs">
+                  <div className={`mt-2 flex items-center gap-1 text-xs ${isOpportunityDeclined ? 'text-red-600' : 'text-[#08708E]'}`}>
                     <Clock className="w-4 h-4 animate-pulse" />
                     <span className="font-medium">Current</span>
                   </div>
@@ -157,7 +161,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
         </div>
       )}
 
-      {isDeclined && recordType === 'Lead' && (
+      {isLeadDeclined && (
         <div className="text-center">
           <div className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl shadow-lg border-2 bg-gradient-to-r from-red-50 to-red-100 border-red-300 text-red-800">
             <XCircle className="w-6 h-6" />
