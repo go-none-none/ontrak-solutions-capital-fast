@@ -120,12 +120,19 @@ export default function MissingDocs() {
             ))}
           </div>
 
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden p-6">
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden p-6 mb-6">
             <div id="jotform-container">
               <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
                 Loading upload form...
               </p>
             </div>
+          </div>
+
+          <div className="bg-slate-100 rounded-xl p-4 border-2 border-dashed border-slate-300">
+            <p className="text-xs font-semibold text-slate-700 mb-2">Developer Template URL:</p>
+            <code className="text-xs text-slate-600 break-all block bg-white p-3 rounded">
+              {window.location.origin}/MissingDocs?id149={'{Lead.Id}'}&cn={'{Lead.Company}'}&ln={'{Lead.LastName}'}
+            </code>
           </div>
         </div>
       </section>
