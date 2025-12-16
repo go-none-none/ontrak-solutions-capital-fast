@@ -43,13 +43,17 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
     { label: 'Application Sent', step: 3, icon: FileSignature },
     { label: 'Missing Information', step: 4, icon: Upload },
     { label: 'Converted', step: 5, icon: CheckCircle }
+  ] : isOpportunityDeclined ? [
+    { label: 'Application Received', step: 1, icon: FileText },
+    { label: 'Under Review', step: 2, icon: Search },
+    { label: 'Declined', step: 6, icon: XCircle }
   ] : [
     { label: 'Application Received', step: 1, icon: FileText },
     { label: 'Under Review', step: 2, icon: Search },
     { label: 'Approved', step: 3, icon: BadgeCheck },
     { label: 'Contracts Sent', step: 4, icon: FileSignature },
     { label: 'Contracts Signed', step: 5, icon: PenTool },
-    { label: isFunded ? 'Funded' : isOpportunityDeclined ? 'Declined' : 'Funded', step: 6, icon: isFunded ? DollarSign : isOpportunityDeclined ? XCircle : DollarSign }
+    { label: 'Funded', step: 6, icon: DollarSign }
   ];
   
   const isMissingInfo = currentStatus?.toLowerCase() === 'application missing info';
