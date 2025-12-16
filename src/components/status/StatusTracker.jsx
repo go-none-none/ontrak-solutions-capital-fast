@@ -99,54 +99,58 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
     <div className="space-y-6">
       {/* Status Tracker */}
       {!isDeclined && (
-        <div className="space-y-3">
+        <div className="relative flex items-start justify-between gap-2 overflow-x-auto pb-4">
           {steps.map((step, index) => {
             const isCompleted = statusInfo.step > step.step;
             const isCurrent = statusInfo.step === step.step;
             const StepIcon = step.icon;
             
             return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`flex items-center gap-4 px-6 py-4 rounded-2xl border-2 transition-all duration-300 ${
-                  isCurrent ? 'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] shadow-2xl scale-110 ring-4 ring-[#08708E]/20' :
-                  isCompleted ? 'bg-white border-[#08708E]/30' :
-                  'bg-slate-50 border-slate-200 opacity-40'
-                }`}
-              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                  isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72]' :
-                  isCurrent ? 'bg-[#08708E]' :
-                  'bg-slate-300'
-                }`}>
-                  {isCompleted ? (
-                    <CheckCircle className="w-6 h-6 text-white" />
-                  ) : (
-                    <StepIcon className="w-6 h-6 text-white" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className={`font-semibold ${
-                    isCurrent ? 'text-[#08708E] text-lg' :
-                    isCompleted ? 'text-slate-700' :
-                    'text-slate-400'
+              <div key={index} className="flex flex-col items-center flex-1 min-w-[120px] relative">
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className={`relative z-10 transition-all duration-300 ${
+                    isCurrent ? 'scale-125' : 'scale-100'
+                  }`}
+                >
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 ${
+                    isCurrent ? 'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] shadow-2xl ring-4 ring-[#08708E]/20' :
+                    isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E]' :
+                    'bg-slate-50 border-slate-200 opacity-40'
                   }`}>
-                    {step.label}
-                  </p>
-                </div>
+                    {isCompleted ? (
+                      <CheckCircle className="w-7 h-7 text-white" />
+                    ) : (
+                      <StepIcon className={`w-7 h-7 ${
+                        isCurrent ? 'text-[#08708E]' : 'text-slate-400'
+                      }`} />
+                    )}
+                  </div>
+                </motion.div>
+                
+                <p className={`mt-3 text-sm text-center font-medium transition-all duration-300 ${
+                  isCurrent ? 'text-[#08708E] font-bold' :
+                  isCompleted ? 'text-slate-700' :
+                  'text-slate-400'
+                }`}>
+                  {step.label}
+                </p>
+                
                 {isCurrent && (
-                  <div className="flex items-center gap-2 text-[#08708E]">
-                    <Clock className="w-5 h-5 animate-pulse" />
-                    <span className="text-sm font-medium">Current</span>
+                  <div className="mt-2 flex items-center gap-1 text-[#08708E] text-xs">
+                    <Clock className="w-4 h-4 animate-pulse" />
+                    <span className="font-medium">Current</span>
                   </div>
                 )}
-                {isCompleted && (
-                  <CheckCircle className="w-5 h-5 text-[#08708E]" />
+                
+                {index < steps.length - 1 && (
+                  <div className={`absolute top-8 left-[60%] w-full h-1 rounded-full transition-all duration-500 ${
+                    statusInfo.step > step.step ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' : 'bg-slate-200'
+                  }`} />
                 )}
-              </motion.div>
+              </div>
             );
           })}
         </div>
