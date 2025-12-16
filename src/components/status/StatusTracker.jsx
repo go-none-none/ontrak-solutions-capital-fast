@@ -27,7 +27,8 @@ const opportunityStatusMap = {
 export default function StatusTracker({ recordType, status, stageName, recordId, businessName, lastName }) {
   const statusMap = recordType === 'Lead' ? leadStatusMap : opportunityStatusMap;
   const currentStatus = recordType === 'Lead' ? status : stageName;
-  const statusInfo = statusMap[currentStatus] || { display: currentStatus, step: 0 };
+  const normalizedStatus = currentStatus?.toLowerCase();
+  const statusInfo = statusMap[normalizedStatus] || { display: currentStatus, step: 0 };
   
   const isDeclined = statusInfo.step === -1;
   const isFunded = stageName === 'closed - funded';
