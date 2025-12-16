@@ -116,10 +116,19 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
       )}
 
       {/* Progress Steps */}
-      {!isDeclined && (
-        <div className="relative py-4">
-          {/* Connecting Line */}
-          <div className="absolute top-[38px] left-0 right-0 h-1 bg-slate-200" style={{ marginLeft: '7%', marginRight: '7%' }} />
+      {!isDeclined ? (
+        <div className="relative py-8">
+          {/* Background Line */}
+          <div className="absolute top-[90px] left-0 right-0 h-2 bg-slate-200 rounded-full" style={{ marginLeft: '5%', marginRight: '5%' }} />
+          
+          {/* Progress Line */}
+          <div 
+            className="absolute top-[90px] left-0 h-2 bg-gradient-to-r from-[#08708E] to-[#065a72] rounded-full transition-all duration-700 ease-out"
+            style={{ 
+              marginLeft: '5%',
+              width: `${Math.max(0, ((statusInfo.step - 1) / (steps.length - 1)) * 90)}%`
+            }}
+          />
           
           <div className="flex justify-between items-start relative">
             {steps.map((step, index) => {
@@ -129,49 +138,62 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
               
               return (
                 <div key={index} className="flex flex-col items-center flex-1 relative z-10">
+                  {/* Current Status Badge (only show on current step) */}
+                  {isCurrent && (
+                    <motion.div
+                      initial={{ scale: 0, y: 20 }}
+                      animate={{ scale: 1, y: 0 }}
+                      className="absolute -top-16 left-1/2 transform -translate-x-1/2 whitespace-nowrap"
+                    >
+                      <div className="bg-gradient-to-r from-[#08708E] to-[#065a72] text-white px-6 py-3 rounded-2xl shadow-xl border-2 border-white">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-5 h-5 animate-pulse" />
+                          <span className="font-bold text-lg">{statusInfo.display}</span>
+                        </div>
+                      </div>
+                      {/* Arrow pointing down */}
+                      <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-2">
+                        <div className="w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-[#065a72]" />
+                      </div>
+                    </motion.div>
+                  )}
+                  
                   <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: index * 0.1 }}
-                    className={`w-14 h-14 rounded-full flex items-center justify-center border-3 transition-all duration-300 ${
-                      isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E] shadow-lg' :
-                      isCurrent ? 'bg-white border-[#08708E] ring-4 ring-[#08708E]/20 shadow-md' :
-                      'bg-white border-slate-300'
+                    className={`w-16 h-16 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${
+                      isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E] shadow-lg scale-100' :
+                      isCurrent ? 'bg-white border-[#08708E] shadow-2xl scale-110 ring-4 ring-[#08708E]/30' :
+                      'bg-white border-slate-300 scale-90'
                     }`}
                   >
                     {isCompleted ? (
-                      <CheckCircle className="w-7 h-7 text-white" />
+                      <CheckCircle className="w-8 h-8 text-white" />
                     ) : (
-                      <StepIcon className={`w-6 h-6 ${
+                      <StepIcon className={`w-7 h-7 ${
                         isCurrent ? 'text-[#08708E]' : 'text-slate-400'
                       }`} />
                     )}
                   </motion.div>
                   
-                  <div className={`mt-3 text-sm text-center max-w-[120px] ${
-                    isCurrent ? 'bg-gradient-to-r from-[#08708E] to-[#065a72] text-white px-3 py-2 rounded-lg font-bold shadow-lg' :
+                  <p className={`mt-4 text-sm text-center max-w-[120px] transition-all duration-300 ${
+                    isCurrent ? 'text-slate-900 font-bold text-base' :
                     isCompleted ? 'text-[#08708E] font-semibold' :
                     'text-slate-400'
                   }`}>
                     {step.label}
-                  </div>
-                  
-                  {/* Progress Bar Segment */}
-                  {index < steps.length - 1 && (
-                    <div 
-                      className={`absolute top-[28px] h-1 rounded-full transition-all duration-500 ${
-                        isCompleted ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' : 'bg-transparent'
-                      }`}
-                      style={{
-                        left: '50%',
-                        width: `calc(100% / ${steps.length} * 1.86)`,
-                        transform: 'translateX(0)'
-                      }}
-                    />
-                  )}
+                  </p>
                 </div>
               );
             })}
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <div className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl shadow-lg border-2 bg-gradient-to-r from-red-50 to-red-100 border-red-300 text-red-800">
+            <XCircle className="w-6 h-6" />
+            <span className="font-bold text-xl">{statusInfo.display}</span>
           </div>
         </div>
       )}
