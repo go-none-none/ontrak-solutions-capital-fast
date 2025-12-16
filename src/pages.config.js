@@ -20,6 +20,7 @@ import IndustryFitness from './pages/IndustryFitness';
 import IndustryAuto from './pages/IndustryAuto';
 import IndustryProfessional from './pages/IndustryProfessional';
 import MissingDocs from './pages/MissingDocs';
+import Status from './pages/Status';
 import __Layout from './Layout.jsx';
 
 
@@ -46,6 +47,7 @@ export const PAGES = {
     "IndustryAuto": IndustryAuto,
     "IndustryProfessional": IndustryProfessional,
     "MissingDocs": MissingDocs,
+    "Status": Status,
 }
 
 export const pagesConfig = {
