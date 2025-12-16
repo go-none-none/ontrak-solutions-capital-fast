@@ -60,12 +60,23 @@ Deno.serve(async (req) => {
             const opp = await oppResponse.json();
             const missingDocsFlag = opp.StageName?.toLowerCase() === 'application missing info';
             
+            // Log all available fields for debugging
+            console.log('Opportunity fields:', Object.keys(opp));
+            console.log('Looking for stage detail in:', {
+                Stage_Detail__c: opp.Stage_Detail__c,
+                StageDetail__c: opp.StageDetail__c,
+                Decline_Reason__c: opp.Decline_Reason__c,
+                DeclineReason__c: opp.DeclineReason__c
+            });
+            
             // Try different possible field names for stage detail
             const stageDetail = opp.Stage_Detail__c || 
                                opp.StageDetail__c || 
                                opp.Decline_Reason__c || 
                                opp.DeclineReason__c ||
                                null;
+            
+            console.log('Final stageDetail value:', stageDetail);
             
             return Response.json({
                 recordType: 'Opportunity',
@@ -76,7 +87,9 @@ Deno.serve(async (req) => {
                 missingDocsFlag: missingDocsFlag,
                 missingDocs: opp.Missing_Docs__c || null,
                 lastModifiedDate: opp.LastModifiedDate,
-                lastName: opp.LastName__c || ''
+                lastName: opp.LastName__c || '',
+                // Include debug info
+                allFields: Object.keys(opp)
             });
         }
 
