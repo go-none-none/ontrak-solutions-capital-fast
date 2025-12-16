@@ -150,13 +150,6 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
                   {step.label}
                 </p>
                 
-                {isCurrent && (
-                  <div className={`mt-2 flex items-center gap-1 text-xs ${isOpportunityDeclined && step.step === 6 ? 'text-red-600' : 'text-[#08708E]'}`}>
-                    <Clock className="w-4 h-4 animate-pulse" />
-                    <span className="font-medium">Current</span>
-                  </div>
-                )}
-                
                 {isCurrent && isOpportunityDeclined && step.step === 6 && stageDetail && (
                   <div className="mt-2 text-xs text-red-600 bg-red-50 px-3 py-1 rounded-lg border border-red-200">
                     {stageDetail}
