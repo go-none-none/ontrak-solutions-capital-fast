@@ -6,9 +6,9 @@ export default function MissingDocs() {
   useEffect(() => {
     // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    const leadId = urlParams.get('id') || '';
-    const company = urlParams.get('company') || '';
-    const lastName = urlParams.get('lastName') || '';
+    const leadId = urlParams.get('id149') || '';
+    const company = urlParams.get('cn') || '';
+    const lastName = urlParams.get('ln') || '';
     
     // Build iframe src with parameters
     let iframeSrc = 'https://form.jotform.com/253446533291155';
