@@ -60,7 +60,7 @@ export default function MissingDocs() {
     {
       icon: FileCheck,
       title: 'Quick Upload',
-      description: 'Upload all required documents in one simple form'
+      description: 'Upload all required documents in one simple place'
     },
     {
       icon: Shield,
