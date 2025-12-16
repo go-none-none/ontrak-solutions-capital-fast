@@ -21,7 +21,7 @@ const opportunityStatusMap = {
   'contracts in': { display: 'Contracts In', step: 5 },
   'renewal processing': { display: 'Renewal Processing', step: 5 },
   'closed - funded': { display: 'Funded', step: 6 },
-  'closed - declined': { display: 'Declined', step: -1 }
+  'closed - declined': { display: 'Declined', step: 6 }
 };
 
 export default function StatusTracker({ recordType, status, stageName, recordId, businessName, lastName }) {
@@ -45,7 +45,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
     { label: 'Approved', step: 3, icon: BadgeCheck },
     { label: 'Contracts Sent', step: 4, icon: FileSignature },
     { label: 'Contracts Signed', step: 5, icon: PenTool },
-    { label: 'Funded', step: 6, icon: DollarSign }
+    { label: isDeclined ? 'Declined' : 'Funded', step: 6, icon: isDeclined ? XCircle : DollarSign }
   ];
   
   const isMissingInfo = currentStatus?.toLowerCase() === 'application missing info';
@@ -99,7 +99,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
   return (
     <div className="space-y-6">
       {/* Status Tracker */}
-      {!isDeclined && (
+      {!(isDeclined && recordType === 'Lead') && (
         <div className="relative flex items-start justify-between gap-2 overflow-x-auto pb-4">
           {steps.map((step, index) => {
             const isCompleted = statusInfo.step > step.step;
@@ -157,7 +157,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
         </div>
       )}
 
-      {isDeclined && (
+      {isDeclined && recordType === 'Lead' && (
         <div className="text-center">
           <div className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl shadow-lg border-2 bg-gradient-to-r from-red-50 to-red-100 border-red-300 text-red-800">
             <XCircle className="w-6 h-6" />
