@@ -19,6 +19,7 @@ import IndustryBeauty from './pages/IndustryBeauty';
 import IndustryFitness from './pages/IndustryFitness';
 import IndustryAuto from './pages/IndustryAuto';
 import IndustryProfessional from './pages/IndustryProfessional';
+import MissingDocs from './pages/MissingDocs';
 import __Layout from './Layout.jsx';
 
 
@@ -44,6 +45,7 @@ export const PAGES = {
     "IndustryFitness": IndustryFitness,
     "IndustryAuto": IndustryAuto,
     "IndustryProfessional": IndustryProfessional,
+    "MissingDocs": MissingDocs,
 }
 
 export const pagesConfig = {
