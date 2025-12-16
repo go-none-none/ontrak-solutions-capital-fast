@@ -25,14 +25,15 @@ const opportunityStatusMap = {
 };
 
 export default function StatusTracker({ recordType, status, stageName, recordId, businessName, lastName }) {
-  const statusMap = recordType === 'Lead' ? leadStatusMap : opportunityStatusMap;
   const currentStatus = recordType === 'Lead' ? status : stageName;
   const normalizedStatus = currentStatus?.toLowerCase();
-  const statusInfo = statusMap[normalizedStatus] || { display: currentStatus, step: 0 };
   
-  const isLeadDeclined = recordType === 'Lead' && statusInfo.step === -1;
+  const isLeadDeclined = recordType === 'Lead' && normalizedStatus === 'closed - not converted';
   const isOpportunityDeclined = recordType === 'Opportunity' && normalizedStatus === 'closed - declined';
-  const isFunded = normalizedStatus === 'closed - funded';
+  const isFunded = recordType === 'Opportunity' && normalizedStatus === 'closed - funded';
+  
+  const statusMap = recordType === 'Lead' ? leadStatusMap : opportunityStatusMap;
+  const statusInfo = statusMap[normalizedStatus] || { display: currentStatus, step: 0 };
   
   const steps = recordType === 'Lead' ? [
     { label: 'Open', step: 1, icon: FileText },
@@ -46,7 +47,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
     { label: 'Approved', step: 3, icon: BadgeCheck },
     { label: 'Contracts Sent', step: 4, icon: FileSignature },
     { label: 'Contracts Signed', step: 5, icon: PenTool },
-    { label: isOpportunityDeclined ? 'Declined' : 'Funded', step: 6, icon: isOpportunityDeclined ? XCircle : DollarSign }
+    { label: isFunded ? 'Funded' : isOpportunityDeclined ? 'Declined' : 'Funded', step: 6, icon: isFunded ? DollarSign : isOpportunityDeclined ? XCircle : DollarSign }
   ];
   
   const isMissingInfo = currentStatus?.toLowerCase() === 'application missing info';
