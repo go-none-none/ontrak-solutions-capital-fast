@@ -42,7 +42,7 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
     { label: 'Contact Initiated', step: 2, icon: Search },
     { label: 'Application Sent', step: 3, icon: FileSignature },
     { label: 'Missing Information', step: 4, icon: Upload },
-    { label: 'Converted', step: 5, icon: CheckCircle }
+    { label: 'Application Completed', step: 5, icon: CheckCircle }
   ] : isOpportunityDeclined ? [
     { label: 'Application Received', step: 1, icon: FileText },
     { label: 'Under Review', step: 2, icon: Search },
