@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { createPageUrl } from '@/utils';
 
 const leadStatusMap = {
-  'open - not contacted': { display: 'Application Received', step: 1 },
-  'working - contacted': { display: 'Application Received', step: 1 },
-  'working - application out': { display: 'Application Out', step: 2 },
-  'application missing info': { display: 'Missing Information', step: 2 },
+  'open - not contacted': { display: 'Open', step: 1 },
+  'working - contacted': { display: 'Contact Initiated', step: 2 },
+  'working - application out': { display: 'Application Sent', step: 3 },
+  'application missing info': { display: 'Missing Information', step: 4 },
   'closed - not converted': { display: 'Declined', step: -1 },
-  'Converted': { display: 'Converted', step: 4 }
+  'converted': { display: 'Converted', step: 5 }
 };
 
 const opportunityStatusMap = {
@@ -34,10 +34,11 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
   const isFunded = stageName === 'closed - funded';
   
   const steps = recordType === 'Lead' ? [
-    { label: 'Application Submitted', step: 1, icon: FileText },
-    { label: 'Initial Review', step: 2, icon: Search },
-    { label: 'Qualification Review', step: 3, icon: BadgeCheck },
-    { label: 'Moving Forward', step: 4, icon: CheckCircle }
+    { label: 'Open', step: 1, icon: FileText },
+    { label: 'Contact Initiated', step: 2, icon: Search },
+    { label: 'Application Sent', step: 3, icon: FileSignature },
+    { label: 'Missing Information', step: 4, icon: Upload },
+    { label: 'Converted', step: 5, icon: CheckCircle }
   ] : [
     { label: 'Application Received', step: 1, icon: FileText },
     { label: 'Under Review', step: 2, icon: Search },
