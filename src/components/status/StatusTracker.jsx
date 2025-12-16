@@ -167,7 +167,9 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                   
                   {index < steps.length - 1 && (
                     <div className={`absolute top-7 h-1 rounded-full transition-all duration-500 ${
-                      statusInfo.step > step.step ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' : 'bg-slate-300'
+                      statusInfo.step > step.step ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' :
+                      statusInfo.step === step.step ? 'bg-gradient-to-r from-[#08708E] to-slate-300' :
+                      'bg-slate-300'
                     }`} style={{
                       left: `${(index + 1) * (100 / steps.length)}%`,
                       width: `${100 / steps.length}%`
