@@ -145,7 +145,7 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                     transition={{ delay: index * 0.1 }}
                     className={`relative w-14 h-14 rounded-full flex items-center justify-center border-3 transition-all duration-300 ${
                       isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E] shadow-lg' :
-                      isCurrent ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E] ring-4 ring-[#08708E]/30 shadow-xl animate-pulse' :
+                      isCurrent ? 'bg-white border-[#08708E] ring-4 ring-[#08708E]/20 shadow-md' :
                       'bg-slate-50 border-slate-300'
                     }`}
                   >
@@ -153,16 +153,17 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
                       <CheckCircle className="w-7 h-7 text-white" />
                     ) : (
                       <StepIcon className={`w-6 h-6 ${
-                        isCurrent ? 'text-white' : 'text-slate-400'
+                        isCurrent ? 'text-[#08708E]' : 'text-slate-400'
                       }`} />
                     )}
                   </motion.div>
-                  <p className={`mt-3 text-sm text-center max-w-[120px] ${
+                  <div className={`mt-3 text-sm text-center max-w-[120px] ${
+                    isCurrent ? 'bg-gradient-to-r from-[#08708E] to-[#065a72] text-white px-3 py-2 rounded-lg font-bold shadow-lg' :
                     isCompleted ? 'text-[#08708E] font-semibold' :
-                    isCurrent ? 'text-slate-900 font-bold' : 'text-slate-400'
+                    'text-slate-400'
                   }`}>
                     {step.label}
-                  </p>
+                  </div>
                   
                   {index < steps.length - 1 && (
                     <div className={`absolute top-7 h-1 rounded-full transition-all duration-500 ${
