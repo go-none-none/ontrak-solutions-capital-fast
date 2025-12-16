@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Clock, XCircle } from 'lucide-react';
+import { CheckCircle, Clock, XCircle, FileText, Search, BadgeCheck, FileSignature, PenTool, DollarSign, Upload } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { createPageUrl } from '@/utils';
 
 const leadStatusMap = {
   'open - not contacted': { display: 'Application Received', step: 1 },
@@ -22,7 +24,7 @@ const opportunityStatusMap = {
   'closed - declined': { display: 'Declined', step: -1 }
 };
 
-export default function StatusTracker({ recordType, status, stageName }) {
+export default function StatusTracker({ recordType, status, stageName, recordId, businessName, lastName }) {
   const statusMap = recordType === 'Lead' ? leadStatusMap : opportunityStatusMap;
   const currentStatus = recordType === 'Lead' ? status : stageName;
   const statusInfo = statusMap[currentStatus] || { display: currentStatus, step: 0 };
@@ -31,18 +33,21 @@ export default function StatusTracker({ recordType, status, stageName }) {
   const isFunded = stageName === 'closed - funded';
   
   const steps = recordType === 'Lead' ? [
-    { label: '📝 Application Submitted', step: 1 },
-    { label: '🔍 Initial Review', step: 2 },
-    { label: '✅ Qualification Review', step: 3 },
-    { label: '🎉 Moving Forward', step: 4 }
+    { label: 'Application Submitted', step: 1, icon: FileText },
+    { label: 'Initial Review', step: 2, icon: Search },
+    { label: 'Qualification Review', step: 3, icon: BadgeCheck },
+    { label: 'Moving Forward', step: 4, icon: CheckCircle }
   ] : [
-    { label: '📝 Application Received', step: 1 },
-    { label: '🔍 Under Review', step: 2 },
-    { label: '✅ Approved', step: 3 },
-    { label: '📋 Contracts Sent', step: 4 },
-    { label: '✍️ Contracts Signed', step: 5 },
-    { label: '💰 Funded', step: 6 }
+    { label: 'Application Received', step: 1, icon: FileText },
+    { label: 'Under Review', step: 2, icon: Search },
+    { label: 'Approved', step: 3, icon: BadgeCheck },
+    { label: 'Contracts Sent', step: 4, icon: FileSignature },
+    { label: 'Contracts Signed', step: 5, icon: PenTool },
+    { label: 'Funded', step: 6, icon: DollarSign }
   ];
+  
+  const isMissingInfo = currentStatus?.toLowerCase() === 'application missing info';
+  const uploadUrl = `${createPageUrl('MissingDocs')}?id149=${recordId}&cn=${encodeURIComponent(businessName || '')}&ln=${encodeURIComponent(lastName || '')}`;
   
   return (
     <div className="space-y-6">
@@ -60,13 +65,39 @@ export default function StatusTracker({ recordType, status, stageName }) {
         </div>
       </div>
       
+      {/* Missing Documents CTA */}
+      {isMissingInfo && recordType === 'Lead' && (
+        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6 mb-6">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+              <Upload className="w-6 h-6 text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
+                Documents Required
+              </h3>
+              <p className="text-slate-600 mb-4">
+                We need additional documents to continue processing your application.
+              </p>
+              <a href={uploadUrl}>
+                <Button className="bg-[#08708E] hover:bg-[#065a72]">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload Documents Now
+                </Button>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Progress Steps */}
       {!isDeclined && (
         <div className="relative">
           <div className="flex justify-between items-start">
             {steps.map((step, index) => {
-              const isCompleted = statusInfo.step >= step.step;
+              const isCompleted = statusInfo.step > step.step;
               const isCurrent = statusInfo.step === step.step;
+              const StepIcon = step.icon;
               
               return (
                 <div key={index} className="flex flex-col items-center flex-1">
@@ -76,16 +107,16 @@ export default function StatusTracker({ recordType, status, stageName }) {
                     transition={{ delay: index * 0.1 }}
                     className={`relative w-14 h-14 rounded-full flex items-center justify-center border-3 transition-all duration-300 ${
                       isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E] shadow-lg' :
-                      isCurrent ? 'bg-white border-[#08708E] ring-4 ring-[#08708E]/20 animate-pulse' :
-                      'bg-white border-slate-300'
+                      isCurrent ? 'bg-white border-[#08708E] ring-4 ring-[#08708E]/20 shadow-md' :
+                      'bg-slate-50 border-slate-300'
                     }`}
                   >
                     {isCompleted ? (
                       <CheckCircle className="w-7 h-7 text-white" />
-                    ) : isCurrent ? (
-                      <div className="w-3 h-3 rounded-full bg-[#08708E] animate-pulse" />
                     ) : (
-                      <span className="text-sm font-semibold text-slate-400">{step.step}</span>
+                      <StepIcon className={`w-6 h-6 ${
+                        isCurrent ? 'text-[#08708E]' : 'text-slate-400'
+                      }`} />
                     )}
                   </motion.div>
                   <p className={`mt-3 text-sm text-center max-w-[120px] ${

@@ -143,6 +143,9 @@ export default function Status() {
               recordType={data.recordType}
               status={data.status}
               stageName={data.stageName}
+              recordId={data.id}
+              businessName={data.businessName}
+              lastName={data.lastName}
             />
           </motion.div>
 
