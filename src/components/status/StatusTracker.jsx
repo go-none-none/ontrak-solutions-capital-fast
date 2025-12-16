@@ -21,7 +21,9 @@ const opportunityStatusMap = {
   'contracts in': { display: 'Contracts In', step: 5 },
   'renewal processing': { display: 'Renewal Processing', step: 5 },
   'closed - funded': { display: 'Funded', step: 6 },
-  'closed - declined': { display: 'Declined', step: 6 }
+  'funded': { display: 'Funded', step: 6 },
+  'closed - declined': { display: 'Declined', step: 6 },
+  'declined': { display: 'Declined', step: 6 }
 };
 
 export default function StatusTracker({ recordType, status, stageName, recordId, businessName, lastName }) {
@@ -29,8 +31,8 @@ export default function StatusTracker({ recordType, status, stageName, recordId,
   const normalizedStatus = currentStatus?.toLowerCase();
   
   const isLeadDeclined = recordType === 'Lead' && normalizedStatus === 'closed - not converted';
-  const isOpportunityDeclined = recordType === 'Opportunity' && normalizedStatus === 'closed - declined';
-  const isFunded = recordType === 'Opportunity' && normalizedStatus === 'closed - funded';
+  const isOpportunityDeclined = recordType === 'Opportunity' && (normalizedStatus === 'closed - declined' || normalizedStatus === 'declined');
+  const isFunded = recordType === 'Opportunity' && (normalizedStatus === 'closed - funded' || normalizedStatus === 'funded');
   
   const statusMap = recordType === 'Lead' ? leadStatusMap : opportunityStatusMap;
   const statusInfo = statusMap[normalizedStatus] || { display: currentStatus, step: 0 };
