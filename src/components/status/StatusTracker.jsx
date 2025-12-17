@@ -62,12 +62,12 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
     if (isMissingInfo && recordType === 'Lead') {
       const container = document.getElementById('jotform-missing-docs');
       if (container && !container.querySelector('iframe')) {
-        let iframeSrc = 'https://form.jotform.com/253446533291155';
         const params = [];
         if (recordId) params.push(`id149=${encodeURIComponent(recordId)}`);
         if (businessName) params.push(`cn=${encodeURIComponent(businessName)}`);
         if (lastName) params.push(`ln=${encodeURIComponent(lastName)}`);
         
+        let iframeSrc = 'https://form.jotform.com/253446533291155';
         if (params.length > 0) {
           iframeSrc += `?${params.join('&')}`;
         }
