@@ -64,11 +64,11 @@ Deno.serve(async (req) => {
             
             // Log all available fields for debugging
             console.log('Opportunity fields:', Object.keys(opp));
-            console.log('Looking for stage detail in:', {
-                Stage_Detail__c: opp.Stage_Detail__c,
-                StageDetail__c: opp.StageDetail__c,
-                Decline_Reason__c: opp.Decline_Reason__c,
-                DeclineReason__c: opp.DeclineReason__c
+            console.log('Looking for name fields:', {
+                FirstName__c: opp.FirstName__c,
+                LastName__c: opp.LastName__c,
+                Contact: opp.Contact,
+                ContactId: opp.ContactId
             });
             
             // Try different possible field names for stage detail
@@ -78,7 +78,24 @@ Deno.serve(async (req) => {
                                opp.DeclineReason__c ||
                                null;
             
-            console.log('Final stageDetail value:', stageDetail);
+            // Try to get first name from various sources
+            let firstName = opp.FirstName__c || '';
+            
+            // If no custom field, try to get from Contact
+            if (!firstName && opp.ContactId) {
+                const contactResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Contact/${opp.ContactId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (contactResponse.ok) {
+                    const contact = await contactResponse.json();
+                    firstName = contact.FirstName || '';
+                }
+            }
+            
+            console.log('Final firstName value:', firstName);
             
             return Response.json({
                 recordType: 'Opportunity',
@@ -90,7 +107,7 @@ Deno.serve(async (req) => {
                 missingDocs: opp.Missing_Docs__c || null,
                 bankStatementChecklist: opp.Bank_Statement_Checklist__c || null,
                 lastModifiedDate: opp.LastModifiedDate,
-                firstName: opp.FirstName__c || '',
+                firstName: firstName,
                 lastName: opp.LastName__c || '',
                 // Include debug info
                 allFields: Object.keys(opp)
