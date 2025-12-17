@@ -29,7 +29,7 @@ export default function Blog() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 py-20">
+      <section className="relative bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 py-16">
         <div className="absolute inset-0">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
