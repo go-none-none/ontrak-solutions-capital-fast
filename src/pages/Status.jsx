@@ -146,24 +146,39 @@ export default function Status() {
                       const firstName = data.firstName;
                       const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
                       
-                      if (status === 'application missing info') {
+                      // Lead statuses
+                      if (status === 'open - not contacted') {
+                        return `${firstName}, thank you for your interest! We'll be reaching out to you shortly to discuss your funding needs.`;
+                      } else if (status === 'working - contacted') {
+                        return `${firstName}, great connecting with you! We're excited to help you with your funding application.`;
+                      } else if (status === 'working - application out') {
+                        return `${firstName}, we've sent your application. Please complete it at your earliest convenience so we can move forward!`;
+                      } else if (status === 'application missing info') {
                         return `${firstName}, we're almost there! Just need a few more documents to move forward with your application.`;
-                      } else if (status === 'underwriting' || status === 'working - contacted') {
-                        return `${firstName}, great news! Your application is being reviewed by our team.`;
+                      } else if (status === 'converted') {
+                        return `${firstName}, excellent news! Your application has been converted and is moving through our approval process.`;
+                      }
+                      
+                      // Opportunity statuses
+                      else if (status === 'application in') {
+                        return `${firstName}, we received your application and our team is reviewing it now. We'll have an update for you soon!`;
+                      } else if (status === 'underwriting') {
+                        return `${firstName}, great news! Your application is currently being reviewed by our underwriting team.`;
                       } else if (status === 'approved') {
-                        return `${firstName}, congratulations! Your application has been approved. We'll be sending contracts shortly.`;
+                        return `${firstName}, congratulations! Your application has been approved. We'll be sending your contracts shortly.`;
                       } else if (status === 'contracts out') {
                         return `${firstName}, your contracts are ready! Please review and sign them to proceed with funding.`;
-                      } else if (status === 'contracts in') {
-                        return `${firstName}, we received your signed contracts. Funding is on the way!`;
+                      } else if (status === 'contracts in' || status === 'renewal processing') {
+                        return `${firstName}, we received your signed contracts. Your funding is being processed and will be on its way soon!`;
                       } else if (status === 'closed - funded' || status === 'funded') {
-                        return `${firstName}, congratulations! Your funding has been successfully processed.`;
-                      } else if (status === 'working - application out' || status === 'application sent') {
-                        return `${firstName}, we've sent your application. Please complete it at your earliest convenience.`;
-                      } else if (status === 'application in') {
-                        return `${firstName}, we received your application and will review it shortly!`;
-                      } else {
-                        return `${firstName}, thank you for choosing OnTrak. We're working hard to process your application!`;
+                        return `${firstName}, congratulations! Your funding has been successfully processed. Thank you for choosing OnTrak!`;
+                      } else if (status === 'closed - declined' || status === 'declined') {
+                        return `${firstName}, unfortunately we're unable to approve your application at this time. Please contact us to discuss alternative options.`;
+                      }
+                      
+                      // Default fallback
+                      else {
+                        return `${firstName}, thank you for choosing OnTrak. We're working on your request!`;
                       }
                     })()}
                   </p>
