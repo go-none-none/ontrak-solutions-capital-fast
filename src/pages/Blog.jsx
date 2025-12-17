@@ -10,8 +10,9 @@ import { blogPosts } from '../components/blog/blogData';
 export default function Blog() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [displayCount, setDisplayCount] = useState(6);
 
-  const categories = ['All', 'Basics', 'Comparisons', 'Use Cases', 'Growth', 'Process'];
+  const categories = ['All', 'Basics', 'Comparisons', 'Use Cases', 'Growth', 'Process', 'Industries'];
 
   const filteredPosts = blogPosts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -20,8 +21,10 @@ export default function Blog() {
     return matchesSearch && matchesCategory;
   });
 
+  const displayedPosts = filteredPosts.slice(0, displayCount);
+  const hasMore = filteredPosts.length > displayCount;
+
   const featuredPost = blogPosts[0];
-  const recentPosts = blogPosts.slice(1, 7);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -93,34 +96,45 @@ export default function Blog() {
               <TrendingUp className="w-5 h-5 text-[#08708E]" />
               <h2 className="text-2xl font-bold text-slate-900">Featured Article</h2>
             </div>
-            
+
             <Link to={`${createPageUrl('BlogPost')}?slug=${featuredPost.slug}`}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="group bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-3xl p-8 hover:shadow-2xl transition-all duration-300"
+                className="group bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="bg-[#08708E] text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {featuredPost.category}
-                  </span>
-                  <span className="text-slate-500 text-sm flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {featuredPost.readTime}
-                  </span>
-                </div>
-                
-                <h3 className="text-3xl font-bold text-slate-900 mb-4 group-hover:text-[#08708E] transition-colors">
-                  {featuredPost.title}
-                </h3>
-                
-                <p className="text-slate-600 mb-6 line-clamp-3">
-                  {featuredPost.content.substring(0, 200)}...
-                </p>
-                
-                <div className="flex items-center gap-2 text-[#08708E] font-semibold">
-                  Read Full Article
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                {featuredPost.image && (
+                  <div className="relative h-64 overflow-hidden">
+                    <img 
+                      src={featuredPost.image} 
+                      alt={featuredPost.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                )}
+                <div className="p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="bg-[#08708E] text-white px-3 py-1 rounded-full text-sm font-medium">
+                      {featuredPost.category}
+                    </span>
+                    <span className="text-slate-500 text-sm flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      {featuredPost.readTime}
+                    </span>
+                  </div>
+
+                  <h3 className="text-3xl font-bold text-slate-900 mb-4 group-hover:text-[#08708E] transition-colors">
+                    {featuredPost.title}
+                  </h3>
+
+                  <p className="text-slate-600 mb-6 line-clamp-3">
+                    {featuredPost.metaDescription}
+                  </p>
+
+                  <div className="flex items-center gap-2 text-[#08708E] font-semibold">
+                    Read Full Article
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </motion.div>
             </Link>
@@ -137,8 +151,8 @@ export default function Blog() {
             </div>
           ) : (
             <>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredPosts.map((post, index) => (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                {displayedPosts.map((post, index) => (
                   <motion.div
                     key={post.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -146,34 +160,57 @@ export default function Blog() {
                     transition={{ delay: index * 0.1 }}
                   >
                     <Link to={`${createPageUrl('BlogPost')}?slug=${post.slug}`}>
-                      <div className="group bg-white rounded-2xl p-6 border border-slate-200 hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-                        <div className="flex items-center gap-3 mb-4">
-                          <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-medium">
-                            {post.category}
-                          </span>
-                          <span className="text-slate-400 text-xs flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {post.readTime}
-                          </span>
-                        </div>
+                      <div className="group bg-white rounded-2xl border border-slate-200 hover:shadow-xl transition-all duration-300 h-full flex flex-col overflow-hidden">
+                        {post.image && (
+                          <div className="relative h-48 overflow-hidden">
+                            <img 
+                              src={post.image} 
+                              alt={post.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        )}
+                        <div className="p-6 flex flex-col flex-grow">
+                          <div className="flex items-center gap-3 mb-4">
+                            <span className="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-medium">
+                              {post.category}
+                            </span>
+                            <span className="text-slate-400 text-xs flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {post.readTime}
+                            </span>
+                          </div>
 
-                        <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-[#08708E] transition-colors line-clamp-2">
-                          {post.title}
-                        </h3>
+                          <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-[#08708E] transition-colors line-clamp-2">
+                            {post.title}
+                          </h3>
 
-                        <p className="text-slate-600 text-sm mb-4 line-clamp-3 flex-grow">
-                          {post.metaDescription}
-                        </p>
+                          <p className="text-slate-600 text-sm mb-4 line-clamp-3 flex-grow">
+                            {post.metaDescription}
+                          </p>
 
-                        <div className="flex items-center gap-2 text-[#08708E] font-semibold text-sm">
-                          Read More
-                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                          <div className="flex items-center gap-2 text-[#08708E] font-semibold text-sm">
+                            Read More
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                          </div>
                         </div>
                       </div>
                     </Link>
                   </motion.div>
                 ))}
               </div>
+
+              {/* Load More Button */}
+              {hasMore && (
+                <div className="text-center">
+                  <Button 
+                    onClick={() => setDisplayCount(prev => prev + 6)}
+                    className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg rounded-full"
+                  >
+                    Load More Articles
+                  </Button>
+                </div>
+              )}
             </>
           )}
         </div>

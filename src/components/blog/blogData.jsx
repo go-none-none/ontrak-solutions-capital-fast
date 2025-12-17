@@ -1,3 +1,10 @@
+// Calculate reading time based on word count (200 words per minute)
+const calculateReadTime = (content) => {
+  const wordCount = content.trim().split(/\s+/).length;
+  const minutes = Math.ceil(wordCount / 200);
+  return `${minutes} min read`;
+};
+
 export const blogPosts = [
   // POST 1
   {
@@ -7,7 +14,6 @@ export const blogPosts = [
     metaDescription: 'Discover how a business cash advance works, who it helps, and why it is a flexible funding option for small businesses.',
     title: 'What Is a Business Cash Advance? A Clear, Simple Explanation',
     category: 'Basics',
-    readTime: '8 min read',
     publishDate: '2025-01-15',
     image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800',
     keywords: ['business cash advance', 'cash advance for business', 'small business cash advance'],
@@ -1742,4 +1748,7 @@ These are real businesses that faced real challenges and opportunities. With str
 **Ready to write your own success story?** The right funding partner helps businesses like yours overcome challenges and seize opportunities every day.
     `
   }
-];
+].map(post => ({
+  ...post,
+  readTime: calculateReadTime(post.content)
+}));

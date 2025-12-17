@@ -105,13 +105,6 @@ export default function BlogPost() {
                   </h2>
                 );
               }
-              if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-                return (
-                  <p key={i} className="font-bold text-slate-900 my-4">
-                    {paragraph.replace(/\*\*/g, '')}
-                  </p>
-                );
-              }
               if (paragraph.startsWith('- ')) {
                 const items = paragraph.split('\n');
                 return (
@@ -124,6 +117,24 @@ export default function BlogPost() {
                   </ul>
                 );
               }
+              
+              // Handle bold text with **
+              const parts = paragraph.split(/(\*\*[^*]+\*\*)/g);
+              const hasMarkup = parts.some(part => part.startsWith('**'));
+              
+              if (hasMarkup) {
+                return (
+                  <p key={i} className="text-slate-700 leading-relaxed my-4">
+                    {parts.map((part, j) => {
+                      if (part.startsWith('**') && part.endsWith('**')) {
+                        return <strong key={j} className="font-bold text-slate-900">{part.slice(2, -2)}</strong>;
+                      }
+                      return <span key={j}>{part}</span>;
+                    })}
+                  </p>
+                );
+              }
+              
               return (
                 <p key={i} className="text-slate-700 leading-relaxed my-4">
                   {paragraph}
