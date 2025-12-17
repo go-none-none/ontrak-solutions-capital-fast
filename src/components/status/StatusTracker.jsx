@@ -192,33 +192,36 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
           animate={{ opacity: 1, y: 0 }}
           className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-6 shadow-md"
         >
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
               <FileText className="w-5 h-5 text-amber-600" />
             </div>
             <h3 className="text-lg font-bold text-slate-900">Required Bank Statements</h3>
           </div>
-          <div className="bg-white rounded-xl p-4 space-y-3">
+          <p className="text-slate-600 text-sm mb-4 ml-[52px]">
+            We're still waiting for the missing bank statements below. Please upload them using the form below to keep your application moving forward.
+          </p>
+          <div className="bg-white rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {bankStatementChecklist.split(/<br\s*\/?>/i).map((item, index) => {
               const trimmedItem = item.trim();
               if (!trimmedItem) return null;
               const isMissing = trimmedItem.includes('❌');
               const isReceived = trimmedItem.includes('✅');
               return (
-                <div key={index} className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
-                  isMissing ? 'bg-red-50 border border-red-200' : 
-                  isReceived ? 'bg-green-50 border border-green-200' : 
-                  'bg-slate-50 border border-slate-200'
+                <div key={index} className={`flex flex-col items-center gap-2 p-3 rounded-lg transition-all ${
+                  isMissing ? 'bg-red-50 border-2 border-red-300' : 
+                  isReceived ? 'bg-green-50 border-2 border-green-300' : 
+                  'bg-slate-50 border-2 border-slate-200'
                 }`}>
-                  <span className={`text-2xl ${isMissing ? 'animate-pulse' : ''}`}>
+                  <span className={`text-3xl ${isMissing ? 'animate-pulse' : ''}`}>
                     {isMissing ? '❌' : isReceived ? '✅' : '📄'}
                   </span>
-                  <span className={`flex-1 font-medium ${
+                  <span className={`text-center text-sm font-semibold ${
                     isMissing ? 'text-red-700' : 
                     isReceived ? 'text-green-700' : 
                     'text-slate-700'
                   }`}>
-                    {trimmedItem.replace(/[❌✅]/g, '').trim()}
+                    {trimmedItem.replace(/[❌✅]/g, '').replace('Bank Statement – ', '').trim()}
                   </span>
                 </div>
               );
