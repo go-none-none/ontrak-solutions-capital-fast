@@ -56,7 +56,7 @@ export default function Blog() {
                 placeholder="Search articles..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-12 h-14 rounded-full text-lg"
+                className="pl-12 h-14 rounded-full text-lg bg-white text-slate-900 placeholder:text-slate-400"
               />
             </div>
           </motion.div>
