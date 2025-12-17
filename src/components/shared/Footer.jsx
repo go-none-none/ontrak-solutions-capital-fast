@@ -38,6 +38,7 @@ export default function Footer() {
                 { name: 'FAQ', href: 'FAQ' },
                 { name: 'Use Cases', href: 'UseCases' },
                 { name: 'Industries', href: 'Industries' },
+                { name: 'Blog', href: 'Blog' },
                 { name: 'Reviews', href: 'Reviews' },
                 { name: 'Contact', href: 'Contact' },
               ].map((link) => (

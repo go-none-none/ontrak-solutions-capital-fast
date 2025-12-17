@@ -23,6 +23,7 @@ export default function Navigation() {
     { name: 'FAQ', href: createPageUrl('FAQ') },
     { name: 'Use Cases', href: createPageUrl('UseCases') },
     { name: 'Industries', href: createPageUrl('Industries') },
+    { name: 'Blog', href: createPageUrl('Blog') },
     { name: 'Reviews', href: createPageUrl('Reviews') },
     { name: 'Contact', href: createPageUrl('Contact') },
   ];
