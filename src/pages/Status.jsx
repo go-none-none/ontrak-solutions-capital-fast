@@ -151,7 +151,7 @@ export default function Status() {
           </motion.div>
 
           {/* Missing Documents Section */}
-          {data.missingDocsFlag && data.missingDocs && (
+          {data.status === 'Application Missing Info' && data.bankStatementChecklist && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -164,15 +164,24 @@ export default function Status() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-slate-900 mb-2">
-                    Documents Required
+                    Documents Missing
                   </h3>
                   <p className="text-slate-600 mb-4">
                     We need the following documents to continue processing your application:
                   </p>
                   <div className="bg-white rounded-xl p-4 mb-4">
-                    <pre className="text-sm text-slate-700 whitespace-pre-wrap font-sans">
-                      {data.missingDocs}
-                    </pre>
+                    <ul className="space-y-2">
+                      {data.bankStatementChecklist.split('\n').map((item, index) => {
+                        const trimmedItem = item.trim();
+                        if (!trimmedItem) return null;
+                        const isMissing = trimmedItem.includes('❌');
+                        return (
+                          <li key={index} className={`flex items-start gap-2 ${isMissing ? 'text-red-600' : 'text-green-600'} font-medium`}>
+                            {trimmedItem}
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
                   <a href={uploadUrl}>
                     <Button className="bg-[#08708E] hover:bg-[#065a72] w-full sm:w-auto">
