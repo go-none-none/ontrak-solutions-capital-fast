@@ -62,7 +62,15 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
     if (isMissingInfo && recordType === 'Lead') {
       const container = document.getElementById('jotform-missing-docs');
       if (container && !container.querySelector('iframe')) {
-        const iframeSrc = 'https://form.jotform.com/253446533291155';
+        let iframeSrc = 'https://form.jotform.com/253446533291155';
+        const params = [];
+        if (recordId) params.push(`id149=${encodeURIComponent(recordId)}`);
+        if (businessName) params.push(`cn=${encodeURIComponent(businessName)}`);
+        if (lastName) params.push(`ln=${encodeURIComponent(lastName)}`);
+        
+        if (params.length > 0) {
+          iframeSrc += `?${params.join('&')}`;
+        }
         
         container.innerHTML = `
           <iframe
@@ -72,11 +80,26 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
             allow="geolocation; microphone; camera; fullscreen"
             src="${iframeSrc}"
             frameborder="0"
-            style="min-width:100%;max-width:100%;height:800px;border:none;"
-            scrolling="yes"
+            style="min-width:100%;max-width:100%;height:539px;border:none;"
+            scrolling="no"
           >
           </iframe>
         `;
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+        script.onload = () => {
+          if (window.jotformEmbedHandler) {
+            window.jotformEmbedHandler("iframe[id='JotFormIFrame-missing-docs']", "https://form.jotform.com/");
+          }
+        };
+        document.body.appendChild(script);
+        
+        return () => {
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+        };
       }
     }
   }, [isMissingInfo, recordType, recordId, businessName, lastName]);
