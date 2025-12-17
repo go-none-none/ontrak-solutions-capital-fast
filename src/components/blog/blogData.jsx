@@ -14,7 +14,7 @@ export const blogPosts = [
     metaDescription: 'Discover how a business cash advance works, who it helps, and why it is a flexible funding option for small businesses.',
     title: 'What Is a Business Cash Advance? A Clear, Simple Explanation',
     category: 'Basics',
-    publishDate: '2025-01-15',
+    publishDate: '2025-12-17',
     image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800',
     keywords: ['business cash advance', 'cash advance for business', 'small business cash advance'],
     content: `
@@ -57,7 +57,7 @@ Small and mid-sized business owners across industries rely on cash advances to p
     title: 'How Does a Business Cash Advance Work? A Step-by-Step Guide',
     category: 'Basics',
     readTime: '9 min read',
-    publishDate: '2025-01-14',
+    publishDate: '2025-12-10',
     image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800',
     keywords: ['how does a business cash advance work', 'cash advance process'],
     content: `
@@ -100,7 +100,7 @@ This speed is a game-changer for businesses facing time-sensitive opportunities 
     title: 'Business Cash Advance vs Traditional Bank Loan: Which Is Right?',
     category: 'Comparisons',
     readTime: '10 min read',
-    publishDate: '2025-01-13',
+    publishDate: '2025-12-03',
     image: 'https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=800',
     keywords: ['business cash advance vs bank loan', 'alternative business financing'],
     content: `
@@ -145,7 +145,7 @@ Understanding both options empowers you to make strategic funding decisions that
     title: 'Business Cash Advance vs Line of Credit: Your Options',
     category: 'Comparisons',
     readTime: '9 min read',
-    publishDate: '2025-01-12',
+    publishDate: '2025-11-26',
     image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800',
     keywords: ['cash advance vs line of credit', 'business line of credit alternatives'],
     content: `
@@ -191,7 +191,7 @@ A line of credit and cash advance are not competitors—they are different tools
     title: 'How Fast Funding Helps Growing Businesses Seize Opportunities',
     category: 'Growth',
     readTime: '8 min read',
-    publishDate: '2025-01-11',
+    publishDate: '2025-11-19',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800',
     keywords: ['fast business funding', 'quick business cash advance'],
     content: `
@@ -230,7 +230,7 @@ In today fast-paced business environment, the ability to act quickly separates t
     title: 'Using Cash Advances to Fund Inventory and Stock Your Business',
     category: 'Use Cases',
     readTime: '9 min read',
-    publishDate: '2025-01-10',
+    publishDate: '2025-11-12',
     image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800',
     keywords: ['inventory funding for small business', 'cash advance for inventory'],
     content: `
@@ -273,7 +273,7 @@ Every dollar invested in smart inventory is a dollar invested in future revenue.
     title: 'Funding Payroll with a Cash Advance: Keeping Your Team Paid',
     category: 'Use Cases',
     readTime: '8 min read',
-    publishDate: '2025-01-09',
+    publishDate: '2025-11-05',
     image: 'https://images.unsplash.com/photo-1554224154-26032ffc0d07?w=800',
     keywords: ['payroll funding for small business', 'cash advance for payroll'],
     content: `
@@ -316,7 +316,7 @@ The cost of funding payroll temporarily is minimal compared to the cost of losin
     title: 'Funding Marketing with Business Cash Advances',
     category: 'Use Cases',
     readTime: '9 min read',
-    publishDate: '2025-01-08',
+    publishDate: '2025-10-29',
     image: 'https://images.unsplash.com/photo-1533750516457-a7f992034fec?w=800',
     keywords: ['marketing funding for small business', 'cash advance for marketing'],
     content: `
@@ -353,7 +353,7 @@ The most successful businesses view marketing not as an expense but as revenue g
     title: 'Financing Equipment Purchases with Business Cash Advances',
     category: 'Use Cases',
     readTime: '8 min read',
-    publishDate: '2025-01-07',
+    publishDate: '2025-10-22',
     image: 'https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800',
     keywords: ['equipment financing cash advance', 'fund equipment purchase fast'],
     content: `
@@ -402,7 +402,7 @@ Your equipment is the foundation of your operations. When it needs replacement, 
     title: 'Cash Advances for Seasonal Businesses: Managing Year-Round Cash Flow',
     category: 'Use Cases',
     readTime: '9 min read',
-    publishDate: '2025-01-06',
+    publishDate: '2025-10-15',
     image: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800',
     keywords: ['seasonal business funding', 'cash advance for seasonal business'],
     content: `
@@ -457,7 +457,7 @@ Seasonal businesses are not less viable—they are differently profitable. Cash 
     title: 'What Do You Need to Qualify for a Business Cash Advance?',
     category: 'Process',
     readTime: '7 min read',
-    publishDate: '2025-01-05',
+    publishDate: '2025-10-08',
     image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800',
     keywords: ['cash advance approval requirements', 'qualify for business cash advance'],
     content: `
@@ -524,7 +524,7 @@ Cash advances are designed for real businesses with real revenue—not just perf
     title: 'Understanding Factor Rates: How Cash Advance Pricing Works',
     category: 'Basics',
     readTime: '8 min read',
-    publishDate: '2025-01-04',
+    publishDate: '2025-10-01',
     image: 'https://images.unsplash.com/photo-1554224154-22dec7ec8818?w=800',
     keywords: ['factor rates explained', 'cash advance pricing', 'factor rate calculator'],
     content: `
@@ -609,7 +609,7 @@ Understanding factor rates removes confusion and empowers you to evaluate offers
     title: 'How Cash Advance Repayment Works: Your Complete Guide',
     category: 'Process',
     readTime: '9 min read',
-    publishDate: '2025-01-03',
+    publishDate: '2025-09-24',
     image: 'https://images.unsplash.com/photo-1579621970795-87facc2f976d?w=800',
     keywords: ['cash advance repayment', 'how to repay business cash advance'],
     content: `
@@ -700,7 +700,7 @@ This alignment makes cash advances uniquely suited for businesses with variable 
     title: 'Restaurant Funding: How Cash Advances Support Food Service Businesses',
     category: 'Industries',
     readTime: '9 min read',
-    publishDate: '2025-01-02',
+    publishDate: '2025-09-17',
     image: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800',
     keywords: ['restaurant business funding', 'cash advance for restaurants'],
     content: `
@@ -777,7 +777,7 @@ Restaurants need funding partners who understand the unique dynamics of food ser
     title: 'Retail Funding Solutions: Cash Advances for Store Owners',
     category: 'Industries',
     readTime: '8 min read',
-    publishDate: '2025-01-01',
+    publishDate: '2025-09-10',
     image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800',
     keywords: ['retail business funding', 'cash advance for retail stores'],
     content: `
@@ -848,7 +848,7 @@ Cash advances provide that capital with the speed and flexibility retail busines
     title: 'Construction Funding: Cash Advances for Contractors and Builders',
     category: 'Industries',
     readTime: '9 min read',
-    publishDate: '2024-12-31',
+    publishDate: '2025-09-03',
     image: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800',
     keywords: ['contractor funding', 'construction business cash advance'],
     content: `
@@ -917,7 +917,7 @@ Contractors need funding that understands project-based revenue and flexible rep
     title: 'Healthcare Practice Funding: Cash Advances for Medical Professionals',
     category: 'Industries',
     readTime: '8 min read',
-    publishDate: '2024-12-30',
+    publishDate: '2025-08-27',
     image: 'https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=800',
     keywords: ['medical practice funding', 'healthcare business cash advance'],
     content: `
@@ -990,7 +990,7 @@ Healthcare providers need funding that respects their time and does not require 
     title: 'Building Business Credit: Strategies for Small Business Owners',
     category: 'Growth',
     readTime: '9 min read',
-    publishDate: '2024-12-29',
+    publishDate: '2025-08-20',
     image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800',
     keywords: ['improve business credit score', 'building business credit'],
     content: `
@@ -1083,7 +1083,7 @@ Whether you use cash advances, traditional loans, or both, maintaining strong cr
     title: 'Cash Flow Management: Keeping Your Business Financially Healthy',
     category: 'Growth',
     readTime: '10 min read',
-    publishDate: '2024-12-28',
+    publishDate: '2025-08-13',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800',
     keywords: ['business cash flow management', 'managing small business cash flow'],
     content: `
@@ -1208,7 +1208,7 @@ Cash flow is not just a financial metric—it is a strategic business capability
     title: 'How to Choose the Right Business Funding Partner',
     category: 'Basics',
     readTime: '8 min read',
-    publishDate: '2024-12-27',
+    publishDate: '2025-08-06',
     image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800',
     keywords: ['choosing business funding partner', 'best business lender'],
     content: `
@@ -1307,7 +1307,7 @@ Take time to choose carefully. The relationship matters as much as the capital.
     title: 'Funding Business Expansion: Strategic Growth Capital Planning',
     category: 'Growth',
     readTime: '10 min read',
-    publishDate: '2024-12-26',
+    publishDate: '2025-07-30',
     image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800',
     keywords: ['business expansion funding', 'funding business growth strategy'],
     content: `
@@ -1414,7 +1414,7 @@ The right funding partner understands expansion challenges and structures capita
     title: 'Emergency Business Funding: Getting Cash When You Need It Most',
     category: 'Process',
     readTime: '7 min read',
-    publishDate: '2024-12-25',
+    publishDate: '2025-07-23',
     image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800',
     keywords: ['emergency business funding', 'urgent business cash advance'],
     content: `
@@ -1503,7 +1503,7 @@ Business emergencies happen. Equipment fails. Unexpected expenses arise. Opportu
     title: 'Common Business Funding Mistakes and How to Avoid Them',
     category: 'Basics',
     readTime: '9 min read',
-    publishDate: '2024-12-24',
+    publishDate: '2025-07-16',
     image: 'https://images.unsplash.com/photo-1590650153855-d9e808231d41?w=800',
     keywords: ['business funding mistakes', 'common funding errors to avoid'],
     content: `
@@ -1630,7 +1630,7 @@ Avoiding these mistakes requires awareness, planning, and discipline. The good n
     title: 'Real Business Funding Success Stories: How Cash Advances Changed Everything',
     category: 'Growth',
     readTime: '10 min read',
-    publishDate: '2024-12-23',
+    publishDate: '2025-07-09',
     image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800',
     keywords: ['business funding success stories', 'cash advance success stories'],
     content: `
