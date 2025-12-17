@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
         }
 
         // Try Opportunity - explicitly query the fields we need
-        let oppResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Opportunity/${recordId}?fields=Id,Name,StageName,Stage_Detail__c,Missing_Docs__c,LastModifiedDate,FirstName__c,LastName__c`, {
+        let oppResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Opportunity/${recordId}?fields=Id,Name,StageName,Stage_Detail__c,Missing_Docs__c,Bank_Statement_Checklist__c,LastModifiedDate,FirstName__c,LastName__c`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
@@ -88,6 +88,7 @@ Deno.serve(async (req) => {
                 stageDetail: stageDetail,
                 missingDocsFlag: missingDocsFlag,
                 missingDocs: opp.Missing_Docs__c || null,
+                bankStatementChecklist: opp.Bank_Statement_Checklist__c || null,
                 lastModifiedDate: opp.LastModifiedDate,
                 firstName: opp.FirstName__c || '',
                 lastName: opp.LastName__c || '',
