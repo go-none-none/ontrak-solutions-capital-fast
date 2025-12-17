@@ -147,52 +147,10 @@ export default function Status() {
               recordId={data.id}
               businessName={data.businessName}
               lastName={data.lastName}
+              bankStatementChecklist={data.bankStatementChecklist}
             />
           </motion.div>
 
-          {/* Missing Documents Section */}
-          {data.status === 'Application Missing Info' && data.bankStatementChecklist && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-amber-50 border-2 border-amber-200 rounded-3xl p-8 mb-6"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-                  <FileText className="w-6 h-6 text-amber-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">
-                    Documents Missing
-                  </h3>
-                  <p className="text-slate-600 mb-4">
-                    We need the following documents to continue processing your application:
-                  </p>
-                  <div className="bg-white rounded-xl p-4 mb-4">
-                    <ul className="space-y-2">
-                      {data.bankStatementChecklist.split('\n').map((item, index) => {
-                        const trimmedItem = item.trim();
-                        if (!trimmedItem) return null;
-                        const isMissing = trimmedItem.includes('❌');
-                        return (
-                          <li key={index} className={`flex items-start gap-2 ${isMissing ? 'text-red-600' : 'text-green-600'} font-medium`}>
-                            {trimmedItem}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                  <a href={uploadUrl}>
-                    <Button className="bg-[#08708E] hover:bg-[#065a72] w-full sm:w-auto">
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload Documents
-                    </Button>
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          )}
 
           {/* Next Steps */}
           <motion.div

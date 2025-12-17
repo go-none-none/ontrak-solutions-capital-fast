@@ -26,7 +26,7 @@ const opportunityStatusMap = {
   'declined': { display: 'Declined', step: 6 }
 };
 
-export default function StatusTracker({ recordType, status, stageName, stageDetail, recordId, businessName, lastName }) {
+export default function StatusTracker({ recordType, status, stageName, stageDetail, recordId, businessName, lastName, bankStatementChecklist }) {
   const currentStatus = recordType === 'Lead' ? status : stageName;
   const normalizedStatus = currentStatus?.toLowerCase();
   
@@ -185,23 +185,65 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
         </div>
       )}
       
+      {/* Bank Statement Checklist */}
+      {isMissingInfo && recordType === 'Lead' && bankStatementChecklist && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-6 shadow-md"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+              <FileText className="w-5 h-5 text-amber-600" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900">Required Bank Statements</h3>
+          </div>
+          <div className="bg-white rounded-xl p-4 space-y-3">
+            {bankStatementChecklist.split(/<br\s*\/?>/i).map((item, index) => {
+              const trimmedItem = item.trim();
+              if (!trimmedItem) return null;
+              const isMissing = trimmedItem.includes('❌');
+              const isReceived = trimmedItem.includes('✅');
+              return (
+                <div key={index} className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                  isMissing ? 'bg-red-50 border border-red-200' : 
+                  isReceived ? 'bg-green-50 border border-green-200' : 
+                  'bg-slate-50 border border-slate-200'
+                }`}>
+                  <span className={`text-2xl ${isMissing ? 'animate-pulse' : ''}`}>
+                    {isMissing ? '❌' : isReceived ? '✅' : '📄'}
+                  </span>
+                  <span className={`flex-1 font-medium ${
+                    isMissing ? 'text-red-700' : 
+                    isReceived ? 'text-green-700' : 
+                    'text-slate-700'
+                  }`}>
+                    {trimmedItem.replace(/[❌✅]/g, '').trim()}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+      )}
+
       {/* Missing Documents Form */}
       {isMissingInfo && recordType === 'Lead' && (
-        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6 mb-6">
+        <div className="bg-white border-2 border-slate-200 rounded-2xl p-6">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-              <Upload className="w-6 h-6 text-amber-600" />
+            <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center flex-shrink-0">
+              <Upload className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-bold text-slate-900 mb-2">
-                Documents Required
+                Upload Missing Documents
               </h3>
               <p className="text-slate-600">
                 Please upload the required documents below to continue processing your application.
               </p>
             </div>
           </div>
-          <div id="jotform-missing-docs" className="bg-white rounded-xl overflow-hidden">
+          <div id="jotform-missing-docs" className="bg-slate-50 rounded-xl overflow-hidden">
             <p style={{textAlign: 'center', padding: '40px', color: '#08708E'}}>
               Loading upload form...
             </p>
