@@ -134,9 +134,41 @@ export default function Status() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-slate-600 mb-8">
-              <Calendar className="w-4 h-4" />
-              <span>Last Updated: {formatDate(data.lastModifiedDate)}</span>
+            <div className="space-y-3 mb-8">
+              <div className="flex items-center gap-2 text-sm text-slate-600">
+                <Calendar className="w-4 h-4" />
+                <span>Last Updated: {formatDate(data.lastModifiedDate)}</span>
+              </div>
+              {data.firstName && (
+                <div className="bg-gradient-to-r from-[#08708E]/10 to-cyan-50 border-l-4 border-[#08708E] rounded-r-lg p-4">
+                  <p className="text-slate-700 font-medium">
+                    {(() => {
+                      const firstName = data.firstName;
+                      const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
+                      
+                      if (status === 'application missing info') {
+                        return `${firstName}, we're almost there! Just need a few more documents to move forward with your application.`;
+                      } else if (status === 'underwriting' || status === 'working - contacted') {
+                        return `${firstName}, great news! Your application is being reviewed by our team.`;
+                      } else if (status === 'approved') {
+                        return `${firstName}, congratulations! Your application has been approved. We'll be sending contracts shortly.`;
+                      } else if (status === 'contracts out') {
+                        return `${firstName}, your contracts are ready! Please review and sign them to proceed with funding.`;
+                      } else if (status === 'contracts in') {
+                        return `${firstName}, we received your signed contracts. Funding is on the way!`;
+                      } else if (status === 'closed - funded' || status === 'funded') {
+                        return `${firstName}, congratulations! Your funding has been successfully processed.`;
+                      } else if (status === 'working - application out' || status === 'application sent') {
+                        return `${firstName}, we've sent your application. Please complete it at your earliest convenience.`;
+                      } else if (status === 'application in') {
+                        return `${firstName}, we received your application and will review it shortly!`;
+                      } else {
+                        return `${firstName}, thank you for choosing OnTrak. We're working hard to process your application!`;
+                      }
+                    })()}
+                  </p>
+                </div>
+              )}
             </div>
 
             <StatusTracker 

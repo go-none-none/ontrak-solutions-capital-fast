@@ -45,12 +45,13 @@ Deno.serve(async (req) => {
                 missingDocs: lead.Missing_Docs__c || null,
                 bankStatementChecklist: lead.Bank_Statement_Checklist__c || null,
                 lastModifiedDate: lead.LastModifiedDate,
+                firstName: lead.FirstName,
                 lastName: lead.LastName
             });
         }
 
         // Try Opportunity - explicitly query the fields we need
-        let oppResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Opportunity/${recordId}?fields=Id,Name,StageName,Stage_Detail__c,Missing_Docs__c,LastModifiedDate,LastName__c`, {
+        let oppResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Opportunity/${recordId}?fields=Id,Name,StageName,Stage_Detail__c,Missing_Docs__c,LastModifiedDate,FirstName__c,LastName__c`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
@@ -88,6 +89,7 @@ Deno.serve(async (req) => {
                 missingDocsFlag: missingDocsFlag,
                 missingDocs: opp.Missing_Docs__c || null,
                 lastModifiedDate: opp.LastModifiedDate,
+                firstName: opp.FirstName__c || '',
                 lastName: opp.LastName__c || '',
                 // Include debug info
                 allFields: Object.keys(opp)
