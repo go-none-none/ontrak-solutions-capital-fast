@@ -43,6 +43,7 @@ Deno.serve(async (req) => {
                 status: lead.Status,
                 missingDocsFlag: missingDocsFlag,
                 missingDocs: lead.Missing_Docs__c || null,
+                bankStatementChecklist: lead.Bank_Statement_Checklist__c || null,
                 lastModifiedDate: lead.LastModifiedDate,
                 lastName: lead.LastName
             });
