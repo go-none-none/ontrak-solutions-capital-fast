@@ -63,14 +63,12 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
       const container = document.getElementById('jotform-missing-docs');
       if (container && !container.querySelector('iframe')) {
         let iframeSrc = 'https://form.jotform.com/253446533291155';
-        const params = [];
+        const params = ['autoSubmit=false'];
         if (recordId) params.push(`id149=${encodeURIComponent(recordId)}`);
         if (businessName) params.push(`cn=${encodeURIComponent(businessName)}`);
         if (lastName) params.push(`ln=${encodeURIComponent(lastName)}`);
         
-        if (params.length > 0) {
-          iframeSrc += `?${params.join('&')}`;
-        }
+        iframeSrc += `?${params.join('&')}`;
         
         container.innerHTML = `
           <iframe
