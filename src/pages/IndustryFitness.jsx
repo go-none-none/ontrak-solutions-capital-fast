@@ -59,8 +59,32 @@ export default function IndustryFitness() {
         </div>
       </section>
 
+      {/* Introduction */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">Fitness Center Financing for Gyms & Studios</h2>
+            <div className="prose prose-lg text-slate-600 space-y-4">
+              <p>
+                Fitness businesses require substantial capital investment — purchasing cardio and strength equipment, expanding facility square footage, launching new class formats, hiring certified trainers, and maintaining a competitive edge in a growing industry. OnTrak provides specialized financing for traditional gyms, boutique fitness studios, CrossFit boxes, yoga and Pilates studios, martial arts schools, personal training facilities, and recreation centers.
+              </p>
+              <p>
+                Whether you need funding to purchase commercial-grade treadmills and weight equipment, expand your facility to accommodate more members, launch new group fitness classes or training programs, invest in member management software and booking systems, run marketing campaigns to attract new members, or renovate your space with better lighting and flooring, our fitness business loans are structured to support your growth objectives.
+              </p>
+              <p>
+                With OnTrak's fitness industry financing ranging from $10,000 to $300,000, you can access fast capital with approval in hours and funding within 24-48 hours. We understand that fitness businesses have membership-based revenue models with monthly recurring income, which is why our repayment structures align with your membership billing cycles and seasonal trends.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Benefits */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -191,8 +215,51 @@ export default function IndustryFitness() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* FAQ */}
       <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">Fitness Business Financing FAQs</h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: 'Can I finance gym equipment purchases?',
+                a: 'Yes! Gym equipment financing is one of our most popular use cases. You can use our funding to purchase cardio machines (treadmills, ellipticals, bikes), strength equipment (weight racks, benches, machines), free weights, functional training gear, and any specialized equipment your fitness concept requires.'
+              },
+              {
+                q: 'Do you fund boutique fitness studios?',
+                a: 'Absolutely! We love working with boutique concepts like yoga studios, Pilates studios, barre studios, cycling studios, boxing gyms, and other specialized fitness businesses. Whether you\'re launching your first studio or expanding to multiple locations, we can help.'
+              },
+              {
+                q: 'What if my gym is still building its member base?',
+                a: 'We work with fitness businesses at all stages of growth. Even if you\'re still building membership, we can evaluate your application based on your current revenue trends, growth trajectory, and business plan. Many new gym owners successfully secure funding to accelerate growth.'
+              },
+              {
+                q: 'Can I use funding for marketing and member acquisition?',
+                a: 'Yes! Many fitness businesses use our capital for marketing campaigns, member acquisition programs, social media advertising, referral incentives, and promotional offers. Investing in marketing often delivers the highest ROI for growing fitness centers.'
+              },
+              {
+                q: 'How do repayments work with membership-based revenue?',
+                a: 'Our repayment structures are designed to align with recurring membership revenue. For merchant cash advances, repayments are based on a percentage of daily sales, which naturally accommodates fluctuations in memberships and seasonal trends in fitness.'
+              }
+            ].map((faq, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{faq.q}</h3>
+                <p className="text-slate-600 leading-relaxed">{faq.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +270,7 @@ export default function IndustryFitness() {
               Ready to Level Up Your Fitness Business?
             </h2>
             <p className="text-lg text-slate-600 mb-8">
-              Get the funding you need to purchase equipment, expand your facility, or launch new programs.
+              Get the funding you need to purchase equipment, expand your facility, or launch new programs. Trusted by fitness entrepreneurs nationwide.
             </p>
             <Link to={createPageUrl('application')}>
               <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-6 rounded-full text-lg font-semibold">

@@ -59,8 +59,32 @@ export default function IndustryTransportation() {
         </div>
       </section>
 
+      {/* Introduction */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">Transportation & Logistics Business Financing</h2>
+            <div className="prose prose-lg text-slate-600 space-y-4">
+              <p>
+                Transportation companies and logistics providers operate in a capital-intensive industry — from purchasing trucks and trailers to covering fuel costs, managing maintenance expenses, hiring drivers, and handling the cash flow gaps that come with freight payment terms. OnTrak provides specialized financing for trucking companies, owner-operators, freight brokers, delivery services, courier companies, and all types of transportation businesses.
+              </p>
+              <p>
+                Whether you're an owner-operator looking to purchase your next truck, a small fleet wanting to expand capacity, a delivery service needing to cover fuel costs during growth, or a logistics company investing in technology and tracking systems, our transportation business loans and equipment financing are designed to keep your fleet moving and your business growing.
+              </p>
+              <p>
+                With OnTrak's transportation financing ranging from $10,000 to $500,000, you can access the capital you need with approval in hours and funding within 24-48 hours. We understand the transportation industry operates on tight margins with payment terms that can extend 30-60 days, which is why our repayment structures are designed to align with freight payment cycles and seasonal demand fluctuations.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Benefits */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -191,8 +215,51 @@ export default function IndustryTransportation() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* FAQ */}
       <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">Transportation Financing FAQs</h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: 'Can owner-operators qualify for truck financing?',
+                a: 'Yes! Owner-operators are welcome to apply. We evaluate your business based on current revenue and performance, not just credit scores. Many owner-operators use our funding to purchase additional trucks, cover operating expenses, or invest in trailer equipment.'
+              },
+              {
+                q: 'What about fuel and operating costs?',
+                a: 'Absolutely. Transportation companies frequently use our working capital to cover fuel expenses, tolls, permits, insurance, and other operating costs — especially during periods when freight payments are delayed or you\'re scaling up operations.'
+              },
+              {
+                q: 'Do I need to pledge my trucks as collateral?',
+                a: 'Not always. We offer unsecured financing options where you don\'t need to put liens on your vehicles. For larger amounts, equipment-secured loans are available, but many transportation companies prefer to keep their fleet unencumbered.'
+              },
+              {
+                q: 'How do you handle seasonal fluctuations in transportation?',
+                a: 'Our repayment structures can accommodate the seasonal nature of freight and logistics. For merchant cash advances based on revenue, you naturally pay more during peak seasons and less during slower periods — aligning perfectly with transportation cash flow.'
+              },
+              {
+                q: 'Can I use funding for technology and GPS systems?',
+                a: 'Yes! Many transportation companies use our financing to invest in fleet management software, GPS tracking, ELD compliance systems, dispatch technology, and other digital tools that improve efficiency and profitability.'
+              }
+            ].map((faq, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{faq.q}</h3>
+                <p className="text-slate-600 leading-relaxed">{faq.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +270,7 @@ export default function IndustryTransportation() {
               Ready to Expand Your Fleet?
             </h2>
             <p className="text-lg text-slate-600 mb-8">
-              Get the capital you need to grow your transportation business and increase revenue.
+              Get the capital you need to grow your transportation business and increase revenue. Trusted by owner-operators and fleet managers nationwide.
             </p>
             <Link to={createPageUrl('application')}>
               <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-6 rounded-full text-lg font-semibold">

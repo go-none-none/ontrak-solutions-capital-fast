@@ -59,8 +59,32 @@ export default function IndustryAuto() {
         </div>
       </section>
 
+      {/* Introduction */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">Auto Repair Shop Financing & Automotive Business Loans</h2>
+            <div className="prose prose-lg text-slate-600 space-y-4">
+              <p>
+                Auto repair shops and automotive service businesses require significant capital investment — from purchasing vehicle lifts and diagnostic equipment to stocking parts inventory, expanding service bays, and maintaining certifications. OnTrak provides specialized financing for auto repair shops, quick lube centers, tire shops, body shops, transmission specialists, muffler and brake shops, and all types of automotive service providers.
+              </p>
+              <p>
+                Whether you need funding to purchase a vehicle lift or alignment machine, stock essential parts and fluids to reduce customer wait times, add additional service bays to handle more vehicles, invest in modern diagnostic scanners and shop management software, obtain ASE certifications or manufacturer training, or launch marketing campaigns to attract new customers, our auto shop financing solutions are designed to keep your business competitive.
+              </p>
+              <p>
+                OnTrak's automotive business loans range from $10,000 to $250,000 with approvals in hours and funding within 24-48 hours. We understand that auto repair businesses operate with variable cash flow based on seasonal demand, weather patterns, and economic conditions — which is why our repayment structures are designed to flex with your revenue cycles.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Benefits */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -191,8 +215,51 @@ export default function IndustryAuto() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* FAQ */}
       <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">Auto Shop Financing FAQs</h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: 'Can I finance expensive equipment like vehicle lifts?',
+                a: 'Yes! Auto shop equipment financing is one of our core offerings. You can use our funding to purchase vehicle lifts, alignment machines, tire changers, diagnostic scanners, welding equipment, paint booths, and any other automotive service equipment your shop needs.'
+              },
+              {
+                q: 'Do independent mechanics qualify?',
+                a: 'Absolutely! We work with both independent mechanics and established multi-bay shops. As long as you have consistent revenue from your automotive services, you can qualify for financing regardless of your shop size.'
+              },
+              {
+                q: 'What about parts inventory financing?',
+                a: 'Many auto shops use our working capital to stock commonly needed parts, oils, filters, batteries, and tires. Having inventory on hand reduces customer wait times and increases revenue by completing more jobs per day.'
+              },
+              {
+                q: 'Can I add service bays to my existing shop?',
+                a: 'Yes! Shop expansion financing is commonly used to add service bays, expand square footage, improve customer waiting areas, and increase overall capacity. More bays mean more revenue potential.'
+              },
+              {
+                q: 'How quickly can auto shops get funded?',
+                a: 'Most auto repair businesses receive approval within hours and funding within 24-48 hours. This speed is crucial when you find a great deal on equipment, need to stock up on inventory, or have an unexpected expense.'
+              }
+            ].map((faq, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{faq.q}</h3>
+                <p className="text-slate-600 leading-relaxed">{faq.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +270,7 @@ export default function IndustryAuto() {
               Ready to Upgrade Your Shop?
             </h2>
             <p className="text-lg text-slate-600 mb-8">
-              Get the funding you need to purchase equipment, expand bays, or stock inventory.
+              Get the funding you need to purchase equipment, expand bays, or stock inventory. Trusted by auto shop owners nationwide.
             </p>
             <Link to={createPageUrl('application')}>
               <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-6 rounded-full text-lg font-semibold">

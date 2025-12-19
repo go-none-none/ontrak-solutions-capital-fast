@@ -59,8 +59,32 @@ export default function IndustryConstruction() {
         </div>
       </section>
 
+      {/* Introduction */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">Construction Business Financing for Contractors & Builders</h2>
+            <div className="prose prose-lg text-slate-600 space-y-4">
+              <p>
+                Construction companies and contractors face significant upfront costs — purchasing heavy equipment, buying materials in bulk, meeting payroll during project delays, securing performance bonds, and mobilizing for new job sites. OnTrak provides specialized construction business loans and equipment financing designed for general contractors, subcontractors, residential builders, commercial construction firms, specialty trades, and construction service companies.
+              </p>
+              <p>
+                Whether you need capital to purchase excavators and heavy machinery, buy bulk materials for a large project, cover payroll during payment delays, increase your bonding capacity, or mobilize your crew for a new contract, our construction financing solutions provide the working capital you need without tying up your equipment or requiring extensive collateral.
+              </p>
+              <p>
+                OnTrak's construction funding programs range from $10,000 to $500,000 with approval processes designed for contractors who need capital quickly to bid on projects or purchase equipment. Most construction businesses receive approval within hours and funding within 24-48 hours — fast enough to seize time-sensitive opportunities or respond to unexpected project needs.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Benefits */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -191,8 +215,51 @@ export default function IndustryConstruction() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* FAQ */}
       <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">Construction Financing FAQs</h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: 'Can I get funding to purchase construction equipment?',
+                a: 'Yes! Many contractors use our financing to purchase excavators, bulldozers, skid steers, dump trucks, cranes, and other heavy equipment. Equipment financing can be secured or unsecured depending on the equipment value and your business profile.'
+              },
+              {
+                q: 'Do I need to put up my equipment as collateral?',
+                a: 'Not necessarily. We offer both secured and unsecured construction financing options. Many contractors prefer unsecured funding to keep their equipment free and clear, while others use equipment-backed loans for larger amounts at lower rates.'
+              },
+              {
+                q: 'How does funding work for project mobilization?',
+                a: 'We provide upfront capital to cover project mobilization costs like permits, site preparation, material deposits, equipment rentals, and labor costs before your first progress payment. This allows you to take on larger projects without draining your working capital.'
+              },
+              {
+                q: 'What if I need to increase my bonding capacity?',
+                a: 'Working capital from OnTrak can strengthen your balance sheet and help you qualify for larger performance bonds and payment bonds. Many contractors use our funding specifically to increase bonding capacity and bid on bigger projects.'
+              },
+              {
+                q: 'How quickly can construction companies get approved?',
+                a: 'Most construction businesses receive approval within a few hours and funding within 24-48 hours. This speed is critical when you need to order materials at a discount, secure equipment for an upcoming job, or cover unexpected expenses.'
+              }
+            ].map((faq, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{faq.q}</h3>
+                <p className="text-slate-600 leading-relaxed">{faq.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +270,7 @@ export default function IndustryConstruction() {
               Ready to Build Something Great?
             </h2>
             <p className="text-lg text-slate-600 mb-8">
-              Get the funding you need to take on larger projects and grow your construction business.
+              Get the funding you need to take on larger projects and grow your construction business. Trusted by contractors nationwide.
             </p>
             <Link to={createPageUrl('application')}>
               <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-6 rounded-full text-lg font-semibold">

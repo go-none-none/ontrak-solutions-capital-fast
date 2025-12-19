@@ -59,8 +59,32 @@ export default function IndustryProfessional() {
         </div>
       </section>
 
+      {/* Introduction */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">Professional Services Financing for Service-Based Businesses</h2>
+            <div className="prose prose-lg text-slate-600 space-y-4">
+              <p>
+                Professional service firms face unique capital needs — from hiring experienced talent and investing in technology infrastructure to expanding office space, launching marketing initiatives, and managing cash flow gaps between invoicing and payment. OnTrak provides confidential, fast financing for accounting firms, law offices, consulting companies, marketing agencies, engineering firms, architecture practices, IT service providers, and other professional service businesses.
+              </p>
+              <p>
+                Whether you need working capital to hire senior-level professionals or expand your team, invest in practice management software and cloud infrastructure, lease additional office space or upgrade your facilities, launch digital marketing and client acquisition campaigns, fund training and professional certifications, or bridge cash flow gaps while waiting for client payments, our professional services business loans are designed to support your firm's growth without disrupting operations.
+              </p>
+              <p>
+                With OnTrak's professional services financing ranging from $10,000 to $400,000, you can access capital quickly with approval in hours and funding within 24-48 hours. We understand that professional firms often have 30-90 day payment terms with clients, which is why our repayment structures can align with your billing cycles and revenue patterns.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Benefits */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -191,8 +215,51 @@ export default function IndustryProfessional() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* FAQ */}
       <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">Professional Services Financing FAQs</h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: 'Do you fund solo practitioners and small firms?',
+                a: 'Yes! We work with solo practitioners, small partnerships, and established firms across all professional service industries. Whether you\'re a single consultant or a 50-person firm, we evaluate your application based on revenue and growth potential.'
+              },
+              {
+                q: 'Can I use funding to hire new staff?',
+                a: 'Absolutely! Many professional firms use our capital specifically for talent acquisition — hiring experienced professionals, offering competitive compensation packages, covering recruitment costs, and building out your team to take on larger clients or new service lines.'
+              },
+              {
+                q: 'What about cash flow gaps from client billing terms?',
+                a: 'This is one of our most common use cases. Professional firms often invoice clients on 30, 60, or 90-day terms while still needing to cover payroll, rent, and operating expenses. Our working capital financing bridges these cash flow gaps seamlessly.'
+              },
+              {
+                q: 'Is the application process confidential?',
+                a: 'Yes. We understand that professional discretion is critical for service firms. Your application and financial information are kept completely confidential, and we never contact clients or partners as part of the approval process.'
+              },
+              {
+                q: 'Can I invest in software and technology?',
+                a: 'Yes! Many professional firms use our funding for CRM systems, project management tools, cloud infrastructure, cybersecurity, practice management software, and other technology investments that improve efficiency and client service.'
+              }
+            ].map((faq, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{faq.q}</h3>
+                <p className="text-slate-600 leading-relaxed">{faq.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +270,7 @@ export default function IndustryProfessional() {
               Ready to Grow Your Firm?
             </h2>
             <p className="text-lg text-slate-600 mb-8">
-              Get the capital you need to hire talent, invest in technology, and expand your services.
+              Get the capital you need to hire talent, invest in technology, and expand your services. Trusted by professional firms nationwide.
             </p>
             <Link to={createPageUrl('application')}>
               <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-6 rounded-full text-lg font-semibold">

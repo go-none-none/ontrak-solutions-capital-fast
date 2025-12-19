@@ -59,8 +59,32 @@ export default function IndustryRestaurants() {
         </div>
       </section>
 
+      {/* Introduction */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">Restaurant Funding Solutions That Understand Your Industry</h2>
+            <div className="prose prose-lg text-slate-600 space-y-4">
+              <p>
+                Running a restaurant requires significant capital investment — from purchasing commercial kitchen equipment and maintaining inventory to managing seasonal cash flow fluctuations and covering payroll during slower months. At OnTrak, we specialize in providing fast, flexible financing specifically designed for restaurant owners, café operators, food trucks, catering businesses, and hospitality professionals.
+              </p>
+              <p>
+                Whether you're a quick-service restaurant looking to upgrade your kitchen equipment, a fine dining establishment planning an expansion, or a café owner needing working capital to cover seasonal dips, our restaurant business loans and merchant cash advances are structured to match the unique revenue patterns of the food service industry. We understand that restaurants operate on thin margins with daily credit card sales, which is why our funding solutions are designed to align with your cash flow.
+              </p>
+              <p>
+                With OnTrak's restaurant funding programs, you can access between $10,000 and $250,000 with approval in as little as a few hours and funding delivered within 24-48 hours. No lengthy bank applications, no waiting weeks for approval — just straightforward financing to help you seize opportunities when they arise.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Benefits */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -191,8 +215,51 @@ export default function IndustryRestaurants() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* FAQ */}
       <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">Restaurant Funding FAQs</h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: 'What credit score do I need for restaurant financing?',
+                a: 'We work with restaurant owners across all credit profiles. While traditional banks may require excellent credit, our programs are designed to approve 95% of applicants, including those with less-than-perfect credit scores.'
+              },
+              {
+                q: 'How quickly can I get restaurant funding?',
+                a: 'Most restaurant owners receive approval within a few hours of applying, and funding is typically delivered to your business bank account within 24-48 hours. This makes it perfect for time-sensitive equipment purchases or seasonal inventory needs.'
+              },
+              {
+                q: 'Do I need collateral for restaurant business loans?',
+                a: 'No. Most of our restaurant funding options are unsecured, meaning you don\'t need to put up your property, equipment, or personal assets as collateral. We focus on your daily credit card sales and business performance.'
+              },
+              {
+                q: 'What can I use restaurant financing for?',
+                a: 'Restaurant financing can be used for virtually any business need: commercial kitchen equipment, renovation and remodeling, point-of-sale systems, inventory and food supplies, marketing campaigns, hiring and payroll, expansion to new locations, or working capital for seasonal fluctuations.'
+              },
+              {
+                q: 'How do repayments work for restaurants?',
+                a: 'Repayment is designed to match your restaurant\'s cash flow. For merchant cash advances, a small percentage of your daily credit card sales goes toward repayment automatically — meaning you pay more during busy periods and less during slower times.'
+              }
+            ].map((faq, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{faq.q}</h3>
+                <p className="text-slate-600 leading-relaxed">{faq.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +270,7 @@ export default function IndustryRestaurants() {
               Ready to Grow Your Restaurant?
             </h2>
             <p className="text-lg text-slate-600 mb-8">
-              Get funded in as little as 24 hours with our streamlined application process.
+              Get funded in as little as 24 hours with our streamlined application process. Join hundreds of restaurant owners who have secured fast, flexible financing through OnTrak.
             </p>
             <Link to={createPageUrl('application')}>
               <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-6 rounded-full text-lg font-semibold">

@@ -59,8 +59,32 @@ export default function IndustryBeauty() {
         </div>
       </section>
 
+      {/* Introduction */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">Beauty & Wellness Business Financing for Salons & Spas</h2>
+            <div className="prose prose-lg text-slate-600 space-y-4">
+              <p>
+                Beauty and wellness businesses require ongoing investment to stay competitive — from purchasing professional styling equipment and stocking retail inventory to creating beautiful salon environments and expanding to new locations. OnTrak provides specialized financing for hair salons, nail salons, barbershops, day spas, medical spas, massage therapy centers, beauty supply stores, and wellness centers.
+              </p>
+              <p>
+                Whether you need capital to purchase salon chairs and styling stations, stock professional hair care and beauty products, renovate your space with modern lighting and décor, open a second location, invest in training and certifications, or launch marketing campaigns to attract new clients, our beauty business loans and merchant cash advances are designed to support your growth.
+              </p>
+              <p>
+                OnTrak's beauty industry financing ranges from $10,000 to $200,000 with approval processes that don't require perfect credit or extensive collateral. Most salon and spa owners receive approval within hours and funding within 24-48 hours — fast enough to take advantage of equipment sales, seasonal promotions, or unexpected growth opportunities.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Benefits */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -191,8 +215,51 @@ export default function IndustryBeauty() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* FAQ */}
       <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">Beauty Business Financing FAQs</h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: 'Can independent stylists and booth renters get funding?',
+                a: 'Yes! We work with both salon owners and independent beauty professionals who rent booth space. As long as you have consistent revenue from your beauty business, you can qualify for financing to purchase equipment, products, or expand your services.'
+              },
+              {
+                q: 'What can salon financing be used for?',
+                a: 'Salon and spa financing can cover professional equipment (styling stations, chairs, dryers, pedicure chairs), retail product inventory, renovations and interior design, new location build-outs, marketing campaigns, staff training and certifications, or general working capital.'
+              },
+              {
+                q: 'Do I need collateral for beauty business loans?',
+                a: 'No. Most of our beauty industry financing is unsecured, meaning you don\'t need to put up your equipment, property, or personal assets. We base approvals on your business revenue and performance, not collateral requirements.'
+              },
+              {
+                q: 'How long does it take to get funded?',
+                a: 'Most salon and spa owners receive approval within a few hours and funding within 24-48 hours. This makes it perfect for taking advantage of limited-time equipment deals, stocking seasonal products, or covering unexpected expenses.'
+              },
+              {
+                q: 'Can I use funding to open a second salon location?',
+                a: 'Absolutely! Many beauty professionals use our financing to expand to additional locations. Funds can cover lease deposits, build-out costs, initial equipment purchases, product inventory, and marketing for your grand opening.'
+              }
+            ].map((faq, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{faq.q}</h3>
+                <p className="text-slate-600 leading-relaxed">{faq.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +270,7 @@ export default function IndustryBeauty() {
               Ready to Transform Your Salon?
             </h2>
             <p className="text-lg text-slate-600 mb-8">
-              Get the funding you need to renovate, expand, or upgrade your beauty business.
+              Get the funding you need to renovate, expand, or upgrade your beauty business. Trusted by beauty professionals nationwide.
             </p>
             <Link to={createPageUrl('application')}>
               <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-6 rounded-full text-lg font-semibold">

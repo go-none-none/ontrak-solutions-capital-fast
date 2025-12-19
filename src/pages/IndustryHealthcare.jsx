@@ -59,8 +59,32 @@ export default function IndustryHealthcare() {
         </div>
       </section>
 
+      {/* Introduction */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">Healthcare Practice Financing for Medical Professionals</h2>
+            <div className="prose prose-lg text-slate-600 space-y-4">
+              <p>
+                Healthcare providers face unique financial challenges — from purchasing expensive medical equipment and managing insurance reimbursement delays to expanding facilities and recruiting qualified staff. OnTrak specializes in providing fast, confidential financing for medical practices, dental offices, chiropractic clinics, physical therapy centers, urgent care facilities, veterinary practices, and other healthcare providers.
+              </p>
+              <p>
+                Whether you're a private practice physician looking to invest in state-of-the-art diagnostic equipment, a dentist planning to open a second location, or a healthcare administrator needing to bridge cash flow gaps while waiting for insurance reimbursements, our healthcare business loans and lines of credit are designed to meet the specialized needs of medical professionals.
+              </p>
+              <p>
+                With OnTrak's healthcare financing programs, qualified medical practices can access between $10,000 and $500,000 with rapid approval processes and funding typically delivered within 24-48 hours. We understand that healthcare operates on different cash flow cycles than other industries, which is why our repayment structures can accommodate insurance billing cycles and patient payment schedules.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Benefits */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -191,8 +215,51 @@ export default function IndustryHealthcare() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* FAQ */}
       <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">Healthcare Financing FAQs</h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: 'What types of healthcare practices qualify for funding?',
+                a: 'We work with all types of healthcare providers including private practice physicians, dentists, chiropractors, physical therapists, mental health professionals, veterinarians, urgent care centers, medical spas, and specialty clinics. If you provide healthcare services, we can likely help.'
+              },
+              {
+                q: 'Can I use healthcare financing to purchase medical equipment?',
+                a: 'Yes! Many healthcare providers use our funding to purchase or lease diagnostic equipment, imaging machines, dental equipment, surgical instruments, exam tables, EHR systems, and other medical technology. Equipment financing is one of our most popular use cases for medical practices.'
+              },
+              {
+                q: 'Do you understand insurance reimbursement cycles?',
+                a: 'Absolutely. We specialize in healthcare financing and understand that insurance reimbursements can take 30-90 days or longer. Our repayment terms can be structured to accommodate your practice\'s billing cycles and the timing of insurance payments.'
+              },
+              {
+                q: 'Is the application process HIPAA compliant?',
+                a: 'Yes. We maintain strict confidentiality standards and comply with all healthcare privacy regulations. Your practice information and financial details are kept completely secure throughout the application and funding process.'
+              },
+              {
+                q: 'How quickly can a medical practice get funded?',
+                a: 'Most healthcare providers receive approval within a few hours of submitting their application, with funding typically delivered to your practice bank account within 24-48 hours. This is ideal for time-sensitive equipment purchases or unexpected practice needs.'
+              }
+            ].map((faq, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{faq.q}</h3>
+                <p className="text-slate-600 leading-relaxed">{faq.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +270,7 @@ export default function IndustryHealthcare() {
               Ready to Invest in Your Practice?
             </h2>
             <p className="text-lg text-slate-600 mb-8">
-              Get the funding you need to provide better care and grow your practice.
+              Get the funding you need to provide better care and grow your practice. Trusted by hundreds of healthcare professionals nationwide.
             </p>
             <Link to={createPageUrl('application')}>
               <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-6 rounded-full text-lg font-semibold">

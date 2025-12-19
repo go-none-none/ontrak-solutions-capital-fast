@@ -59,8 +59,32 @@ export default function IndustryRetail() {
         </div>
       </section>
 
+      {/* Introduction */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">Retail Business Financing for Every Season</h2>
+            <div className="prose prose-lg text-slate-600 space-y-4">
+              <p>
+                Retail businesses face unique financial challenges — seasonal inventory demands, holiday shopping preparation, unexpected rent increases, e-commerce competition, and the constant need to refresh product lines to stay relevant. OnTrak provides specialized retail business loans and merchant cash advances designed specifically for boutique shops, clothing stores, electronics retailers, home goods stores, sporting goods shops, and all types of retail operations.
+              </p>
+              <p>
+                Whether you need capital to stock up for Black Friday, expand your product offerings, renovate your storefront to create a better customer experience, or invest in an e-commerce platform to compete online, our retail funding solutions provide the working capital you need when you need it most. We understand that retail operates on tight margins with significant seasonal fluctuations, which is why our repayment structures are designed to flex with your sales cycles.
+              </p>
+              <p>
+                OnTrak's retail financing ranges from $10,000 to $400,000 with fast approval processes that don't require perfect credit scores or extensive collateral. Most retail business owners receive approval within hours and funding within 24-48 hours — fast enough to capitalize on bulk purchasing opportunities or respond quickly to market trends.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Benefits */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
@@ -191,8 +215,51 @@ export default function IndustryRetail() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* FAQ */}
       <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">Retail Business Financing FAQs</h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: 'How much can I borrow for my retail business?',
+                a: 'Retail businesses can access between $10,000 and $400,000 depending on your monthly revenue, time in business, and funding needs. We offer flexible amounts to accommodate everything from small inventory purchases to major store renovations or new location openings.'
+              },
+              {
+                q: 'Can I get funding for seasonal inventory?',
+                a: 'Absolutely! Many retail businesses use our funding to stock up before peak seasons like holidays, back-to-school, or summer. Our fast approval process ensures you can secure inventory at the best prices and be fully stocked when your customers are ready to buy.'
+              },
+              {
+                q: 'Do you fund e-commerce retailers?',
+                a: 'Yes! We fund both brick-and-mortar stores and e-commerce retailers, as well as businesses operating in both channels. Whether you sell on Shopify, Amazon, your own website, or in a physical location, we can provide the working capital you need.'
+              },
+              {
+                q: 'What if my retail business is relatively new?',
+                a: 'We work with retail businesses that have been operating for as little as 6 months. While traditional banks often require 2+ years in business, we evaluate your application based on current revenue, sales trends, and growth potential — not just time in business.'
+              },
+              {
+                q: 'How does repayment work for retail businesses?',
+                a: 'For merchant cash advances, repayment is automatic based on a percentage of your daily credit card and debit card sales. This means during high-sales periods you repay more, and during slower periods you repay less — perfectly aligned with retail cash flow patterns.'
+              }
+            ].map((faq, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-slate-50 rounded-xl p-6 border-l-4 border-[#08708E]"
+              >
+                <h3 className="text-lg font-bold text-slate-900 mb-3">{faq.q}</h3>
+                <p className="text-slate-600 leading-relaxed">{faq.a}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-24 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -203,7 +270,7 @@ export default function IndustryRetail() {
               Ready to Elevate Your Retail Business?
             </h2>
             <p className="text-lg text-slate-600 mb-8">
-              Get the capital you need to stock inventory, renovate, or grow your business.
+              Get the capital you need to stock inventory, renovate, or grow your business. Join hundreds of retail owners who've secured fast financing through OnTrak.
             </p>
             <Link to={createPageUrl('application')}>
               <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-6 rounded-full text-lg font-semibold">
