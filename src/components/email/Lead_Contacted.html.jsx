@@ -109,15 +109,19 @@
                                         <table cellpadding="0" cellspacing="0" style="display: inline-block;">
                                             <tr>
                                                 <td style="padding: 0 10px;">
-                                                    <a href="https://ontrak.co/application" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Apply Now</a>
+                                                    <a href="https://ontrak.co/application?rep={!Owner.Alias}" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Apply Now</a>
                                                 </td>
                                                 <td style="padding: 0 10px; color: #e2e8f0;">|</td>
                                                 <td style="padding: 0 10px;">
-                                                    <a href="https://ontrak.co/Status" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Check Status</a>
+                                                   <a href="https://ontrak.co/HowItWorks" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">How It Works</a>
                                                 </td>
                                                 <td style="padding: 0 10px; color: #e2e8f0;">|</td>
                                                 <td style="padding: 0 10px;">
-                                                    <a href="https://ontrak.co/FAQ" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">FAQ</a>
+                                                   <a href="https://ontrak.co/FAQ" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">FAQ</a>
+                                                </td>
+                                                <td style="padding: 0 10px; color: #e2e8f0;">|</td>
+                                                <td style="padding: 0 10px;">
+                                                   <a href="https://ontrak.co/Industries" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Industries</a>
                                                 </td>
                                                 <td style="padding: 0 10px; color: #e2e8f0;">|</td>
                                                 <td style="padding: 0 10px;">

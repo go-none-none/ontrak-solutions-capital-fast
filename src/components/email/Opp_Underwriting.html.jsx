@@ -116,19 +116,15 @@
                                         <table cellpadding="0" cellspacing="0" style="display: inline-block;">
                                             <tr>
                                                 <td style="padding: 0 10px;">
-                                                    <a href="https://ontrak.co/application" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Apply Now</a>
+                                                   <a href="https://ontrak.co/Status?rid={!Opportunity.Id}" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Check Status</a>
                                                 </td>
                                                 <td style="padding: 0 10px; color: #e2e8f0;">|</td>
                                                 <td style="padding: 0 10px;">
-                                                    <a href="https://ontrak.co/Status" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Check Status</a>
+                                                   <a href="https://ontrak.co/FAQ" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">FAQ</a>
                                                 </td>
                                                 <td style="padding: 0 10px; color: #e2e8f0;">|</td>
                                                 <td style="padding: 0 10px;">
-                                                    <a href="https://ontrak.co/FAQ" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">FAQ</a>
-                                                </td>
-                                                <td style="padding: 0 10px; color: #e2e8f0;">|</td>
-                                                <td style="padding: 0 10px;">
-                                                    <a href="https://ontrak.co/Contact" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Contact</a>
+                                                   <a href="https://ontrak.co/Contact" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Contact</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -149,9 +145,7 @@
                                 Email: <a href="mailto:{!Owner.Email}" style="color: #08708E; text-decoration: none;">{!Owner.Email}</a>
                             </p>
                             <p style="color: #94a3b8; font-size: 12px; margin: 15px 0 0 0; line-height: 1.6;">
-                                © 2025 OnTrak Solutions LLC. All rights reserved.<br>
-                                <a href="https://ontrak.co/PrivacyPolicy" style="color: #94a3b8; text-decoration: underline;">Privacy Policy</a> • 
-                                <a href="https://ontrak.co/TermsOfService" style="color: #94a3b8; text-decoration: underline;">Terms of Service</a>
+                                &copy; 2025 OnTrak Solutions LLC. All rights reserved.
                             </p>
                         </td>
                     </tr>

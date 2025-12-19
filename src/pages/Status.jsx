@@ -26,7 +26,6 @@ export default function Status() {
         const recordId = urlParams.get('rid');
         
         if (!recordId) {
-          setError('No record ID provided');
           setLoading(false);
           return;
         }
@@ -48,6 +47,53 @@ export default function Status() {
     fetchStatus();
   }, []);
 
+  useEffect(() => {
+    const status = data ? (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase() : '';
+    const showApplicationForm = status === 'open - not contacted' || status === 'working - contacted' || status === 'working - application out';
+    
+    if (showApplicationForm && data) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const repId = urlParams.get('repId') || data.ownerAlias;
+      
+      let iframeSrc = 'https://form.jotform.com/252957146872065';
+      if (repId) {
+        iframeSrc += `?rep=${encodeURIComponent(repId)}`;
+      }
+      
+      const container = document.getElementById('jotform-container');
+      if (container) {
+        container.innerHTML = `
+          <iframe
+            id="JotFormIFrame-252957146872065"
+            title="Application Form"
+            allowtransparency="true"
+            allow="geolocation; microphone; camera; fullscreen"
+            src="${iframeSrc}"
+            frameborder="0"
+            style="min-width:100%;max-width:100%;height:539px;border:none;"
+            scrolling="no"
+          >
+          </iframe>
+        `;
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+        script.onload = () => {
+          if (window.jotformEmbedHandler) {
+            window.jotformEmbedHandler("iframe[id='JotFormIFrame-252957146872065']", "https://form.jotform.com/");
+          }
+        };
+        document.body.appendChild(script);
+        
+        return () => {
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+        };
+      }
+    }
+  }, [data]);
+
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -64,6 +110,56 @@ export default function Status() {
           <Loader2 className="w-12 h-12 text-[#08708E] animate-spin mx-auto mb-4" />
           <p className="text-slate-600">Loading your application status...</p>
         </div>
+      </div>
+    );
+  }
+
+  // No record ID provided - show message
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <section className="relative h-[300px] bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
+          <div className="absolute inset-0">
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
+          </div>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center w-full"
+            >
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                Application Status
+              </h1>
+              <p className="text-white/70">
+                Track your funding application in real-time
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="py-12 -mt-16 relative z-10">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-3xl shadow-xl p-8 text-center"
+            >
+              <FileText className="w-16 h-16 text-[#08708E] mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-slate-900 mb-3">No Application Found</h2>
+              <p className="text-slate-600 mb-6">
+                We don't have a record for you yet. Start your funding application today and track it here!
+              </p>
+              <Button 
+                onClick={() => window.location.href = createPageUrl('application')}
+                className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg"
+              >
+                Start Your Application
+              </Button>
+            </motion.div>
+          </div>
+        </section>
       </div>
     );
   }
@@ -89,6 +185,10 @@ export default function Status() {
   const urlParams = new URLSearchParams(window.location.search);
   const recordId = urlParams.get('rid');
   const uploadUrl = `${createPageUrl('MissingDocs')}?id149=${recordId}&cn=${encodeURIComponent(data.businessName)}&ln=${encodeURIComponent(data.lastName || '')}`;
+
+  // Show application form for early statuses
+  const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
+  const showApplicationForm = status === 'open - not contacted' || status === 'working - contacted' || status === 'working - application out';
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -197,6 +297,24 @@ export default function Status() {
               bankStatementChecklist={data.bankStatementChecklist}
             />
           </motion.div>
+
+          {/* Application Form for Early Statuses */}
+          {showApplicationForm && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-3xl shadow-xl p-8 mb-6"
+            >
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Complete Your Application</h3>
+              <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
+              <div id="jotform-container">
+                <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                  Loading application form...
+                </p>
+              </div>
+            </motion.div>
+          )}
 
 
           {/* Next Steps */}
