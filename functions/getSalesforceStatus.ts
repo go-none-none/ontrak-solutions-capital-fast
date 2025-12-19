@@ -36,6 +36,24 @@ Deno.serve(async (req) => {
         if (leadResponse.ok) {
             const lead = await leadResponse.json();
             const missingDocsFlag = lead.Status?.toLowerCase() === 'application missing info';
+
+            // Fetch owner information
+            let ownerName = '';
+            let ownerPhone = '';
+            if (lead.OwnerId) {
+                const ownerResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/User/${lead.OwnerId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (ownerResponse.ok) {
+                    const owner = await ownerResponse.json();
+                    ownerName = owner.Name || '';
+                    ownerPhone = owner.Phone || owner.MobilePhone || '';
+                }
+            }
+
             return Response.json({
                 recordType: 'Lead',
                 id: lead.Id,
@@ -46,7 +64,9 @@ Deno.serve(async (req) => {
                 bankStatementChecklist: lead.Bank_Statement_Checklist__c || null,
                 lastModifiedDate: lead.LastModifiedDate,
                 firstName: lead.FirstName,
-                lastName: lead.LastName
+                lastName: lead.LastName,
+                ownerName: ownerName,
+                ownerPhone: ownerPhone
             });
         }
 
@@ -61,7 +81,7 @@ Deno.serve(async (req) => {
         if (oppResponse.ok) {
             const opp = await oppResponse.json();
             const missingDocsFlag = opp.StageName?.toLowerCase() === 'application missing info';
-            
+
             // Log all available fields for debugging
             console.log('Opportunity fields:', Object.keys(opp));
             console.log('Looking for name fields:', {
@@ -70,17 +90,17 @@ Deno.serve(async (req) => {
                 Contact: opp.Contact,
                 ContactId: opp.ContactId
             });
-            
+
             // Try different possible field names for stage detail
             const stageDetail = opp.Stage_Detail__c || 
                                opp.StageDetail__c || 
                                opp.Decline_Reason__c || 
                                opp.DeclineReason__c ||
                                null;
-            
+
             // Try to get first name from various sources
             let firstName = opp.FirstName__c || '';
-            
+
             // If no custom field, try to get from Contact
             if (!firstName && opp.ContactId) {
                 const contactResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Contact/${opp.ContactId}`, {
@@ -94,9 +114,26 @@ Deno.serve(async (req) => {
                     firstName = contact.FirstName || '';
                 }
             }
-            
+
             console.log('Final firstName value:', firstName);
-            
+
+            // Fetch owner information
+            let ownerName = '';
+            let ownerPhone = '';
+            if (opp.OwnerId) {
+                const ownerResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/User/${opp.OwnerId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (ownerResponse.ok) {
+                    const owner = await ownerResponse.json();
+                    ownerName = owner.Name || '';
+                    ownerPhone = owner.Phone || owner.MobilePhone || '';
+                }
+            }
+
             return Response.json({
                 recordType: 'Opportunity',
                 id: opp.Id,
@@ -109,6 +146,8 @@ Deno.serve(async (req) => {
                 lastModifiedDate: opp.LastModifiedDate,
                 firstName: firstName,
                 lastName: opp.LastName__c || '',
+                ownerName: ownerName,
+                ownerPhone: ownerPhone,
                 // Include debug info
                 allFields: Object.keys(opp)
             });
