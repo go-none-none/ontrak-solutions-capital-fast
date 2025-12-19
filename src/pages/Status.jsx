@@ -54,10 +54,14 @@ export default function Status() {
     if (showApplicationForm && data) {
       const urlParams = new URLSearchParams(window.location.search);
       const repId = urlParams.get('repId') || data.ownerAlias;
+      const recordId = urlParams.get('rid') || data.id;
       
       let iframeSrc = 'https://form.jotform.com/252957146872065';
-      if (repId) {
-        iframeSrc += `?rep=${encodeURIComponent(repId)}`;
+      const params = [];
+      if (repId) params.push(`rep=${encodeURIComponent(repId)}`);
+      if (recordId) params.push(`rid=${encodeURIComponent(recordId)}`);
+      if (params.length > 0) {
+        iframeSrc += `?${params.join('&')}`;
       }
       
       const container = document.getElementById('jotform-container');
