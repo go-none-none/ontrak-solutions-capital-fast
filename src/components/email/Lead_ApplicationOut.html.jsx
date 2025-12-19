@@ -63,9 +63,46 @@
 
                             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
 
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 30px 0;">
+                                <tr>
+                                    <td style="padding: 20px; background-color: #f0f9ff; border-radius: 12px;">
+                                        <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 10px 0;">Why businesses choose OnTrak:</p>
+                                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
+                                            OnTrak Solutions has helped thousands of businesses access fast, flexible funding. With approval in hours and funding within 24-48 hours, we understand the unique needs of small businesses across all industries.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 30px 0;">
+                                <tr>
+                                    <td>
+                                        <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">What our customers are saying:</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px; margin-bottom: 10px;">
+                                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
+                                            "The application was simple and straightforward. I appreciated how quickly OnTrak responded to my questions."
+                                        </p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Sarah M., Retail Business Owner</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px;">
+                                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
+                                            "OnTrak understood my business and made the whole process easy. Highly recommend!"
+                                        </p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— David L., Auto Shop Owner</p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+
                             <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin: 0;">
-                                <strong style="color: #0f172a;">Questions?</strong><br>
-                                Call us at <a href="tel:+13025205200" style="color: #08708E; text-decoration: none; font-weight: 600;">(302) 520-5200</a> or reply to this email.
+                                <strong style="color: #0f172a;">Need help or have questions?</strong><br>
+                                Contact me directly at <a href="tel:{!Owner.Phone}" style="color: #08708E; text-decoration: none; font-weight: 600;">{!Owner.Phone}</a> or reply to this email.
                             </p>
                         </td>
                     </tr>
