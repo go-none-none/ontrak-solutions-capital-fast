@@ -14,7 +14,7 @@
                     <!-- Header with Logo -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
-                            <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px;">
+                            <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
                             <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Update on Your Application</h1>
                         </td>
                     </tr>
@@ -25,7 +25,7 @@
                             <p style="color: #0f172a; font-size: 18px; margin: 0 0 20px 0; font-weight: 600;">Hi {!Opportunity.Contact.FirstName},</p>
                             
                             <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                Thank you for your interest in OnTrak. After carefully reviewing your application, we're unable to approve your request at this time.
+                                Thank you so much for considering OnTrak. I've carefully reviewed your application, and unfortunately, I'm not able to approve it at this time.
                             </p>
 
                             <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #fef2f2; border-left: 4px solid #ef4444; border-radius: 8px; margin: 30px 0;">
@@ -38,7 +38,7 @@
                             </table>
 
                             <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                If you'd like to discuss alternative options or understand more about next steps, please don't hesitate to contact us. We're happy to help.
+                                I know this isn't the news you were hoping for, but I'd love to talk with you about why and explore other options that might work better. Please reach out — I'm here to help however I can.
                             </p>
 
                             <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; border-radius: 12px; margin: 30px 0;">

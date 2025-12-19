@@ -14,7 +14,7 @@
                     <!-- Header with Logo -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
-                            <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px;">
+                            <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
                             <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Additional Documents Needed</h1>
                         </td>
                     </tr>
@@ -25,7 +25,7 @@
                             <p style="color: #0f172a; font-size: 18px; margin: 0 0 20px 0; font-weight: 600;">Hi {!Lead.FirstName},</p>
                             
                             <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                We're almost there! We just need a few more documents to move forward with your application.
+                                You're so close! We just need a couple more documents from you to keep things moving forward with your application.
                             </p>
 
                             <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #fff7ed; border-left: 4px solid #f59e0b; border-radius: 8px; margin: 30px 0;">
@@ -38,7 +38,7 @@
                             </table>
 
                             <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
-                                You can review what's missing and securely upload the required items using the link below. Once everything is received, we'll continue processing right away.
+                                Just click the link below to see what we need and upload it securely. As soon as I receive everything, I'll get you processed right away — promise!
                             </p>
 
                             <!-- CTA Buttons -->

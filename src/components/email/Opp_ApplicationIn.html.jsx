@@ -14,7 +14,7 @@
                     <!-- Header with Logo -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
-                            <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px;">
+                            <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
                             <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Application Received</h1>
                         </td>
                     </tr>
@@ -25,7 +25,7 @@
                             <p style="color: #0f172a; font-size: 18px; margin: 0 0 20px 0; font-weight: 600;">Hi {!Opportunity.Contact.FirstName},</p>
                             
                             <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                We've received your application, and our team is currently reviewing it. We'll be in touch with an update soon.
+                                I've got your application right here, and I'm reviewing it now with our team. You'll hear from me with an update very soon!
                             </p>
 
                             <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f0f9ff; border-left: 4px solid #08708E; border-radius: 8px; margin: 30px 0;">

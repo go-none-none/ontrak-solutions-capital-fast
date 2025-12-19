@@ -14,7 +14,7 @@
                     <!-- Header with Logo -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
-                            <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px;">
+                            <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
                             <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Great Connecting With You!</h1>
                         </td>
                     </tr>
@@ -25,11 +25,11 @@
                             <p style="color: #0f172a; font-size: 18px; margin: 0 0 20px 0; font-weight: 600;">Hi {!Lead.FirstName},</p>
                             
                             <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                It was great connecting with you! We're excited to help you with your funding application and learn more about your business needs.
+                                It was wonderful speaking with you today! I'm genuinely excited to help you get the funding your business needs and to learn more about your goals.
                             </p>
 
                             <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
-                                If you have any questions in the meantime, feel free to reply to this email — we're here to help.
+                                If anything comes to mind or you have questions along the way, just hit reply — I'm here and happy to help anytime.
                             </p>
 
                             <!-- CTA Buttons -->

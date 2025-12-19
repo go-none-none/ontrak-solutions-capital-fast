@@ -26,7 +26,7 @@
                             <p style="color: #0f172a; font-size: 18px; margin: 0 0 20px 0; font-weight: 600;">Hi {!Opportunity.Contact.FirstName},</p>
                             
                             <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                Congratulations! Your funding has been successfully processed. The funds should be in your account shortly.
+                                I'm so excited to tell you this — your funding has been successfully processed! Your funds should be hitting your account any moment now.
                             </p>
 
                             <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-left: 4px solid #10b981; border-radius: 8px; margin: 30px 0;">
@@ -39,7 +39,7 @@
                             </table>
 
                             <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                Thank you for choosing OnTrak. We appreciate the opportunity to work with you and support your business growth.
+                                Thank you for trusting OnTrak with your business funding. It's been a pleasure working with you, and I'm genuinely excited to see where your business goes from here!
                             </p>
 
                             <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; border-radius: 12px; margin: 30px 0;">
@@ -56,7 +56,7 @@
                             </table>
 
                             <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
-                                We're here if you need anything in the future. Whether it's additional funding or just a question, don't hesitate to reach out.
+                                And remember, I'm just an email or phone call away if you ever need anything — whether it's more funding down the road or just have a quick question. Don't be a stranger!
                             </p>
 
                             <!-- CTA Buttons -->
