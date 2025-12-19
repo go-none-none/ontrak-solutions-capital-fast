@@ -13,10 +13,14 @@
                     
                     <!-- Header with Logo -->
                     <tr>
-                        <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
+                        <td style="background: #ffffff; padding: 30px 30px 20px 30px; text-align: center; border-bottom: 1px solid #e2e8f0;">
                             <a href="https://ontrak.co" style="display: inline-block;">
-                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/38ae07730_customcolor_logo_transparent_background2.png" alt="OnTrak Solutions" style="height: 60px; width: auto; margin-bottom: 20px; display: block;">
+                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/38ae07730_customcolor_logo_transparent_background2.png" alt="OnTrak Solutions" style="height: 80px; width: auto; display: block;">
                             </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
                             <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Additional Documents Needed</h1>
                         </td>
                     </tr>
