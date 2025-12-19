@@ -14,7 +14,9 @@
                     <!-- Header with Logo -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); padding: 40px 30px; text-align: center;">
-                            <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
+                            <a href="https://ontrak.co" style="display: inline-block;">
+                                <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
+                            </a>
                             <h1 style="color: #ffffff; font-size: 36px; font-weight: bold; margin: 0; line-height: 1.3;">🎉 Congratulations!</h1>
                             <p style="color: #ffffff; font-size: 20px; margin: 10px 0 0 0; opacity: 0.95;">Your Funding Is Complete</p>
                         </td>
@@ -95,11 +97,15 @@
                                         <table cellpadding="0" cellspacing="0" style="display: inline-block;">
                                             <tr>
                                                 <td style="padding: 0 10px;">
-                                                    <a href="https://ontrak.co" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Home</a>
+                                                    <a href="https://ontrak.co/application" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Apply Again</a>
                                                 </td>
                                                 <td style="padding: 0 10px; color: #e2e8f0;">|</td>
                                                 <td style="padding: 0 10px;">
                                                     <a href="https://ontrak.co/Reviews" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Leave a Review</a>
+                                                </td>
+                                                <td style="padding: 0 10px; color: #e2e8f0;">|</td>
+                                                <td style="padding: 0 10px;">
+                                                    <a href="https://ontrak.co/FAQ" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">FAQ</a>
                                                 </td>
                                                 <td style="padding: 0 10px; color: #e2e8f0;">|</td>
                                                 <td style="padding: 0 10px;">
