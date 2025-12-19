@@ -15,7 +15,7 @@
                     <tr>
                         <td style="background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); padding: 40px 30px; text-align: center;">
                             <a href="https://ontrak.co" style="display: inline-block;">
-                                <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
+                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/4ab3f48f8_OnTracklogo_HighRes.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
                             </a>
                             <h1 style="color: #ffffff; font-size: 36px; font-weight: bold; margin: 0; line-height: 1.3;">🎉 Congratulations!</h1>
                             <p style="color: #ffffff; font-size: 20px; margin: 10px 0 0 0; opacity: 0.95;">Your Funding Is Complete</p>
