@@ -146,7 +146,7 @@
                             <p style="color: #64748b; font-size: 14px; margin: 0 0 15px 0;">Funding Specialist | OnTrak Solutions</p>
                             <p style="color: #64748b; font-size: 14px; margin: 0 0 8px 0;">
                                 Direct: <a href="tel:{!Owner.Phone}" style="color: #08708E; text-decoration: none;">{!Owner.Phone}</a><br>
-                                Email: <a href="mailto:info@ontrak.co" style="color: #08708E; text-decoration: none;">info@ontrak.co</a>
+                                Email: <a href="mailto:{!Owner.Email}" style="color: #08708E; text-decoration: none;">{!Owner.Email}</a>
                             </p>
                             <p style="color: #94a3b8; font-size: 12px; margin: 15px 0 0 0; line-height: 1.6;">
                                 © 2025 OnTrak Solutions LLC. All rights reserved.<br>
