@@ -16,7 +16,10 @@
                     <!-- Header with Logo -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/5e3c6e076_OnTrak-Logo.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px;">
+                            <!-- Replace with your actual logo URL or use text logo -->
+                            <div style="background-color: #ffffff; display: inline-block; padding: 12px 24px; border-radius: 8px; margin-bottom: 20px;">
+                                <h2 style="color: #08708E; font-size: 24px; font-weight: bold; margin: 0; letter-spacing: -0.5px;">OnTrak</h2>
+                            </div>
                             <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Your Funding Update</h1>
                         </td>
                     </tr>
@@ -47,12 +50,21 @@
                                 [Your personalized message content goes here. Explain what's happening with their application, next steps, or any action items they need to complete.]
                             </p>
 
-                            <!-- CTA Button -->
+                            <!-- CTA Buttons -->
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td align="center" style="padding: 10px 0;">
-                                        <a href="[Your Link Here]" style="display: inline-block; background: linear-gradient(to right, #08708E, #065a72); color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 40px; border-radius: 30px; box-shadow: 0 4px 6px rgba(8, 112, 142, 0.2);">
+                                        <!-- Primary CTA -->
+                                        <a href="https://ontrak.co/Status?rid=[RecordID]" style="display: inline-block; background: linear-gradient(to right, #08708E, #065a72); color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 40px; border-radius: 30px; box-shadow: 0 4px 6px rgba(8, 112, 142, 0.2); margin: 5px;">
                                             View Application Status
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="padding: 10px 0;">
+                                        <!-- Secondary CTA -->
+                                        <a href="https://ontrak.co/Contact" style="display: inline-block; background-color: #ffffff; color: #08708E; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 30px; border: 2px solid #08708E; margin: 5px;">
+                                            Contact Support
                                         </a>
                                     </td>
                                 </tr>
@@ -83,6 +95,37 @@
                         </td>
                     </tr>
 
+                    <!-- Navigation Links -->
+                    <tr>
+                        <td style="background-color: #ffffff; padding: 20px 30px; border-top: 1px solid #e2e8f0;">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center">
+                                        <table cellpadding="0" cellspacing="0" style="display: inline-block;">
+                                            <tr>
+                                                <td style="padding: 0 10px;">
+                                                    <a href="https://ontrak.co" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Home</a>
+                                                </td>
+                                                <td style="padding: 0 10px; color: #e2e8f0;">|</td>
+                                                <td style="padding: 0 10px;">
+                                                    <a href="https://ontrak.co/application" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Apply Now</a>
+                                                </td>
+                                                <td style="padding: 0 10px; color: #e2e8f0;">|</td>
+                                                <td style="padding: 0 10px;">
+                                                    <a href="https://ontrak.co/Status" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Check Status</a>
+                                                </td>
+                                                <td style="padding: 0 10px; color: #e2e8f0;">|</td>
+                                                <td style="padding: 0 10px;">
+                                                    <a href="https://ontrak.co/Contact" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500;">Contact</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
                     <!-- Footer -->
                     <tr>
                         <td style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
@@ -94,7 +137,7 @@
                             <p style="color: #94a3b8; font-size: 12px; margin: 15px 0 0 0; line-height: 1.6;">
                                 You're receiving this email because you applied for business funding with OnTrak Solutions.<br>
                                 <a href="[Unsubscribe Link]" style="color: #94a3b8; text-decoration: underline;">Unsubscribe</a> • 
-                                <a href="[Privacy Policy Link]" style="color: #94a3b8; text-decoration: underline;">Privacy Policy</a>
+                                <a href="https://ontrak.co/PrivacyPolicy" style="color: #94a3b8; text-decoration: underline;">Privacy Policy</a>
                             </p>
                         </td>
                     </tr>
