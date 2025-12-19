@@ -15,7 +15,7 @@
                     <tr>
                         <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
                             <a href="https://ontrak.co" style="display: inline-block;">
-                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/4ab3f48f8_OnTracklogo_HighRes.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
+                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/4ab3f48f8_OnTracklogo_HighRes.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; display: block;">
                             </a>
                             <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Great Connecting With You!</h1>
                         </td>
@@ -95,7 +95,7 @@
 
                             <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin: 0;">
                                 <strong style="color: #0f172a;">Questions or need assistance?</strong><br>
-                                Feel free to contact me directly at <a href="tel:{!Owner.Phone}" style="color: #08708E; text-decoration: none; font-weight: 600;">{!Owner.Phone}</a> or simply reply to this email.
+                                Contact me directly at <a href="tel:{!Owner.Phone}" style="color: #08708E; text-decoration: none; font-weight: 600;">{!Owner.Phone}</a> or reply to this email.
                             </p>
                         </td>
                     </tr>

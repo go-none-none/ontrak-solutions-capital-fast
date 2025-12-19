@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,10 +16,9 @@
                     <tr>
                         <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
                             <a href="https://ontrak.co" style="display: inline-block;">
-                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/4ab3f48f8_OnTracklogo_HighRes.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
+                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/4ab3f48f8_OnTracklogo_HighRes.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; display: block;">
                             </a>
-                            <h1 style="color: #ffffff; font-size: 32px; font-weight: bold; margin: 0; line-height: 1.3;">🎉 Congratulations!</h1>
-                            <p style="color: #ffffff; font-size: 18px; margin: 10px 0 0 0; opacity: 0.9;">Your Application Has Been Approved</p>
+                            <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Congratulations — Approved!</h1>
                         </td>
                     </tr>
 
@@ -31,10 +31,10 @@
                                 I'm thrilled to share this news with you — your application has been approved! This is such an exciting step forward for your business, and I'm really happy to be part of your journey.
                             </p>
 
-                            <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left: 4px solid #22c55e; border-radius: 8px; margin: 30px 0;">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f0f9ff; border-left: 4px solid #08708E; border-radius: 8px; margin: 30px 0;">
                                 <tr>
                                     <td style="padding: 20px;">
-                                        <p style="color: #22c55e; font-size: 14px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">✓ Approved</p>
+                                        <p style="color: #08708E; font-size: 14px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">✓ Approved</p>
                                         <p style="color: #0f172a; font-size: 15px; margin: 0;">We'll be sending your contracts shortly. Once signed, your funding will be processed and on its way to you.</p>
                                     </td>
                                 </tr>

@@ -13,12 +13,11 @@
                     
                     <!-- Header with Logo -->
                     <tr>
-                        <td style="background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); padding: 40px 30px; text-align: center;">
+                        <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
                             <a href="https://ontrak.co" style="display: inline-block;">
-                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/4ab3f48f8_OnTracklogo_HighRes.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
+                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/4ab3f48f8_OnTracklogo_HighRes.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; display: block;">
                             </a>
-                            <h1 style="color: #ffffff; font-size: 36px; font-weight: bold; margin: 0; line-height: 1.3;">🎉 Congratulations!</h1>
-                            <p style="color: #ffffff; font-size: 20px; margin: 10px 0 0 0; opacity: 0.95;">Your Funding Is Complete</p>
+                            <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Congratulations — Funded!</h1>
                         </td>
                     </tr>
 
@@ -31,10 +30,10 @@
                                 I'm so excited to tell you this — your funding has been successfully processed! Your funds should be hitting your account any moment now.
                             </p>
 
-                            <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-left: 4px solid #10b981; border-radius: 8px; margin: 30px 0;">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f0f9ff; border-left: 4px solid #08708E; border-radius: 8px; margin: 30px 0;">
                                 <tr>
                                     <td style="padding: 20px;">
-                                        <p style="color: #10b981; font-size: 14px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">✓ Funding Complete</p>
+                                        <p style="color: #08708E; font-size: 14px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">✓ Funding Complete</p>
                                         <p style="color: #0f172a; font-size: 15px; margin: 0;">Your funds have been successfully transferred and should arrive in your business account within a few hours.</p>
                                     </td>
                                 </tr>

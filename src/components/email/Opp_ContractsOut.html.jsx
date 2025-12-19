@@ -15,7 +15,7 @@
                     <tr>
                         <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
                             <a href="https://ontrak.co" style="display: inline-block;">
-                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/4ab3f48f8_OnTracklogo_HighRes.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);">
+                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/4ab3f48f8_OnTracklogo_HighRes.png" alt="OnTrak Solutions" style="height: 50px; margin-bottom: 20px; display: block;">
                             </a>
                             <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Contracts Ready to Sign</h1>
                         </td>
@@ -30,10 +30,10 @@
                                 Your contracts are all ready to go! Take a look when you get a chance and sign them so we can get your funding over to you.
                             </p>
 
-                            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 8px; margin: 30px 0;">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f0f9ff; border-left: 4px solid #08708E; border-radius: 8px; margin: 30px 0;">
                                 <tr>
                                     <td style="padding: 20px;">
-                                        <p style="color: #3b82f6; font-size: 14px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">📝 Action Required</p>
+                                        <p style="color: #08708E; font-size: 14px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">📝 Action Required</p>
                                         <p style="color: #0f172a; font-size: 15px; margin: 0;">Please review your contracts and complete the signing process. Once signed, your funding will be processed immediately.</p>
                                     </td>
                                 </tr>
