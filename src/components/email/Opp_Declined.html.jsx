@@ -118,10 +118,11 @@
                     <tr>
                         <td style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
                             <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Best regards,</p>
-                            <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">The OnTrak Team</p>
+                            <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">{!Owner.Name}</p>
+                            <p style="color: #64748b; font-size: 14px; margin: 0 0 15px 0;">Funding Specialist | OnTrak Solutions</p>
                             <p style="color: #64748b; font-size: 14px; margin: 0 0 8px 0;">
-                                <a href="tel:+13025205200" style="color: #08708E; text-decoration: none;">(302) 520-5200</a> • 
-                                <a href="mailto:info@ontrak.co" style="color: #08708E; text-decoration: none;">info@ontrak.co</a>
+                                Direct: <a href="tel:{!Owner.Phone}" style="color: #08708E; text-decoration: none;">{!Owner.Phone}</a><br>
+                                Email: <a href="mailto:info@ontrak.co" style="color: #08708E; text-decoration: none;">info@ontrak.co</a>
                             </p>
                             <p style="color: #94a3b8; font-size: 12px; margin: 15px 0 0 0; line-height: 1.6;">
                                 © 2025 OnTrak Solutions LLC. All rights reserved.<br>

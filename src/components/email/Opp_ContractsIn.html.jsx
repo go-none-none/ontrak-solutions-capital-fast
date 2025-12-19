@@ -63,9 +63,46 @@
 
                             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
 
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 30px 0;">
+                                <tr>
+                                    <td style="padding: 20px; background-color: #f0f9ff; border-radius: 12px;">
+                                        <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 10px 0;">Your funding is on the way:</p>
+                                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
+                                            OnTrak Solutions is processing your funding and you should see it in your account soon. Thank you for choosing OnTrak for your business financing needs.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 30px 0;">
+                                <tr>
+                                    <td>
+                                        <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">Join our satisfied clients:</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px; margin-bottom: 10px;">
+                                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
+                                            "From approval to funding in my account took less than two days. Incredible service!"
+                                        </p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Nicole B., Transportation Company</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px;">
+                                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
+                                            "OnTrak came through exactly when I needed them. Fast, professional, and transparent."
+                                        </p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Brandon F., Retail Business</p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+
                             <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin: 0;">
-                                <strong style="color: #0f172a;">Questions?</strong><br>
-                                Call us at <a href="tel:+13025205200" style="color: #08708E; text-decoration: none; font-weight: 600;">(302) 520-5200</a> or reply to this email.
+                                <strong style="color: #0f172a;">Questions or need updates?</strong><br>
+                                Contact me directly at <a href="tel:{!Owner.Phone}" style="color: #08708E; text-decoration: none; font-weight: 600;">{!Owner.Phone}</a> or reply to this email.
                             </p>
                         </td>
                     </tr>
@@ -105,10 +142,11 @@
                     <tr>
                         <td style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
                             <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Best regards,</p>
-                            <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">The OnTrak Team</p>
+                            <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">{!Owner.Name}</p>
+                            <p style="color: #64748b; font-size: 14px; margin: 0 0 15px 0;">Funding Specialist | OnTrak Solutions</p>
                             <p style="color: #64748b; font-size: 14px; margin: 0 0 8px 0;">
-                                <a href="tel:+13025205200" style="color: #08708E; text-decoration: none;">(302) 520-5200</a> • 
-                                <a href="mailto:info@ontrak.co" style="color: #08708E; text-decoration: none;">info@ontrak.co</a>
+                                Direct: <a href="tel:{!Owner.Phone}" style="color: #08708E; text-decoration: none;">{!Owner.Phone}</a><br>
+                                Email: <a href="mailto:info@ontrak.co" style="color: #08708E; text-decoration: none;">info@ontrak.co</a>
                             </p>
                             <p style="color: #94a3b8; font-size: 12px; margin: 15px 0 0 0; line-height: 1.6;">
                                 © 2025 OnTrak Solutions LLC. All rights reserved.<br>
