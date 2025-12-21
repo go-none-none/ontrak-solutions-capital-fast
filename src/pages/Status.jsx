@@ -18,6 +18,7 @@ export default function Status() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+  const [showApplication, setShowApplication] = useState(false);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -49,7 +50,7 @@ export default function Status() {
 
   useEffect(() => {
     const status = data ? (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase() : '';
-    const showApplicationForm = status === 'open - not contacted' || status === 'working - contacted' || status === 'working - application out';
+    const showApplicationForm = (status === 'open - not contacted' || status === 'working - contacted' || status === 'working - application out') && showApplication;
     
     if (showApplicationForm && data) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -60,6 +61,11 @@ export default function Status() {
       const params = [];
       if (repId) params.push(`rep=${encodeURIComponent(repId)}`);
       if (recordId) params.push(`rid=${encodeURIComponent(recordId)}`);
+      if (data.businessName) params.push(`cn=${encodeURIComponent(data.businessName)}`);
+      if (data.firstName) params.push(`fn=${encodeURIComponent(data.firstName)}`);
+      if (data.lastName) params.push(`ln=${encodeURIComponent(data.lastName)}`);
+      if (data.phone) params.push(`phone=${encodeURIComponent(data.phone)}`);
+      if (data.email) params.push(`email=${encodeURIComponent(data.email)}`);
       if (params.length > 0) {
         iframeSrc += `?${params.join('&')}`;
       }
@@ -96,7 +102,7 @@ export default function Status() {
         };
       }
     }
-  }, [data]);
+  }, [data, showApplication]);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -150,17 +156,71 @@ export default function Status() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-3xl shadow-xl p-8 text-center"
             >
-              <FileText className="w-16 h-16 text-[#08708E] mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900 mb-3">No Application Found</h2>
-              <p className="text-slate-600 mb-6">
-                We don't have a record for you yet. Start your funding application today and track it here!
-              </p>
-              <Button 
-                onClick={() => window.location.href = createPageUrl('application')}
-                className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg"
-              >
-                Start Your Application
-              </Button>
+              <div style={{ 
+                transformStyle: 'preserve-3d',
+                transition: 'transform 0.6s',
+                transform: showApplication ? 'rotateY(180deg)' : 'rotateY(0deg)'
+              }}>
+                <div style={{ 
+                  backfaceVisibility: 'hidden',
+                  display: showApplication ? 'none' : 'block'
+                }}>
+                  <FileText className="w-16 h-16 text-[#08708E] mx-auto mb-4" />
+                  <h2 className="text-2xl font-bold text-slate-900 mb-3">No Application Found</h2>
+                  <p className="text-slate-600 mb-6">
+                    We don't have a record for you yet. Start your funding application today and track it here!
+                  </p>
+                  <Button 
+                    onClick={() => setShowApplication(true)}
+                    className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg"
+                  >
+                    Start Your Application
+                  </Button>
+                </div>
+                <div style={{ 
+                  backfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)',
+                  position: showApplication ? 'relative' : 'absolute',
+                  width: '100%',
+                  top: 0,
+                  display: showApplication ? 'block' : 'none'
+                }}>
+                  <div id="jotform-container-nodata">
+                    {showApplication && (() => {
+                      setTimeout(() => {
+                        const container = document.getElementById('jotform-container-nodata');
+                        if (container) {
+                          container.innerHTML = `
+                            <iframe
+                              id="JotFormIFrame-252957146872065-nodata"
+                              title="Application Form"
+                              allowtransparency="true"
+                              allow="geolocation; microphone; camera; fullscreen"
+                              src="https://form.jotform.com/252957146872065"
+                              frameborder="0"
+                              style="min-width:100%;max-width:100%;height:539px;border:none;"
+                              scrolling="no"
+                            >
+                            </iframe>
+                          `;
+                          const script = document.createElement('script');
+                          script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+                          script.onload = () => {
+                            if (window.jotformEmbedHandler) {
+                              window.jotformEmbedHandler("iframe[id='JotFormIFrame-252957146872065-nodata']", "https://form.jotform.com/");
+                            }
+                          };
+                          document.body.appendChild(script);
+                        }
+                      }, 100);
+                      return null;
+                    })()}
+                    <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                      Loading application form...
+                    </p>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </section>
@@ -192,7 +252,7 @@ export default function Status() {
 
   // Show application form for early statuses
   const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
-  const showApplicationForm = status === 'open - not contacted' || status === 'working - contacted' || status === 'working - application out';
+  const isEarlyStatus = status === 'open - not contacted' || status === 'working - contacted' || status === 'working - application out';
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -303,19 +363,48 @@ export default function Status() {
           </motion.div>
 
           {/* Application Form for Early Statuses */}
-          {showApplicationForm && (
+          {isEarlyStatus && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="bg-white rounded-3xl shadow-xl p-8 mb-6"
+              style={{ 
+                transformStyle: 'preserve-3d',
+                transition: 'transform 0.6s',
+                transform: showApplication ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                minHeight: showApplication ? '600px' : 'auto'
+              }}
             >
-              <h3 className="text-xl font-bold text-slate-900 mb-4">Complete Your Application</h3>
-              <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
-              <div id="jotform-container">
-                <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
-                  Loading application form...
-                </p>
+              <div style={{ 
+                backfaceVisibility: 'hidden',
+                display: showApplication ? 'none' : 'block'
+              }}>
+                <h3 className="text-xl font-bold text-slate-900 mb-4">Complete Your Application</h3>
+                <p className="text-slate-600 mb-6">Ready to get started? Click below to complete your funding application.</p>
+                <Button 
+                  onClick={() => setShowApplication(true)}
+                  className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg w-full"
+                >
+                  Start Your Application
+                </Button>
+              </div>
+              <div style={{ 
+                backfaceVisibility: 'hidden',
+                transform: 'rotateY(180deg)',
+                position: showApplication ? 'relative' : 'absolute',
+                width: '100%',
+                top: 0,
+                left: 0,
+                padding: showApplication ? '32px' : 0
+              }}>
+                {showApplication && (
+                  <div id="jotform-container">
+                    <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                      Loading application form...
+                    </p>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
