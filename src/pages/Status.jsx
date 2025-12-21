@@ -18,6 +18,7 @@ export default function Status() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+  const [showApplication, setShowApplication] = useState(false);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -49,9 +50,9 @@ export default function Status() {
 
   useEffect(() => {
     const status = data ? (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase() : '';
-    const showApplicationForm = status === 'open - not contacted' || status === 'working - contacted' || status === 'working - application out';
+    const showApplicationForm = status === 'working - contacted' || status === 'working - application out';
     
-    if (showApplicationForm && data) {
+    if (showApplicationForm && showApplication && data) {
       const urlParams = new URLSearchParams(window.location.search);
       const repId = urlParams.get('repId') || data.ownerAlias;
       const recordId = urlParams.get('rid') || data.id;
@@ -60,6 +61,12 @@ export default function Status() {
       const params = [];
       if (repId) params.push(`rep=${encodeURIComponent(repId)}`);
       if (recordId) params.push(`rid=${encodeURIComponent(recordId)}`);
+      if (data.businessName) params.push(`businessName=${encodeURIComponent(data.businessName)}`);
+      if (data.firstName) params.push(`firstName=${encodeURIComponent(data.firstName)}`);
+      if (data.lastName) params.push(`lastName=${encodeURIComponent(data.lastName)}`);
+      if (data.phone) params.push(`phone=${encodeURIComponent(data.phone)}`);
+      if (data.email) params.push(`email=${encodeURIComponent(data.email)}`);
+      
       if (params.length > 0) {
         iframeSrc += `?${params.join('&')}`;
       }
@@ -96,7 +103,7 @@ export default function Status() {
         };
       }
     }
-  }, [data]);
+  }, [data, showApplication]);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -192,7 +199,7 @@ export default function Status() {
 
   // Show application form for early statuses
   const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
-  const showApplicationForm = status === 'open - not contacted' || status === 'working - contacted' || status === 'working - application out';
+  const showApplicationForm = status === 'working - contacted' || status === 'working - application out';
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -226,99 +233,141 @@ export default function Status() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl shadow-xl p-8 mb-6"
+            style={{ transformStyle: 'preserve-3d' }}
           >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-slate-900">{data.businessName}</h2>
-                <p className="text-sm text-slate-500">Application ID: {data.id.slice(-8)}</p>
-              </div>
-            </div>
+            <motion.div
+              animate={{ rotateY: showApplication ? 180 : 0 }}
+              transition={{ duration: 0.6 }}
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              {/* Front Side */}
+              <div 
+                style={{ 
+                  backfaceVisibility: 'hidden',
+                  display: showApplication ? 'none' : 'block'
+                }}
+                className="bg-white rounded-3xl shadow-xl p-8 mb-6"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center">
+                    <Building2 className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-900">{data.businessName}</h2>
+                    <p className="text-sm text-slate-500">Application ID: {data.id.slice(-8)}</p>
+                  </div>
+                </div>
 
-            <div className="space-y-3 mb-8">
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                <Calendar className="w-4 h-4" />
-                <span>Last Updated: {formatDate(data.lastModifiedDate)}</span>
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <Calendar className="w-4 h-4" />
+                    <span>Last Updated: {formatDate(data.lastModifiedDate)}</span>
+                  </div>
+                  {data.firstName && (
+                    <div className="bg-gradient-to-r from-[#08708E]/10 to-cyan-50 border-l-4 border-[#08708E] rounded-r-lg p-4">
+                      <p className="text-slate-700 font-medium">
+                        {(() => {
+                          const firstName = data.firstName;
+                          const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
+                          
+                          // Lead statuses
+                          if (status === 'open - not contacted') {
+                            return `${firstName}, thank you for your interest! We'll be reaching out to you shortly to discuss your funding needs.`;
+                          } else if (status === 'working - contacted') {
+                            return `${firstName}, great connecting with you! We're excited to help you with your funding application.`;
+                          } else if (status === 'working - application out') {
+                            return `${firstName}, we've sent your application. Please complete it at your earliest convenience so we can move forward!`;
+                          } else if (status === 'application missing info') {
+                            return `${firstName}, we're almost there! Just need a few more documents to move forward with your application.`;
+                          } else if (status === 'converted') {
+                            return `${firstName}, excellent news! Your application has been converted and is moving through our approval process.`;
+                          }
+                          
+                          // Opportunity statuses
+                          else if (status === 'application in') {
+                            return `${firstName}, we received your application and our team is reviewing it now. We'll have an update for you soon!`;
+                          } else if (status === 'underwriting') {
+                            return `${firstName}, great news! Your application is currently being reviewed by our underwriting team.`;
+                          } else if (status === 'approved') {
+                            return `${firstName}, congratulations! Your application has been approved. We'll be sending your contracts shortly.`;
+                          } else if (status === 'contracts out') {
+                            return `${firstName}, your contracts are ready! Please review and sign them to proceed with funding.`;
+                          } else if (status === 'contracts in' || status === 'renewal processing') {
+                            return `${firstName}, we received your signed contracts. Your funding is being processed and will be on its way soon!`;
+                          } else if (status === 'closed - funded' || status === 'funded') {
+                            return `${firstName}, congratulations! Your funding has been successfully processed. Thank you for choosing OnTrak!`;
+                          } else if (status === 'closed - declined' || status === 'declined') {
+                            return `${firstName}, unfortunately we're unable to approve your application at this time. Please contact us to discuss alternative options.`;
+                          }
+                          
+                          // Default fallback
+                          else {
+                            return `${firstName}, thank you for choosing OnTrak. We're working on your request!`;
+                          }
+                        })()}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <StatusTracker 
+                  recordType={data.recordType}
+                  status={data.status}
+                  stageName={data.stageName}
+                  stageDetail={data.stageDetail}
+                  recordId={data.id}
+                  businessName={data.businessName}
+                  lastName={data.lastName}
+                  bankStatementChecklist={data.bankStatementChecklist}
+                />
+
+                {showApplicationForm && (
+                  <div className="mt-6 pt-6 border-t border-slate-200">
+                    <Button 
+                      onClick={() => setShowApplication(true)}
+                      className="bg-[#08708E] hover:bg-[#065a72] px-8 py-4 text-lg w-full"
+                    >
+                      Start Your Application
+                    </Button>
+                  </div>
+                )}
               </div>
-              {data.firstName && (
-                <div className="bg-gradient-to-r from-[#08708E]/10 to-cyan-50 border-l-4 border-[#08708E] rounded-r-lg p-4">
-                  <p className="text-slate-700 font-medium">
-                    {(() => {
-                      const firstName = data.firstName;
-                      const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
-                      
-                      // Lead statuses
-                      if (status === 'open - not contacted') {
-                        return `${firstName}, thank you for your interest! We'll be reaching out to you shortly to discuss your funding needs.`;
-                      } else if (status === 'working - contacted') {
-                        return `${firstName}, great connecting with you! We're excited to help you with your funding application.`;
-                      } else if (status === 'working - application out') {
-                        return `${firstName}, we've sent your application. Please complete it at your earliest convenience so we can move forward!`;
-                      } else if (status === 'application missing info') {
-                        return `${firstName}, we're almost there! Just need a few more documents to move forward with your application.`;
-                      } else if (status === 'converted') {
-                        return `${firstName}, excellent news! Your application has been converted and is moving through our approval process.`;
-                      }
-                      
-                      // Opportunity statuses
-                      else if (status === 'application in') {
-                        return `${firstName}, we received your application and our team is reviewing it now. We'll have an update for you soon!`;
-                      } else if (status === 'underwriting') {
-                        return `${firstName}, great news! Your application is currently being reviewed by our underwriting team.`;
-                      } else if (status === 'approved') {
-                        return `${firstName}, congratulations! Your application has been approved. We'll be sending your contracts shortly.`;
-                      } else if (status === 'contracts out') {
-                        return `${firstName}, your contracts are ready! Please review and sign them to proceed with funding.`;
-                      } else if (status === 'contracts in' || status === 'renewal processing') {
-                        return `${firstName}, we received your signed contracts. Your funding is being processed and will be on its way soon!`;
-                      } else if (status === 'closed - funded' || status === 'funded') {
-                        return `${firstName}, congratulations! Your funding has been successfully processed. Thank you for choosing OnTrak!`;
-                      } else if (status === 'closed - declined' || status === 'declined') {
-                        return `${firstName}, unfortunately we're unable to approve your application at this time. Please contact us to discuss alternative options.`;
-                      }
-                      
-                      // Default fallback
-                      else {
-                        return `${firstName}, thank you for choosing OnTrak. We're working on your request!`;
-                      }
-                    })()}
-                  </p>
+
+              {/* Back Side - Application Form */}
+              {showApplication && (
+                <div 
+                  style={{ 
+                    backfaceVisibility: 'hidden',
+                    transform: 'rotateY(180deg)',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0
+                  }}
+                  className="bg-white rounded-3xl shadow-xl p-8 mb-6"
+                >
+                  <div className="mb-6">
+                    <Button
+                      onClick={() => setShowApplication(false)}
+                      variant="outline"
+                      className="mb-4"
+                    >
+                      ← Back to Status
+                    </Button>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">Complete Your Application</h3>
+                    <p className="text-slate-600">Fill out the application below to get started with your funding request.</p>
+                  </div>
+                  <div id="jotform-container">
+                    <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                      Loading application form...
+                    </p>
+                  </div>
                 </div>
               )}
-            </div>
-
-            <StatusTracker 
-              recordType={data.recordType}
-              status={data.status}
-              stageName={data.stageName}
-              stageDetail={data.stageDetail}
-              recordId={data.id}
-              businessName={data.businessName}
-              lastName={data.lastName}
-              bankStatementChecklist={data.bankStatementChecklist}
-            />
+            </motion.div>
           </motion.div>
 
-          {/* Application Form for Early Statuses */}
-          {showApplicationForm && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white rounded-3xl shadow-xl p-8 mb-6"
-            >
-              <h3 className="text-xl font-bold text-slate-900 mb-4">Complete Your Application</h3>
-              <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
-              <div id="jotform-container">
-                <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
-                  Loading application form...
-                </p>
-              </div>
-            </motion.div>
-          )}
+
 
 
           {/* Next Steps */}
