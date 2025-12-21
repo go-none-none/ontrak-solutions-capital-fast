@@ -60,11 +60,11 @@ export default function Status() {
       const params = [];
       if (repId) params.push(`rep=${encodeURIComponent(repId)}`);
       if (recordId) params.push(`rid=${encodeURIComponent(recordId)}`);
-      if (data.businessName) params.push(`businessName=${encodeURIComponent(data.businessName)}`);
-      if (data.firstName) params.push(`firstName=${encodeURIComponent(data.firstName)}`);
-      if (data.lastName) params.push(`lastName=${encodeURIComponent(data.lastName)}`);
-      if (data.phone) params.push(`phone=${encodeURIComponent(data.phone)}`);
-      if (data.email) params.push(`email=${encodeURIComponent(data.email)}`);
+      if (data.businessName) params.push(`input_7=${encodeURIComponent(data.businessName)}`);
+      if (data.firstName) params.push(`first_21=${encodeURIComponent(data.firstName)}`);
+      if (data.lastName) params.push(`last_21=${encodeURIComponent(data.lastName)}`);
+      if (data.phone) params.push(`input_14_full=${encodeURIComponent(data.phone)}`);
+      if (data.email) params.push(`input_15=${encodeURIComponent(data.email)}`);
       
       if (params.length > 0) {
         iframeSrc += `?${params.join('&')}`;
