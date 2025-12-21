@@ -18,6 +18,7 @@ export default function Status() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -48,6 +49,44 @@ export default function Status() {
   }, []);
 
   useEffect(() => {
+    // Handle form when no record ID
+    if (!data && isFlipped) {
+      const container = document.getElementById('jotform-container-norecord');
+      if (container) {
+        let iframeSrc = 'https://form.jotform.com/252957146872065';
+        
+        container.innerHTML = `
+          <iframe
+            id="JotFormIFrame-norecord"
+            title="Application Form"
+            allowtransparency="true"
+            allow="geolocation; microphone; camera; fullscreen"
+            src="${iframeSrc}"
+            frameborder="0"
+            style="min-width:100%;max-width:100%;height:539px;border:none;"
+            scrolling="no"
+          >
+          </iframe>
+        `;
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+        script.onload = () => {
+          if (window.jotformEmbedHandler) {
+            window.jotformEmbedHandler("iframe[id='JotFormIFrame-norecord']", "https://form.jotform.com/");
+          }
+        };
+        document.body.appendChild(script);
+        
+        return () => {
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+        };
+      }
+      return;
+    }
+
     const status = data ? (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase() : '';
     const showApplicationForm = status === 'working - contacted' || status === 'working - application out';
     
@@ -102,7 +141,7 @@ export default function Status() {
         };
       }
     }
-  }, [data]);
+  }, [data, isFlipped]);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -124,7 +163,7 @@ export default function Status() {
     );
   }
 
-  // No record ID provided - show message
+  // No record ID provided - show flip card
   if (!data) {
     return (
       <div className="min-h-screen bg-slate-50">
@@ -151,23 +190,65 @@ export default function Status() {
 
         <section className="py-12 -mt-16 relative z-10">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-3xl shadow-xl p-8 text-center"
-            >
-              <FileText className="w-16 h-16 text-[#08708E] mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-slate-900 mb-3">No Application Found</h2>
-              <p className="text-slate-600 mb-6">
-                We don't have a record for you yet. Start your funding application today and track it here!
-              </p>
-              <Button 
-                onClick={() => window.location.href = createPageUrl('application')}
-                className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg"
+            <div className="perspective-1000" style={{ perspective: '1000px' }}>
+              <motion.div
+                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                transition={{ duration: 0.6 }}
+                style={{ transformStyle: 'preserve-3d' }}
+                className="relative w-full"
               >
-                Start Your Application
-              </Button>
-            </motion.div>
+                {/* Front */}
+                <div 
+                  style={{ 
+                    backfaceVisibility: 'hidden',
+                    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+                  }}
+                  className={isFlipped ? 'hidden' : 'block'}
+                >
+                  <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
+                    <FileText className="w-16 h-16 text-[#08708E] mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-slate-900 mb-3">No Application Found</h2>
+                    <p className="text-slate-600 mb-6">
+                      We don't have a record for you yet. Start your funding application today and track it here!
+                    </p>
+                    <Button 
+                      onClick={() => setIsFlipped(true)}
+                      className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg"
+                    >
+                      Start Your Application
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Back */}
+                <div 
+                  style={{ 
+                    backfaceVisibility: 'hidden',
+                    transform: isFlipped ? 'rotateY(0deg)' : 'rotateY(-180deg)'
+                  }}
+                  className={isFlipped ? 'block' : 'hidden'}
+                >
+                  <div className="bg-white rounded-3xl shadow-xl p-8">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-xl font-bold text-slate-900">Complete Your Application</h3>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setIsFlipped(false)}
+                      >
+                        Back
+                      </Button>
+                    </div>
+                    <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
+                    <div id="jotform-container-norecord">
+                      <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                        Loading application form...
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </section>
       </div>
