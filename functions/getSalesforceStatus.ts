@@ -40,6 +40,7 @@ Deno.serve(async (req) => {
             // Fetch owner information
             let ownerName = '';
             let ownerPhone = '';
+            let ownerAlias = '';
             if (lead.OwnerId) {
                 const ownerResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/User/${lead.OwnerId}`, {
                     headers: {
@@ -51,6 +52,7 @@ Deno.serve(async (req) => {
                     const owner = await ownerResponse.json();
                     ownerName = owner.Name || '';
                     ownerPhone = owner.Phone || owner.MobilePhone || '';
+                    ownerAlias = owner.Alias || '';
                 }
             }
 
@@ -65,8 +67,11 @@ Deno.serve(async (req) => {
                 lastModifiedDate: lead.LastModifiedDate,
                 firstName: lead.FirstName,
                 lastName: lead.LastName,
+                phone: lead.Phone || lead.MobilePhone || '',
+                email: lead.Email || '',
                 ownerName: ownerName,
-                ownerPhone: ownerPhone
+                ownerPhone: ownerPhone,
+                ownerAlias: ownerAlias
             });
         }
 
@@ -120,6 +125,7 @@ Deno.serve(async (req) => {
             // Fetch owner information
             let ownerName = '';
             let ownerPhone = '';
+            let ownerAlias = '';
             if (opp.OwnerId) {
                 const ownerResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/User/${opp.OwnerId}`, {
                     headers: {
@@ -131,6 +137,25 @@ Deno.serve(async (req) => {
                     const owner = await ownerResponse.json();
                     ownerName = owner.Name || '';
                     ownerPhone = owner.Phone || owner.MobilePhone || '';
+                    ownerAlias = owner.Alias || '';
+                }
+            }
+
+            // Get contact info for phone and email if not on opportunity
+            let phone = opp.Phone__c || '';
+            let email = opp.Email__c || '';
+            
+            if ((!phone || !email) && opp.ContactId) {
+                const contactResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Contact/${opp.ContactId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (contactResponse.ok) {
+                    const contact = await contactResponse.json();
+                    if (!phone) phone = contact.Phone || contact.MobilePhone || '';
+                    if (!email) email = contact.Email || '';
                 }
             }
 
@@ -146,8 +171,11 @@ Deno.serve(async (req) => {
                 lastModifiedDate: opp.LastModifiedDate,
                 firstName: firstName,
                 lastName: opp.LastName__c || '',
+                phone: phone,
+                email: email,
                 ownerName: ownerName,
                 ownerPhone: ownerPhone,
+                ownerAlias: ownerAlias,
                 // Include debug info
                 allFields: Object.keys(opp)
             });
