@@ -1,17 +1,55 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, Clock, Shield, TrendingUp, Phone, Zap } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 
 export default function Application() {
+  const [salesforceData, setSalesforceData] = useState(null);
+
+  useEffect(() => {
+    const fetchSalesforceData = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const recordId = urlParams.get('rid');
+      
+      if (recordId) {
+        try {
+          const response = await base44.functions.invoke('getSalesforceStatus', { recordId });
+          if (response.data && !response.data.error) {
+            setSalesforceData(response.data);
+          }
+        } catch (error) {
+          console.error('Error fetching Salesforce data:', error);
+        }
+      }
+    };
+    
+    fetchSalesforceData();
+  }, []);
+
   useEffect(() => {
     // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    const repId = urlParams.get('repId');
+    const repId = urlParams.get('repId') || (salesforceData?.ownerAlias);
+    const recordId = urlParams.get('rid');
     
-    // Build iframe src with rep parameter
+    // Build iframe src with parameters
     let iframeSrc = 'https://form.jotform.com/252957146872065';
-    if (repId) {
-      iframeSrc += `?rep=${encodeURIComponent(repId)}`;
+    const params = [];
+    
+    if (repId) params.push(`rep=${encodeURIComponent(repId)}`);
+    if (recordId) params.push(`rid=${encodeURIComponent(recordId)}`);
+    
+    // Add Salesforce data if available
+    if (salesforceData) {
+      if (salesforceData.businessName) params.push(`input_7=${encodeURIComponent(salesforceData.businessName)}`);
+      if (salesforceData.firstName) params.push(`first_21=${encodeURIComponent(salesforceData.firstName)}`);
+      if (salesforceData.lastName) params.push(`last_21=${encodeURIComponent(salesforceData.lastName)}`);
+      if (salesforceData.phone) params.push(`input_14_full=${encodeURIComponent(salesforceData.phone)}`);
+      if (salesforceData.email) params.push(`input_15=${encodeURIComponent(salesforceData.email)}`);
+    }
+    
+    if (params.length > 0) {
+      iframeSrc += `?${params.join('&')}`;
     }
     
     // Create and inject iframe
@@ -47,7 +85,7 @@ export default function Application() {
         }
       };
     }
-  }, []);
+  }, [salesforceData]);
 
   const reasons = [
     {
