@@ -18,7 +18,6 @@ export default function Status() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
-  const [showApplication, setShowApplication] = useState(false);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -52,7 +51,7 @@ export default function Status() {
     const status = data ? (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase() : '';
     const showApplicationForm = status === 'working - contacted' || status === 'working - application out';
     
-    if (showApplicationForm && showApplication && data) {
+    if (showApplicationForm && data) {
       const urlParams = new URLSearchParams(window.location.search);
       const repId = urlParams.get('repId') || data.ownerAlias;
       const recordId = urlParams.get('rid') || data.id;
@@ -103,7 +102,7 @@ export default function Status() {
         };
       }
     }
-  }, [data, showApplication]);
+  }, [data]);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -233,21 +232,8 @@ export default function Status() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            style={{ transformStyle: 'preserve-3d' }}
+            className="bg-white rounded-3xl shadow-xl p-8 mb-6"
           >
-            <motion.div
-              animate={{ rotateY: showApplication ? 180 : 0 }}
-              transition={{ duration: 0.6 }}
-              style={{ transformStyle: 'preserve-3d' }}
-            >
-              {/* Front Side */}
-              <div 
-                style={{ 
-                  backfaceVisibility: 'hidden',
-                  display: showApplication ? 'none' : 'block'
-                }}
-                className="bg-white rounded-3xl shadow-xl p-8 mb-6"
-              >
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center">
                     <Building2 className="w-6 h-6 text-white" />
@@ -320,52 +306,25 @@ export default function Status() {
                   lastName={data.lastName}
                   bankStatementChecklist={data.bankStatementChecklist}
                 />
-
-                {showApplicationForm && (
-                  <div className="mt-6 pt-6 border-t border-slate-200">
-                    <Button 
-                      onClick={() => setShowApplication(true)}
-                      className="bg-[#08708E] hover:bg-[#065a72] px-8 py-4 text-lg w-full"
-                    >
-                      Start Your Application
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              {/* Back Side - Application Form */}
-              {showApplication && (
-                <div 
-                  style={{ 
-                    backfaceVisibility: 'hidden',
-                    transform: 'rotateY(180deg)',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0
-                  }}
-                  className="bg-white rounded-3xl shadow-xl p-8 mb-6"
-                >
-                  <div className="mb-6">
-                    <Button
-                      onClick={() => setShowApplication(false)}
-                      variant="outline"
-                      className="mb-4"
-                    >
-                      ← Back to Status
-                    </Button>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Complete Your Application</h3>
-                    <p className="text-slate-600">Fill out the application below to get started with your funding request.</p>
-                  </div>
-                  <div id="jotform-container">
-                    <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
-                      Loading application form...
-                    </p>
-                  </div>
-                </div>
-              )}
-            </motion.div>
           </motion.div>
+
+          {/* Application Form for Contact Initiated & Application Sent */}
+          {showApplicationForm && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-3xl shadow-xl p-8 mb-6"
+            >
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Complete Your Application</h3>
+              <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
+              <div id="jotform-container">
+                <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                  Loading application form...
+                </p>
+              </div>
+            </motion.div>
+          )}
 
 
 
