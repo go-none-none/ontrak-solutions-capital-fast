@@ -44,10 +44,32 @@
 
                             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
 
-                            <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin: 0;">
-                                <strong style="color: #0f172a;">Need help?</strong><br>
-                                Call me at <a href="tel:{!Owner.Phone}" style="color: #08708E; text-decoration: none; font-weight: 600;">{!Owner.Phone}</a>
-                            </p>
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 20px 0;">
+                                <tr>
+                                    <td style="padding: 20px; background-color: #f0f9ff; border-radius: 12px;">
+                                        <p style="color: #0f172a; font-size: 15px; font-weight: 600; margin: 0 0 10px 0;">💬 Questions?</p>
+                                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
+                                            I'm here to help! Call or text me directly:<br>
+                                            <a href="tel:{!Owner.Phone}" style="color: #08708E; text-decoration: none; font-weight: 600;">{!Owner.Phone}</a>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 30px; background-color: #f8fafc;">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" style="padding-bottom: 20px;">
+                                        <a href="https://ontrak.co/MissingDocs?id149={!Lead.Id}&cn={!Lead.Company}&ln={!Lead.LastName}" style="color: #08708E; text-decoration: none; font-size: 14px; font-weight: 600; margin: 0 15px;">Upload Docs</a>
+                                        <a href="https://ontrak.co/HowItWorks" style="color: #08708E; text-decoration: none; font-size: 14px; font-weight: 600; margin: 0 15px;">How It Works</a>
+                                        <a href="https://ontrak.co/FAQ" style="color: #08708E; text-decoration: none; font-size: 14px; font-weight: 600; margin: 0 15px;">FAQ</a>
+                                        <a href="https://ontrak.co/Contact" style="color: #08708E; text-decoration: none; font-size: 14px; font-weight: 600; margin: 0 15px;">Contact</a>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
 
@@ -55,9 +77,16 @@
                         <td style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
                             <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Best regards,</p>
                             <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">{!Owner.Name}</p>
-                            <p style="color: #64748b; font-size: 14px; margin: 0 0 15px 0;">Funding Specialist | OnTrak Solutions</p>
+                            <p style="color: #64748b; font-size: 14px; margin: 0 0 4px 0;">Funding Specialist</p>
+                            <p style="color: #64748b; font-size: 14px; margin: 0 0 4px 0;">OnTrak Solutions</p>
+                            <p style="color: #64748b; font-size: 14px; margin: 0 0 15px 0;">
+                                <a href="tel:{!Owner.Phone}" style="color: #08708E; text-decoration: none;">{!Owner.Phone}</a> | 
+                                <a href="mailto:{!Owner.Email}" style="color: #08708E; text-decoration: none;">{!Owner.Email}</a>
+                            </p>
                             <p style="color: #94a3b8; font-size: 12px; margin: 15px 0 0 0; line-height: 1.6;">
-                                © 2025 OnTrak Solutions LLC. All rights reserved.
+                                © 2025 OnTrak Solutions LLC. All rights reserved.<br>
+                                <a href="https://ontrak.co/PrivacyPolicy" style="color: #94a3b8; text-decoration: none;">Privacy Policy</a> | 
+                                <a href="https://ontrak.co/TermsOfService" style="color: #94a3b8; text-decoration: none;">Terms of Service</a>
                             </p>
                         </td>
                     </tr>
