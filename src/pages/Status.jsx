@@ -51,39 +51,35 @@ export default function Status() {
   useEffect(() => {
     // Handle form when no record ID
     if (!data && isFlipped) {
-      const container = document.getElementById('jotform-container-norecord');
-      if (container) {
-        let iframeSrc = 'https://form.jotform.com/252957146872065';
-        
-        container.innerHTML = `
-          <iframe
-            id="JotFormIFrame-norecord"
-            title="Application Form"
-            allowtransparency="true"
-            allow="geolocation; microphone; camera; fullscreen"
-            src="${iframeSrc}"
-            frameborder="0"
-            style="min-width:100%;max-width:100%;height:539px;border:none;"
-            scrolling="no"
-          >
-          </iframe>
-        `;
-        
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
-        script.onload = () => {
-          if (window.jotformEmbedHandler) {
-            window.jotformEmbedHandler("iframe[id='JotFormIFrame-norecord']", "https://form.jotform.com/");
-          }
-        };
-        document.body.appendChild(script);
-        
-        return () => {
-          if (script.parentNode) {
-            script.parentNode.removeChild(script);
-          }
-        };
-      }
+      setTimeout(() => {
+        const container = document.getElementById('jotform-container-norecord');
+        if (container) {
+          let iframeSrc = 'https://form.jotform.com/252957146872065';
+          
+          container.innerHTML = `
+            <iframe
+              id="JotFormIFrame-norecord"
+              title="Application Form"
+              allowtransparency="true"
+              allow="geolocation; microphone; camera; fullscreen"
+              src="${iframeSrc}"
+              frameborder="0"
+              style="min-width:100%;max-width:100%;height:539px;border:none;"
+              scrolling="no"
+            >
+            </iframe>
+          `;
+          
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+          script.onload = () => {
+            if (window.jotformEmbedHandler) {
+              window.jotformEmbedHandler("iframe[id='JotFormIFrame-norecord']", "https://form.jotform.com/");
+            }
+          };
+          document.body.appendChild(script);
+        }
+      }, 100);
       return;
     }
 
