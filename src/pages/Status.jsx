@@ -185,12 +185,26 @@ export default function Status() {
         </section>
 
         <section className="py-12 -mt-16 relative z-10">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            {!isFlipped ? (
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8" style={{ perspective: '1000px' }}>
+            <motion.div
+              initial={false}
+              animate={{ rotateY: isFlipped ? 180 : 0 }}
+              transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
+              style={{ 
+                transformStyle: 'preserve-3d',
+                position: 'relative',
+                width: '100%'
+              }}
+            >
+              {/* Front - No Application Found */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
+                style={{
+                  backfaceVisibility: 'hidden',
+                  position: isFlipped ? 'absolute' : 'relative',
+                  width: '100%',
+                  top: 0,
+                  left: 0
+                }}
                 className="bg-white rounded-3xl shadow-xl p-8 text-center"
               >
                 <FileText className="w-16 h-16 text-[#08708E] mx-auto mb-4" />
@@ -205,10 +219,17 @@ export default function Status() {
                   Start Your Application
                 </Button>
               </motion.div>
-            ) : (
+
+              {/* Back - Application Form */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
+                style={{
+                  backfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)',
+                  position: !isFlipped ? 'absolute' : 'relative',
+                  width: '100%',
+                  top: 0,
+                  left: 0
+                }}
                 className="bg-white rounded-3xl shadow-xl p-8"
               >
                 <div className="flex justify-between items-center mb-4">
@@ -228,7 +249,7 @@ export default function Status() {
                   </p>
                 </div>
               </motion.div>
-            )}
+            </motion.div>
           </div>
         </section>
       </div>
