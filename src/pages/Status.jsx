@@ -185,7 +185,7 @@ export default function Status() {
         </section>
 
         <section className="py-12 -mt-16 relative z-10">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8" style={{ perspective: '1000px' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ perspective: '1000px' }}>
             <motion.div
               initial={false}
               animate={{ rotateY: isFlipped ? 180 : 0 }}
