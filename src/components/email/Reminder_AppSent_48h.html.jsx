@@ -83,17 +83,17 @@
                                 <tr>
                                     <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px; margin-bottom: 10px;">
                                         <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
-                                            "The team at OnTrak was professional and helpful from day one. Great experience!"
+                                            "They treated me like a partner, not just a number. Outstanding service!"
                                         </p>
-                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Lisa T., Retail Business</p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Andrew C., Flooring Company</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px;">
                                         <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
-                                            "OnTrak made the whole process easy and got me funded quickly."
+                                            "No hassle, no headaches. OnTrak made business funding actually enjoyable!"
                                         </p>
-                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Mark J., Construction Company</p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Olivia N., Graphic Design Studio</p>
                                     </td>
                                 </tr>
                             </table>

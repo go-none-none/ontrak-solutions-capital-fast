@@ -83,17 +83,17 @@
                                 <tr>
                                     <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px; margin-bottom: 10px;">
                                         <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
-                                            "The team at OnTrak was professional and helpful from day one. Great experience!"
+                                            "The flexibility in payment options made this work for my business. Thank you!"
                                         </p>
-                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Lisa T., Retail Business</p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Ronald B., Machine Shop</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px;">
                                         <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
-                                            "OnTrak made the whole process easy and got me funded quickly."
+                                            "Within a week, I had the funds to upgrade my entire system. Amazing!"
                                         </p>
-                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Mark J., Construction Company</p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Vanessa K., Veterinary Clinic</p>
                                     </td>
                                 </tr>
                             </table>

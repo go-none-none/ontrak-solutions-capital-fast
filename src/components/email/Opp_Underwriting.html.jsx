@@ -83,17 +83,17 @@
                                 <tr>
                                     <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px; margin-bottom: 10px;">
                                         <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
-                                            "The team at OnTrak was professional and helpful from day one. Great experience!"
+                                            "Working with OnTrak was a breath of fresh air. Quick, easy, and stress-free!"
                                         </p>
-                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Lisa T., Retail Business</p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Thomas L., Medical Practice</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px;">
                                         <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
-                                            "OnTrak made the whole process easy and got me funded quickly."
+                                            "The funding helped me buy new equipment and grow. Best decision I made!"
                                         </p>
-                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Mark J., Construction Company</p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Patricia G., Manufacturing</p>
                                     </td>
                                 </tr>
                             </table>
