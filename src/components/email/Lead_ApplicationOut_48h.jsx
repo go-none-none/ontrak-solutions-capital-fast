@@ -53,6 +53,45 @@
 
                             <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 20px 0;">
                                 <tr>
+                                    <td style="padding: 20px; background-color: #fef3c7; border-radius: 12px;">
+                                        <p style="color: #92400e; font-size: 15px; font-weight: 600; margin: 0 0 10px 0;">⚡ Still available:</p>
+                                        <p style="color: #78350f; font-size: 14px; line-height: 1.6; margin: 0;">
+                                            ✓ Fast approval process<br>
+                                            ✓ Funding within 24-48 hours<br>
+                                            ✓ Flexible terms and options
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 20px 0;">
+                                <tr>
+                                    <td>
+                                        <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">What our customers say:</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px; margin-bottom: 10px;">
+                                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
+                                            "I completed my application when I was ready and OnTrak was there every step of the way."
+                                        </p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Karen T., Healthcare Provider</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; background-color: #f8fafc; border-left: 4px solid #08708E; border-radius: 8px;">
+                                        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0; font-style: italic;">
+                                            "No pressure, just professional service. Got funded fast when I was ready to move forward."
+                                        </p>
+                                        <p style="color: #0f172a; font-size: 13px; font-weight: 600; margin: 0;">— Jason R., Auto Services</p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 20px 0;">
+                                <tr>
                                     <td style="padding: 20px; background-color: #f0f9ff; border-radius: 12px;">
                                         <p style="color: #0f172a; font-size: 15px; font-weight: 600; margin: 0 0 10px 0;">💬 Questions?</p>
                                         <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
