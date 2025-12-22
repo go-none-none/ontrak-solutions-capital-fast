@@ -43,18 +43,11 @@
                                 Don't let anything hold you back from getting your funding. Let's work through this together!
                             </p>
 
-                            <!-- CTA Buttons -->
+                            <!-- CTA Button -->
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td align="center" style="padding: 10px 0;">
-                                        <a href="https://ontrak.co/Contact" style="display: inline-block; background: linear-gradient(to right, #08708E, #065a72); color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 40px; border-radius: 30px; box-shadow: 0 4px 6px rgba(8, 112, 142, 0.2); margin: 5px;">
-                                            Contact Us - Time Sensitive
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="center" style="padding: 10px 0;">
-                                        <a href="tel:{!Owner.Phone}" style="display: inline-block; background-color: #ffffff; color: #08708E; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 30px; border: 2px solid #08708E; margin: 5px;">
+                                        <a href="tel:{!Owner.Phone}" style="display: inline-block; background: linear-gradient(to right, #08708E, #065a72); color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 40px; border-radius: 30px; box-shadow: 0 4px 6px rgba(8, 112, 142, 0.2); margin: 5px;">
                                             Call Me: {!Owner.Phone}
                                         </a>
                                     </td>
