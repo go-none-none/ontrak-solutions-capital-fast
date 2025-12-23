@@ -75,7 +75,8 @@ Deno.serve(async (req) => {
       inputs: [{
         emailAddresses: recipientEmail,
         emailSubject: subject,
-        emailBody: htmlBody,
+        emailBody: message,
+        emailBodyAsHTML: htmlBody,
         senderType: 'CurrentUser'
       }]
     };
