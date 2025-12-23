@@ -28,52 +28,26 @@ export default function RepPortal() {
       setSession(parsed);
       loadData(parsed);
     } else {
-      // Check for OAuth callback
-      const hash = window.location.hash;
-      if (hash.includes('access_token')) {
-        handleOAuthCallback(hash);
-      } else {
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleOAuthCallback = async (hash) => {
-    const params = new URLSearchParams(hash.substring(1));
-    const token = params.get('access_token');
-    
-    if (token) {
-      try {
-        const response = await base44.functions.invoke('salesforceAuth', {
-          action: 'verifyToken',
-          token
-        });
-        
-        const sessionData = {
-          ...response.data,
-          timestamp: Date.now()
-        };
-        
-        sessionStorage.setItem('sfSession', JSON.stringify(sessionData));
-        setSession(sessionData);
-        window.location.hash = '';
-        loadData(sessionData);
-      } catch (error) {
-        console.error('Auth error:', error);
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('salesforceAuth', {
-        action: 'getLoginUrl'
-      });
-      window.location.href = response.data.loginUrl;
+      const response = await base44.functions.invoke('salesforceAuth', {});
+      
+      const sessionData = {
+        ...response.data,
+        timestamp: Date.now()
+      };
+      
+      sessionStorage.setItem('sfSession', JSON.stringify(sessionData));
+      setSession(sessionData);
+      loadData(sessionData);
     } catch (error) {
       console.error('Login error:', error);
+      alert('Failed to connect to Salesforce. Please try again.');
       setLoading(false);
     }
   };
