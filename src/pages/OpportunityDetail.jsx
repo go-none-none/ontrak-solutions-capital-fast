@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadWidget from '../components/rep/DialpadWidget.jsx';
-import SMSWidget from '../components/rep/SMSWidget';
+
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 
 export default function OpportunityDetail() {
@@ -536,15 +536,6 @@ export default function OpportunityDetail() {
               recordType="Opportunity"
               session={session}
               onCallCompleted={() => setRefreshKey(prev => prev + 1)}
-            />
-
-            {/* SMS Widget */}
-            <SMSWidget
-              phoneNumber={opportunity.Phone || contactRoles[0]?.Contact?.MobilePhone || contactRoles[0]?.Contact?.Phone}
-              recordId={opportunity.Id}
-              recordType="Opportunity"
-              session={session}
-              onMessageSent={() => setRefreshKey(prev => prev + 1)}
             />
 
             {/* Contact Roles */}
