@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, Building2, Calendar, ArrowRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
-import PowerDialer from './PowerDialer';
+import DialpadWidget from './DialpadWidget';
 
 export default function LeadCard({ lead, session }) {
   const stages = [
@@ -78,13 +78,10 @@ export default function LeadCard({ lead, session }) {
 
       <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 mb-3">
         {lead.Phone && (
-          <>
-            <a href={`tel:${lead.Phone}`} className="flex items-center gap-1 hover:text-[#08708E]">
-              <Phone className="w-4 h-4" />
-              <span>{lead.Phone}</span>
-            </a>
-            <PowerDialer phoneNumber={lead.Phone} recordId={lead.Id} session={session} />
-          </>
+          <a href={`tel:${lead.Phone}`} className="flex items-center gap-1 hover:text-[#08708E]">
+            <Phone className="w-4 h-4" />
+            <span>{lead.Phone}</span>
+          </a>
         )}
         {lead.Email && (
           <a href={`mailto:${lead.Email}`} className="flex items-center gap-1 hover:text-[#08708E]">
