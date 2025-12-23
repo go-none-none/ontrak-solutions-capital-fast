@@ -61,7 +61,7 @@ export default function RepPortal() {
       loadData(sessionData);
     } catch (error) {
       console.error('OAuth error:', error);
-      alert('Failed to authenticate with Salesforce. Please try again.');
+      alert(`Failed to authenticate with Salesforce: ${error.message || error.response?.data?.error || 'Unknown error'}`);
       setLoading(false);
     }
   };
