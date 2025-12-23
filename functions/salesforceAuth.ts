@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
       const state = crypto.randomUUID();
 
       return Response.json({
-        loginUrl: `https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&prompt=login`,
+        loginUrl: `https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`,
         state
       });
     }
