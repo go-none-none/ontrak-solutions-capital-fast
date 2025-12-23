@@ -29,8 +29,8 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       return;
     }
     const cleanNumber = phoneNumber.replace(/\D/g, '');
-    const formattedNumber = cleanNumber.startsWith('1') ? `+${cleanNumber}` : `+1${cleanNumber}`;
-    window.location.href = `dialpad://sms/${formattedNumber}`;
+    // Use standard SMS protocol which opens default SMS app
+    window.location.href = `sms:${cleanNumber}`;
   };
 
   const handleLogCall = async () => {
