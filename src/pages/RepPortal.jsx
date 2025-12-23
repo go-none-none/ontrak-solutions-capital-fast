@@ -18,6 +18,8 @@ export default function RepPortal() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('leads');
   const [stageFilter, setStageFilter] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 100;
 
   useEffect(() => {
     checkSession();
@@ -114,6 +116,7 @@ export default function RepPortal() {
   const handleStageClick = (stageName) => {
     setStageFilter(stageName);
     setSearchTerm('');
+    setCurrentPage(1);
   };
 
   const filteredLeads = leads.filter(lead => {
@@ -130,6 +133,14 @@ export default function RepPortal() {
     const stageMatch = !stageFilter || opp.StageName === stageFilter;
     return searchMatch && stageMatch;
   });
+
+  // Pagination
+  const totalLeadPages = Math.ceil(filteredLeads.length / itemsPerPage);
+  const totalOppPages = Math.ceil(filteredOpportunities.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const endIdx = startIdx + itemsPerPage;
+  const paginatedLeads = filteredLeads.slice(startIdx, endIdx);
+  const paginatedOpportunities = filteredOpportunities.slice(startIdx, endIdx);
 
   if (loading) {
     return (
@@ -232,13 +243,13 @@ export default function RepPortal() {
               <Input
                 placeholder="Search by name, company, or email..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                 className="pl-10 h-12"
-              />
-            </div>
-          </div>
+                />
+                </div>
+                </div>
 
-          <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); setStageFilter(null); }}>
+          <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); setStageFilter(null); setCurrentPage(1); }}>
             <TabsList className="mb-6">
               <TabsTrigger value="leads">Leads ({filteredLeads.length})</TabsTrigger>
               <TabsTrigger value="opportunities">
@@ -251,7 +262,7 @@ export default function RepPortal() {
               {stageFilter && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
-                  <Button variant="ghost" size="sm" onClick={() => setStageFilter(null)}>Clear Filter</Button>
+                  <Button variant="ghost" size="sm" onClick={() => { setStageFilter(null); setCurrentPage(1); }}>Clear Filter</Button>
                 </div>
               )}
               <div className="space-y-3">
@@ -261,18 +272,68 @@ export default function RepPortal() {
                     <p className="text-slate-600">No leads found</p>
                   </div>
                 ) : (
-                  filteredLeads.map(lead => (
+                  paginatedLeads.map(lead => (
                     <LeadCard key={lead.Id} lead={lead} session={session} />
                   ))
                 )}
               </div>
+              {totalLeadPages > 1 && (
+                <div className="flex items-center justify-between mt-6 pt-6 border-t">
+                  <p className="text-sm text-slate-600">
+                    Showing {startIdx + 1}-{Math.min(endIdx, filteredLeads.length)} of {filteredLeads.length}
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: Math.min(5, totalLeadPages) }, (_, i) => {
+                        let pageNum;
+                        if (totalLeadPages <= 5) {
+                          pageNum = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1;
+                        } else if (currentPage >= totalLeadPages - 2) {
+                          pageNum = totalLeadPages - 4 + i;
+                        } else {
+                          pageNum = currentPage - 2 + i;
+                        }
+                        return (
+                          <Button
+                            key={pageNum}
+                            variant={currentPage === pageNum ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(pageNum)}
+                            className="w-10"
+                          >
+                            {pageNum}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(p => Math.min(totalLeadPages, p + 1))}
+                      disabled={currentPage === totalLeadPages}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="opportunities">
               {stageFilter && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
-                  <Button variant="ghost" size="sm" onClick={() => setStageFilter(null)}>Clear Filter</Button>
+                  <Button variant="ghost" size="sm" onClick={() => { setStageFilter(null); setCurrentPage(1); }}>Clear Filter</Button>
                 </div>
               )}
               <div className="space-y-3">
@@ -282,7 +343,7 @@ export default function RepPortal() {
                     <p className="text-slate-600">No opportunities found</p>
                   </div>
                 ) : (
-                  filteredOpportunities.map(opp => (
+                  paginatedOpportunities.map(opp => (
                     <OpportunityCard 
                       key={opp.Id} 
                       opportunity={opp} 
@@ -292,6 +353,56 @@ export default function RepPortal() {
                   ))
                 )}
               </div>
+              {totalOppPages > 1 && (
+                <div className="flex items-center justify-between mt-6 pt-6 border-t">
+                  <p className="text-sm text-slate-600">
+                    Showing {startIdx + 1}-{Math.min(endIdx, filteredOpportunities.length)} of {filteredOpportunities.length}
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: Math.min(5, totalOppPages) }, (_, i) => {
+                        let pageNum;
+                        if (totalOppPages <= 5) {
+                          pageNum = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1;
+                        } else if (currentPage >= totalOppPages - 2) {
+                          pageNum = totalOppPages - 4 + i;
+                        } else {
+                          pageNum = currentPage - 2 + i;
+                        }
+                        return (
+                          <Button
+                            key={pageNum}
+                            variant={currentPage === pageNum ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(pageNum)}
+                            className="w-10"
+                          >
+                            {pageNum}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(p => Math.min(totalOppPages, p + 1))}
+                      disabled={currentPage === totalOppPages}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
