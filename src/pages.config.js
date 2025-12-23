@@ -24,6 +24,8 @@ import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
 import RepPortal from './pages/RepPortal';
+import LeadDetail from './pages/LeadDetail';
+import OpportunityDetail from './pages/OpportunityDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -54,6 +56,8 @@ export const PAGES = {
     "UseCases": UseCases,
     "application": application,
     "RepPortal": RepPortal,
+    "LeadDetail": LeadDetail,
+    "OpportunityDetail": OpportunityDetail,
 }
 
 export const pagesConfig = {
