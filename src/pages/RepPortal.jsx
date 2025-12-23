@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -226,26 +226,48 @@ export default function RepPortal() {
 
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {stats.map((stat, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white rounded-2xl p-6 shadow-sm"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-600 mb-1">{stat.label}</p>
-                  <p className="text-3xl font-bold text-slate-900">{stat.value}</p>
-                </div>
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                  <stat.icon className="w-7 h-7 text-white" />
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={() => { setActiveTab('leads'); setStageFilter(null); setCurrentPage(1); }}
+            className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all ${
+              activeTab === 'leads' ? 'ring-2 ring-[#08708E] shadow-md' : 'hover:shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 mb-1">Active Leads</p>
+                <p className="text-3xl font-bold text-slate-900">{leads.length}</p>
               </div>
-            </motion.div>
-          ))}
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                <Users className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            onClick={() => { setActiveTab('opportunities'); setStageFilter(null); setCurrentPage(1); }}
+            className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all ${
+              activeTab === 'opportunities' ? 'ring-2 ring-[#08708E] shadow-md' : 'hover:shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 mb-1">Open Opportunities</p>
+                <p className="text-3xl font-bold text-slate-900">{opportunities.length}</p>
+                <p className="text-sm text-slate-500 mt-1">
+                  ${opportunities.reduce((sum, o) => sum + (o.Amount || 0), 0).toLocaleString()}
+                </p>
+              </div>
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+                <TrendingUp className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </motion.div>
         </div>
 
         {/* Pipeline */}
@@ -270,16 +292,8 @@ export default function RepPortal() {
                 </div>
                 </div>
 
-          <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); setStageFilter(null); setCurrentPage(1); }}>
-            <TabsList className="mb-6">
-              <TabsTrigger value="leads">Leads ({filteredLeads.length})</TabsTrigger>
-              <TabsTrigger value="opportunities">
-                Opportunities ({filteredOpportunities.length})
-                {stageFilter && <span className="ml-2 text-xs">• {stageFilter}</span>}
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="leads">
+          {activeTab === 'leads' && (
+            <div>
               {stageFilter && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
@@ -348,9 +362,11 @@ export default function RepPortal() {
                   </div>
                 </div>
               )}
-            </TabsContent>
+            </div>
+            )}
 
-            <TabsContent value="opportunities">
+            {activeTab === 'opportunities' && (
+            <div>
               {stageFilter && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
@@ -424,8 +440,8 @@ export default function RepPortal() {
                   </div>
                 </div>
               )}
-            </TabsContent>
-          </Tabs>
+            </div>
+            )}
         </div>
       </div>
     </div>
