@@ -91,7 +91,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
 
       {isDeclined && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-800 font-medium text-center">Declined</p>
+          <p className="text-sm text-red-800 font-medium text-center">{opportunity.StageName}</p>
         </div>
       )}
 

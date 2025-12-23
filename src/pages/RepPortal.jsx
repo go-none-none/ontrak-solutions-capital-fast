@@ -145,14 +145,16 @@ export default function RepPortal() {
   const filteredOpportunities = opportunities.filter(opp => {
     const searchMatch = opp.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       opp.Account?.Name?.toLowerCase().includes(searchTerm.toLowerCase());
-    let stageMatch;
-    if (!stageFilter) {
-      stageMatch = true;
-    } else if (stageFilter === 'Declined') {
-      stageMatch = opp.StageName && opp.StageName.startsWith('Closed - Declined');
-    } else {
-      stageMatch = opp.StageName === stageFilter;
+
+    let stageMatch = true;
+    if (stageFilter) {
+      if (stageFilter === 'Declined') {
+        stageMatch = opp.StageName && opp.StageName.startsWith('Closed - Declined');
+      } else {
+        stageMatch = opp.StageName === stageFilter;
+      }
     }
+
     return searchMatch && stageMatch;
   });
 
