@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Phone, Mail, Building2, Edit, Loader2, CheckCircle2, User, DollarSign, FileText, Calendar, MapPin } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, Edit, Loader2, Check, X, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadWidget from '../components/rep/DialpadWidget.jsx';
-import EditLeadModal from '../components/rep/EditLeadModal.jsx';
 
 export default function LeadDetail() {
   const [session, setSession] = useState(null);
   const [lead, setLead] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [editMode, setEditMode] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [editing, setEditing] = useState({});
+  const [editValues, setEditValues] = useState({});
   const [refreshKey, setRefreshKey] = useState(0);
 
   const stages = [
@@ -58,25 +59,6 @@ export default function LeadDetail() {
     }
   };
 
-  const handleUpdate = async (updates) => {
-    try {
-      await base44.functions.invoke('updateSalesforceRecord', {
-        recordId: lead.Id,
-        recordType: 'Lead',
-        updates,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
-
-      await loadLead(session);
-      setEditMode(false);
-      setRefreshKey(prev => prev + 1);
-    } catch (error) {
-      console.error('Update error:', error);
-      alert('Failed to update lead');
-    }
-  };
-
   const handleStatusChange = async (newStatus) => {
     if (lead.Status === newStatus) return;
     
@@ -99,19 +81,76 @@ export default function LeadDetail() {
     }
   };
 
-  const handleDocCheckbox = async (field, value) => {
+  const handleFieldEdit = (field, value) => {
+    setEditValues({ ...editValues, [field]: value });
+  };
+
+  const handleFieldSave = async (field) => {
     try {
       await base44.functions.invoke('updateSalesforceRecord', {
         objectType: 'Lead',
         recordId: lead.Id,
-        data: { [field]: value },
+        data: { [field]: editValues[field] },
         token: session.token,
         instanceUrl: session.instanceUrl
       });
       await loadLead(session);
+      setEditing({ ...editing, [field]: false });
+      setRefreshKey(prev => prev + 1);
     } catch (error) {
-      console.error('Checkbox update error:', error);
+      console.error('Update error:', error);
     }
+  };
+
+  const EditableField = ({ label, field, value, type = 'text', multiline = false }) => {
+    const isEditing = editing[field];
+    const displayValue = isEditing ? editValues[field] : value;
+
+    return (
+      <div>
+        <p className="text-slate-500 text-xs mb-1">{label}</p>
+        {isEditing ? (
+          <div className="flex items-center gap-2">
+            {multiline ? (
+              <Textarea
+                value={displayValue || ''}
+                onChange={(e) => handleFieldEdit(field, e.target.value)}
+                className="text-sm"
+                rows={3}
+              />
+            ) : (
+              <Input
+                type={type}
+                value={displayValue || ''}
+                onChange={(e) => handleFieldEdit(field, e.target.value)}
+                className="h-8 text-sm"
+              />
+            )}
+            <Button size="sm" variant="ghost" onClick={() => handleFieldSave(field)}>
+              <Check className="w-4 h-4 text-green-600" />
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setEditing({ ...editing, [field]: false })}>
+              <X className="w-4 h-4 text-red-600" />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 group">
+            <p className="font-medium text-slate-900">{value || <span className="text-slate-400 text-sm">Not set</span>}</p>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="opacity-0 group-hover:opacity-100"
+              onClick={() => {
+                setEditValues({ ...editValues, [field]: value || '' });
+                setEditing({ ...editing, [field]: true });
+              }}
+            >
+              <Edit className="w-3 h-3" />
+            </Button>
+          </div>
+        )}
+      </div>
+    );
   };
 
   const getCurrentStageIndex = () => {
@@ -152,10 +191,6 @@ export default function LeadDetail() {
                 <p className="text-sm text-slate-600">{lead.Company}</p>
               </div>
             </div>
-            <Button onClick={() => setEditMode(true)}>
-              <Edit className="w-4 h-4 mr-2" />
-              Edit
-            </Button>
           </div>
         </div>
       </div>
@@ -202,41 +237,41 @@ export default function LeadDetail() {
               </div>
             </div>
 
-            {/* Contact Info */}
+            {/* Basic Details */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <Phone className="w-5 h-5 text-[#08708E]" />
-                Contact Information
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Details</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {lead.Phone && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Phone</p>
-                    <a href={`tel:${lead.Phone}`} className="font-medium text-[#08708E] hover:underline">{lead.Phone}</a>
+                <EditableField label="Company" field="Company" value={lead.Company} />
+                <EditableField label="Title" field="Title" value={lead.Title} />
+                <EditableField label="Email" field="Email" value={lead.Email} type="email" />
+                <EditableField label="DBA" field="DBA__c" value={lead.DBA__c} />
+                <EditableField label="Lead Source" field="LeadSource" value={lead.LeadSource} />
+                <EditableField label="Website" field="Website" value={lead.Website} />
+                <EditableField label="Fax" field="Fax" value={lead.Fax} />
+                <EditableField label="Call Disposition" field="Call_Disposition__c" value={lead.Call_Disposition__c} />
+                <div>
+                  <p className="text-slate-500 text-xs mb-1">Lead Owner</p>
+                  <p className="font-medium text-slate-900">{lead.Owner?.Name}</p>
+                </div>
+                <EditableField label="Type" field="Type__c" value={lead.Type__c} />
+                <div>
+                  <p className="text-slate-500 text-xs mb-1">Lead Status</p>
+                  <p className="font-medium text-slate-900">{lead.Status}</p>
+                </div>
+                <EditableField label="Status Detail" field="Status_Detail__c" value={lead.Status_Detail__c} />
+                <EditableField label="Phone" field="Phone" value={lead.Phone} />
+                <EditableField label="Additional Phone" field="MobilePhone" value={lead.MobilePhone} />
+                {lead.Street && (
+                  <div className="col-span-2">
+                    <p className="text-slate-500 text-xs mb-1">Address</p>
+                    <p className="font-medium text-slate-900">
+                      {lead.Street}, {lead.City}, {lead.State} {lead.PostalCode}
+                    </p>
                   </div>
                 )}
-                {lead.MobilePhone && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Mobile</p>
-                    <a href={`tel:${lead.MobilePhone}`} className="font-medium text-[#08708E] hover:underline">{lead.MobilePhone}</a>
-                  </div>
-                )}
-                {lead.Email && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Email</p>
-                    <a href={`mailto:${lead.Email}`} className="font-medium text-[#08708E] hover:underline">{lead.Email}</a>
-                  </div>
-                )}
-                {lead.Website && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Website</p>
-                    <a href={lead.Website} target="_blank" rel="noopener noreferrer" className="font-medium text-[#08708E] hover:underline">{lead.Website}</a>
-                  </div>
-                )}
-                {lead.Fax && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Fax</p>
-                    <p className="font-medium text-slate-900">{lead.Fax}</p>
+                {lead.Description && (
+                  <div className="col-span-2">
+                    <EditableField label="Description" field="Description" value={lead.Description} multiline />
                   </div>
                 )}
               </div>
@@ -244,358 +279,189 @@ export default function LeadDetail() {
 
             {/* Owner 1 Information */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <User className="w-5 h-5 text-[#08708E]" />
-                Owner Information
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Owner 1</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-slate-500 mb-1">Name</p>
-                  <p className="font-medium text-slate-900">{lead.Name}</p>
-                </div>
-                {lead.Title && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Title</p>
-                    <p className="font-medium text-slate-900">{lead.Title}</p>
-                  </div>
-                )}
-                {lead.Birthdate__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Birthdate</p>
-                    <p className="font-medium text-slate-900">{lead.Birthdate__c}</p>
-                  </div>
-                )}
-                {lead.Social_Security_Number__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">SSN</p>
-                    <p className="font-medium text-slate-900">***-**-{lead.Social_Security_Number__c.slice(-4)}</p>
-                  </div>
-                )}
-                {lead.Ownership__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Ownership %</p>
-                    <p className="font-medium text-slate-900">{lead.Ownership__c}%</p>
-                  </div>
-                )}
-                {lead.Credit_Score__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Credit Score</p>
-                    <p className="font-medium text-slate-900">{lead.Credit_Score__c}</p>
-                  </div>
-                )}
-                {lead.Home_Address_Street__c && (
-                  <div className="col-span-2">
-                    <p className="text-slate-500 mb-1">Home Address</p>
-                    <p className="font-medium text-slate-900">
-                      {lead.Home_Address_Street__c}
-                      {lead.Home_Address_City__c && `, ${lead.Home_Address_City__c}`}
-                      {lead.Home_Address_State__c && `, ${lead.Home_Address_State__c}`}
-                      {lead.Home_Address_Zip_Code__c && ` ${lead.Home_Address_Zip_Code__c}`}
-                    </p>
-                  </div>
-                )}
+                <EditableField label="Name" field="Name" value={lead.Name} />
+                <EditableField label="Title" field="Title" value={lead.Title} />
+                <EditableField label="Birthdate" field="Birthdate__c" value={lead.Birthdate__c} type="date" />
+                <EditableField label="Social Security Number" field="Social_Security_Number__c" value={lead.Social_Security_Number__c} />
+                <EditableField label="Ownership %" field="Ownership__c" value={lead.Ownership__c} />
+                <EditableField label="Credit Score" field="Credit_Score__c" value={lead.Credit_Score__c} />
+                <EditableField label="Application Federal Tax Id" field="Application_Federal_Tax_Id__c" value={lead.Application_Federal_Tax_Id__c} />
+                <EditableField label="Application SSN" field="Application_SSN__c" value={lead.Application_SSN__c} />
+                <EditableField label="Mobile" field="MobilePhone" value={lead.MobilePhone} />
+                <EditableField label="Email" field="Email" value={lead.Email} type="email" />
+                <EditableField label="Home Address Street" field="Home_Address_Street__c" value={lead.Home_Address_Street__c} />
+                <EditableField label="Home Address City" field="Home_Address_City__c" value={lead.Home_Address_City__c} />
+                <EditableField label="Home Address State" field="Home_Address_State__c" value={lead.Home_Address_State__c} />
+                <EditableField label="Home Address Zip Code" field="Home_Address_Zip_Code__c" value={lead.Home_Address_Zip_Code__c} />
+                <EditableField label="Home Address Country" field="Home_Address_Country__c" value={lead.Home_Address_Country__c} />
               </div>
             </div>
 
             {/* Owner 2 Information */}
-            {lead.Owner_2_First_Name__c && (
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <User className="w-5 h-5 text-[#08708E]" />
-                  Owner 2 Information
-                </h2>
-                <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-slate-500 mb-1">Name</p>
-                    <p className="font-medium text-slate-900">{lead.Owner_2_First_Name__c} {lead.Owner_2_Last_Name__c}</p>
-                  </div>
-                  {lead.Owner_2_Title__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Title</p>
-                      <p className="font-medium text-slate-900">{lead.Owner_2_Title__c}</p>
-                    </div>
-                  )}
-                  {lead.Owner_2_Birthday__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Birthday</p>
-                      <p className="font-medium text-slate-900">{lead.Owner_2_Birthday__c}</p>
-                    </div>
-                  )}
-                  {lead.Owner_2_Social_Security_Number__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">SSN</p>
-                      <p className="font-medium text-slate-900">***-**-{lead.Owner_2_Social_Security_Number__c.slice(-4)}</p>
-                    </div>
-                  )}
-                  {lead.Owner_2_Ownership__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Ownership %</p>
-                      <p className="font-medium text-slate-900">{lead.Owner_2_Ownership__c}%</p>
-                    </div>
-                  )}
-                  {lead.Owner_2_Credit_Score__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Credit Score</p>
-                      <p className="font-medium text-slate-900">{lead.Owner_2_Credit_Score__c}</p>
-                    </div>
-                  )}
-                  {lead.Owner_2_Mobile__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Mobile</p>
-                      <a href={`tel:${lead.Owner_2_Mobile__c}`} className="font-medium text-[#08708E] hover:underline">{lead.Owner_2_Mobile__c}</a>
-                    </div>
-                  )}
-                  {lead.Owner_2_Email__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Email</p>
-                      <a href={`mailto:${lead.Owner_2_Email__c}`} className="font-medium text-[#08708E] hover:underline">{lead.Owner_2_Email__c}</a>
-                    </div>
-                  )}
-                  {lead.Owner_2_Home_Address_Street__c && (
-                    <div className="col-span-2">
-                      <p className="text-slate-500 mb-1">Home Address</p>
-                      <p className="font-medium text-slate-900">
-                        {lead.Owner_2_Home_Address_Street__c}
-                        {lead.Owner_2_Home_Address_City__c && `, ${lead.Owner_2_Home_Address_City__c}`}
-                        {lead.Owner_2_Home_Address_State__c && `, ${lead.Owner_2_Home_Address_State__c}`}
-                        {lead.Owner_2_Home_Address_Zip_Code__c && ` ${lead.Owner_2_Home_Address_Zip_Code__c}`}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Business Information */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-[#08708E]" />
-                Business Information
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Owner 2</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-slate-500 mb-1">Company</p>
-                  <p className="font-medium text-slate-900">{lead.Company}</p>
-                </div>
-                {lead.DBA__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">DBA</p>
-                    <p className="font-medium text-slate-900">{lead.DBA__c}</p>
-                  </div>
-                )}
-                {lead.Industry && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Industry</p>
-                    <p className="font-medium text-slate-900">{lead.Industry}</p>
-                  </div>
-                )}
-                {lead.Entity_Type__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Entity Type</p>
-                    <p className="font-medium text-slate-900">{lead.Entity_Type__c}</p>
-                  </div>
-                )}
-                {lead.Federal_Tax_ID__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Federal Tax ID</p>
-                    <p className="font-medium text-slate-900">{lead.Federal_Tax_ID__c}</p>
-                  </div>
-                )}
-                {lead.State_of_Incorporation__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">State of Incorporation</p>
-                    <p className="font-medium text-slate-900">{lead.State_of_Incorporation__c}</p>
-                  </div>
-                )}
-                {lead.Business_Start_Date__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Business Start Date</p>
-                    <p className="font-medium text-slate-900">{lead.Business_Start_Date__c}</p>
-                  </div>
-                )}
-                {lead.Street && (
-                  <div className="col-span-2">
-                    <p className="text-slate-500 mb-1">Business Address</p>
-                    <p className="font-medium text-slate-900">
-                      {lead.Street}
-                      {lead.City && `, ${lead.City}`}
-                      {lead.State && `, ${lead.State}`}
-                      {lead.PostalCode && ` ${lead.PostalCode}`}
-                    </p>
-                  </div>
-                )}
-                {lead.Business_Location_Occupancy__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Location Occupancy</p>
-                    <p className="font-medium text-slate-900">{lead.Business_Location_Occupancy__c}</p>
-                  </div>
-                )}
-                {lead.Business_Location_Monthly_Payment__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Monthly Payment</p>
-                    <p className="font-medium text-slate-900">${parseFloat(lead.Business_Location_Monthly_Payment__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {lead.Landlord_Mortgagee_Name__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Landlord/Mortgagee</p>
-                    <p className="font-medium text-slate-900">{lead.Landlord_Mortgagee_Name__c}</p>
-                  </div>
-                )}
-                {lead.Landlord_Mortgagee_Phone__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Landlord Phone</p>
-                    <p className="font-medium text-slate-900">{lead.Landlord_Mortgagee_Phone__c}</p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-slate-500 mb-1">Seasonal Business</p>
-                  <p className="font-medium text-slate-900">{lead.Seasonal_Business__c ? 'Yes' : 'No'}</p>
-                </div>
-                {lead.Seasonal_Peak_Months__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Peak Months</p>
-                    <p className="font-medium text-slate-900">{lead.Seasonal_Peak_Months__c}</p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-slate-500 mb-1">E-Commerce</p>
-                  <p className="font-medium text-slate-900">{lead.E_Commerce__c ? 'Yes' : 'No'}</p>
-                </div>
-                <div>
-                  <p className="text-slate-500 mb-1">Franchise</p>
-                  <p className="font-medium text-slate-900">{lead.Franchise__c ? 'Yes' : 'No'}</p>
-                </div>
-                <div>
-                  <p className="text-slate-500 mb-1">Home-Based</p>
-                  <p className="font-medium text-slate-900">{lead.Home_Based_Business__c ? 'Yes' : 'No'}</p>
-                </div>
+                <EditableField label="First Name" field="Owner_2_First_Name__c" value={lead.Owner_2_First_Name__c} />
+                <EditableField label="Last Name" field="Owner_2_Last_Name__c" value={lead.Owner_2_Last_Name__c} />
+                <EditableField label="Title" field="Owner_2_Title__c" value={lead.Owner_2_Title__c} />
+                <EditableField label="Birthday" field="Owner_2_Birthday__c" value={lead.Owner_2_Birthday__c} type="date" />
+                <EditableField label="Social Security Number" field="Owner_2_Social_Security_Number__c" value={lead.Owner_2_Social_Security_Number__c} />
+                <EditableField label="Ownership %" field="Owner_2_Ownership__c" value={lead.Owner_2_Ownership__c} />
+                <EditableField label="Credit Score" field="Owner_2_Credit_Score__c" value={lead.Owner_2_Credit_Score__c} />
+                <EditableField label="Application Owner 2 SSN" field="Application_Owner_2_SSN__c" value={lead.Application_Owner_2_SSN__c} />
+                <EditableField label="Mobile" field="Owner_2_Mobile__c" value={lead.Owner_2_Mobile__c} />
+                <EditableField label="Email" field="Owner_2_Email__c" value={lead.Owner_2_Email__c} type="email" />
+                <EditableField label="Home Address Street" field="Owner_2_Home_Address_Street__c" value={lead.Owner_2_Home_Address_Street__c} />
+                <EditableField label="Home Address City" field="Owner_2_Home_Address_City__c" value={lead.Owner_2_Home_Address_City__c} />
+                <EditableField label="Home Address State" field="Owner_2_Home_Address_State__c" value={lead.Owner_2_Home_Address_State__c} />
+                <EditableField label="Home Address Zip Code" field="Owner_2_Home_Address_Zip_Code__c" value={lead.Owner_2_Home_Address_Zip_Code__c} />
+                <EditableField label="Home Address Country" field="Owner_2_Home_Address_Country__c" value={lead.Owner_2_Home_Address_Country__c} />
               </div>
             </div>
 
             {/* Financial Information */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-[#08708E]" />
-                Financial Information
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Financial Information</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {lead.Amount_Requested__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Amount Requested</p>
-                    <p className="font-semibold text-[#08708E] text-lg">${parseFloat(lead.Amount_Requested__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {lead.Use_of_Proceeds__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Use of Proceeds</p>
-                    <p className="font-medium text-slate-900">{lead.Use_of_Proceeds__c}</p>
-                  </div>
-                )}
-                {lead.Estimated_Monthly_Revenue__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Monthly Revenue</p>
-                    <p className="font-medium text-slate-900">${parseFloat(lead.Estimated_Monthly_Revenue__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {lead.Annual_Revenue__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Annual Revenue</p>
-                    <p className="font-medium text-slate-900">${parseFloat(lead.Annual_Revenue__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {lead.Open_Balances__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Open Balances</p>
-                    <p className="font-medium text-slate-900">${parseFloat(lead.Open_Balances__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {lead.Current_Credit_Card_Processor__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Credit Card Processor</p>
-                    <p className="font-medium text-slate-900">{lead.Current_Credit_Card_Processor__c}</p>
-                  </div>
-                )}
+                <EditableField label="Amount Requested" field="Amount_Requested__c" value={lead.Amount_Requested__c} />
+                <EditableField label="Use of Proceeds" field="Use_of_Proceeds__c" value={lead.Use_of_Proceeds__c} />
+                <EditableField label="Estimated Monthly Revenue $" field="Estimated_Monthly_Revenue__c" value={lead.Estimated_Monthly_Revenue__c} />
+                <EditableField label="Annual Revenue" field="Annual_Revenue__c" value={lead.Annual_Revenue__c} />
+                <EditableField label="Open Balances $" field="Open_Balances__c" value={lead.Open_Balances__c} />
                 <div>
-                  <p className="text-slate-500 mb-1">Open Bankruptcies</p>
+                  <p className="text-slate-500 text-xs mb-1">Open Bankruptcies</p>
                   <p className="font-medium text-slate-900">{lead.Open_Bankruptcies__c ? 'Yes' : 'No'}</p>
                 </div>
                 <div>
-                  <p className="text-slate-500 mb-1">Judgements/Liens</p>
+                  <p className="text-slate-500 text-xs mb-1">Judgements/Liens</p>
                   <p className="font-medium text-slate-900">{lead.Judgements_Liens__c ? 'Yes' : 'No'}</p>
+                </div>
+                <EditableField label="Current Credit Card Processor" field="Current_Credit_Card_Processor__c" value={lead.Current_Credit_Card_Processor__c} />
+              </div>
+            </div>
+
+            {/* Business Information */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Business Information</h2>
+              <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                <EditableField label="Application Industry" field="Application_Industry__c" value={lead.Application_Industry__c} />
+                <EditableField label="Industry" field="Industry" value={lead.Industry} />
+                <EditableField label="Entity Type" field="Entity_Type__c" value={lead.Entity_Type__c} />
+                <EditableField label="Federal Tax ID" field="Federal_Tax_ID__c" value={lead.Federal_Tax_ID__c} />
+                <EditableField label="State of Incorporation" field="State_of_Incorporation__c" value={lead.State_of_Incorporation__c} />
+                <EditableField label="Business Start Date" field="Business_Start_Date__c" value={lead.Business_Start_Date__c} type="date" />
+                <div>
+                  <p className="text-slate-500 text-xs mb-1">Seasonal Business</p>
+                  <p className="font-medium text-slate-900">{lead.Seasonal_Business__c ? 'Yes' : 'No'}</p>
+                </div>
+                <EditableField label="Seasonal Peak Months" field="Seasonal_Peak_Months__c" value={lead.Seasonal_Peak_Months__c} />
+                <div>
+                  <p className="text-slate-500 text-xs mb-1">E-Commerce</p>
+                  <p className="font-medium text-slate-900">{lead.E_Commerce__c ? 'Yes' : 'No'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 text-xs mb-1">Franchise</p>
+                  <p className="font-medium text-slate-900">{lead.Franchise__c ? 'Yes' : 'No'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 text-xs mb-1">Home-Based Business</p>
+                  <p className="font-medium text-slate-900">{lead.Home_Based_Business__c ? 'Yes' : 'No'}</p>
+                </div>
+                <EditableField label="Business Location Occupancy" field="Business_Location_Occupancy__c" value={lead.Business_Location_Occupancy__c} />
+                <EditableField label="Landlord/Mortgagee Name" field="Landlord_Mortgagee_Name__c" value={lead.Landlord_Mortgagee_Name__c} />
+                <EditableField label="Business Location Monthly Payment" field="Business_Location_Monthly_Payment__c" value={lead.Business_Location_Monthly_Payment__c} />
+                <EditableField label="Landlord/Mortgagee Phone" field="Landlord_Mortgagee_Phone__c" value={lead.Landlord_Mortgagee_Phone__c} />
+              </div>
+            </div>
+
+            {/* References */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Business References</h2>
+              <div className="grid sm:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <EditableField label="Business Trade Reference 1" field="Business_Trade_Reference_1__c" value={lead.Business_Trade_Reference_1__c} />
+                  <EditableField label="Phone" field="Business_Trade_Reference_1_Phone__c" value={lead.Business_Trade_Reference_1_Phone__c} />
+                </div>
+                <div>
+                  <EditableField label="Business Trade Reference 2" field="Business_Trade_Reference_2__c" value={lead.Business_Trade_Reference_2__c} />
+                  <EditableField label="Phone" field="Business_Trade_Reference_2_Phone__c" value={lead.Business_Trade_Reference_2_Phone__c} />
+                </div>
+                <div>
+                  <EditableField label="Business Trade Reference 3" field="Business_Trade_Reference_3__c" value={lead.Business_Trade_Reference_3__c} />
+                  <EditableField label="Phone" field="Business_Trade_Reference_3_Phone__c" value={lead.Business_Trade_Reference_3_Phone__c} />
                 </div>
               </div>
             </div>
 
-            {/* References & Lenders */}
-            {(lead.Business_Trade_Reference_1__c || lead.Lender_Name_1__c) && (
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-[#08708E]" />
-                  References & Lenders
-                </h2>
-                <div className="space-y-4">
-                  {lead.Business_Trade_Reference_1__c && (
-                    <div>
-                      <p className="text-xs text-slate-500 mb-1">Trade References</p>
-                      <div className="grid sm:grid-cols-3 gap-2 text-sm">
-                        <div>
-                          <p className="font-medium text-slate-900">{lead.Business_Trade_Reference_1__c}</p>
-                          {lead.Business_Trade_Reference_1_Phone__c && (
-                            <p className="text-slate-600 text-xs">{lead.Business_Trade_Reference_1_Phone__c}</p>
-                          )}
-                        </div>
-                        {lead.Business_Trade_Reference_2__c && (
-                          <div>
-                            <p className="font-medium text-slate-900">{lead.Business_Trade_Reference_2__c}</p>
-                            {lead.Business_Trade_Reference_2_Phone__c && (
-                              <p className="text-slate-600 text-xs">{lead.Business_Trade_Reference_2_Phone__c}</p>
-                            )}
-                          </div>
-                        )}
-                        {lead.Business_Trade_Reference_3__c && (
-                          <div>
-                            <p className="font-medium text-slate-900">{lead.Business_Trade_Reference_3__c}</p>
-                            {lead.Business_Trade_Reference_3_Phone__c && (
-                              <p className="text-slate-600 text-xs">{lead.Business_Trade_Reference_3_Phone__c}</p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {lead.Lender_Name_1__c && (
-                    <div>
-                      <p className="text-xs text-slate-500 mb-1">Existing Lenders</p>
-                      <div className="grid sm:grid-cols-3 gap-2 text-sm">
-                        <div>
-                          <p className="font-medium text-slate-900">{lead.Lender_Name_1__c}</p>
-                          {lead.Open_Balance_Amount_1__c && (
-                            <p className="text-slate-600 text-xs">${parseFloat(lead.Open_Balance_Amount_1__c).toLocaleString()}</p>
-                          )}
-                        </div>
-                        {lead.Lender_Name_2__c && (
-                          <div>
-                            <p className="font-medium text-slate-900">{lead.Lender_Name_2__c}</p>
-                            {lead.Open_Balance_Amount_2__c && (
-                              <p className="text-slate-600 text-xs">${parseFloat(lead.Open_Balance_Amount_2__c).toLocaleString()}</p>
-                            )}
-                          </div>
-                        )}
-                        {lead.Lender_Name_3__c && (
-                          <div>
-                            <p className="font-medium text-slate-900">{lead.Lender_Name_3__c}</p>
-                            {lead.Open_Balance_Amount_3__c && (
-                              <p className="text-slate-600 text-xs">${parseFloat(lead.Open_Balance_Amount_3__c).toLocaleString()}</p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
+            {/* Open Balances */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Lenders & Open Balances</h2>
+              <div className="grid sm:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <EditableField label="Lender Name 1" field="Lender_Name_1__c" value={lead.Lender_Name_1__c} />
+                  <EditableField label="Open Balance Amount 1" field="Open_Balance_Amount_1__c" value={lead.Open_Balance_Amount_1__c} />
+                </div>
+                <div>
+                  <EditableField label="Lender Name 2" field="Lender_Name_2__c" value={lead.Lender_Name_2__c} />
+                  <EditableField label="Open Balance Amount 2" field="Open_Balance_Amount_2__c" value={lead.Open_Balance_Amount_2__c} />
+                </div>
+                <div>
+                  <EditableField label="Lender Name 3" field="Lender_Name_3__c" value={lead.Lender_Name_3__c} />
+                  <EditableField label="Open Balance Amount 3" field="Open_Balance_Amount_3__c" value={lead.Open_Balance_Amount_3__c} />
                 </div>
               </div>
-            )}
+            </div>
+
+            {/* Stage Tracking */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Stage Tracking</h2>
+              <div className="grid sm:grid-cols-2 gap-4 text-xs">
+                {lead.Open_Not_Contacted_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Open - Not Contacted Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(lead.Open_Not_Contacted_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {lead.Working_Contacted_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Working - Contacted Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(lead.Working_Contacted_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {lead.Working_Application_Out_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Working - Application Out Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(lead.Working_Application_Out_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {lead.Closed_Converted_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Closed - Converted Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(lead.Closed_Converted_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {lead.Closed_Not_Converted_Date_time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Closed - Not Converted Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(lead.Closed_Not_Converted_Date_time__c).toLocaleString()}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Marketing Information */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Marketing Information</h2>
+              <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                <EditableField label="UTM Source" field="UTM_Source__c" value={lead.UTM_Source__c} />
+                <EditableField label="UTM Content" field="UTM_Content__c" value={lead.UTM_Content__c} />
+                <EditableField label="UTM Medium" field="UTM_Medium__c" value={lead.UTM_Medium__c} />
+                <EditableField label="UTM Campaign" field="UTM_Campaign__c" value={lead.UTM_Campaign__c} />
+                <EditableField label="UTM Term" field="UTM_Term__c" value={lead.UTM_Term__c} />
+              </div>
+            </div>
 
             {/* Activity Timeline */}
             <ActivityTimeline
@@ -626,181 +492,25 @@ export default function LeadDetail() {
               onCallCompleted={() => setRefreshKey(prev => prev + 1)}
             />
 
-            {/* Document Tracking - Only for Missing Info status */}
-            {lead.Status === 'Application Missing Info' && (
-              <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-amber-200">
-                <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-amber-600" />
-                  Missing Documents
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
-                    <label className="text-sm text-slate-700 font-medium">Bank Statements</label>
-                    <input
-                      type="checkbox"
-                      checked={lead.Bank_Statements_Received__c || false}
-                      onChange={(e) => handleDocCheckbox('Bank_Statements_Received__c', e.target.checked)}
-                      className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
-                    <label className="text-sm text-slate-700 font-medium">Tax Returns</label>
-                    <input
-                      type="checkbox"
-                      checked={lead.Tax_Returns_Received__c || false}
-                      onChange={(e) => handleDocCheckbox('Tax_Returns_Received__c', e.target.checked)}
-                      className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
-                    <label className="text-sm text-slate-700 font-medium">Voided Check</label>
-                    <input
-                      type="checkbox"
-                      checked={lead.Voided_Check_Received__c || false}
-                      onChange={(e) => handleDocCheckbox('Voided_Check_Received__c', e.target.checked)}
-                      className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
-                    <label className="text-sm text-slate-700 font-medium">Driver's License</label>
-                    <input
-                      type="checkbox"
-                      checked={lead.Drivers_License_Received__c || false}
-                      onChange={(e) => handleDocCheckbox('Drivers_License_Received__c', e.target.checked)}
-                      className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Documents Received (always visible) */}
+            {/* System Info */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-900 mb-4">Documents Received</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Bank Statements</span>
-                  {lead.Bank_Statements_Received__c ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                  ) : (
-                    <span className="text-slate-400 text-xs">Not received</span>
-                  )}
+              <h3 className="font-semibold text-slate-900 mb-4">System Information</h3>
+              <div className="space-y-2 text-xs">
+                <div>
+                  <p className="text-slate-500">Created By</p>
+                  <p className="font-medium text-slate-900">{lead.CreatedBy?.Name}</p>
+                  <p className="text-slate-500">{new Date(lead.CreatedDate).toLocaleString()}</p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Tax Returns</span>
-                  {lead.Tax_Returns_Received__c ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                  ) : (
-                    <span className="text-slate-400 text-xs">Not received</span>
-                  )}
+                <div>
+                  <p className="text-slate-500">Last Modified By</p>
+                  <p className="font-medium text-slate-900">{lead.LastModifiedBy?.Name}</p>
+                  <p className="text-slate-500">{new Date(lead.LastModifiedDate).toLocaleString()}</p>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Voided Check</span>
-                  {lead.Voided_Check_Received__c ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                  ) : (
-                    <span className="text-slate-400 text-xs">Not received</span>
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Driver's License</span>
-                  {lead.Drivers_License_Received__c ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                  ) : (
-                    <span className="text-slate-400 text-xs">Not received</span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Timeline */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-[#08708E]" />
-                Timeline
-              </h3>
-              <div className="space-y-3 text-xs">
-                {lead.Open_Not_Contacted_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Open - Not Contacted</p>
-                    <p className="font-medium text-slate-900">{new Date(lead.Open_Not_Contacted_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {lead.Working_Contacted_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Working - Contacted</p>
-                    <p className="font-medium text-slate-900">{new Date(lead.Working_Contacted_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {lead.Working_Application_Out_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Application Out</p>
-                    <p className="font-medium text-slate-900">{new Date(lead.Working_Application_Out_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {lead.Closed_Converted_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Converted</p>
-                    <p className="font-medium text-slate-900">{new Date(lead.Closed_Converted_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Additional Details */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-900 mb-4">Additional Info</h3>
-              <div className="space-y-3 text-sm">
-                {lead.LeadSource && (
-                  <div>
-                    <p className="text-slate-500">Lead Source</p>
-                    <p className="font-medium text-slate-900">{lead.LeadSource}</p>
-                  </div>
-                )}
-                {lead.Type__c && (
-                  <div>
-                    <p className="text-slate-500">Type</p>
-                    <p className="font-medium text-slate-900">{lead.Type__c}</p>
-                  </div>
-                )}
-                {lead.Call_Disposition__c && (
-                  <div>
-                    <p className="text-slate-500">Call Disposition</p>
-                    <p className="font-medium text-slate-900">{lead.Call_Disposition__c}</p>
-                  </div>
-                )}
-                {lead.Status_Detail__c && (
-                  <div>
-                    <p className="text-slate-500">Status Detail</p>
-                    <p className="font-medium text-slate-900">{lead.Status_Detail__c}</p>
-                  </div>
-                )}
-                {lead.Description && (
-                  <div>
-                    <p className="text-slate-500">Description</p>
-                    <p className="font-medium text-slate-900">{lead.Description}</p>
-                  </div>
-                )}
-                {lead.UTM_Source__c && (
-                  <div>
-                    <p className="text-slate-500">UTM Source</p>
-                    <p className="font-medium text-slate-900">{lead.UTM_Source__c}</p>
-                  </div>
-                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Edit Modal */}
-      {editMode && (
-        <EditLeadModal
-          lead={lead}
-          onSave={handleUpdate}
-          onClose={() => setEditMode(false)}
-        />
-      )}
     </div>
   );
 }
