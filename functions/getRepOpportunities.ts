@@ -22,8 +22,16 @@ Deno.serve(async (req) => {
       }
     );
 
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('Salesforce error:', error);
+      return Response.json({ error: 'Failed to fetch opportunities', details: error }, { status: 500 });
+    }
+
     const data = await response.json();
     const allOpportunities = data.records || [];
+    
+    console.log('Fetched opportunities count:', allOpportunities.length);
 
     return Response.json({ opportunities: allOpportunities });
   } catch (error) {

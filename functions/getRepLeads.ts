@@ -22,8 +22,16 @@ Deno.serve(async (req) => {
       }
     );
 
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('Salesforce error:', error);
+      return Response.json({ error: 'Failed to fetch leads', details: error }, { status: 500 });
+    }
+
     const data = await response.json();
     const allLeads = data.records || [];
+    
+    console.log('Fetched leads count:', allLeads.length);
     
     // Sort to prioritize specific statuses
     const priorityStatuses = ['Contacted', 'Application Out', 'Application Missing Info'];
