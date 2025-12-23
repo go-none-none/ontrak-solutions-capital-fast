@@ -278,7 +278,7 @@ export default function RepPortal() {
           onStageClick={handleStageClick} 
         />
 
-        {/* Search & Tabs */}
+        {/* Search & Content */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mt-6">
           <div className="flex items-center gap-4 mb-6">
             <div className="relative flex-1">
