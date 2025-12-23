@@ -5,15 +5,20 @@ import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, Building2, Calendar, ArrowRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
+import PowerDialer from './PowerDialer';
 
 export default function LeadCard({ lead, session }) {
-  const statusColors = {
-    'Open - Not Contacted': 'bg-blue-100 text-blue-800',
-    'Working - Contacted': 'bg-yellow-100 text-yellow-800',
-    'Working - Application Out': 'bg-purple-100 text-purple-800',
-    'Application Missing Info': 'bg-orange-100 text-orange-800',
-    'Converted': 'bg-green-100 text-green-800',
-    'Closed - Not Converted': 'bg-red-100 text-red-800'
+  const stages = [
+    { label: 'New', status: 'Open - Not Contacted' },
+    { label: 'Contacted', status: 'Working - Contacted' },
+    { label: 'App Out', status: 'Working - Application Out' },
+    { label: 'Missing Info', status: 'Application Missing Info' },
+    { label: 'Converted', status: 'Converted' }
+  ];
+
+  const getCurrentStageIndex = () => {
+    const index = stages.findIndex(s => s.status === lead.Status);
+    return index >= 0 ? index : 0;
   };
 
   const formatDate = (dateString) => {
@@ -25,6 +30,8 @@ export default function LeadCard({ lead, session }) {
     });
   };
 
+  const currentStage = getCurrentStageIndex();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -33,13 +40,8 @@ export default function LeadCard({ lead, session }) {
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <h3 className="text-lg font-semibold text-slate-900">{lead.Name}</h3>
-            <Badge className={statusColors[lead.Status] || 'bg-slate-100 text-slate-800'}>
-              {lead.Status}
-            </Badge>
-          </div>
-          <div className="flex items-center gap-1 text-slate-600 mb-1">
+          <h3 className="text-lg font-semibold text-slate-900 mb-1">{lead.Name}</h3>
+          <div className="flex items-center gap-1 text-slate-600 mb-2">
             <Building2 className="w-4 h-4" />
             <span className="text-sm">{lead.Company}</span>
           </div>
@@ -51,12 +53,38 @@ export default function LeadCard({ lead, session }) {
         </Link>
       </div>
 
-      <div className="flex flex-wrap gap-4 text-sm text-slate-600 mb-3">
+      {/* Stage Progress Bar */}
+      <div className="mb-4">
+        <div className="flex justify-between items-center mb-2">
+          {stages.map((stage, idx) => (
+            <div key={idx} className="flex flex-col items-center flex-1">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                idx <= currentStage ? 'bg-[#08708E] text-white' : 'bg-slate-200 text-slate-500'
+              }`}>
+                {idx + 1}
+              </div>
+              <span className="text-xs text-slate-600 mt-1 text-center">{stage.label}</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-1">
+          {stages.map((_, idx) => (
+            <div key={idx} className={`h-1.5 flex-1 rounded ${
+              idx <= currentStage ? 'bg-[#08708E]' : 'bg-slate-200'
+            }`} />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 mb-3">
         {lead.Phone && (
-          <a href={`tel:${lead.Phone}`} className="flex items-center gap-1 hover:text-[#08708E]">
-            <Phone className="w-4 h-4" />
-            <span>{lead.Phone}</span>
-          </a>
+          <>
+            <a href={`tel:${lead.Phone}`} className="flex items-center gap-1 hover:text-[#08708E]">
+              <Phone className="w-4 h-4" />
+              <span>{lead.Phone}</span>
+            </a>
+            <PowerDialer phoneNumber={lead.Phone} recordId={lead.Id} session={session} />
+          </>
         )}
         {lead.Email && (
           <a href={`mailto:${lead.Email}`} className="flex items-center gap-1 hover:text-[#08708E]">

@@ -1,21 +1,46 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { DollarSign, Calendar, Building2, TrendingUp, ArrowRight } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
+import { DollarSign, Calendar, Building2, TrendingUp, ArrowRight, FileText } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
 
-export default function OpportunityCard({ opportunity, session }) {
-  const stageColors = {
-    'Application In': 'bg-blue-100 text-blue-800',
-    'Underwriting': 'bg-purple-100 text-purple-800',
-    'Approved': 'bg-green-100 text-green-800',
-    'Contracts Out': 'bg-yellow-100 text-yellow-800',
-    'Contracts In': 'bg-indigo-100 text-indigo-800',
-    'Closed - Funded': 'bg-green-100 text-green-800',
-    'Funded': 'bg-green-100 text-green-800',
-    'Closed - Declined': 'bg-red-100 text-red-800'
+export default function OpportunityCard({ opportunity, session, onUpdate }) {
+  const stages = [
+    { label: 'App In', name: 'Application In' },
+    { label: 'Underwriting', name: 'Underwriting' },
+    { label: 'Approved', name: 'Approved' },
+    { label: 'Contracts Out', name: 'Contracts Out' },
+    { label: 'Contracts In', name: 'Contracts In' },
+    { label: 'Funded', name: 'Closed - Funded' }
+  ];
+
+  const missingDocs = [
+    { id: 'bank_statements', label: 'Bank Statements', field: 'Bank_Statements_Received__c' },
+    { id: 'tax_returns', label: 'Tax Returns', field: 'Tax_Returns_Received__c' },
+    { id: 'voided_check', label: 'Voided Check', field: 'Voided_Check_Received__c' }
+  ];
+
+  const getCurrentStageIndex = () => {
+    const index = stages.findIndex(s => s.name === opportunity.StageName);
+    return index >= 0 ? index : 0;
+  };
+
+  const handleDocToggle = async (field, currentValue) => {
+    try {
+      await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Opportunity',
+        recordId: opportunity.Id,
+        data: { [field]: !currentValue },
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error('Update error:', error);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -36,6 +61,9 @@ export default function OpportunityCard({ opportunity, session }) {
     }).format(amount);
   };
 
+  const currentStage = getCurrentStageIndex();
+  const isDeclined = opportunity.StageName === 'Closed - Declined';
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -44,14 +72,9 @@ export default function OpportunityCard({ opportunity, session }) {
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <h3 className="text-lg font-semibold text-slate-900">{opportunity.Name}</h3>
-            <Badge className={stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}>
-              {opportunity.StageName}
-            </Badge>
-          </div>
+          <h3 className="text-lg font-semibold text-slate-900 mb-1">{opportunity.Name}</h3>
           {opportunity.Account?.Name && (
-            <div className="flex items-center gap-1 text-slate-600 mb-1">
+            <div className="flex items-center gap-1 text-slate-600 mb-2">
               <Building2 className="w-4 h-4" />
               <span className="text-sm">{opportunity.Account.Name}</span>
             </div>
@@ -63,6 +86,64 @@ export default function OpportunityCard({ opportunity, session }) {
           </Button>
         </Link>
       </div>
+
+      {/* Stage Progress Bar */}
+      {!isDeclined && (
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            {stages.map((stage, idx) => (
+              <div key={idx} className="flex flex-col items-center flex-1">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                  idx <= currentStage ? 'bg-[#08708E] text-white' : 'bg-slate-200 text-slate-500'
+                }`}>
+                  {idx + 1}
+                </div>
+                <span className="text-xs text-slate-600 mt-1 text-center">{stage.label}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-1">
+            {stages.map((_, idx) => (
+              <div key={idx} className={`h-1.5 flex-1 rounded ${
+                idx <= currentStage ? 'bg-[#08708E]' : 'bg-slate-200'
+              }`} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {isDeclined && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-800 font-medium text-center">Declined</p>
+        </div>
+      )}
+
+      {/* Missing Documents Checklist */}
+      {opportunity.StageName === 'Application In' && (
+        <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText className="w-4 h-4 text-amber-700" />
+            <span className="text-sm font-medium text-amber-900">Missing Documents</span>
+          </div>
+          <div className="space-y-2">
+            {missingDocs.map(doc => (
+              <div key={doc.id} className="flex items-center gap-2">
+                <Checkbox
+                  checked={opportunity[doc.field] || false}
+                  onCheckedChange={() => handleDocToggle(doc.field, opportunity[doc.field])}
+                  id={`${opportunity.Id}-${doc.id}`}
+                />
+                <label
+                  htmlFor={`${opportunity.Id}-${doc.id}`}
+                  className="text-sm text-slate-700 cursor-pointer"
+                >
+                  {doc.label}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex items-center gap-6 text-sm mb-3">
         <div className="flex items-center gap-1 text-[#08708E] font-semibold">
