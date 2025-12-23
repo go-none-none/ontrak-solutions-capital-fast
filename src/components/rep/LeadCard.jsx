@@ -12,8 +12,7 @@ export default function LeadCard({ lead, session }) {
     { label: 'New', status: 'Open - Not Contacted' },
     { label: 'Contacted', status: 'Working - Contacted' },
     { label: 'App Out', status: 'Working - Application Out' },
-    { label: 'Missing Info', status: 'Application Missing Info' },
-    { label: 'Converted', status: 'Converted' }
+    { label: 'Missing Info', status: 'Application Missing Info' }
   ];
 
   const getCurrentStageIndex = () => {

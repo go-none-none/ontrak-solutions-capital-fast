@@ -7,8 +7,7 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
     { name: 'Open - Not Contacted', label: 'New', color: 'from-blue-500 to-blue-600' },
     { name: 'Working - Contacted', label: 'Contacted', color: 'from-yellow-500 to-yellow-600' },
     { name: 'Working - Application Out', label: 'App Out', color: 'from-purple-500 to-purple-600' },
-    { name: 'Application Missing Info', label: 'Missing Info', color: 'from-orange-500 to-orange-600' },
-    { name: 'Converted', label: 'Converted', color: 'from-green-500 to-green-600' }
+    { name: 'Application Missing Info', label: 'Missing Info', color: 'from-orange-500 to-orange-600' }
   ];
 
   const opportunityStages = [
@@ -73,7 +72,7 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className={`grid gap-3 ${activeTab === 'leads' ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6'}`}>
         {pipelineData.map((stage, idx) => (
           <motion.div
             key={idx}
