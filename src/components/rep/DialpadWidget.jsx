@@ -6,34 +6,18 @@ import { Phone, Loader2, CheckCircle, MessageSquare } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function DialpadWidget({ phoneNumber, recordId, recordType, session, onCallCompleted }) {
-  const [calling, setCalling] = useState(false);
-  const [callId, setCallId] = useState(null);
   const [showDisposition, setShowDisposition] = useState(false);
   const [disposition, setDisposition] = useState('');
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const handleCall = async () => {
+  const handleCall = () => {
     if (!phoneNumber) {
       alert('No phone number available');
       return;
     }
-
-    setCalling(true);
-    try {
-      const response = await base44.functions.invoke('dialpadMakeCall', {
-        phoneNumber,
-        callerId: session.userId
-      });
-
-      setCallId(response.data.callId);
-      setShowDisposition(true);
-    } catch (error) {
-      console.error('Call error:', error);
-      alert('Failed to initiate call. Check your Dialpad configuration.');
-    } finally {
-      setCalling(false);
-    }
+    // Open Dialpad desktop app to make a call
+    window.open(`dialpad://call/${phoneNumber.replace(/\D/g, '')}`, '_blank');
   };
 
   const handleSMS = () => {
@@ -45,6 +29,10 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
     window.open(`dialpad://sms/${phoneNumber.replace(/\D/g, '')}`, '_blank');
   };
 
+  const handleLogCall = () => {
+    setShowDisposition(true);
+  };
+
   const handleSaveDisposition = async () => {
     if (!disposition) {
       alert('Please select a disposition');
@@ -53,12 +41,13 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
 
     setSaving(true);
     try {
-      await base44.functions.invoke('dialpadUpdateDisposition', {
-        callId,
-        disposition,
-        notes,
+      await base44.functions.invoke('createSalesforceActivity', {
         recordId,
         recordType,
+        subject: `Call - ${disposition}`,
+        description: notes || `Called ${phoneNumber}`,
+        status: 'Completed',
+        activityType: 'Task',
         token: session.token,
         instanceUrl: session.instanceUrl
       });
@@ -66,12 +55,11 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       setShowDisposition(false);
       setDisposition('');
       setNotes('');
-      setCallId(null);
       
       if (onCallCompleted) onCallCompleted();
     } catch (error) {
       console.error('Disposition error:', error);
-      alert('Failed to save disposition');
+      alert('Failed to save call log');
     } finally {
       setSaving(false);
     }
@@ -143,18 +131,13 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       {phoneNumber ? (
         <>
           <p className="text-white/80 text-sm mb-4">{phoneNumber}</p>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mb-2">
             <Button
               onClick={handleCall}
-              disabled={calling}
               className="flex-1 bg-white text-[#08708E] hover:bg-white/90"
             >
-              {calling ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              ) : (
-                <Phone className="w-4 h-4 mr-2" />
-              )}
-              {calling ? 'Calling...' : 'Call'}
+              <Phone className="w-4 h-4 mr-2" />
+              Call
             </Button>
             <Button
               onClick={handleSMS}
@@ -164,6 +147,14 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
               SMS
             </Button>
           </div>
+          <Button
+            onClick={handleLogCall}
+            variant="outline"
+            className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
+            size="sm"
+          >
+            Log Call
+          </Button>
         </>
       ) : (
         <p className="text-white/60 text-sm">No phone number available</p>
