@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Loader2, CheckCircle } from 'lucide-react';
+import { Phone, Loader2, CheckCircle, MessageSquare } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function DialpadWidget({ phoneNumber, recordId, recordType, session, onCallCompleted }) {
@@ -34,6 +34,15 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
     } finally {
       setCalling(false);
     }
+  };
+
+  const handleSMS = () => {
+    if (!phoneNumber) {
+      alert('No phone number available');
+      return;
+    }
+    // Open Dialpad desktop app with SMS to this number
+    window.open(`dialpad://sms/${phoneNumber.replace(/\D/g, '')}`, '_blank');
   };
 
   const handleSaveDisposition = async () => {
@@ -134,18 +143,27 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       {phoneNumber ? (
         <>
           <p className="text-white/80 text-sm mb-4">{phoneNumber}</p>
-          <Button
-            onClick={handleCall}
-            disabled={calling}
-            className="w-full bg-white text-[#08708E] hover:bg-white/90"
-          >
-            {calling ? (
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-            ) : (
-              <Phone className="w-4 h-4 mr-2" />
-            )}
-            {calling ? 'Calling...' : 'Call Now'}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={handleCall}
+              disabled={calling}
+              className="flex-1 bg-white text-[#08708E] hover:bg-white/90"
+            >
+              {calling ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Phone className="w-4 h-4 mr-2" />
+              )}
+              {calling ? 'Calling...' : 'Call'}
+            </Button>
+            <Button
+              onClick={handleSMS}
+              className="flex-1 bg-white text-[#08708E] hover:bg-white/90"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              SMS
+            </Button>
+          </div>
         </>
       ) : (
         <p className="text-white/60 text-sm">No phone number available</p>

@@ -459,7 +459,7 @@ export default function LeadDetail() {
           {/* Sidebar */}
           <div className="space-y-6">
             <DialpadWidget
-              phoneNumber={lead.Phone}
+              phoneNumber={lead.MobilePhone || lead.Phone}
               recordId={lead.Id}
               recordType="Lead"
               session={session}
