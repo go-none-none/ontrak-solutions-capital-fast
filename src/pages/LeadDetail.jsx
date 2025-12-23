@@ -466,6 +466,14 @@ export default function LeadDetail() {
               onCallCompleted={() => setRefreshKey(prev => prev + 1)}
             />
 
+            <SMSWidget
+              phoneNumber={lead.MobilePhone || lead.Phone}
+              recordId={lead.Id}
+              recordType="Lead"
+              session={session}
+              onMessageSent={() => setRefreshKey(prev => prev + 1)}
+            />
+
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h3 className="font-semibold text-slate-900 mb-4">Quick Info</h3>
               <div className="space-y-3 text-sm">
