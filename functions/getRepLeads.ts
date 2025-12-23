@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
     }
 
     // Query leads owned by this rep
-    const query = `SELECT Id, Name, Company, Phone, Email, Status, LeadSource, CreatedDate, LastModifiedDate FROM Lead WHERE OwnerId = '${userId}' AND IsConverted = false ORDER BY LastModifiedDate DESC LIMIT 200`;
+    const query = `SELECT Id, Name, Company, Phone, Email, Status, LeadSource, CreatedDate, LastModifiedDate FROM Lead WHERE OwnerId = '${userId}' AND IsConverted = false ORDER BY LastModifiedDate DESC LIMIT 2000`;
     
     const response = await fetch(
       `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
