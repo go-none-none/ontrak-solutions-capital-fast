@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
     }
 
     // Initiate call via Dialpad API
-    const response = await fetch('https://dialpad.com/api/v2/calls', {
+    const response = await fetch('https://dialpad.com/api/v2/calls/outbound', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         to_number: phoneNumber,
-        from_number: callerId
+        from_number: callerId || undefined
       })
     });
 

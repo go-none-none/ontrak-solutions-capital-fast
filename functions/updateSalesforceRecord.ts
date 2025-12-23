@@ -5,20 +5,27 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const { recordId, recordType, objectType, updates, data, token, instanceUrl } = await req.json();
 
-    if (!token || !instanceUrl || !recordId || !recordType || !updates) {
+    if (!token || !instanceUrl || !recordId) {
       return Response.json({ error: 'Missing parameters' }, { status: 400 });
+    }
+
+    const objectName = objectType || recordType;
+    const updateData = data || updates;
+
+    if (!objectName || !updateData) {
+      return Response.json({ error: 'Missing object type or update data' }, { status: 400 });
     }
 
     // Update the record
     const response = await fetch(
-      `${instanceUrl}/services/data/v59.0/sobjects/${recordType}/${recordId}`,
+      `${instanceUrl}/services/data/v59.0/sobjects/${objectName}/${recordId}`,
       {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(updates)
+        body: JSON.stringify(updateData)
       }
     );
 
