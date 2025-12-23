@@ -41,13 +41,9 @@ export default function RepPortal() {
 
   const handleOAuthCallback = async (code) => {
     try {
-      const codeVerifier = sessionStorage.getItem('pkce_verifier');
-      sessionStorage.removeItem('pkce_verifier');
-      
       const response = await base44.functions.invoke('salesforceAuth', {
         action: 'exchangeCode',
-        code,
-        codeVerifier
+        code
       });
       
       const sessionData = {
@@ -69,16 +65,8 @@ export default function RepPortal() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      // Generate PKCE code verifier and challenge
-      const codeVerifier = generateRandomString(128);
-      const codeChallenge = await generateCodeChallenge(codeVerifier);
-      
-      // Store verifier for later use
-      sessionStorage.setItem('pkce_verifier', codeVerifier);
-      
       const response = await base44.functions.invoke('salesforceAuth', {
-        action: 'getLoginUrl',
-        codeChallenge
+        action: 'getLoginUrl'
       });
       window.location.href = response.data.loginUrl;
     } catch (error) {
@@ -86,31 +74,6 @@ export default function RepPortal() {
       alert('Failed to connect to Salesforce. Please try again.');
       setLoading(false);
     }
-  };
-  
-  const generateRandomString = (length) => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-  };
-  
-  const generateCodeChallenge = async (verifier) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(verifier);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return base64UrlEncode(hash);
-  };
-  
-  const base64UrlEncode = (buffer) => {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    for (let i = 0; i < bytes.length; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   };
   
 

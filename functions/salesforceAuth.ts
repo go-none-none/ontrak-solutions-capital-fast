@@ -3,7 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { action, code, codeChallenge, codeVerifier } = await req.json();
+    const { action, code } = await req.json();
 
     const clientId = Deno.env.get("SALESFORCE_CLIENT_ID");
     const clientSecret = Deno.env.get("SALESFORCE_CLIENT_SECRET");
@@ -16,14 +16,14 @@ Deno.serve(async (req) => {
       const redirectUri = 'https://ontrak.co/repportal';
 
       return Response.json({
-        loginUrl: `https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&code_challenge=${codeChallenge}&code_challenge_method=S256`
+        loginUrl: `https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`
       });
     }
 
     if (action === 'exchangeCode') {
       const redirectUri = 'https://ontrak.co/repportal';
 
-      // Exchange code for token (using PKCE, not client_secret)
+      // Exchange code for token
       const tokenResponse = await fetch('https://login.salesforce.com/services/oauth2/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -31,8 +31,8 @@ Deno.serve(async (req) => {
           grant_type: 'authorization_code',
           code: code,
           client_id: clientId,
-          redirect_uri: redirectUri,
-          code_verifier: codeVerifier
+          client_secret: clientSecret,
+          redirect_uri: redirectUri
         })
       });
       
