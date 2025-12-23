@@ -77,12 +77,16 @@ Deno.serve(async (req) => {
 
     const sfResult = await sfResponse.json();
     
+    console.log('Salesforce task creation response:', sfResult);
+    console.log('Task response status:', sfResponse.status);
+    
     if (!sfResponse.ok) {
-      console.error('Salesforce task creation error:', sfResult);
+      console.error('Salesforce task creation error:', JSON.stringify(sfResult, null, 2));
       return Response.json({ 
         success: false,
         error: 'Failed to log email in Salesforce',
-        details: sfResult
+        details: sfResult,
+        statusCode: sfResponse.status
       }, { status: 500 });
     }
 
