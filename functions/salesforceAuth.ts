@@ -18,9 +18,13 @@ Deno.serve(async (req) => {
     
     const userInfo = await userInfoResponse.json();
     
+    // Extract userId from sub field (format: https://login.salesforce.com/id/{orgId}/{userId})
+    const subParts = userInfo.sub.split('/');
+    const userId = subParts[subParts.length - 1];
+    
     // Return session info
     return Response.json({
-      userId: userInfo.user_id,
+      userId: userId,
       email: userInfo.email,
       name: userInfo.name,
       instanceUrl: userInfo.sub.split('/id/')[0],
