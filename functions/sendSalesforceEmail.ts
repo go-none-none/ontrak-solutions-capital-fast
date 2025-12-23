@@ -3,13 +3,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
-    const { recipientEmail, recipientName, subject, message, recordId, recordType, token, instanceUrl } = await req.json();
+    const { recipientEmail, recipientName, subject, message, recordId, recordType, token, instanceUrl, senderName } = await req.json();
 
     console.log('Sending email to:', recipientEmail, 'for record:', recordId, 'type:', recordType);
 
@@ -19,7 +14,7 @@ Deno.serve(async (req) => {
 
     // First, send the actual email using Base44's email integration
     console.log('Sending email via Base44...');
-    const emailResult = await base44.integrations.Core.SendEmail({
+    const emailResult = await base44.asServiceRole.integrations.Core.SendEmail({
       to: recipientEmail,
       subject: subject,
       body: `
@@ -27,12 +22,12 @@ Deno.serve(async (req) => {
           <p>Hi ${recipientName || 'there'},</p>
           <p>${message.replace(/\n/g, '<br>')}</p>
           <br>
-          <p>Best regards,<br>${user.full_name || 'OnTrak Capital'}</p>
+          <p>Best regards,<br>${senderName || 'OnTrak Capital'}</p>
           <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
           <p style="font-size: 12px; color: #666;">OnTrak Capital</p>
         </div>
       `,
-      from_name: user.full_name || 'OnTrak Capital'
+      from_name: senderName || 'OnTrak Capital'
     });
     console.log('Email sent successfully via Base44');
 

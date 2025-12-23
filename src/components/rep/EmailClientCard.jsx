@@ -30,6 +30,7 @@ export default function EmailClientCard({ recipientEmail, recipientName, recordI
         message: formData.message,
         recordId,
         recordType,
+        senderName: session.name,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
