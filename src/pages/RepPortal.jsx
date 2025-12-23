@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, Users, TrendingUp, Search, LogOut, Loader2 } from 'lucide-react';
+import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import LeadCard from '../components/rep/LeadCard';
@@ -19,6 +19,7 @@ export default function RepPortal() {
   const [activeTab, setActiveTab] = useState('leads');
   const [stageFilter, setStageFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
   const itemsPerPage = 100;
 
   useEffect(() => {
@@ -88,8 +89,12 @@ export default function RepPortal() {
     setOpportunities([]);
   };
 
-  const loadData = async (sessionData) => {
-    setLoading(true);
+  const loadData = async (sessionData, isRefresh = false) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     try {
       const [leadsRes, oppsRes] = await Promise.all([
         base44.functions.invoke('getRepLeads', {
@@ -109,7 +114,17 @@ export default function RepPortal() {
     } catch (error) {
       console.error('Load error:', error);
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleRefresh = () => {
+    if (session) {
+      loadData(session, true);
     }
   };
 
@@ -194,11 +209,17 @@ export default function RepPortal() {
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Rep Portal</h1>
               <p className="text-sm text-slate-600">Welcome back, {session.name}</p>
-            </div>
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
+              </div>
+              <div className="flex gap-2">
+              <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
+                <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              <Button variant="outline" onClick={handleLogout}>
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
+              </div>
           </div>
         </div>
       </div>
