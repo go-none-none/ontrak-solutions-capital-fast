@@ -436,6 +436,7 @@ export default function LeadDetail() {
               recipientEmail={lead.Email}
               recipientName={lead.Name}
               recordId={lead.Id}
+              recordType="Lead"
               session={session}
             />
 

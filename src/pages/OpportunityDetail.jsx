@@ -277,6 +277,7 @@ export default function OpportunityDetail() {
                   recipientEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
                   recipientName={contactRoles[0]?.Contact?.Name || opportunity.Account?.Name}
                   recordId={opportunity.Id}
+                  recordType="Opportunity"
                   session={session}
                 />
 

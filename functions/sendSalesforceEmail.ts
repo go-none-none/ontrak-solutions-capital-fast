@@ -9,14 +9,17 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { recipientEmail, recipientName, subject, message, recordId, token, instanceUrl } = await req.json();
+    const { recipientEmail, recipientName, subject, message, recordId, recordType, token, instanceUrl } = await req.json();
+
+    console.log('Sending email to:', recipientEmail, 'for record:', recordId, 'type:', recordType);
 
     if (!recipientEmail || !subject || !message || !token || !instanceUrl) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     // First, send the actual email using Base44's email integration
-    await base44.integrations.Core.SendEmail({
+    console.log('Sending email via Base44...');
+    const emailResult = await base44.integrations.Core.SendEmail({
       to: recipientEmail,
       subject: subject,
       body: `
@@ -31,19 +34,26 @@ Deno.serve(async (req) => {
       `,
       from_name: user.full_name || 'OnTrak Capital'
     });
+    console.log('Email sent successfully via Base44');
 
     // Then, log it as a Task in Salesforce for activity tracking
     const taskBody = {
-      Subject: subject,
+      Subject: `Email: ${subject}`,
       Description: message,
       Status: 'Completed',
       Priority: 'Normal',
       ActivityDate: new Date().toISOString().split('T')[0],
-      WhoId: recordId, // Link to Lead or Contact
-      Type: 'Email',
-      TaskSubtype: 'Email'
+      Type: 'Email'
     };
 
+    // Use WhoId for Lead, WhatId for Opportunity
+    if (recordType === 'Lead') {
+      taskBody.WhoId = recordId;
+    } else if (recordType === 'Opportunity') {
+      taskBody.WhatId = recordId;
+    }
+
+    console.log('Creating Salesforce task with body:', taskBody);
     const sfResponse = await fetch(`${instanceUrl}/services/data/v58.0/sobjects/Task`, {
       method: 'POST',
       headers: {
@@ -53,15 +63,23 @@ Deno.serve(async (req) => {
       body: JSON.stringify(taskBody)
     });
 
+    const sfResult = await sfResponse.json();
+    
     if (!sfResponse.ok) {
-      const error = await sfResponse.text();
-      console.error('Salesforce task creation error:', error);
-      // Don't fail the whole operation if logging fails
+      console.error('Salesforce task creation error:', sfResult);
+      return Response.json({ 
+        success: true,
+        message: 'Email sent but not logged in Salesforce',
+        error: sfResult
+      });
     }
+
+    console.log('Salesforce task created:', sfResult);
 
     return Response.json({ 
       success: true,
-      message: 'Email sent and logged successfully'
+      message: 'Email sent and logged successfully',
+      taskId: sfResult.id
     });
   } catch (error) {
     console.error('Send email error:', error);

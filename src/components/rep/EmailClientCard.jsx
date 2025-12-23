@@ -7,7 +7,7 @@ import { Mail, Loader2, ChevronDown, Send } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
-export default function EmailClientCard({ recipientEmail, recipientName, recordId, session }) {
+export default function EmailClientCard({ recipientEmail, recipientName, recordId, recordType, session }) {
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,15 +23,18 @@ export default function EmailClientCard({ recipientEmail, recipientName, recordI
 
     setSending(true);
     try {
-      await base44.functions.invoke('sendSalesforceEmail', {
+      const response = await base44.functions.invoke('sendSalesforceEmail', {
         recipientEmail,
         recipientName,
         subject: formData.subject,
         message: formData.message,
         recordId,
+        recordType,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
+
+      console.log('Email send response:', response.data);
 
       toast.success('Email sent successfully!');
       setFormData({ subject: '', message: '' });
