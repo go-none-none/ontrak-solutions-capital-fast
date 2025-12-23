@@ -113,7 +113,6 @@ export default function RepPortal() {
 
   const handleStageClick = (stageName) => {
     setStageFilter(stageName);
-    setActiveTab('opportunities');
     setSearchTerm('');
   };
 
@@ -121,7 +120,8 @@ export default function RepPortal() {
     const searchMatch = lead.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.Company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.Email?.toLowerCase().includes(searchTerm.toLowerCase());
-    return searchMatch;
+    const stageMatch = !stageFilter || lead.Status === stageFilter;
+    return searchMatch && stageMatch;
   });
 
   const filteredOpportunities = opportunities.filter(opp => {
@@ -217,7 +217,12 @@ export default function RepPortal() {
         </div>
 
         {/* Pipeline */}
-        <PipelineView opportunities={opportunities} onStageClick={handleStageClick} />
+        <PipelineView 
+          leads={leads} 
+          opportunities={opportunities} 
+          activeTab={activeTab}
+          onStageClick={handleStageClick} 
+        />
 
         {/* Search & Tabs */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mt-6">
@@ -243,6 +248,12 @@ export default function RepPortal() {
             </TabsList>
 
             <TabsContent value="leads">
+              {stageFilter && (
+                <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
+                  <Button variant="ghost" size="sm" onClick={() => setStageFilter(null)}>Clear Filter</Button>
+                </div>
+              )}
               <div className="space-y-3">
                 {filteredLeads.length === 0 ? (
                   <div className="text-center py-12">
