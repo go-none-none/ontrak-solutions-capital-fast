@@ -54,8 +54,7 @@ Deno.serve(async (req) => {
       Description: message,
       Status: 'Completed',
       Priority: 'Normal',
-      ActivityDate: new Date().toISOString().split('T')[0],
-      Type: 'Email'
+      ActivityDate: new Date().toISOString().split('T')[0]
     };
 
     // Use WhoId for Lead, WhatId for Opportunity
