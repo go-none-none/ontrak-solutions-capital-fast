@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadWidget from '../components/rep/DialpadWidget.jsx';
+import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 
 export default function OpportunityDetail() {
   const [session, setSession] = useState(null);
@@ -270,6 +271,14 @@ export default function OpportunityDetail() {
                     </CollapsibleContent>
                   </div>
                 </Collapsible>
+
+                {/* Email Client */}
+                <EmailClientCard
+                  recipientEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
+                  recipientName={contactRoles[0]?.Contact?.Name || opportunity.Account?.Name}
+                  recordId={opportunity.Id}
+                  session={session}
+                />
 
                 {/* Activity & Files */}
                 <ActivityTimeline

@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { DollarSign, Calendar, Building2, TrendingUp, ArrowRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
-import SendEmailModal from './SendEmailModal';
 
 export default function OpportunityCard({ opportunity, session, onUpdate }) {
   const stages = [
@@ -58,19 +57,11 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
             </div>
           )}
         </div>
-        <div className="flex gap-2">
-          {opportunity.Account?.Email__c && (
-            <SendEmailModal 
-              recipientEmail={opportunity.Account.Email__c} 
-              recipientName={opportunity.Account.Name || opportunity.Name} 
-            />
-          )}
-          <Link to={`${createPageUrl('OpportunityDetail')}?id=${opportunity.Id}`}>
-            <Button variant="outline" size="sm">
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-        </div>
+        <Link to={`${createPageUrl('OpportunityDetail')}?id=${opportunity.Id}`}>
+          <Button variant="outline" size="sm">
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </Link>
       </div>
 
       {/* Stage Progress Bar */}

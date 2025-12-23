@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadWidget from '../components/rep/DialpadWidget.jsx';
+import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 
 export default function LeadDetail() {
   const [session, setSession] = useState(null);
@@ -429,6 +430,14 @@ export default function LeadDetail() {
                 </CollapsibleContent>
               </div>
             </Collapsible>
+
+            {/* Email Client */}
+            <EmailClientCard
+              recipientEmail={lead.Email}
+              recipientName={lead.Name}
+              recordId={lead.Id}
+              session={session}
+            />
 
             {/* Activity & Files */}
             <ActivityTimeline
