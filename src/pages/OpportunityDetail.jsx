@@ -6,10 +6,10 @@ import { ArrowLeft, DollarSign, Calendar, Edit, Loader2, TrendingUp } from 'luci
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
-import ActivityTimeline from '../components/rep/ActivityTimeline';
-import FileManager from '../components/rep/FileManager';
-import DialpadWidget from '../components/rep/DialpadWidget';
-import EditOpportunityModal from '../components/rep/EditOpportunityModal';
+import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
+import FileManager from '../components/rep/FileManager.jsx';
+import DialpadWidget from '../components/rep/DialpadWidget.jsx';
+import EditOpportunityModal from '../components/rep/EditOpportunityModal.jsx';
 
 export default function OpportunityDetail() {
   const [session, setSession] = useState(null);

@@ -6,10 +6,10 @@ import { ArrowLeft, Phone, Mail, Building2, Edit, Save, X, Loader2 } from 'lucid
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
-import ActivityTimeline from '../components/rep/ActivityTimeline';
-import FileManager from '../components/rep/FileManager';
-import DialpadWidget from '../components/rep/DialpadWidget';
-import EditLeadModal from '../components/rep/EditLeadModal';
+import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
+import FileManager from '../components/rep/FileManager.jsx';
+import DialpadWidget from '../components/rep/DialpadWidget.jsx';
+import EditLeadModal from '../components/rep/EditLeadModal.jsx';
 
 export default function LeadDetail() {
   const [session, setSession] = useState(null);
