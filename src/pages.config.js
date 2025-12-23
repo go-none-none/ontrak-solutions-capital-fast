@@ -15,17 +15,17 @@ import IndustryProfessional from './pages/IndustryProfessional';
 import IndustryRestaurants from './pages/IndustryRestaurants';
 import IndustryRetail from './pages/IndustryRetail';
 import IndustryTransportation from './pages/IndustryTransportation';
+import LeadDetail from './pages/LeadDetail';
 import MissingDocs from './pages/MissingDocs';
+import OpportunityDetail from './pages/OpportunityDetail';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import RepPortal from './pages/RepPortal';
 import Reviews from './pages/Reviews';
 import Status from './pages/Status';
 import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
-import RepPortal from './pages/RepPortal';
-import LeadDetail from './pages/LeadDetail';
-import OpportunityDetail from './pages/OpportunityDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -47,17 +47,17 @@ export const PAGES = {
     "IndustryRestaurants": IndustryRestaurants,
     "IndustryRetail": IndustryRetail,
     "IndustryTransportation": IndustryTransportation,
+    "LeadDetail": LeadDetail,
     "MissingDocs": MissingDocs,
+    "OpportunityDetail": OpportunityDetail,
     "PrivacyPolicy": PrivacyPolicy,
+    "RepPortal": RepPortal,
     "Reviews": Reviews,
     "Status": Status,
     "TermsOfService": TermsOfService,
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
-    "RepPortal": RepPortal,
-    "LeadDetail": LeadDetail,
-    "OpportunityDetail": OpportunityDetail,
 }
 
 export const pagesConfig = {
