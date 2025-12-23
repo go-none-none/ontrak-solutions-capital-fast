@@ -21,14 +21,13 @@ export default function PowerDialer({ phoneNumber, recordId, session, onCallComp
     setCalling(true);
     try {
       const response = await base44.functions.invoke('dialpadMakeCall', {
-        phoneNumber: phoneNumber,
-        callerId: null
+        phoneNumber: phoneNumber.replace(/\D/g, '')
       });
       
       setCallId(response.data.callId);
     } catch (error) {
       console.error('Call error:', error);
-      alert('Failed to initiate call');
+      alert(`Failed to initiate call: ${error.response?.data?.error || error.message}`);
       setCalling(false);
     }
   };

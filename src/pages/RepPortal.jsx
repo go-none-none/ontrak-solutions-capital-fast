@@ -17,6 +17,7 @@ export default function RepPortal() {
   const [opportunities, setOpportunities] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('leads');
+  const [stageFilter, setStageFilter] = useState(null);
 
   useEffect(() => {
     checkSession();
@@ -110,16 +111,25 @@ export default function RepPortal() {
     }
   };
 
-  const filteredLeads = leads.filter(lead =>
-    lead.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.Company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.Email?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleStageClick = (stageName) => {
+    setStageFilter(stageName);
+    setActiveTab('opportunities');
+    setSearchTerm('');
+  };
 
-  const filteredOpportunities = opportunities.filter(opp =>
-    opp.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    opp.Account?.Name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredLeads = leads.filter(lead => {
+    const searchMatch = lead.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.Company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.Email?.toLowerCase().includes(searchTerm.toLowerCase());
+    return searchMatch;
+  });
+
+  const filteredOpportunities = opportunities.filter(opp => {
+    const searchMatch = opp.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      opp.Account?.Name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const stageMatch = !stageFilter || opp.StageName === stageFilter;
+    return searchMatch && stageMatch;
+  });
 
   if (loading) {
     return (
@@ -207,7 +217,7 @@ export default function RepPortal() {
         </div>
 
         {/* Pipeline */}
-        <PipelineView opportunities={opportunities} />
+        <PipelineView opportunities={opportunities} onStageClick={handleStageClick} />
 
         {/* Search & Tabs */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mt-6">
@@ -223,10 +233,13 @@ export default function RepPortal() {
             </div>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); setStageFilter(null); }}>
             <TabsList className="mb-6">
               <TabsTrigger value="leads">Leads ({filteredLeads.length})</TabsTrigger>
-              <TabsTrigger value="opportunities">Opportunities ({filteredOpportunities.length})</TabsTrigger>
+              <TabsTrigger value="opportunities">
+                Opportunities ({filteredOpportunities.length})
+                {stageFilter && <span className="ml-2 text-xs">• {stageFilter}</span>}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="leads">
@@ -245,6 +258,12 @@ export default function RepPortal() {
             </TabsContent>
 
             <TabsContent value="opportunities">
+              {stageFilter && (
+                <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
+                  <Button variant="ghost" size="sm" onClick={() => setStageFilter(null)}>Clear Filter</Button>
+                </div>
+              )}
               <div className="space-y-3">
                 {filteredOpportunities.length === 0 ? (
                   <div className="text-center py-12">

@@ -16,6 +16,15 @@ export default function LeadDetail() {
   const [lead, setLead] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+
+  const stages = [
+    { label: 'New', status: 'Open - Not Contacted' },
+    { label: 'Contacted', status: 'Working - Contacted' },
+    { label: 'App Out', status: 'Working - Application Out' },
+    { label: 'Missing Info', status: 'Application Missing Info' },
+    { label: 'Converted', status: 'Converted' }
+  ];
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {

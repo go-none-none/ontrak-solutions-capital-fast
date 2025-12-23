@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { DollarSign, TrendingUp, Target } from 'lucide-react';
 
-export default function PipelineView({ opportunities }) {
+export default function PipelineView({ opportunities, onStageClick }) {
   const stages = [
     { name: 'Application In', color: 'from-blue-500 to-blue-600' },
     { name: 'Underwriting', color: 'from-purple-500 to-purple-600' },
@@ -59,11 +59,14 @@ export default function PipelineView({ opportunities }) {
             transition={{ delay: idx * 0.05 }}
             className="relative group"
           >
-            <div className={`bg-gradient-to-br ${stage.color} rounded-xl p-4 text-white shadow-sm hover:shadow-md transition-all`}>
+            <button
+              onClick={() => onStageClick && onStageClick(stage.name)}
+              className={`w-full bg-gradient-to-br ${stage.color} rounded-xl p-4 text-white shadow-sm hover:shadow-lg hover:scale-105 transition-all text-left`}
+            >
               <div className="text-2xl font-bold mb-1">{stage.count}</div>
               <div className="text-xs opacity-90 mb-2">{stage.name}</div>
               <div className="text-sm font-semibold">{formatCurrency(stage.amount)}</div>
-            </div>
+            </button>
           </motion.div>
         ))}
       </div>
