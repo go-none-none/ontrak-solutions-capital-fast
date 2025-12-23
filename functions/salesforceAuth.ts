@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
     if (action === 'exchangeCode') {
       const redirectUri = 'https://ontrak.co/repportal';
 
-      // Exchange code for token
+      // Exchange code for token (using PKCE, not client_secret)
       const tokenResponse = await fetch('https://login.salesforce.com/services/oauth2/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -31,7 +31,6 @@ Deno.serve(async (req) => {
           grant_type: 'authorization_code',
           code: code,
           client_id: clientId,
-          client_secret: clientSecret,
           redirect_uri: redirectUri,
           code_verifier: codeVerifier
         })
