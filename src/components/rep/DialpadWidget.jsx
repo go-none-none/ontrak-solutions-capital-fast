@@ -18,8 +18,9 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       alert('No phone number available');
       return;
     }
-    // Open Dialpad desktop app to make a call
-    window.open(`dialpad://call?number=${phoneNumber.replace(/\D/g, '')}`, '_blank');
+    const cleanNumber = phoneNumber.replace(/\D/g, '');
+    const formattedNumber = cleanNumber.startsWith('1') ? `+${cleanNumber}` : `+1${cleanNumber}`;
+    window.location.href = `dialpad://call/${formattedNumber}`;
   };
 
   const handleSMS = () => {
@@ -27,8 +28,9 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       alert('No phone number available');
       return;
     }
-    // Open Dialpad desktop app with SMS to this number
-    window.open(`dialpad://sms?number=${phoneNumber.replace(/\D/g, '')}`, '_blank');
+    const cleanNumber = phoneNumber.replace(/\D/g, '');
+    const formattedNumber = cleanNumber.startsWith('1') ? `+${cleanNumber}` : `+1${cleanNumber}`;
+    window.location.href = `dialpad://sms/${formattedNumber}`;
   };
 
   const handleLogCall = async () => {
