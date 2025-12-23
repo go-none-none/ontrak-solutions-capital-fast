@@ -6,6 +6,7 @@ import { Phone, Mail, Building2, Calendar, ArrowRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import DialpadWidget from './DialpadWidget';
+import SendEmailModal from './SendEmailModal';
 
 export default function LeadCard({ lead, session }) {
   const stages = [
@@ -46,11 +47,14 @@ export default function LeadCard({ lead, session }) {
             <span className="text-sm">{lead.Company}</span>
           </div>
         </div>
-        <Link to={`${createPageUrl('LeadDetail')}?id=${lead.Id}`}>
-          <Button variant="outline" size="sm">
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          {lead.Email && <SendEmailModal recipientEmail={lead.Email} recipientName={lead.Name} />}
+          <Link to={`${createPageUrl('LeadDetail')}?id=${lead.Id}`}>
+            <Button variant="outline" size="sm">
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Stage Progress Bar */}
