@@ -13,17 +13,15 @@ Deno.serve(async (req) => {
     }
     
     if (action === 'getLoginUrl') {
-      const url = new URL(req.url);
-      const redirectUri = `${url.origin}/rep-portal`;
-      
+      const redirectUri = 'https://ontrakfunding.base44.dev/rep-portal';
+
       return Response.json({
         loginUrl: `https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`
       });
     }
-    
+
     if (action === 'exchangeCode') {
-      const url = new URL(req.url);
-      const redirectUri = `${url.origin}/rep-portal`;
+      const redirectUri = 'https://ontrakfunding.base44.dev/rep-portal';
       
       // Exchange code for token
       const tokenResponse = await fetch('https://login.salesforce.com/services/oauth2/token', {
