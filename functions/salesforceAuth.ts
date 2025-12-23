@@ -6,29 +6,17 @@ Deno.serve(async (req) => {
     const { action, token } = await req.json();
     
     if (action === 'getLoginUrl') {
-      const appToken = await base44.asServiceRole.connectors.getAccessToken('salesforce');
-      
-      // Get instance URL from app's Salesforce connection
-      const userInfoResponse = await fetch('https://login.salesforce.com/services/oauth2/userinfo', {
-        headers: { 'Authorization': `Bearer ${appToken}` }
-      });
-      const userInfo = await userInfoResponse.json();
-      const instanceUrl = userInfo.sub.split('/id/')[0];
-      
-      // Get OAuth config
-      const tokenResponse = await fetch(`${instanceUrl}/services/oauth2/token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `grant_type=refresh_token&refresh_token=dummy&client_id=get_config`
-      });
+      const clientId = Deno.env.get("SALESFORCE_CLIENT_ID");
+      if (!clientId) {
+        return Response.json({ error: 'SALESFORCE_CLIENT_ID not configured' }, { status: 500 });
+      }
       
       const url = new URL(req.url);
       const redirectUri = `${url.origin}/rep-portal`;
       
-      // Return Salesforce OAuth URL - this will prompt user to login
+      // Return Salesforce OAuth URL - this will prompt user to login with their credentials
       return Response.json({
-        loginUrl: `${instanceUrl}/services/oauth2/authorize?response_type=token&client_id=3MVG9pRzvMkjMb6lZlt3YjDQwe.hH5JbE6YqwqOy9OCKgj_Uh_8NsW7BUfTpmCvi_VaJv8A_P4xiFQd4PBhFh&redirect_uri=${encodeURIComponent(redirectUri)}&scope=api%20id%20profile%20email`,
-        instanceUrl
+        loginUrl: `https://login.salesforce.com/services/oauth2/authorize?response_type=token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=full%20refresh_token%20api%20id%20profile%20email`
       });
     }
     
