@@ -17,7 +17,7 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       return;
     }
     // Open Dialpad desktop app to make a call
-    window.open(`dialpad://call/${phoneNumber.replace(/\D/g, '')}`, '_blank');
+    window.location.href = `callto:${phoneNumber.replace(/\D/g, '')}`;
   };
 
   const handleSMS = () => {
@@ -26,7 +26,7 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       return;
     }
     // Open Dialpad desktop app with SMS to this number
-    window.open(`dialpad://sms/${phoneNumber.replace(/\D/g, '')}`, '_blank');
+    window.location.href = `sms:${phoneNumber.replace(/\D/g, '')}`;
   };
 
   const handleLogCall = () => {
