@@ -9,8 +9,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
     }
 
-    // Query all opportunities
-    const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, CreatedDate, LastModifiedDate FROM Opportunity WHERE OwnerId = '${userId}' ORDER BY LastModifiedDate DESC`;
+    // Query all opportunities including closed ones
+    const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, CreatedDate, LastModifiedDate FROM Opportunity WHERE OwnerId = '${userId}' AND (IsClosed = false OR StageName LIKE 'Closed - Declined%') ORDER BY LastModifiedDate DESC`;
     
     let response = await fetch(
       `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
