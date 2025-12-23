@@ -39,6 +39,7 @@ Deno.serve(async (req) => {
       
       if (!tokenResponse.ok) {
         const error = await tokenResponse.text();
+        console.error('Salesforce token exchange error:', error);
         return Response.json({ error: `Token exchange failed: ${error}` }, { status: 401 });
       }
       
