@@ -206,8 +206,11 @@ export default function RepPortal() {
           ))}
         </div>
 
+        {/* Pipeline */}
+        <PipelineView opportunities={opportunities} />
+
         {/* Search & Tabs */}
-        <div className="bg-white rounded-2xl shadow-sm p-6">
+        <div className="bg-white rounded-2xl shadow-sm p-6 mt-6">
           <div className="flex items-center gap-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
