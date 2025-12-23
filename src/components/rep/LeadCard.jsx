@@ -94,6 +94,15 @@ export default function LeadCard({ lead, session }) {
         )}
       </div>
 
+      {lead.Funding_Amount_Requested__c && (
+        <div className="mb-3 text-sm">
+          <span className="text-slate-500">Funding Requested: </span>
+          <span className="font-semibold text-[#08708E]">
+            ${parseFloat(lead.Funding_Amount_Requested__c).toLocaleString()}
+          </span>
+        </div>
+      )}
+
       <div className="flex items-center justify-between text-xs text-slate-500">
         <div className="flex items-center gap-1">
           <Calendar className="w-3 h-3" />

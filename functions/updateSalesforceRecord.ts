@@ -3,7 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { recordId, recordType, updates, token, instanceUrl } = await req.json();
+    const { recordId, recordType, objectType, updates, data, token, instanceUrl } = await req.json();
 
     if (!token || !instanceUrl || !recordId || !recordType || !updates) {
       return Response.json({ error: 'Missing parameters' }, { status: 400 });

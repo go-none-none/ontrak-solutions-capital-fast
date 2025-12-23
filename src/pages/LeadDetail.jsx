@@ -267,8 +267,95 @@ export default function LeadDetail() {
                     <p className="font-medium text-slate-900">{lead.Industry}</p>
                   </div>
                 )}
+                {lead.Monthly_Revenue__c && (
+                  <div>
+                    <p className="text-slate-500">Monthly Revenue</p>
+                    <p className="font-medium text-slate-900">${parseFloat(lead.Monthly_Revenue__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {lead.Funding_Amount_Requested__c && (
+                  <div>
+                    <p className="text-slate-500">Funding Requested</p>
+                    <p className="font-medium text-slate-900">${parseFloat(lead.Funding_Amount_Requested__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {lead.Time_in_Business__c && (
+                  <div>
+                    <p className="text-slate-500">Time in Business</p>
+                    <p className="font-medium text-slate-900">{lead.Time_in_Business__c}</p>
+                  </div>
+                )}
+                {lead.Use_of_Funds__c && (
+                  <div>
+                    <p className="text-slate-500">Use of Funds</p>
+                    <p className="font-medium text-slate-900">{lead.Use_of_Funds__c}</p>
+                  </div>
+                )}
               </div>
             </div>
+
+            {/* Missing Documents */}
+            {lead.Status === 'Application Missing Info' && (
+              <div className="bg-white rounded-2xl p-6 shadow-sm">
+                <h3 className="font-semibold text-slate-900 mb-4">Missing Documents</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={lead.Bank_Statements_Received__c || false}
+                      onChange={async (e) => {
+                        await base44.functions.invoke('updateSalesforceRecord', {
+                          objectType: 'Lead',
+                          recordId: lead.Id,
+                          data: { Bank_Statements_Received__c: e.target.checked },
+                          token: session.token,
+                          instanceUrl: session.instanceUrl
+                        });
+                        loadLead(session);
+                      }}
+                      className="w-4 h-4 rounded border-slate-300"
+                    />
+                    <label className="text-sm text-slate-700">Bank Statements</label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={lead.Tax_Returns_Received__c || false}
+                      onChange={async (e) => {
+                        await base44.functions.invoke('updateSalesforceRecord', {
+                          objectType: 'Lead',
+                          recordId: lead.Id,
+                          data: { Tax_Returns_Received__c: e.target.checked },
+                          token: session.token,
+                          instanceUrl: session.instanceUrl
+                        });
+                        loadLead(session);
+                      }}
+                      className="w-4 h-4 rounded border-slate-300"
+                    />
+                    <label className="text-sm text-slate-700">Tax Returns</label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={lead.Voided_Check_Received__c || false}
+                      onChange={async (e) => {
+                        await base44.functions.invoke('updateSalesforceRecord', {
+                          objectType: 'Lead',
+                          recordId: lead.Id,
+                          data: { Voided_Check_Received__c: e.target.checked },
+                          token: session.token,
+                          instanceUrl: session.instanceUrl
+                        });
+                        loadLead(session);
+                      }}
+                      className="w-4 h-4 rounded border-slate-300"
+                    />
+                    <label className="text-sm text-slate-700">Voided Check</label>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
