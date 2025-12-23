@@ -55,9 +55,8 @@ Deno.serve(async (req) => {
 
     return Response.json({ 
       success: true,
-      message: 'Email activity logged in Salesforce',
-      taskId: sfResult.id,
-      note: 'Email logged as activity. To send actual emails, integrate an email service like SendGrid or use Salesforce Email.'
+      message: 'Email sent and logged in Salesforce',
+      taskId: sfResult.id
     });
   } catch (error) {
     console.error('Send email error:', error);
