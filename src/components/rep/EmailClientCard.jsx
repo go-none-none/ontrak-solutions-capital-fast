@@ -34,14 +34,19 @@ export default function EmailClientCard({ recipientEmail, recipientName, recordI
         instanceUrl: session.instanceUrl
       });
 
-      console.log('Email send response:', response.data);
+      console.log('Email send response:', response);
 
-      toast.success('Email sent successfully!');
-      setFormData({ subject: '', message: '' });
-      setOpen(false);
+      if (response.data?.success) {
+        toast.success('Email sent successfully!');
+        setFormData({ subject: '', message: '' });
+        setOpen(false);
+      } else {
+        console.error('Email send failed:', response.data);
+        toast.error(response.data?.error || 'Failed to send email');
+      }
     } catch (error) {
       console.error('Send email error:', error);
-      toast.error('Failed to send email');
+      toast.error(error.response?.data?.error || error.message || 'Failed to send email');
     } finally {
       setSending(false);
     }
