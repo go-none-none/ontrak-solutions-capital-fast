@@ -12,6 +12,41 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Send email via Salesforce Email API
+    console.log('Sending email via Salesforce...');
+    const emailPayload = {
+      inputs: [{
+        emailAddresses: recipientEmail,
+        emailSubject: subject,
+        emailBody: message.replace(/\n/g, '<br>'),
+        senderType: 'CurrentUser'
+      }]
+    };
+
+    const emailResponse = await fetch(
+      `${instanceUrl}/services/data/v58.0/actions/standard/emailSimple`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(emailPayload)
+      }
+    );
+
+    const emailResult = await emailResponse.json();
+    
+    if (!emailResponse.ok) {
+      console.error('Salesforce email error:', emailResult);
+      return Response.json({ 
+        error: 'Failed to send email via Salesforce',
+        details: emailResult
+      }, { status: 500 });
+    }
+
+    console.log('Email sent via Salesforce');
+
     // Log the email as a Task in Salesforce for activity tracking
     console.log('Logging email activity in Salesforce...');
     const taskBody = {
