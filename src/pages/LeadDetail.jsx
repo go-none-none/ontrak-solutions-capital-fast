@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Phone, Mail, Building2, Edit, Save, X, Loader2 } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, Building2, Edit, Loader2, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
@@ -17,6 +17,7 @@ export default function LeadDetail() {
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const stages = [
     { label: 'New', status: 'Open - Not Contacted' },
@@ -25,7 +26,6 @@ export default function LeadDetail() {
     { label: 'Missing Info', status: 'Application Missing Info' },
     { label: 'Converted', status: 'Converted' }
   ];
-  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
@@ -77,6 +77,33 @@ export default function LeadDetail() {
     }
   };
 
+  const handleStatusChange = async (newStatus) => {
+    if (lead.Status === newStatus) return;
+    
+    setUpdatingStatus(true);
+    try {
+      await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Lead',
+        recordId: lead.Id,
+        data: { Status: newStatus },
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      await loadLead(session);
+    } catch (error) {
+      console.error('Status update error:', error);
+      alert('Failed to update status');
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
+  const getCurrentStageIndex = () => {
+    const index = stages.findIndex(s => s.status === lead?.Status);
+    return index >= 0 ? index : 0;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -93,19 +120,10 @@ export default function LeadDetail() {
     );
   }
 
-  const statusColors = {
-    'Open - Not Contacted': 'bg-blue-100 text-blue-800',
-    'Working - Contacted': 'bg-yellow-100 text-yellow-800',
-    'Working - Application Out': 'bg-purple-100 text-purple-800',
-    'Application Missing Info': 'bg-orange-100 text-orange-800',
-    'Converted': 'bg-green-100 text-green-800',
-    'Closed - Not Converted': 'bg-red-100 text-red-800'
-  };
-
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-40">
+      <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -119,15 +137,10 @@ export default function LeadDetail() {
                 <p className="text-sm text-slate-600">{lead.Company}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Badge className={statusColors[lead.Status] || 'bg-slate-100 text-slate-800'}>
-                {lead.Status}
-              </Badge>
-              <Button onClick={() => setEditMode(true)}>
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
-            </div>
+            <Button onClick={() => setEditMode(true)}>
+              <Edit className="w-4 h-4 mr-2" />
+              Edit
+            </Button>
           </div>
         </div>
       </div>
@@ -137,6 +150,43 @@ export default function LeadDetail() {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main Column */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Stage Progress */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h3 className="text-sm font-semibold text-slate-700 mb-4">Lead Stage</h3>
+              <div className="flex justify-between items-center mb-3">
+                {stages.map((stage, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleStatusChange(stage.status)}
+                    disabled={updatingStatus}
+                    className={`flex flex-col items-center flex-1 transition-all ${
+                      updatingStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                      idx <= getCurrentStageIndex() 
+                        ? 'bg-[#08708E] text-white shadow-lg' 
+                        : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
+                    }`}>
+                      {idx < getCurrentStageIndex() ? (
+                        <CheckCircle2 className="w-5 h-5" />
+                      ) : (
+                        idx + 1
+                      )}
+                    </div>
+                    <span className="text-xs text-slate-600 mt-2 text-center">{stage.label}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-1">
+                {stages.map((_, idx) => (
+                  <div key={idx} className={`h-2 flex-1 rounded transition-all ${
+                    idx <= getCurrentStageIndex() ? 'bg-[#08708E]' : 'bg-slate-200'
+                  }`} />
+                ))}
+              </div>
+            </div>
+
             {/* Contact Info */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <h2 className="text-lg font-semibold text-slate-900 mb-4">Contact Information</h2>
