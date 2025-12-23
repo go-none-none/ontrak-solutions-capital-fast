@@ -13,16 +13,18 @@ Deno.serve(async (req) => {
     }
     
     if (action === 'getLoginUrl') {
+      const { codeChallenge } = await req.json();
       const redirectUri = 'https://ontrakfunding.base44.dev/rep-portal';
 
       return Response.json({
-        loginUrl: `https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`
+        loginUrl: `https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&code_challenge=${codeChallenge}&code_challenge_method=S256`
       });
     }
 
     if (action === 'exchangeCode') {
+      const { codeVerifier } = await req.json();
       const redirectUri = 'https://ontrakfunding.base44.dev/rep-portal';
-      
+
       // Exchange code for token
       const tokenResponse = await fetch('https://login.salesforce.com/services/oauth2/token', {
         method: 'POST',
@@ -32,7 +34,8 @@ Deno.serve(async (req) => {
           code: code,
           client_id: clientId,
           client_secret: clientSecret,
-          redirect_uri: redirectUri
+          redirect_uri: redirectUri,
+          code_verifier: codeVerifier
         })
       });
       
