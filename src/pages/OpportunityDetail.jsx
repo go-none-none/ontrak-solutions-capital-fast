@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ArrowLeft, Edit, Loader2, Check, X, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Edit, Loader2, Check, X, ChevronDown, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
@@ -21,6 +21,7 @@ export default function OpportunityDetail() {
   const [editing, setEditing] = useState({});
   const [editValues, setEditValues] = useState({});
   const [refreshKey, setRefreshKey] = useState(0);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
@@ -63,6 +64,28 @@ export default function OpportunityDetail() {
 
   const handleFieldEdit = (field, value) => {
     setEditValues({ ...editValues, [field]: value });
+  };
+
+  const handleStatusChange = async (newStage) => {
+    if (opportunity.StageName === newStage) return;
+    
+    setUpdatingStatus(true);
+    try {
+      await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Opportunity',
+        recordId: opportunity.Id,
+        data: { StageName: newStage },
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      await loadOpportunity(session);
+    } catch (error) {
+      console.error('Status update error:', error);
+      alert('Failed to update status');
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
   const handleFieldSave = async (field) => {
@@ -195,8 +218,8 @@ export default function OpportunityDetail() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         {!opportunity.StageName?.startsWith('Closed - Declined') ? (
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-            <h3 className="font-semibold text-slate-900 mb-4">Progress</h3>
-            <div className="flex justify-between items-center mb-2">
+            <h3 className="text-sm font-semibold text-slate-700 mb-4">Opportunity Stage</h3>
+            <div className="flex justify-between items-center mb-3">
               {[
                 { label: 'App In', name: 'Application In' },
                 { label: 'Underwriting', name: 'Underwriting' },
@@ -209,23 +232,36 @@ export default function OpportunityDetail() {
                 const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
                 const isActive = idx <= currentStageIndex;
                 return (
-                  <div key={idx} className="flex flex-col items-center flex-1">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold ${
-                      isActive ? 'bg-[#08708E] text-white' : 'bg-slate-200 text-slate-500'
+                  <button
+                    key={idx}
+                    onClick={() => handleStatusChange(stage.name)}
+                    disabled={updatingStatus}
+                    className={`flex flex-col items-center flex-1 transition-all ${
+                      updatingStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                      isActive 
+                        ? 'bg-[#08708E] text-white shadow-lg' 
+                        : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
                     }`}>
-                      {idx + 1}
+                      {idx < currentStageIndex ? (
+                        <CheckCircle2 className="w-5 h-5" />
+                      ) : (
+                        idx + 1
+                      )}
                     </div>
                     <span className="text-xs text-slate-600 mt-2 text-center">{stage.label}</span>
-                  </div>
+                  </button>
                 );
               })}
             </div>
-            <div className="flex gap-1 mt-4">
+            <div className="flex gap-1">
               {[0,1,2,3,4,5].map((idx) => {
                 const stages = ['Application In', 'Underwriting', 'Approved', 'Contracts Out', 'Contracts In', 'Closed - Funded'];
                 const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
                 return (
-                  <div key={idx} className={`h-2 flex-1 rounded ${
+                  <div key={idx} className={`h-2 flex-1 rounded transition-all ${
                     idx <= currentStageIndex ? 'bg-[#08708E]' : 'bg-slate-200'
                   }`} />
                 );
@@ -494,7 +530,7 @@ export default function OpportunityDetail() {
           <div className="space-y-6">
             {/* Dialpad Widget */}
             <DialpadWidget
-              phoneNumber={opportunity.Phone}
+              phoneNumber={opportunity.Phone || contactRoles[0]?.Contact?.Phone || contactRoles[0]?.Contact?.MobilePhone}
               recordId={opportunity.Id}
               recordType="Opportunity"
               session={session}
