@@ -9,26 +9,30 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
     }
 
-    // Query opportunities owned by this rep
-    const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, CreatedDate, LastModifiedDate FROM Opportunity WHERE OwnerId = '${userId}' AND IsClosed = false ORDER BY LastModifiedDate DESC LIMIT 200`;
+    // Query opportunities by stage - 100 latest updated for each
+    const stages = ['Application In', 'Underwriting', 'Approved', 'Contracts Out', 'Contracts In', 'Closed - Funded'];
+    const allOpportunities = [];
     
-    const response = await fetch(
-      `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+    for (const stage of stages) {
+      const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, CreatedDate, LastModifiedDate FROM Opportunity WHERE OwnerId = '${userId}' AND StageName = '${stage}' ORDER BY LastModifiedDate DESC LIMIT 100`;
+      
+      const response = await fetch(
+        `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
-      }
-    );
+      );
 
-    if (!response.ok) {
-      const error = await response.text();
-      return Response.json({ error }, { status: response.status });
+      if (response.ok) {
+        const data = await response.json();
+        allOpportunities.push(...data.records);
+      }
     }
 
-    const data = await response.json();
-    return Response.json({ opportunities: data.records });
+    return Response.json({ opportunities: allOpportunities });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
