@@ -10,6 +10,8 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
   const [disposition, setDisposition] = useState('');
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
+  const [dispositions, setDispositions] = useState([]);
+  const [loadingDispositions, setLoadingDispositions] = useState(false);
 
   const handleCall = () => {
     if (!phoneNumber) {
@@ -17,7 +19,7 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       return;
     }
     // Open Dialpad desktop app to make a call
-    window.location.href = `callto:${phoneNumber.replace(/\D/g, '')}`;
+    window.open(`dialpad://call?number=${phoneNumber.replace(/\D/g, '')}`, '_blank');
   };
 
   const handleSMS = () => {
@@ -26,11 +28,29 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       return;
     }
     // Open Dialpad desktop app with SMS to this number
-    window.location.href = `sms:${phoneNumber.replace(/\D/g, '')}`;
+    window.open(`dialpad://sms?number=${phoneNumber.replace(/\D/g, '')}`, '_blank');
   };
 
-  const handleLogCall = () => {
+  const handleLogCall = async () => {
     setShowDisposition(true);
+    setLoadingDispositions(true);
+    try {
+      const response = await base44.functions.invoke('dialpadGetCallDispositions', {
+        phoneNumber
+      });
+      if (response.data.dispositions && response.data.dispositions.length > 0) {
+        setDispositions(response.data.dispositions);
+      } else {
+        // Fallback to common dispositions if none found
+        setDispositions(['Connected', 'Voicemail', 'No Answer', 'Busy', 'Wrong Number', 'Callback Requested', 'Not Interested']);
+      }
+    } catch (error) {
+      console.error('Failed to load dispositions:', error);
+      // Fallback to common dispositions
+      setDispositions(['Connected', 'Voicemail', 'No Answer', 'Busy', 'Wrong Number', 'Callback Requested', 'Not Interested']);
+    } finally {
+      setLoadingDispositions(false);
+    }
   };
 
   const handleSaveDisposition = async () => {
@@ -74,19 +94,14 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
         </div>
         
         <div className="space-y-3">
-          <Select value={disposition} onValueChange={setDisposition}>
+          <Select value={disposition} onValueChange={setDisposition} disabled={loadingDispositions}>
             <SelectTrigger>
-              <SelectValue placeholder="Select disposition" />
+              <SelectValue placeholder={loadingDispositions ? "Loading..." : "Select disposition"} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Connected">Connected</SelectItem>
-              <SelectItem value="Voicemail">Left Voicemail</SelectItem>
-              <SelectItem value="No Answer">No Answer</SelectItem>
-              <SelectItem value="Busy">Busy</SelectItem>
-              <SelectItem value="Wrong Number">Wrong Number</SelectItem>
-              <SelectItem value="Callback Requested">Callback Requested</SelectItem>
-              <SelectItem value="Not Interested">Not Interested</SelectItem>
-              <SelectItem value="Appointment Set">Appointment Set</SelectItem>
+              {dispositions.map(disp => (
+                <SelectItem key={disp} value={disp}>{disp}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
 

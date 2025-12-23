@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadWidget from '../components/rep/DialpadWidget.jsx';
-import SMSWidget from '../components/rep/SMSWidget';
+
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 
 export default function LeadDetail() {
@@ -465,14 +465,6 @@ export default function LeadDetail() {
               recordType="Lead"
               session={session}
               onCallCompleted={() => setRefreshKey(prev => prev + 1)}
-            />
-
-            <SMSWidget
-              phoneNumber={lead.MobilePhone || lead.Phone}
-              recordId={lead.Id}
-              recordType="Lead"
-              session={session}
-              onMessageSent={() => setRefreshKey(prev => prev + 1)}
             />
 
             <div className="bg-white rounded-xl p-6 shadow-sm">
