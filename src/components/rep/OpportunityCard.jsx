@@ -1,11 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DollarSign, Calendar, Building2, TrendingUp, ArrowRight, FileText } from 'lucide-react';
+import { DollarSign, Calendar, Building2, TrendingUp, ArrowRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
 
 export default function OpportunityCard({ opportunity, session, onUpdate }) {
   const stages = [
@@ -17,30 +15,9 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
     { label: 'Funded', name: 'Closed - Funded' }
   ];
 
-  const missingDocs = [
-    { id: 'bank_statements', label: 'Bank Statements', field: 'Bank_Statements_Received__c' },
-    { id: 'tax_returns', label: 'Tax Returns', field: 'Tax_Returns_Received__c' },
-    { id: 'voided_check', label: 'Voided Check', field: 'Voided_Check_Received__c' }
-  ];
-
   const getCurrentStageIndex = () => {
     const index = stages.findIndex(s => s.name === opportunity.StageName);
     return index >= 0 ? index : 0;
-  };
-
-  const handleDocToggle = async (field, currentValue) => {
-    try {
-      await base44.functions.invoke('updateSalesforceRecord', {
-        objectType: 'Opportunity',
-        recordId: opportunity.Id,
-        data: { [field]: !currentValue },
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      console.error('Update error:', error);
-    }
   };
 
   const formatDate = (dateString) => {
@@ -115,33 +92,6 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
       {isDeclined && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-sm text-red-800 font-medium text-center">Declined</p>
-        </div>
-      )}
-
-      {/* Missing Documents Checklist */}
-      {opportunity.StageName === 'Application In' && (
-        <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <FileText className="w-4 h-4 text-amber-700" />
-            <span className="text-sm font-medium text-amber-900">Missing Documents</span>
-          </div>
-          <div className="space-y-2">
-            {missingDocs.map(doc => (
-              <div key={doc.id} className="flex items-center gap-2">
-                <Checkbox
-                  checked={opportunity[doc.field] || false}
-                  onCheckedChange={() => handleDocToggle(doc.field, opportunity[doc.field])}
-                  id={`${opportunity.Id}-${doc.id}`}
-                />
-                <label
-                  htmlFor={`${opportunity.Id}-${doc.id}`}
-                  className="text-sm text-slate-700 cursor-pointer"
-                >
-                  {doc.label}
-                </label>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 
