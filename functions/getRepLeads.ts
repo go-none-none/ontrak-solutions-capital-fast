@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
     const allLeads = [];
     
     for (const status of statuses) {
-      const query = `SELECT Id, Name, Company, Phone, Email, Status, LeadSource, CreatedDate, LastModifiedDate, Owner.Name, Owner.Email, Owner.Phone, Industry, AnnualRevenue, NumberOfEmployees, Website, Description, Street, City, State, PostalCode, Country FROM Lead WHERE OwnerId = '${userId}' AND Status = '${status}' AND IsConverted = false ORDER BY LastModifiedDate DESC LIMIT 100`;
+      const query = `SELECT Id, Name, Company, Phone, MobilePhone, Email, Status, LeadSource, CreatedDate, LastModifiedDate, Owner.Name, Owner.Email, Owner.Phone, Owner.MobilePhone, Owner.Title, Owner.Department, Owner.Division, Owner.CompanyName, Owner.UserRole.Name, Owner.Manager.Name, Owner.Manager.Email, Industry, AnnualRevenue, NumberOfEmployees, Website, Description, Street, City, State, PostalCode, Country, Title, Rating, OwnerId FROM Lead WHERE OwnerId = '${userId}' AND Status = '${status}' AND IsConverted = false ORDER BY LastModifiedDate DESC LIMIT 100`;
       
       const response = await fetch(
         `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
