@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     // Query all opportunities
     const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, CreatedDate, LastModifiedDate FROM Opportunity WHERE OwnerId = '${userId}' ORDER BY LastModifiedDate DESC`;
     
-    const response = await fetch(
+    let response = await fetch(
       `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
       {
         headers: {
@@ -28,8 +28,26 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Failed to fetch opportunities', details: error }, { status: 500 });
     }
 
-    const data = await response.json();
-    const allOpportunities = data.records || [];
+    let data = await response.json();
+    let allOpportunities = data.records || [];
+    
+    // Handle pagination to get all records
+    while (data.nextRecordsUrl) {
+      response = await fetch(
+        `${instanceUrl}${data.nextRecordsUrl}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      if (!response.ok) break;
+      
+      data = await response.json();
+      allOpportunities = allOpportunities.concat(data.records || []);
+    }
     
     console.log('Fetched opportunities count:', allOpportunities.length);
 

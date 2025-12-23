@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     // Query all leads with priority ordering - using standard fields only
     const query = `SELECT Id, Name, Company, Phone, MobilePhone, Email, Status, LeadSource, CreatedDate, LastModifiedDate, Industry, AnnualRevenue, NumberOfEmployees, Website, Description, Street, City, State, PostalCode, Country, Title, Rating, OwnerId FROM Lead WHERE OwnerId = '${userId}' AND IsConverted = false ORDER BY LastModifiedDate DESC`;
     
-    const response = await fetch(
+    let response = await fetch(
       `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
       {
         headers: {
@@ -28,8 +28,26 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Failed to fetch leads', details: error }, { status: 500 });
     }
 
-    const data = await response.json();
-    const allLeads = data.records || [];
+    let data = await response.json();
+    let allLeads = data.records || [];
+    
+    // Handle pagination to get all records
+    while (data.nextRecordsUrl) {
+      response = await fetch(
+        `${instanceUrl}${data.nextRecordsUrl}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      if (!response.ok) break;
+      
+      data = await response.json();
+      allLeads = allLeads.concat(data.records || []);
+    }
     
     console.log('Fetched leads count:', allLeads.length);
     
