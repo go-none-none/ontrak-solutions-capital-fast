@@ -15,38 +15,53 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Create email message using Salesforce API
-    const emailBody = {
-      messages: [{
-        targetObjectId: recipientEmail,
-        subject: subject,
-        plainTextBody: message,
-        senderDisplayName: user.full_name || 'OnTrak Capital',
-        saveAsActivity: true,
-        whatId: recordId // Link email to the Lead or Opportunity record
-      }]
+    // First, send the actual email using Base44's email integration
+    await base44.integrations.Core.SendEmail({
+      to: recipientEmail,
+      subject: subject,
+      body: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+          <p>Hi ${recipientName || 'there'},</p>
+          <p>${message.replace(/\n/g, '<br>')}</p>
+          <br>
+          <p>Best regards,<br>${user.full_name || 'OnTrak Capital'}</p>
+          <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+          <p style="font-size: 12px; color: #666;">OnTrak Capital</p>
+        </div>
+      `,
+      from_name: user.full_name || 'OnTrak Capital'
+    });
+
+    // Then, log it as a Task in Salesforce for activity tracking
+    const taskBody = {
+      Subject: subject,
+      Description: message,
+      Status: 'Completed',
+      Priority: 'Normal',
+      ActivityDate: new Date().toISOString().split('T')[0],
+      WhoId: recordId, // Link to Lead or Contact
+      Type: 'Email',
+      TaskSubtype: 'Email'
     };
 
-    const response = await fetch(`${instanceUrl}/services/data/v58.0/actions/standard/emailSimple`, {
+    const sfResponse = await fetch(`${instanceUrl}/services/data/v58.0/sobjects/Task`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(emailBody)
+      body: JSON.stringify(taskBody)
     });
 
-    if (!response.ok) {
-      const error = await response.text();
-      console.error('Salesforce email error:', error);
-      return Response.json({ error: 'Failed to send email via Salesforce' }, { status: 500 });
+    if (!sfResponse.ok) {
+      const error = await sfResponse.text();
+      console.error('Salesforce task creation error:', error);
+      // Don't fail the whole operation if logging fails
     }
 
-    const result = await response.json();
-    
     return Response.json({ 
       success: true,
-      result: result
+      message: 'Email sent and logged successfully'
     });
   } catch (error) {
     console.error('Send email error:', error);
