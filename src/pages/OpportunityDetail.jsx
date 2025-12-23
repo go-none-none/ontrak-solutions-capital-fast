@@ -14,6 +14,7 @@ import DialpadWidget from '../components/rep/DialpadWidget.jsx';
 export default function OpportunityDetail() {
   const [session, setSession] = useState(null);
   const [opportunity, setOpportunity] = useState(null);
+  const [contactRoles, setContactRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState({});
   const [editValues, setEditValues] = useState({});
@@ -35,14 +36,22 @@ export default function OpportunityDetail() {
       const urlParams = new URLSearchParams(window.location.search);
       const oppId = urlParams.get('id');
 
-      const response = await base44.functions.invoke('getSalesforceRecord', {
-        recordId: oppId,
-        recordType: 'Opportunity',
-        token: sessionData.token,
-        instanceUrl: sessionData.instanceUrl
-      });
+      const [oppResponse, contactRolesResponse] = await Promise.all([
+        base44.functions.invoke('getSalesforceRecord', {
+          recordId: oppId,
+          recordType: 'Opportunity',
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforceContactRoles', {
+          recordId: oppId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        })
+      ]);
 
-      setOpportunity(response.data.record);
+      setOpportunity(oppResponse.data.record);
+      setContactRoles(contactRolesResponse.data.contactRoles || []);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
@@ -365,6 +374,36 @@ export default function OpportunityDetail() {
               session={session}
               onCallCompleted={() => setRefreshKey(prev => prev + 1)}
             />
+
+            {/* Contact Roles */}
+            {contactRoles.length > 0 && (
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h3 className="font-semibold text-slate-900 mb-4">Contact Information</h3>
+                <div className="space-y-4">
+                  {contactRoles.map(role => (
+                    <div key={role.Id} className="border-b border-slate-100 pb-3 last:border-0">
+                      <p className="font-medium text-slate-900">{role.Contact?.Name}</p>
+                      {role.Role && <p className="text-xs text-slate-500 mb-2">{role.Role}</p>}
+                      {role.Contact?.Email && (
+                        <a href={`mailto:${role.Contact.Email}`} className="text-sm text-[#08708E] hover:underline block">
+                          {role.Contact.Email}
+                        </a>
+                      )}
+                      {role.Contact?.Phone && (
+                        <a href={`tel:${role.Contact.Phone}`} className="text-sm text-[#08708E] hover:underline block">
+                          {role.Contact.Phone}
+                        </a>
+                      )}
+                      {role.Contact?.MobilePhone && (
+                        <a href={`tel:${role.Contact.MobilePhone}`} className="text-sm text-slate-600 hover:underline block">
+                          Mobile: {role.Contact.MobilePhone}
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Quick Stats */}
             <div className="bg-white rounded-xl p-6 shadow-sm">

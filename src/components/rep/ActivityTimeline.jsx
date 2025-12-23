@@ -11,6 +11,7 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddTask, setShowAddTask] = useState(false);
+  const [showTimeline, setShowTimeline] = useState(false);
   const [newTask, setNewTask] = useState({ subject: '', description: '', status: 'Not Started', priority: 'Normal' });
   const [submitting, setSubmitting] = useState(false);
 
@@ -100,7 +101,13 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-slate-900">Activity Timeline</h2>
+        <button 
+          onClick={() => setShowTimeline(!showTimeline)}
+          className="flex items-center gap-2 hover:text-[#08708E] transition-colors"
+        >
+          <h2 className="text-lg font-semibold text-slate-900">Activity Timeline</h2>
+          <span className="text-sm text-slate-500">({activities.length})</span>
+        </button>
         <Button size="sm" onClick={() => setShowAddTask(!showAddTask)}>
           <Plus className="w-4 h-4 mr-2" />
           Add Task
@@ -155,48 +162,50 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
         </motion.div>
       )}
 
-      {loading ? (
-        <div className="text-center py-8">
-          <Loader2 className="w-8 h-8 text-[#08708E] animate-spin mx-auto" />
-        </div>
-      ) : activities.length === 0 ? (
-        <div className="text-center py-8 text-slate-500">
-          <MessageSquare className="w-12 h-12 mx-auto mb-2 text-slate-300" />
-          <p>No activities yet</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {activities.map((activity, i) => {
-            const Icon = getActivityIcon(activity.type);
-            return (
-              <motion.div
-                key={activity.Id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="flex gap-3 pb-4 border-b border-slate-100 last:border-0"
-              >
-                <div className={`w-10 h-10 rounded-lg ${getActivityColor(activity.type)} flex items-center justify-center flex-shrink-0`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <h4 className="font-medium text-slate-900">{activity.Subject}</h4>
-                    <span className="text-xs text-slate-500 whitespace-nowrap">{formatDate(activity.date)}</span>
+      {showTimeline && (
+        loading ? (
+          <div className="text-center py-8">
+            <Loader2 className="w-8 h-8 text-[#08708E] animate-spin mx-auto" />
+          </div>
+        ) : activities.length === 0 ? (
+          <div className="text-center py-8 text-slate-500">
+            <MessageSquare className="w-12 h-12 mx-auto mb-2 text-slate-300" />
+            <p>No activities yet</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {activities.map((activity, i) => {
+              const Icon = getActivityIcon(activity.type);
+              return (
+                <motion.div
+                  key={activity.Id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="flex gap-3 pb-4 border-b border-slate-100 last:border-0"
+                >
+                  <div className={`w-10 h-10 rounded-lg ${getActivityColor(activity.type)} flex items-center justify-center flex-shrink-0`}>
+                    <Icon className="w-5 h-5" />
                   </div>
-                  {activity.Description && (
-                    <p className="text-sm text-slate-600 line-clamp-2">{activity.Description}</p>
-                  )}
-                  {activity.Status && (
-                    <span className="inline-block mt-2 text-xs px-2 py-1 rounded bg-slate-100 text-slate-700">
-                      {activity.Status}
-                    </span>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h4 className="font-medium text-slate-900">{activity.Subject}</h4>
+                      <span className="text-xs text-slate-500 whitespace-nowrap">{formatDate(activity.date)}</span>
+                    </div>
+                    {activity.Description && (
+                      <p className="text-sm text-slate-600 line-clamp-2">{activity.Description}</p>
+                    )}
+                    {activity.Status && (
+                      <span className="inline-block mt-2 text-xs px-2 py-1 rounded bg-slate-100 text-slate-700">
+                        {activity.Status}
+                      </span>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )
       )}
     </div>
   );

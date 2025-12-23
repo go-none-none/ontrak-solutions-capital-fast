@@ -28,6 +28,13 @@ export default function LeadDetail() {
     references: false
   });
 
+  const bankStatementFields = [
+    { label: 'Bank Statement - Month 1', field: 'Bank_Statement_Month_1__c' },
+    { label: 'Bank Statement - Month 2', field: 'Bank_Statement_Month_2__c' },
+    { label: 'Bank Statement - Month 3', field: 'Bank_Statement_Month_3__c' },
+    { label: 'Bank Statement - Month 4', field: 'Bank_Statement_Month_4__c' }
+  ];
+
   const stages = [
     { label: 'New', status: 'Open - Not Contacted' },
     { label: 'Contacted', status: 'Working - Contacted' },
@@ -242,6 +249,59 @@ export default function LeadDetail() {
                 ))}
               </div>
             </div>
+
+            {/* Bank Statements Checklist - Only show when Application Missing Info */}
+            {lead.Status === 'Application Missing Info' && (
+              <Collapsible defaultOpen={true}>
+                <div className="bg-white rounded-xl shadow-sm overflow-hidden border-2 border-amber-200">
+                  <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-amber-50">
+                    <h2 className="text-lg font-semibold text-amber-900">Bank Statements Check List</h2>
+                    <ChevronDown className="w-5 h-5 transition-transform" />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="p-4 pt-0 space-y-3">
+                      {bankStatementFields.map(({ label, field }) => (
+                        <div key={field} className="flex items-center justify-between p-3 border-b border-slate-200 last:border-0">
+                          <span className="text-sm font-medium text-slate-700">{label}</span>
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={lead[field] || false}
+                              onChange={async (e) => {
+                                try {
+                                  await base44.functions.invoke('updateSalesforceRecord', {
+                                    objectType: 'Lead',
+                                    recordId: lead.Id,
+                                    data: { [field]: e.target.checked },
+                                    token: session.token,
+                                    instanceUrl: session.instanceUrl
+                                  });
+                                  await loadLead(session);
+                                } catch (error) {
+                                  console.error('Update error:', error);
+                                }
+                              }}
+                              className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                            />
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                setEditValues({ ...editValues, [field]: lead[field] || false });
+                                setEditing({ ...editing, [field]: true });
+                              }}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Edit className="w-4 h-4 text-slate-400" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleContent>
+                </div>
+              </Collapsible>
+            )}
 
             {/* Contact Info - Always Open */}
             <Collapsible open={openSections.contact} onOpenChange={(val) => setOpenSections({...openSections, contact: val})}>
