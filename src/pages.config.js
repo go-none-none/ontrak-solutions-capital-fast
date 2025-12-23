@@ -1,57 +1,59 @@
-import Home from './pages/Home';
 import About from './pages/About';
-import Contact from './pages/Contact';
-import UseCases from './pages/UseCases';
-import Industries from './pages/Industries';
-import Reviews from './pages/Reviews';
-import TermsOfService from './pages/TermsOfService';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import FAQ from './pages/FAQ';
-import HowItWorks from './pages/HowItWorks';
-import application from './pages/application';
-import ThankYou from './pages/ThankYou';
-import IndustryRestaurants from './pages/IndustryRestaurants';
-import IndustryRetail from './pages/IndustryRetail';
-import IndustryHealthcare from './pages/IndustryHealthcare';
-import IndustryConstruction from './pages/IndustryConstruction';
-import IndustryTransportation from './pages/IndustryTransportation';
-import IndustryBeauty from './pages/IndustryBeauty';
-import IndustryFitness from './pages/IndustryFitness';
-import IndustryAuto from './pages/IndustryAuto';
-import IndustryProfessional from './pages/IndustryProfessional';
-import MissingDocs from './pages/MissingDocs';
-import Status from './pages/Status';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
+import Contact from './pages/Contact';
+import FAQ from './pages/FAQ';
+import Home from './pages/Home';
+import HowItWorks from './pages/HowItWorks';
+import Industries from './pages/Industries';
+import IndustryAuto from './pages/IndustryAuto';
+import IndustryBeauty from './pages/IndustryBeauty';
+import IndustryConstruction from './pages/IndustryConstruction';
+import IndustryFitness from './pages/IndustryFitness';
+import IndustryHealthcare from './pages/IndustryHealthcare';
+import IndustryProfessional from './pages/IndustryProfessional';
+import IndustryRestaurants from './pages/IndustryRestaurants';
+import IndustryRetail from './pages/IndustryRetail';
+import IndustryTransportation from './pages/IndustryTransportation';
+import MissingDocs from './pages/MissingDocs';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Reviews from './pages/Reviews';
+import Status from './pages/Status';
+import TermsOfService from './pages/TermsOfService';
+import ThankYou from './pages/ThankYou';
+import UseCases from './pages/UseCases';
+import application from './pages/application';
+import RepPortal from './pages/RepPortal';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
     "About": About,
-    "Contact": Contact,
-    "UseCases": UseCases,
-    "Industries": Industries,
-    "Reviews": Reviews,
-    "TermsOfService": TermsOfService,
-    "PrivacyPolicy": PrivacyPolicy,
-    "FAQ": FAQ,
-    "HowItWorks": HowItWorks,
-    "application": application,
-    "ThankYou": ThankYou,
-    "IndustryRestaurants": IndustryRestaurants,
-    "IndustryRetail": IndustryRetail,
-    "IndustryHealthcare": IndustryHealthcare,
-    "IndustryConstruction": IndustryConstruction,
-    "IndustryTransportation": IndustryTransportation,
-    "IndustryBeauty": IndustryBeauty,
-    "IndustryFitness": IndustryFitness,
-    "IndustryAuto": IndustryAuto,
-    "IndustryProfessional": IndustryProfessional,
-    "MissingDocs": MissingDocs,
-    "Status": Status,
     "Blog": Blog,
     "BlogPost": BlogPost,
+    "Contact": Contact,
+    "FAQ": FAQ,
+    "Home": Home,
+    "HowItWorks": HowItWorks,
+    "Industries": Industries,
+    "IndustryAuto": IndustryAuto,
+    "IndustryBeauty": IndustryBeauty,
+    "IndustryConstruction": IndustryConstruction,
+    "IndustryFitness": IndustryFitness,
+    "IndustryHealthcare": IndustryHealthcare,
+    "IndustryProfessional": IndustryProfessional,
+    "IndustryRestaurants": IndustryRestaurants,
+    "IndustryRetail": IndustryRetail,
+    "IndustryTransportation": IndustryTransportation,
+    "MissingDocs": MissingDocs,
+    "PrivacyPolicy": PrivacyPolicy,
+    "Reviews": Reviews,
+    "Status": Status,
+    "TermsOfService": TermsOfService,
+    "ThankYou": ThankYou,
+    "UseCases": UseCases,
+    "application": application,
+    "RepPortal": RepPortal,
 }
 
 export const pagesConfig = {
