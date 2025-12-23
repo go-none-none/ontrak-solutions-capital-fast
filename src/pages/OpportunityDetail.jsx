@@ -191,8 +191,58 @@ export default function OpportunityDetail() {
         </div>
       </div>
 
+      {/* Stage Progress */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        {!opportunity.StageName?.startsWith('Closed - Declined') ? (
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h3 className="font-semibold text-slate-900 mb-4">Progress</h3>
+            <div className="flex justify-between items-center mb-2">
+              {[
+                { label: 'App In', name: 'Application In' },
+                { label: 'Underwriting', name: 'Underwriting' },
+                { label: 'Approved', name: 'Approved' },
+                { label: 'Contracts Out', name: 'Contracts Out' },
+                { label: 'Contracts In', name: 'Contracts In' },
+                { label: 'Funded', name: 'Closed - Funded' }
+              ].map((stage, idx) => {
+                const stages = ['Application In', 'Underwriting', 'Approved', 'Contracts Out', 'Contracts In', 'Closed - Funded'];
+                const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
+                const isActive = idx <= currentStageIndex;
+                return (
+                  <div key={idx} className="flex flex-col items-center flex-1">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold ${
+                      isActive ? 'bg-[#08708E] text-white' : 'bg-slate-200 text-slate-500'
+                    }`}>
+                      {idx + 1}
+                    </div>
+                    <span className="text-xs text-slate-600 mt-2 text-center">{stage.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex gap-1 mt-4">
+              {[0,1,2,3,4,5].map((idx) => {
+                const stages = ['Application In', 'Underwriting', 'Approved', 'Contracts Out', 'Contracts In', 'Closed - Funded'];
+                const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
+                return (
+                  <div key={idx} className={`h-2 flex-1 rounded ${
+                    idx <= currentStageIndex ? 'bg-[#08708E]' : 'bg-slate-200'
+                  }`} />
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
+              <p className="text-lg font-semibold text-red-800">{opportunity.StageName}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main Column */}
           <div className="lg:col-span-2">

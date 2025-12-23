@@ -39,7 +39,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
   };
 
   const currentStage = getCurrentStageIndex();
-  const isDeclined = opportunity.StageName === 'Closed - Declined';
+  const isDeclined = opportunity.StageName && opportunity.StageName.startsWith('Closed - Declined');
 
   return (
     <motion.div
