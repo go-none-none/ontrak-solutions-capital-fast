@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Phone, Mail, Building2, Edit, Loader2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, Building2, Edit, Loader2, CheckCircle2, User, DollarSign, FileText, Calendar, MapPin } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
@@ -99,6 +99,21 @@ export default function LeadDetail() {
     }
   };
 
+  const handleDocCheckbox = async (field, value) => {
+    try {
+      await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Lead',
+        recordId: lead.Id,
+        data: { [field]: value },
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      await loadLead(session);
+    } catch (error) {
+      console.error('Checkbox update error:', error);
+    }
+  };
+
   const getCurrentStageIndex = () => {
     const index = stages.findIndex(s => s.status === lead?.Status);
     return index >= 0 ? index : 0;
@@ -188,64 +203,78 @@ export default function LeadDetail() {
             </div>
 
             {/* Contact Info */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Contact Information</h2>
-              <div className="grid sm:grid-cols-2 gap-4">
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <Phone className="w-5 h-5 text-[#08708E]" />
+                Contact Information
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-4 text-sm">
                 {lead.Phone && (
-                  <a href={`tel:${lead.Phone}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50">
-                    <div className="w-10 h-10 rounded-lg bg-[#08708E] flex items-center justify-center">
-                      <Phone className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-500">Phone</p>
-                      <p className="font-medium text-slate-900">{lead.Phone}</p>
-                    </div>
-                  </a>
+                  <div>
+                    <p className="text-slate-500 mb-1">Phone</p>
+                    <a href={`tel:${lead.Phone}`} className="font-medium text-[#08708E] hover:underline">{lead.Phone}</a>
+                  </div>
+                )}
+                {lead.MobilePhone && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Mobile</p>
+                    <a href={`tel:${lead.MobilePhone}`} className="font-medium text-[#08708E] hover:underline">{lead.MobilePhone}</a>
+                  </div>
                 )}
                 {lead.Email && (
-                  <a href={`mailto:${lead.Email}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50">
-                    <div className="w-10 h-10 rounded-lg bg-[#08708E] flex items-center justify-center">
-                      <Mail className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-500">Email</p>
-                      <p className="font-medium text-slate-900">{lead.Email}</p>
-                    </div>
-                  </a>
+                  <div>
+                    <p className="text-slate-500 mb-1">Email</p>
+                    <a href={`mailto:${lead.Email}`} className="font-medium text-[#08708E] hover:underline">{lead.Email}</a>
+                  </div>
+                )}
+                {lead.Website && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Website</p>
+                    <a href={lead.Website} target="_blank" rel="noopener noreferrer" className="font-medium text-[#08708E] hover:underline">{lead.Website}</a>
+                  </div>
+                )}
+                {lead.Fax && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Fax</p>
+                    <p className="font-medium text-slate-900">{lead.Fax}</p>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Business Information */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Business Information</h2>
+            {/* Owner 1 Information */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <User className="w-5 h-5 text-[#08708E]" />
+                Owner Information
+              </h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {lead.Monthly_Revenue__c && (
+                <div>
+                  <p className="text-slate-500 mb-1">Name</p>
+                  <p className="font-medium text-slate-900">{lead.Name}</p>
+                </div>
+                {lead.Title && (
                   <div>
-                    <p className="text-slate-500 mb-1">Monthly Revenue</p>
-                    <p className="font-semibold text-[#08708E] text-lg">
-                      ${parseFloat(lead.Monthly_Revenue__c).toLocaleString()}
-                    </p>
+                    <p className="text-slate-500 mb-1">Title</p>
+                    <p className="font-medium text-slate-900">{lead.Title}</p>
                   </div>
                 )}
-                {lead.Funding_Amount_Requested__c && (
+                {lead.Birthdate__c && (
                   <div>
-                    <p className="text-slate-500 mb-1">Funding Requested</p>
-                    <p className="font-semibold text-[#08708E] text-lg">
-                      ${parseFloat(lead.Funding_Amount_Requested__c).toLocaleString()}
-                    </p>
+                    <p className="text-slate-500 mb-1">Birthdate</p>
+                    <p className="font-medium text-slate-900">{lead.Birthdate__c}</p>
                   </div>
                 )}
-                {lead.Time_in_Business__c && (
+                {lead.Social_Security_Number__c && (
                   <div>
-                    <p className="text-slate-500 mb-1">Time in Business</p>
-                    <p className="font-medium text-slate-900">{lead.Time_in_Business__c}</p>
+                    <p className="text-slate-500 mb-1">SSN</p>
+                    <p className="font-medium text-slate-900">***-**-{lead.Social_Security_Number__c.slice(-4)}</p>
                   </div>
                 )}
-                {lead.Use_of_Funds__c && (
+                {lead.Ownership__c && (
                   <div>
-                    <p className="text-slate-500 mb-1">Use of Funds</p>
-                    <p className="font-medium text-slate-900">{lead.Use_of_Funds__c}</p>
+                    <p className="text-slate-500 mb-1">Ownership %</p>
+                    <p className="font-medium text-slate-900">{lead.Ownership__c}%</p>
                   </div>
                 )}
                 {lead.Credit_Score__c && (
@@ -254,28 +283,319 @@ export default function LeadDetail() {
                     <p className="font-medium text-slate-900">{lead.Credit_Score__c}</p>
                   </div>
                 )}
-                {lead.Business_Type__c && (
+                {lead.Home_Address_Street__c && (
+                  <div className="col-span-2">
+                    <p className="text-slate-500 mb-1">Home Address</p>
+                    <p className="font-medium text-slate-900">
+                      {lead.Home_Address_Street__c}
+                      {lead.Home_Address_City__c && `, ${lead.Home_Address_City__c}`}
+                      {lead.Home_Address_State__c && `, ${lead.Home_Address_State__c}`}
+                      {lead.Home_Address_Zip_Code__c && ` ${lead.Home_Address_Zip_Code__c}`}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Owner 2 Information */}
+            {lead.Owner_2_First_Name__c && (
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                  <User className="w-5 h-5 text-[#08708E]" />
+                  Owner 2 Information
+                </h2>
+                <div className="grid sm:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-slate-500 mb-1">Business Type</p>
-                    <p className="font-medium text-slate-900">{lead.Business_Type__c}</p>
+                    <p className="text-slate-500 mb-1">Name</p>
+                    <p className="font-medium text-slate-900">{lead.Owner_2_First_Name__c} {lead.Owner_2_Last_Name__c}</p>
+                  </div>
+                  {lead.Owner_2_Title__c && (
+                    <div>
+                      <p className="text-slate-500 mb-1">Title</p>
+                      <p className="font-medium text-slate-900">{lead.Owner_2_Title__c}</p>
+                    </div>
+                  )}
+                  {lead.Owner_2_Birthday__c && (
+                    <div>
+                      <p className="text-slate-500 mb-1">Birthday</p>
+                      <p className="font-medium text-slate-900">{lead.Owner_2_Birthday__c}</p>
+                    </div>
+                  )}
+                  {lead.Owner_2_Social_Security_Number__c && (
+                    <div>
+                      <p className="text-slate-500 mb-1">SSN</p>
+                      <p className="font-medium text-slate-900">***-**-{lead.Owner_2_Social_Security_Number__c.slice(-4)}</p>
+                    </div>
+                  )}
+                  {lead.Owner_2_Ownership__c && (
+                    <div>
+                      <p className="text-slate-500 mb-1">Ownership %</p>
+                      <p className="font-medium text-slate-900">{lead.Owner_2_Ownership__c}%</p>
+                    </div>
+                  )}
+                  {lead.Owner_2_Credit_Score__c && (
+                    <div>
+                      <p className="text-slate-500 mb-1">Credit Score</p>
+                      <p className="font-medium text-slate-900">{lead.Owner_2_Credit_Score__c}</p>
+                    </div>
+                  )}
+                  {lead.Owner_2_Mobile__c && (
+                    <div>
+                      <p className="text-slate-500 mb-1">Mobile</p>
+                      <a href={`tel:${lead.Owner_2_Mobile__c}`} className="font-medium text-[#08708E] hover:underline">{lead.Owner_2_Mobile__c}</a>
+                    </div>
+                  )}
+                  {lead.Owner_2_Email__c && (
+                    <div>
+                      <p className="text-slate-500 mb-1">Email</p>
+                      <a href={`mailto:${lead.Owner_2_Email__c}`} className="font-medium text-[#08708E] hover:underline">{lead.Owner_2_Email__c}</a>
+                    </div>
+                  )}
+                  {lead.Owner_2_Home_Address_Street__c && (
+                    <div className="col-span-2">
+                      <p className="text-slate-500 mb-1">Home Address</p>
+                      <p className="font-medium text-slate-900">
+                        {lead.Owner_2_Home_Address_Street__c}
+                        {lead.Owner_2_Home_Address_City__c && `, ${lead.Owner_2_Home_Address_City__c}`}
+                        {lead.Owner_2_Home_Address_State__c && `, ${lead.Owner_2_Home_Address_State__c}`}
+                        {lead.Owner_2_Home_Address_Zip_Code__c && ` ${lead.Owner_2_Home_Address_Zip_Code__c}`}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Business Information */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-[#08708E]" />
+                Business Information
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-slate-500 mb-1">Company</p>
+                  <p className="font-medium text-slate-900">{lead.Company}</p>
+                </div>
+                {lead.DBA__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">DBA</p>
+                    <p className="font-medium text-slate-900">{lead.DBA__c}</p>
+                  </div>
+                )}
+                {lead.Industry && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Industry</p>
+                    <p className="font-medium text-slate-900">{lead.Industry}</p>
+                  </div>
+                )}
+                {lead.Entity_Type__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Entity Type</p>
+                    <p className="font-medium text-slate-900">{lead.Entity_Type__c}</p>
+                  </div>
+                )}
+                {lead.Federal_Tax_ID__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Federal Tax ID</p>
+                    <p className="font-medium text-slate-900">{lead.Federal_Tax_ID__c}</p>
+                  </div>
+                )}
+                {lead.State_of_Incorporation__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">State of Incorporation</p>
+                    <p className="font-medium text-slate-900">{lead.State_of_Incorporation__c}</p>
+                  </div>
+                )}
+                {lead.Business_Start_Date__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Business Start Date</p>
+                    <p className="font-medium text-slate-900">{lead.Business_Start_Date__c}</p>
+                  </div>
+                )}
+                {lead.Street && (
+                  <div className="col-span-2">
+                    <p className="text-slate-500 mb-1">Business Address</p>
+                    <p className="font-medium text-slate-900">
+                      {lead.Street}
+                      {lead.City && `, ${lead.City}`}
+                      {lead.State && `, ${lead.State}`}
+                      {lead.PostalCode && ` ${lead.PostalCode}`}
+                    </p>
+                  </div>
+                )}
+                {lead.Business_Location_Occupancy__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Location Occupancy</p>
+                    <p className="font-medium text-slate-900">{lead.Business_Location_Occupancy__c}</p>
+                  </div>
+                )}
+                {lead.Business_Location_Monthly_Payment__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Monthly Payment</p>
+                    <p className="font-medium text-slate-900">${parseFloat(lead.Business_Location_Monthly_Payment__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {lead.Landlord_Mortgagee_Name__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Landlord/Mortgagee</p>
+                    <p className="font-medium text-slate-900">{lead.Landlord_Mortgagee_Name__c}</p>
+                  </div>
+                )}
+                {lead.Landlord_Mortgagee_Phone__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Landlord Phone</p>
+                    <p className="font-medium text-slate-900">{lead.Landlord_Mortgagee_Phone__c}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-slate-500 mb-1">Seasonal Business</p>
+                  <p className="font-medium text-slate-900">{lead.Seasonal_Business__c ? 'Yes' : 'No'}</p>
+                </div>
+                {lead.Seasonal_Peak_Months__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Peak Months</p>
+                    <p className="font-medium text-slate-900">{lead.Seasonal_Peak_Months__c}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-slate-500 mb-1">E-Commerce</p>
+                  <p className="font-medium text-slate-900">{lead.E_Commerce__c ? 'Yes' : 'No'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 mb-1">Franchise</p>
+                  <p className="font-medium text-slate-900">{lead.Franchise__c ? 'Yes' : 'No'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 mb-1">Home-Based</p>
+                  <p className="font-medium text-slate-900">{lead.Home_Based_Business__c ? 'Yes' : 'No'}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Financial Information */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-[#08708E]" />
+                Financial Information
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                {lead.Amount_Requested__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Amount Requested</p>
+                    <p className="font-semibold text-[#08708E] text-lg">${parseFloat(lead.Amount_Requested__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {lead.Use_of_Proceeds__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Use of Proceeds</p>
+                    <p className="font-medium text-slate-900">{lead.Use_of_Proceeds__c}</p>
+                  </div>
+                )}
+                {lead.Estimated_Monthly_Revenue__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Monthly Revenue</p>
+                    <p className="font-medium text-slate-900">${parseFloat(lead.Estimated_Monthly_Revenue__c).toLocaleString()}</p>
                   </div>
                 )}
                 {lead.Annual_Revenue__c && (
                   <div>
                     <p className="text-slate-500 mb-1">Annual Revenue</p>
-                    <p className="font-medium text-slate-900">
-                      ${parseFloat(lead.Annual_Revenue__c).toLocaleString()}
-                    </p>
+                    <p className="font-medium text-slate-900">${parseFloat(lead.Annual_Revenue__c).toLocaleString()}</p>
                   </div>
                 )}
-                {lead.Number_of_Employees__c && (
+                {lead.Open_Balances__c && (
                   <div>
-                    <p className="text-slate-500 mb-1">Employees</p>
-                    <p className="font-medium text-slate-900">{lead.Number_of_Employees__c}</p>
+                    <p className="text-slate-500 mb-1">Open Balances</p>
+                    <p className="font-medium text-slate-900">${parseFloat(lead.Open_Balances__c).toLocaleString()}</p>
                   </div>
                 )}
+                {lead.Current_Credit_Card_Processor__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Credit Card Processor</p>
+                    <p className="font-medium text-slate-900">{lead.Current_Credit_Card_Processor__c}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-slate-500 mb-1">Open Bankruptcies</p>
+                  <p className="font-medium text-slate-900">{lead.Open_Bankruptcies__c ? 'Yes' : 'No'}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 mb-1">Judgements/Liens</p>
+                  <p className="font-medium text-slate-900">{lead.Judgements_Liens__c ? 'Yes' : 'No'}</p>
+                </div>
               </div>
             </div>
+
+            {/* References & Lenders */}
+            {(lead.Business_Trade_Reference_1__c || lead.Lender_Name_1__c) && (
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-[#08708E]" />
+                  References & Lenders
+                </h2>
+                <div className="space-y-4">
+                  {lead.Business_Trade_Reference_1__c && (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Trade References</p>
+                      <div className="grid sm:grid-cols-3 gap-2 text-sm">
+                        <div>
+                          <p className="font-medium text-slate-900">{lead.Business_Trade_Reference_1__c}</p>
+                          {lead.Business_Trade_Reference_1_Phone__c && (
+                            <p className="text-slate-600 text-xs">{lead.Business_Trade_Reference_1_Phone__c}</p>
+                          )}
+                        </div>
+                        {lead.Business_Trade_Reference_2__c && (
+                          <div>
+                            <p className="font-medium text-slate-900">{lead.Business_Trade_Reference_2__c}</p>
+                            {lead.Business_Trade_Reference_2_Phone__c && (
+                              <p className="text-slate-600 text-xs">{lead.Business_Trade_Reference_2_Phone__c}</p>
+                            )}
+                          </div>
+                        )}
+                        {lead.Business_Trade_Reference_3__c && (
+                          <div>
+                            <p className="font-medium text-slate-900">{lead.Business_Trade_Reference_3__c}</p>
+                            {lead.Business_Trade_Reference_3_Phone__c && (
+                              <p className="text-slate-600 text-xs">{lead.Business_Trade_Reference_3_Phone__c}</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {lead.Lender_Name_1__c && (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Existing Lenders</p>
+                      <div className="grid sm:grid-cols-3 gap-2 text-sm">
+                        <div>
+                          <p className="font-medium text-slate-900">{lead.Lender_Name_1__c}</p>
+                          {lead.Open_Balance_Amount_1__c && (
+                            <p className="text-slate-600 text-xs">${parseFloat(lead.Open_Balance_Amount_1__c).toLocaleString()}</p>
+                          )}
+                        </div>
+                        {lead.Lender_Name_2__c && (
+                          <div>
+                            <p className="font-medium text-slate-900">{lead.Lender_Name_2__c}</p>
+                            {lead.Open_Balance_Amount_2__c && (
+                              <p className="text-slate-600 text-xs">${parseFloat(lead.Open_Balance_Amount_2__c).toLocaleString()}</p>
+                            )}
+                          </div>
+                        )}
+                        {lead.Lender_Name_3__c && (
+                          <div>
+                            <p className="font-medium text-slate-900">{lead.Lender_Name_3__c}</p>
+                            {lead.Open_Balance_Amount_3__c && (
+                              <p className="text-slate-600 text-xs">${parseFloat(lead.Open_Balance_Amount_3__c).toLocaleString()}</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Activity Timeline */}
             <ActivityTimeline
@@ -306,126 +626,167 @@ export default function LeadDetail() {
               onCallCompleted={() => setRefreshKey(prev => prev + 1)}
             />
 
-            {/* Additional Details */}
+            {/* Document Tracking - Only for Missing Info status */}
+            {lead.Status === 'Application Missing Info' && (
+              <div className="bg-white rounded-2xl p-6 shadow-sm border-2 border-amber-200">
+                <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-amber-600" />
+                  Missing Documents
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
+                    <label className="text-sm text-slate-700 font-medium">Bank Statements</label>
+                    <input
+                      type="checkbox"
+                      checked={lead.Bank_Statements_Received__c || false}
+                      onChange={(e) => handleDocCheckbox('Bank_Statements_Received__c', e.target.checked)}
+                      className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
+                    <label className="text-sm text-slate-700 font-medium">Tax Returns</label>
+                    <input
+                      type="checkbox"
+                      checked={lead.Tax_Returns_Received__c || false}
+                      onChange={(e) => handleDocCheckbox('Tax_Returns_Received__c', e.target.checked)}
+                      className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
+                    <label className="text-sm text-slate-700 font-medium">Voided Check</label>
+                    <input
+                      type="checkbox"
+                      checked={lead.Voided_Check_Received__c || false}
+                      onChange={(e) => handleDocCheckbox('Voided_Check_Received__c', e.target.checked)}
+                      className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50">
+                    <label className="text-sm text-slate-700 font-medium">Driver's License</label>
+                    <input
+                      type="checkbox"
+                      checked={lead.Drivers_License_Received__c || false}
+                      onChange={(e) => handleDocCheckbox('Drivers_License_Received__c', e.target.checked)}
+                      className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Documents Received (always visible) */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-900 mb-4">Additional Details</h3>
-              <div className="space-y-3 text-sm">
-                {lead.LeadSource && (
+              <h3 className="font-semibold text-slate-900 mb-4">Documents Received</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600">Bank Statements</span>
+                  {lead.Bank_Statements_Received__c ? (
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <span className="text-slate-400 text-xs">Not received</span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600">Tax Returns</span>
+                  {lead.Tax_Returns_Received__c ? (
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <span className="text-slate-400 text-xs">Not received</span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600">Voided Check</span>
+                  {lead.Voided_Check_Received__c ? (
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <span className="text-slate-400 text-xs">Not received</span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600">Driver's License</span>
+                  {lead.Drivers_License_Received__c ? (
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <span className="text-slate-400 text-xs">Not received</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Timeline */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-[#08708E]" />
+                Timeline
+              </h3>
+              <div className="space-y-3 text-xs">
+                {lead.Open_Not_Contacted_Date_Time__c && (
                   <div>
-                    <p className="text-slate-500">Source</p>
-                    <p className="font-medium text-slate-900">{lead.LeadSource}</p>
+                    <p className="text-slate-500">Open - Not Contacted</p>
+                    <p className="font-medium text-slate-900">{new Date(lead.Open_Not_Contacted_Date_Time__c).toLocaleString()}</p>
                   </div>
                 )}
-                {lead.Title && (
+                {lead.Working_Contacted_Date_Time__c && (
                   <div>
-                    <p className="text-slate-500">Title</p>
-                    <p className="font-medium text-slate-900">{lead.Title}</p>
+                    <p className="text-slate-500">Working - Contacted</p>
+                    <p className="font-medium text-slate-900">{new Date(lead.Working_Contacted_Date_Time__c).toLocaleString()}</p>
                   </div>
                 )}
-                {lead.Industry && (
+                {lead.Working_Application_Out_Date_Time__c && (
                   <div>
-                    <p className="text-slate-500">Industry</p>
-                    <p className="font-medium text-slate-900">{lead.Industry}</p>
+                    <p className="text-slate-500">Application Out</p>
+                    <p className="font-medium text-slate-900">{new Date(lead.Working_Application_Out_Date_Time__c).toLocaleString()}</p>
                   </div>
                 )}
-                {lead.Street && (
+                {lead.Closed_Converted_Date_Time__c && (
                   <div>
-                    <p className="text-slate-500">Address</p>
-                    <p className="font-medium text-slate-900">
-                      {lead.Street}
-                      {lead.City && `, ${lead.City}`}
-                      {lead.State && `, ${lead.State}`}
-                      {lead.PostalCode && ` ${lead.PostalCode}`}
-                    </p>
-                  </div>
-                )}
-                {lead.Website && (
-                  <div>
-                    <p className="text-slate-500">Website</p>
-                    <a href={lead.Website} target="_blank" rel="noopener noreferrer" className="font-medium text-[#08708E] hover:underline">
-                      {lead.Website}
-                    </a>
+                    <p className="text-slate-500">Converted</p>
+                    <p className="font-medium text-slate-900">{new Date(lead.Closed_Converted_Date_Time__c).toLocaleString()}</p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Document Tracking */}
+            {/* Additional Details */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-900 mb-4">Document Tracking</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200">
-                  <label className="text-sm text-slate-700 font-medium">Bank Statements</label>
-                  <input
-                    type="checkbox"
-                    checked={lead.Bank_Statements_Received__c || false}
-                    onChange={async (e) => {
-                      await base44.functions.invoke('updateSalesforceRecord', {
-                        objectType: 'Lead',
-                        recordId: lead.Id,
-                        data: { Bank_Statements_Received__c: e.target.checked },
-                        token: session.token,
-                        instanceUrl: session.instanceUrl
-                      });
-                      loadLead(session);
-                    }}
-                    className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                  />
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200">
-                  <label className="text-sm text-slate-700 font-medium">Tax Returns</label>
-                  <input
-                    type="checkbox"
-                    checked={lead.Tax_Returns_Received__c || false}
-                    onChange={async (e) => {
-                      await base44.functions.invoke('updateSalesforceRecord', {
-                        objectType: 'Lead',
-                        recordId: lead.Id,
-                        data: { Tax_Returns_Received__c: e.target.checked },
-                        token: session.token,
-                        instanceUrl: session.instanceUrl
-                      });
-                      loadLead(session);
-                    }}
-                    className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                  />
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200">
-                  <label className="text-sm text-slate-700 font-medium">Voided Check</label>
-                  <input
-                    type="checkbox"
-                    checked={lead.Voided_Check_Received__c || false}
-                    onChange={async (e) => {
-                      await base44.functions.invoke('updateSalesforceRecord', {
-                        objectType: 'Lead',
-                        recordId: lead.Id,
-                        data: { Voided_Check_Received__c: e.target.checked },
-                        token: session.token,
-                        instanceUrl: session.instanceUrl
-                      });
-                      loadLead(session);
-                    }}
-                    className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                  />
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200">
-                  <label className="text-sm text-slate-700 font-medium">Driver's License</label>
-                  <input
-                    type="checkbox"
-                    checked={lead.Drivers_License_Received__c || false}
-                    onChange={async (e) => {
-                      await base44.functions.invoke('updateSalesforceRecord', {
-                        objectType: 'Lead',
-                        recordId: lead.Id,
-                        data: { Drivers_License_Received__c: e.target.checked },
-                        token: session.token,
-                        instanceUrl: session.instanceUrl
-                      });
-                      loadLead(session);
-                    }}
-                    className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                  />
-                </div>
+              <h3 className="font-semibold text-slate-900 mb-4">Additional Info</h3>
+              <div className="space-y-3 text-sm">
+                {lead.LeadSource && (
+                  <div>
+                    <p className="text-slate-500">Lead Source</p>
+                    <p className="font-medium text-slate-900">{lead.LeadSource}</p>
+                  </div>
+                )}
+                {lead.Type__c && (
+                  <div>
+                    <p className="text-slate-500">Type</p>
+                    <p className="font-medium text-slate-900">{lead.Type__c}</p>
+                  </div>
+                )}
+                {lead.Call_Disposition__c && (
+                  <div>
+                    <p className="text-slate-500">Call Disposition</p>
+                    <p className="font-medium text-slate-900">{lead.Call_Disposition__c}</p>
+                  </div>
+                )}
+                {lead.Status_Detail__c && (
+                  <div>
+                    <p className="text-slate-500">Status Detail</p>
+                    <p className="font-medium text-slate-900">{lead.Status_Detail__c}</p>
+                  </div>
+                )}
+                {lead.Description && (
+                  <div>
+                    <p className="text-slate-500">Description</p>
+                    <p className="font-medium text-slate-900">{lead.Description}</p>
+                  </div>
+                )}
+                {lead.UTM_Source__c && (
+                  <div>
+                    <p className="text-slate-500">UTM Source</p>
+                    <p className="font-medium text-slate-900">{lead.UTM_Source__c}</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
