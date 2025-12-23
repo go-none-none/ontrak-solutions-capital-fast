@@ -36,7 +36,7 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
     return stages.map(stage => {
       let stageOpps;
       if (stage.name === 'Declined') {
-        stageOpps = opportunities.filter(o => o.StageName && o.StageName.startsWith('Closed - Declined'));
+        stageOpps = opportunities.filter(o => o.StageName && o.StageName.includes('Declined'));
       } else {
         stageOpps = opportunities.filter(o => o.StageName === stage.name);
       }

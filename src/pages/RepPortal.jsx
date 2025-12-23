@@ -142,14 +142,19 @@ export default function RepPortal() {
     return searchMatch && stageMatch;
   });
 
+  // Filter out closed/won opportunities, but keep declined ones
   const filteredOpportunities = opportunities.filter(opp => {
+    // First filter: exclude closed won, but keep everything else including declined
+    const isClosedWon = opp.StageName === 'Closed - Funded' || (opp.IsClosed && !opp.StageName?.includes('Declined'));
+    if (isClosedWon) return false;
+
     const searchMatch = opp.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       opp.Account?.Name?.toLowerCase().includes(searchTerm.toLowerCase());
 
     let stageMatch = true;
     if (stageFilter) {
       if (stageFilter === 'Declined') {
-        stageMatch = opp.StageName && opp.StageName.startsWith('Closed - Declined');
+        stageMatch = opp.StageName && opp.StageName.includes('Declined');
       } else {
         stageMatch = opp.StageName === stageFilter;
       }
