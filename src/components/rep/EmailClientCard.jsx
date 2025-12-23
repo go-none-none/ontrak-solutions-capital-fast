@@ -48,7 +48,7 @@ export default function EmailClientCard({ recipientEmail, recipientName, recordI
     } catch (error) {
       console.error('Send email error:', error);
       console.error('Error response data:', error.response?.data);
-      console.error('Full error response:', error.response);
+      console.error('Salesforce error details:', JSON.stringify(error.response?.data?.details, null, 2));
       toast.error(error.response?.data?.error || error.message || 'Failed to send email');
     } finally {
       setSending(false);
