@@ -14,11 +14,23 @@ Deno.serve(async (req) => {
 
     // Send email via Salesforce Email API
     console.log('Sending email via Salesforce...');
+
+    // Load and format email template
+    const templatePath = new URL('../components/email/RepEmail.html', import.meta.url);
+    const templateResponse = await fetch(templatePath);
+    const template = await templateResponse.text();
+
+    // Replace template variables
+    const htmlBody = template
+      .replace(/{{recipientName}}/g, recipientName || 'there')
+      .replace(/{{message}}/g, message.replace(/\n/g, '<br>'))
+      .replace(/{{senderName}}/g, senderName || 'Your Rep');
+
     const emailPayload = {
       inputs: [{
         emailAddresses: recipientEmail,
         emailSubject: subject,
-        emailBody: message.replace(/\n/g, '<br>'),
+        emailBody: htmlBody,
         senderType: 'CurrentUser'
       }]
     };
