@@ -12,26 +12,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // First, send the actual email using Base44's email integration
-    console.log('Sending email via Base44...');
-    const emailResult = await base44.asServiceRole.integrations.Core.SendEmail({
-      to: recipientEmail,
-      subject: subject,
-      body: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <p>Hi ${recipientName || 'there'},</p>
-          <p>${message.replace(/\n/g, '<br>')}</p>
-          <br>
-          <p>Best regards,<br>${senderName || 'OnTrak Capital'}</p>
-          <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
-          <p style="font-size: 12px; color: #666;">OnTrak Capital</p>
-        </div>
-      `,
-      from_name: senderName || 'OnTrak Capital'
-    });
-    console.log('Email sent successfully via Base44');
-
-    // Then, log it as a Task in Salesforce for activity tracking
+    // Log the email as a Task in Salesforce for activity tracking
+    console.log('Logging email activity in Salesforce...');
     const taskBody = {
       Subject: `Email: ${subject}`,
       Description: message,
@@ -63,18 +45,19 @@ Deno.serve(async (req) => {
     if (!sfResponse.ok) {
       console.error('Salesforce task creation error:', sfResult);
       return Response.json({ 
-        success: true,
-        message: 'Email sent but not logged in Salesforce',
-        error: sfResult
-      });
+        success: false,
+        error: 'Failed to log email in Salesforce',
+        details: sfResult
+      }, { status: 500 });
     }
 
     console.log('Salesforce task created:', sfResult);
 
     return Response.json({ 
       success: true,
-      message: 'Email sent and logged successfully',
-      taskId: sfResult.id
+      message: 'Email activity logged in Salesforce',
+      taskId: sfResult.id,
+      note: 'Email logged as activity. To send actual emails, integrate an email service like SendGrid or use Salesforce Email.'
     });
   } catch (error) {
     console.error('Send email error:', error);
