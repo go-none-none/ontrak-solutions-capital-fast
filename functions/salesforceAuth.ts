@@ -3,17 +3,16 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { action, code } = await req.json();
-    
+    const { action, code, codeChallenge, codeVerifier } = await req.json();
+
     const clientId = Deno.env.get("SALESFORCE_CLIENT_ID");
     const clientSecret = Deno.env.get("SALESFORCE_CLIENT_SECRET");
-    
+
     if (!clientId || !clientSecret) {
       return Response.json({ error: 'Salesforce credentials not configured' }, { status: 500 });
     }
-    
+
     if (action === 'getLoginUrl') {
-      const { codeChallenge } = await req.json();
       const redirectUri = 'https://ontrakfunding.base44.dev/rep-portal';
 
       return Response.json({
@@ -22,7 +21,6 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'exchangeCode') {
-      const { codeVerifier } = await req.json();
       const redirectUri = 'https://ontrakfunding.base44.dev/rep-portal';
 
       // Exchange code for token
