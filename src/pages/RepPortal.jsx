@@ -28,27 +28,14 @@ export default function RepPortal() {
       setSession(parsed);
       loadData(parsed);
     } else {
-      // Check for OAuth callback code
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      if (code) {
-        handleOAuthCallback(code);
-      } else {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
-  const handleOAuthCallback = async (code) => {
+  const handleLogin = async () => {
+    setLoading(true);
     try {
-      const codeVerifier = sessionStorage.getItem('pkce_verifier');
-      sessionStorage.removeItem('pkce_verifier');
-      
-      const response = await base44.functions.invoke('salesforceAuth', {
-        action: 'exchangeCode',
-        code,
-        codeVerifier
-      });
+      const response = await base44.functions.invoke('getSalesforceUser');
       
       const sessionData = {
         ...response.data,
@@ -57,30 +44,7 @@ export default function RepPortal() {
       
       sessionStorage.setItem('sfSession', JSON.stringify(sessionData));
       setSession(sessionData);
-      window.history.replaceState({}, '', createPageUrl('RepPortal'));
       loadData(sessionData);
-    } catch (error) {
-      console.error('OAuth error:', error);
-      alert(`Failed to authenticate with Salesforce: ${error.message || error.response?.data?.error || 'Unknown error'}`);
-      setLoading(false);
-    }
-  };
-
-  const handleLogin = async () => {
-    setLoading(true);
-    try {
-      // Generate PKCE code verifier and challenge
-      const codeVerifier = generateRandomString(128);
-      const codeChallenge = await generateCodeChallenge(codeVerifier);
-      
-      // Store verifier for later use
-      sessionStorage.setItem('pkce_verifier', codeVerifier);
-      
-      const response = await base44.functions.invoke('salesforceAuth', {
-        action: 'getLoginUrl',
-        codeChallenge
-      });
-      window.location.href = response.data.loginUrl;
     } catch (error) {
       console.error('Login error:', error);
       alert('Failed to connect to Salesforce. Please try again.');
@@ -88,30 +52,7 @@ export default function RepPortal() {
     }
   };
   
-  const generateRandomString = (length) => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-  };
-  
-  const generateCodeChallenge = async (verifier) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(verifier);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return base64UrlEncode(hash);
-  };
-  
-  const base64UrlEncode = (buffer) => {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    for (let i = 0; i < bytes.length; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-  };
+
 
   const handleLogout = () => {
     sessionStorage.removeItem('sfSession');
