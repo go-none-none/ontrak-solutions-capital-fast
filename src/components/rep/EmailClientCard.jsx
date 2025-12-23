@@ -47,6 +47,8 @@ export default function EmailClientCard({ recipientEmail, recipientName, recordI
       }
     } catch (error) {
       console.error('Send email error:', error);
+      console.error('Error details:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+      console.error('Error response:', error.response);
       toast.error(error.response?.data?.error || error.message || 'Failed to send email');
     } finally {
       setSending(false);
