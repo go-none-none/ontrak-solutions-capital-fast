@@ -9,28 +9,30 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
     }
 
-    // Query leads by specific statuses - 100 latest updated for each
-    const statuses = ['Contacted', 'Application Out', 'Application Missing Info'];
-    const allLeads = [];
+    // Query all leads with priority ordering
+    const query = `SELECT Id, Name, Company, Phone, MobilePhone, Email, Status, LeadSource, CreatedDate, LastModifiedDate, Owner.Name, Owner.Email, Owner.Phone, Owner.MobilePhone, Owner.Title, Owner.Department, Owner.Division, Owner.CompanyName, Owner.UserRole.Name, Owner.Manager.Name, Owner.Manager.Email, Industry, AnnualRevenue, NumberOfEmployees, Website, Description, Street, City, State, PostalCode, Country, Title, Rating, OwnerId, Birthdate__c, Social_Security_Number__c, Ownership__c, Credit_Score__c, Application_Federal_Tax_Id__c, Application_SSN__c, Application_Owner_2_SSN__c, Home_Address_Street__c, Home_Address_City__c, Home_Address_State__c, Home_Address_Zip_Code__c, Home_Address_Country__c, Owner_2_First_Name__c, Owner_2_Last_Name__c, Owner_2_Title__c, Owner_2_Birthday__c, Owner_2_Social_Security_Number__c, Owner_2_Ownership__c, Owner_2_Credit_Score__c, Owner_2_Mobile__c, Owner_2_Email__c, Owner_2_Home_Address_Street__c, Owner_2_Home_Address_City__c, Owner_2_Home_Address_State__c, Owner_2_Home_Address_Zip_Code__c, Owner_2_Home_Address_Country__c FROM Lead WHERE OwnerId = '${userId}' AND IsConverted = false ORDER BY LastModifiedDate DESC`;
     
-    for (const status of statuses) {
-      const query = `SELECT Id, Name, Company, Phone, MobilePhone, Email, Status, LeadSource, CreatedDate, LastModifiedDate, Owner.Name, Owner.Email, Owner.Phone, Owner.MobilePhone, Owner.Title, Owner.Department, Owner.Division, Owner.CompanyName, Owner.UserRole.Name, Owner.Manager.Name, Owner.Manager.Email, Industry, AnnualRevenue, NumberOfEmployees, Website, Description, Street, City, State, PostalCode, Country, Title, Rating, OwnerId, Birthdate__c, Social_Security_Number__c, Ownership__c, Credit_Score__c, Application_Federal_Tax_Id__c, Application_SSN__c, Application_Owner_2_SSN__c, Home_Address_Street__c, Home_Address_City__c, Home_Address_State__c, Home_Address_Zip_Code__c, Home_Address_Country__c, Owner_2_First_Name__c, Owner_2_Last_Name__c, Owner_2_Title__c, Owner_2_Birthday__c, Owner_2_Social_Security_Number__c, Owner_2_Ownership__c, Owner_2_Credit_Score__c, Owner_2_Mobile__c, Owner_2_Email__c, Owner_2_Home_Address_Street__c, Owner_2_Home_Address_City__c, Owner_2_Home_Address_State__c, Owner_2_Home_Address_Zip_Code__c, Owner_2_Home_Address_Country__c FROM Lead WHERE OwnerId = '${userId}' AND Status = '${status}' AND IsConverted = false ORDER BY LastModifiedDate DESC LIMIT 100`;
-      
-      const response = await fetch(
-        `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+    const response = await fetch(
+      `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        allLeads.push(...data.records);
       }
-    }
+    );
+
+    const data = await response.json();
+    const allLeads = data.records || [];
+    
+    // Sort to prioritize specific statuses
+    const priorityStatuses = ['Contacted', 'Application Out', 'Application Missing Info'];
+    allLeads.sort((a, b) => {
+      const aPriority = priorityStatuses.includes(a.Status) ? 0 : 1;
+      const bPriority = priorityStatuses.includes(b.Status) ? 0 : 1;
+      if (aPriority !== bPriority) return aPriority - bPriority;
+      return new Date(b.LastModifiedDate) - new Date(a.LastModifiedDate);
+    });
 
     return Response.json({ leads: allLeads });
   } catch (error) {
