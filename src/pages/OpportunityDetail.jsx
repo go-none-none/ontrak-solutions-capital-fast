@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, DollarSign, Calendar, Edit, Loader2, TrendingUp, User, Building2, FileText, Percent } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, Edit, Loader2, Check, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadWidget from '../components/rep/DialpadWidget.jsx';
-import EditOpportunityModal from '../components/rep/EditOpportunityModal.jsx';
 
 export default function OpportunityDetail() {
   const [session, setSession] = useState(null);
   const [opportunity, setOpportunity] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [editMode, setEditMode] = useState(false);
+  const [editing, setEditing] = useState({});
+  const [editValues, setEditValues] = useState({});
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
@@ -49,23 +49,66 @@ export default function OpportunityDetail() {
     }
   };
 
-  const handleUpdate = async (updates) => {
+  const handleFieldEdit = (field, value) => {
+    setEditValues({ ...editValues, [field]: value });
+  };
+
+  const handleFieldSave = async (field) => {
     try {
       await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Opportunity',
         recordId: opportunity.Id,
-        recordType: 'Opportunity',
-        updates,
+        data: { [field]: editValues[field] },
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-
       await loadOpportunity(session);
-      setEditMode(false);
-      setRefreshKey(prev => prev + 1);
+      setEditing({ ...editing, [field]: false });
     } catch (error) {
       console.error('Update error:', error);
-      alert('Failed to update opportunity');
     }
+  };
+
+  const EditableField = ({ label, field, value, type = 'text' }) => {
+    const isEditing = editing[field];
+    const displayValue = isEditing ? editValues[field] : value;
+
+    return (
+      <div>
+        <p className="text-slate-500 text-xs mb-1">{label}</p>
+        {isEditing ? (
+          <div className="flex items-center gap-2">
+            <Input
+              type={type}
+              value={displayValue || ''}
+              onChange={(e) => handleFieldEdit(field, e.target.value)}
+              className="h-8 text-sm"
+            />
+            <Button size="sm" variant="ghost" onClick={() => handleFieldSave(field)}>
+              <Check className="w-4 h-4 text-green-600" />
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setEditing({ ...editing, [field]: false })}>
+              <X className="w-4 h-4 text-red-600" />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 group">
+            <p className="font-medium text-slate-900">{value || <span className="text-slate-400 text-sm">Not set</span>}</p>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="opacity-0 group-hover:opacity-100"
+              onClick={() => {
+                setEditValues({ ...editValues, [field]: value || '' });
+                setEditing({ ...editing, [field]: true });
+              }}
+            >
+              <Edit className="w-3 h-3" />
+            </Button>
+          </div>
+        )}
+      </div>
+    );
   };
 
   if (loading) {
@@ -91,9 +134,7 @@ export default function OpportunityDetail() {
     'Contracts Out': 'bg-yellow-100 text-yellow-800',
     'Contracts In': 'bg-indigo-100 text-indigo-800',
     'Closed - Funded': 'bg-green-100 text-green-800',
-    'Funded': 'bg-green-100 text-green-800',
-    'Declined': 'bg-red-100 text-red-800',
-    'Closed - Declined': 'bg-red-100 text-red-800'
+    'Declined': 'bg-red-100 text-red-800'
   };
 
   const formatCurrency = (amount) => {
@@ -108,7 +149,7 @@ export default function OpportunityDetail() {
   const formatDate = (dateString) => {
     if (!dateString) return '';
     return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'long',
+      month: 'numeric',
       day: 'numeric',
       year: 'numeric'
     });
@@ -131,15 +172,9 @@ export default function OpportunityDetail() {
                 <p className="text-sm text-slate-600">{opportunity.Account?.Name}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Badge className={stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}>
-                {opportunity.StageName}
-              </Badge>
-              <Button onClick={() => setEditMode(true)}>
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
-            </div>
+            <Badge className={stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}>
+              {opportunity.StageName}
+            </Badge>
           </div>
         </div>
       </div>
@@ -149,441 +184,211 @@ export default function OpportunityDetail() {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main Column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Key Metrics */}
+            {/* Basic Info */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-[#08708E]" />
-                Key Metrics
-              </h2>
-              <div className="grid sm:grid-cols-3 gap-4">
-                <div className="p-4 rounded-lg bg-gradient-to-br from-[#08708E] to-[#065a72] text-white">
-                  <p className="text-sm text-white/80 mb-1">Amount</p>
-                  <p className="text-2xl font-bold">{formatCurrency(opportunity.Amount)}</p>
-                </div>
-                <div className="p-4 rounded-lg bg-slate-50">
-                  <p className="text-sm text-slate-500 mb-1">Probability</p>
-                  <p className="text-2xl font-bold text-slate-900">{opportunity.Probability}%</p>
-                </div>
-                <div className="p-4 rounded-lg bg-slate-50">
-                  <p className="text-sm text-slate-500 mb-1">Close Date</p>
-                  <p className="text-sm font-bold text-slate-900">{formatDate(opportunity.CloseDate)}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Opportunity Details */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-[#08708E]" />
-                Opportunity Details
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Details</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {opportunity.Type && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Type</p>
-                    <p className="font-medium text-slate-900">{opportunity.Type}</p>
-                  </div>
-                )}
-                {opportunity.LeadSource && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Lead Source</p>
-                    <p className="font-medium text-slate-900">{opportunity.LeadSource}</p>
-                  </div>
-                )}
-                {opportunity.ISO__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">ISO</p>
-                    <p className="font-medium text-slate-900">{opportunity.ISO__c}</p>
-                  </div>
-                )}
-                {opportunity.Stage_Detail__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Stage Detail</p>
-                    <p className="font-medium text-slate-900">{opportunity.Stage_Detail__c}</p>
-                  </div>
-                )}
+                <EditableField label="Opportunity Name" field="Name" value={opportunity.Name} />
+                <EditableField label="Account Name" field="AccountId" value={opportunity.Account?.Name} />
+                <EditableField label="Close Date" field="CloseDate" value={formatDate(opportunity.CloseDate)} type="date" />
+                <EditableField label="Type" field="Type" value={opportunity.Type} />
+                <EditableField label="Lead Source" field="LeadSource" value={opportunity.LeadSource} />
+                <EditableField label="Stage" field="StageName" value={opportunity.StageName} />
+                <EditableField label="ISO" field="ISO__c" value={opportunity.ISO__c} />
+                <EditableField label="Stage Detail" field="Stage_Detail__c" value={opportunity.Stage_Detail__c} />
                 {opportunity.Description && (
                   <div className="col-span-2">
-                    <p className="text-slate-500 mb-1">Description</p>
+                    <p className="text-slate-500 text-xs mb-1">Description</p>
                     <p className="font-medium text-slate-900">{opportunity.Description}</p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Financial Details */}
+            {/* Qualifying Information */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-[#08708E]" />
-                Financial Details
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Qualifying Information</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {opportunity.Amount_Requested__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Amount Requested</p>
-                    <p className="font-semibold text-[#08708E] text-lg">{formatCurrency(opportunity.Amount_Requested__c)}</p>
-                  </div>
-                )}
-                {opportunity.Months_In_Business__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Months In Business</p>
-                    <p className="font-medium text-slate-900">{opportunity.Months_In_Business__c}</p>
-                  </div>
-                )}
-                {opportunity.Use_of_Proceeds__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Use of Proceeds</p>
-                    <p className="font-medium text-slate-900">{opportunity.Use_of_Proceeds__c}</p>
-                  </div>
-                )}
-                {opportunity.Estimated_Monthly_Revenue__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Monthly Revenue</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Estimated_Monthly_Revenue__c)}</p>
-                  </div>
-                )}
-                {opportunity.Number_of_Terminals__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Number of Terminals</p>
-                    <p className="font-medium text-slate-900">{opportunity.Number_of_Terminals__c}</p>
-                  </div>
-                )}
-                {opportunity.Open_Balances__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Open Balances</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Open_Balances__c)}</p>
-                  </div>
-                )}
-                {opportunity.Current_Credit_Card_Processor__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">CC Processor</p>
-                    <p className="font-medium text-slate-900">{opportunity.Current_Credit_Card_Processor__c}</p>
-                  </div>
-                )}
+                <EditableField label="Amount Requested" field="Amount_Requested__c" value={opportunity.Amount_Requested__c ? formatCurrency(opportunity.Amount_Requested__c) : null} />
+                <EditableField label="Months In Business" field="Months_In_Business__c" value={opportunity.Months_In_Business__c} />
+                <EditableField label="Use of Proceeds" field="Use_of_Proceeds__c" value={opportunity.Use_of_Proceeds__c} />
+                <EditableField label="Estimated Monthly Revenue" field="Estimated_Monthly_Revenue__c" value={opportunity.Estimated_Monthly_Revenue__c ? formatCurrency(opportunity.Estimated_Monthly_Revenue__c) : null} />
+                <EditableField label="Number of Terminals" field="Number_of_Terminals__c" value={opportunity.Number_of_Terminals__c} />
+                <EditableField label="Open Balances" field="Open_Balances__c" value={opportunity.Open_Balances__c ? formatCurrency(opportunity.Open_Balances__c) : null} />
+                <EditableField label="Current Credit Card Processor" field="Current_Credit_Card_Processor__c" value={opportunity.Current_Credit_Card_Processor__c} />
                 <div>
-                  <p className="text-slate-500 mb-1">Open Bankruptcies</p>
+                  <p className="text-slate-500 text-xs mb-1">Open Bankruptcies</p>
                   <p className="font-medium text-slate-900">{opportunity.Open_Bankruptcies__c ? 'Yes' : 'No'}</p>
                 </div>
+                <EditableField label="# of Open Positions" field="of_Open_Positions__c" value={opportunity.of_Open_Positions__c} />
                 <div>
-                  <p className="text-slate-500 mb-1">Judgements/Liens</p>
+                  <p className="text-slate-500 text-xs mb-1">Judgements/Liens</p>
                   <p className="font-medium text-slate-900">{opportunity.Judgements_Liens__c ? 'Yes' : 'No'}</p>
                 </div>
-                {opportunity.of_Open_Positions__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Open Positions</p>
-                    <p className="font-medium text-slate-900">{opportunity.of_Open_Positions__c}</p>
-                  </div>
-                )}
-                {opportunity.Estimated_Monthly_MCA_Amount__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Est. Monthly MCA</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Estimated_Monthly_MCA_Amount__c)}</p>
-                  </div>
-                )}
+                <EditableField label="Estimated Monthly MCA Amount" field="Estimated_Monthly_MCA_Amount__c" value={opportunity.Estimated_Monthly_MCA_Amount__c ? formatCurrency(opportunity.Estimated_Monthly_MCA_Amount__c) : null} />
               </div>
             </div>
 
-            {/* Owner Information */}
+            {/* Owners */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <User className="w-5 h-5 text-[#08708E]" />
-                Owner Information
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Owners</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {opportunity.Owner__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Owner 1</p>
-                    <p className="font-medium text-slate-900">{opportunity.Owner__c}</p>
-                  </div>
-                )}
-                {opportunity.Owner_2__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Owner 2</p>
-                    <p className="font-medium text-slate-900">{opportunity.Owner_2__c}</p>
-                  </div>
-                )}
+                <EditableField label="Owner" field="Owner__c" value={opportunity.Owner__c} />
+                <EditableField label="Owner 2" field="Owner_2__c" value={opportunity.Owner_2__c} />
               </div>
             </div>
 
-            {/* Bank & Card Stats */}
+            {/* Financial Information */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-[#08708E]" />
-                Banking Statistics
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Financial Information</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {opportunity.Avg_Gross_Monthly_Sales__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Avg Gross Monthly Sales</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Avg_Gross_Monthly_Sales__c)}</p>
-                  </div>
-                )}
-                {opportunity.Avg_Bank_Deposits__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Avg Bank Deposits $</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Avg_Bank_Deposits__c)}</p>
-                  </div>
-                )}
-                {opportunity.Avg_Bank_Deposits_Count__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Avg Bank Deposits #</p>
-                    <p className="font-medium text-slate-900">{opportunity.Avg_Bank_Deposits_Count__c}</p>
-                  </div>
-                )}
-                {opportunity.Avg_Credit_Card_Volume__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Avg CC Volume</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Avg_Credit_Card_Volume__c)}</p>
-                  </div>
-                )}
-                {opportunity.Avg_Daily_Balance__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Avg Daily Balance</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Avg_Daily_Balance__c)}</p>
-                  </div>
-                )}
-                {opportunity.Avg_Credit_Card_Batches__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Avg CC Batches</p>
-                    <p className="font-medium text-slate-900">{opportunity.Avg_Credit_Card_Batches__c}</p>
-                  </div>
-                )}
-                {opportunity.Avg_NSFs__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Avg NSFs</p>
-                    <p className="font-medium text-slate-900">{opportunity.Avg_NSFs__c}</p>
-                  </div>
-                )}
-                {opportunity.Avg_Credit_Card_Transaction_Amount__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Avg CC Transaction</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Avg_Credit_Card_Transaction_Amount__c)}</p>
-                  </div>
-                )}
-                {opportunity.Avg_Negative_Days__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Avg Negative Days</p>
-                    <p className="font-medium text-slate-900">{opportunity.Avg_Negative_Days__c}</p>
-                  </div>
-                )}
+                <EditableField label="Avg Gross Monthly Sales" field="Avg_Gross_Monthly_Sales__c" value={opportunity.Avg_Gross_Monthly_Sales__c ? formatCurrency(opportunity.Avg_Gross_Monthly_Sales__c) : null} />
+                <EditableField label="Avg Bank Deposits $" field="Avg_Bank_Deposits__c" value={opportunity.Avg_Bank_Deposits__c ? formatCurrency(opportunity.Avg_Bank_Deposits__c) : null} />
+                <EditableField label="Avg Bank Deposits #" field="Avg_Bank_Deposits_Count__c" value={opportunity.Avg_Bank_Deposits_Count__c} />
+                <EditableField label="Avg Credit Card Volume" field="Avg_Credit_Card_Volume__c" value={opportunity.Avg_Credit_Card_Volume__c ? formatCurrency(opportunity.Avg_Credit_Card_Volume__c) : null} />
+                <EditableField label="Avg Daily Balance" field="Avg_Daily_Balance__c" value={opportunity.Avg_Daily_Balance__c ? formatCurrency(opportunity.Avg_Daily_Balance__c) : null} />
+                <EditableField label="Avg Credit Card Batches" field="Avg_Credit_Card_Batches__c" value={opportunity.Avg_Credit_Card_Batches__c} />
+                <EditableField label="Avg NSFs" field="Avg_NSFs__c" value={opportunity.Avg_NSFs__c} />
+                <EditableField label="Avg Credit Card Transaction Amount" field="Avg_Credit_Card_Transaction_Amount__c" value={opportunity.Avg_Credit_Card_Transaction_Amount__c ? formatCurrency(opportunity.Avg_Credit_Card_Transaction_Amount__c) : null} />
+                <EditableField label="Avg Negative Days" field="Avg_Negative_Days__c" value={opportunity.Avg_Negative_Days__c} />
               </div>
             </div>
 
-            {/* Existing Lenders */}
-            {opportunity.Lender_Name_1__c && (
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-[#08708E]" />
-                  Existing Lenders
-                </h2>
-                <div className="grid sm:grid-cols-3 gap-4 text-sm">
-                  <div>
-                    <p className="text-slate-500 mb-1">Lender 1</p>
-                    <p className="font-medium text-slate-900">{opportunity.Lender_Name_1__c}</p>
-                    {opportunity.Open_Balance_Amount_1__c && (
-                      <p className="text-[#08708E] font-semibold">{formatCurrency(opportunity.Open_Balance_Amount_1__c)}</p>
-                    )}
-                  </div>
-                  {opportunity.Lender_Name_2__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Lender 2</p>
-                      <p className="font-medium text-slate-900">{opportunity.Lender_Name_2__c}</p>
-                      {opportunity.Open_Balance_Amount_2__c && (
-                        <p className="text-[#08708E] font-semibold">{formatCurrency(opportunity.Open_Balance_Amount_2__c)}</p>
-                      )}
-                    </div>
-                  )}
-                  {opportunity.Lender_Name_3__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Lender 3</p>
-                      <p className="font-medium text-slate-900">{opportunity.Lender_Name_3__c}</p>
-                      {opportunity.Open_Balance_Amount_3__c && (
-                        <p className="text-[#08708E] font-semibold">{formatCurrency(opportunity.Open_Balance_Amount_3__c)}</p>
-                      )}
-                    </div>
-                  )}
+            {/* Open Balances */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Open Balances</h2>
+              <div className="grid sm:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <EditableField label="Lender Name 1" field="Lender_Name_1__c" value={opportunity.Lender_Name_1__c} />
+                  <EditableField label="Open Balance Amount 1" field="Open_Balance_Amount_1__c" value={opportunity.Open_Balance_Amount_1__c ? formatCurrency(opportunity.Open_Balance_Amount_1__c) : null} />
+                </div>
+                <div>
+                  <EditableField label="Lender Name 2" field="Lender_Name_2__c" value={opportunity.Lender_Name_2__c} />
+                  <EditableField label="Open Balance Amount 2" field="Open_Balance_Amount_2__c" value={opportunity.Open_Balance_Amount_2__c ? formatCurrency(opportunity.Open_Balance_Amount_2__c) : null} />
+                </div>
+                <div>
+                  <EditableField label="Lender Name 3" field="Lender_Name_3__c" value={opportunity.Lender_Name_3__c} />
+                  <EditableField label="Open Balance Amount 3" field="Open_Balance_Amount_3__c" value={opportunity.Open_Balance_Amount_3__c ? formatCurrency(opportunity.Open_Balance_Amount_3__c) : null} />
                 </div>
               </div>
-            )}
+            </div>
 
-            {/* Selected Offer / Funding Details */}
+            {/* Funded Terms */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-[#08708E]" />
-                Funding Details
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Funded Terms</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {opportunity.Funded_Date__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Funded Date</p>
-                    <p className="font-medium text-slate-900">{formatDate(opportunity.Funded_Date__c)}</p>
-                  </div>
-                )}
-                {opportunity.Selected_Offer__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Selected Offer</p>
-                    <p className="font-medium text-slate-900">{opportunity.Selected_Offer__c}</p>
-                  </div>
-                )}
-                {opportunity.Lender__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Lender</p>
-                    <p className="font-medium text-slate-900">{opportunity.Lender__c}</p>
-                  </div>
-                )}
-                {opportunity.Product__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Product</p>
-                    <p className="font-medium text-slate-900">{opportunity.Product__c}</p>
-                  </div>
-                )}
-                {opportunity.Buy_Rate__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Buy Rate</p>
-                    <p className="font-medium text-slate-900">{opportunity.Buy_Rate__c.toFixed(5)}</p>
-                  </div>
-                )}
-                {opportunity.Factor_Rate__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Factor Rate</p>
-                    <p className="font-medium text-slate-900">{opportunity.Factor_Rate__c.toFixed(5)}</p>
-                  </div>
-                )}
-                {opportunity.Funded__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Funded</p>
-                    <p className="font-semibold text-[#08708E]">{formatCurrency(opportunity.Funded__c)}</p>
-                  </div>
-                )}
-                {opportunity.Net_Funded__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Net Funded</p>
-                    <p className="font-semibold text-[#08708E]">{formatCurrency(opportunity.Net_Funded__c)}</p>
-                  </div>
-                )}
-                {opportunity.Payoff__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Payoff</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Payoff__c)}</p>
-                  </div>
-                )}
-                {opportunity.Payback__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Payback</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Payback__c)}</p>
-                  </div>
-                )}
-                {opportunity.Payment_Amount__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Payment Amount</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Payment_Amount__c)}</p>
-                  </div>
-                )}
-                {opportunity.Term__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Term</p>
-                    <p className="font-medium text-slate-900">{opportunity.Term__c}</p>
-                  </div>
-                )}
-                {opportunity.Payment_Frequency__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Payment Frequency</p>
-                    <p className="font-medium text-slate-900">{opportunity.Payment_Frequency__c}</p>
-                  </div>
-                )}
-                {opportunity.Payment_Method__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Payment Method</p>
-                    <p className="font-medium text-slate-900">{opportunity.Payment_Method__c}</p>
-                  </div>
-                )}
-                {opportunity.Holdback__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Holdback %</p>
-                    <p className="font-medium text-slate-900">{opportunity.Holdback__c}%</p>
-                  </div>
-                )}
+                <EditableField label="Funded Date" field="Funded_Date__c" value={opportunity.Funded_Date__c ? formatDate(opportunity.Funded_Date__c) : null} type="date" />
+                <EditableField label="Selected Offer" field="Selected_Offer__c" value={opportunity.Selected_Offer__c} />
+                <EditableField label="Lender" field="Lender__c" value={opportunity.Lender__c} />
+                <EditableField label="Buy Rate" field="Buy_Rate__c" value={opportunity.Buy_Rate__c} />
+                <EditableField label="Funded" field="Funded__c" value={opportunity.Funded__c ? formatCurrency(opportunity.Funded__c) : null} />
+                <EditableField label="Factor Rate" field="Factor_Rate__c" value={opportunity.Factor_Rate__c} />
+                <EditableField label="Payoff" field="Payoff__c" value={opportunity.Payoff__c ? formatCurrency(opportunity.Payoff__c) : null} />
+                <EditableField label="Product" field="Product__c" value={opportunity.Product__c} />
+                <EditableField label="Net Funded" field="Net_Funded__c" value={opportunity.Net_Funded__c ? formatCurrency(opportunity.Net_Funded__c) : null} />
+                <EditableField label="Payment Amount" field="Payment_Amount__c" value={opportunity.Payment_Amount__c ? formatCurrency(opportunity.Payment_Amount__c) : null} />
+                <EditableField label="Term" field="Term__c" value={opportunity.Term__c} />
+                <EditableField label="Payment Frequency" field="Payment_Frequency__c" value={opportunity.Payment_Frequency__c} />
+                <EditableField label="Payback" field="Payback__c" value={opportunity.Payback__c ? formatCurrency(opportunity.Payback__c) : null} />
+                <EditableField label="Payment Method" field="Payment_Method__c" value={opportunity.Payment_Method__c} />
+                <EditableField label="Holdback %" field="Holdback__c" value={opportunity.Holdback__c} />
+                <EditableField label="Commission $" field="Commission__c" value={opportunity.Commission__c ? formatCurrency(opportunity.Commission__c) : null} />
+                <EditableField label="Commission %" field="Commission_Percentage__c" value={opportunity.Commission_Percentage__c} />
+                <EditableField label="Origination Fee $" field="Origination_Fee__c" value={opportunity.Origination_Fee__c ? formatCurrency(opportunity.Origination_Fee__c) : null} />
+                <EditableField label="Origination Fee %" field="Origination_Fee_Percentage__c" value={opportunity.Origination_Fee_Percentage__c} />
               </div>
             </div>
 
-            {/* Commission & Fees */}
+            {/* Renewal Forecasting */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <Percent className="w-5 h-5 text-[#08708E]" />
-                Commission & Fees
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Renewal Forecasting</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {opportunity.Commission__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Commission $</p>
-                    <p className="font-semibold text-green-600 text-lg">{formatCurrency(opportunity.Commission__c)}</p>
-                  </div>
-                )}
-                {opportunity.Commission_Percentage__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Commission %</p>
-                    <p className="font-medium text-slate-900">{opportunity.Commission_Percentage__c}%</p>
-                  </div>
-                )}
-                {opportunity.Origination_Fee__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Origination Fee $</p>
-                    <p className="font-medium text-slate-900">{formatCurrency(opportunity.Origination_Fee__c)}</p>
-                  </div>
-                )}
-                {opportunity.Origination_Fee_Percentage__c && (
-                  <div>
-                    <p className="text-slate-500 mb-1">Origination Fee %</p>
-                    <p className="font-medium text-slate-900">{opportunity.Origination_Fee_Percentage__c}%</p>
-                  </div>
-                )}
+                <EditableField label="60% Paid In" field="X60_Paid_In__c" value={opportunity.X60_Paid_In__c ? formatDate(opportunity.X60_Paid_In__c) : null} type="date" />
+                <EditableField label="20% Paid In" field="X20_Paid_In__c" value={opportunity.X20_Paid_In__c ? formatDate(opportunity.X20_Paid_In__c) : null} type="date" />
+                <EditableField label="80% Paid In" field="X80_Paid_In__c" value={opportunity.X80_Paid_In__c ? formatDate(opportunity.X80_Paid_In__c) : null} type="date" />
+                <EditableField label="40% Paid In" field="X40_Paid_In__c" value={opportunity.X40_Paid_In__c ? formatDate(opportunity.X40_Paid_In__c) : null} type="date" />
+                <EditableField label="100% Paid In" field="X100_Paid_In__c" value={opportunity.X100_Paid_In__c ? formatDate(opportunity.X100_Paid_In__c) : null} type="date" />
+                <EditableField label="Renewal Status" field="Renewal_Status__c" value={opportunity.Renewal_Status__c} />
+                <EditableField label="Previous Funding" field="Previous_Funding__c" value={opportunity.Previous_Funding__c} />
+                <EditableField label="Renewal Status Notes" field="Renewal_Status_Notes__c" value={opportunity.Renewal_Status_Notes__c} />
+                <EditableField label="Next Funding" field="Next_Funding__c" value={opportunity.Next_Funding__c} />
+                <EditableField label="Originating Opportunity" field="Originating_Opportunity__c" value={opportunity.Originating_Opportunity__c} />
+                <EditableField label="Current Renewal" field="Current_Renewal__c" value={opportunity.Current_Renewal__c} />
               </div>
             </div>
 
-            {/* Renewal Information */}
-            {(opportunity.Renewal_Status__c || opportunity.Previous_Funding__c) && (
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-slate-900 mb-4">Renewal Information</h2>
-                <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                  {opportunity.Renewal_Status__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Renewal Status</p>
-                      <p className="font-medium text-slate-900">{opportunity.Renewal_Status__c}</p>
-                    </div>
-                  )}
-                  {opportunity.Renewal_Status_Notes__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Renewal Notes</p>
-                      <p className="font-medium text-slate-900">{opportunity.Renewal_Status_Notes__c}</p>
-                    </div>
-                  )}
-                  {opportunity.Previous_Funding__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Previous Funding</p>
-                      <p className="font-medium text-slate-900">{opportunity.Previous_Funding__c}</p>
-                    </div>
-                  )}
-                  {opportunity.Next_Funding__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Next Funding</p>
-                      <p className="font-medium text-slate-900">{opportunity.Next_Funding__c}</p>
-                    </div>
-                  )}
-                  {opportunity.Originating_Opportunity__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Originating Opportunity</p>
-                      <p className="font-medium text-slate-900">{opportunity.Originating_Opportunity__c}</p>
-                    </div>
-                  )}
-                  {opportunity.Current_Renewal__c && (
-                    <div>
-                      <p className="text-slate-500 mb-1">Current Renewal</p>
-                      <p className="font-medium text-slate-900">{opportunity.Current_Renewal__c}</p>
-                    </div>
-                  )}
+            {/* Stage Tracking */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Stage Tracking</h2>
+              <div className="grid sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <p className="text-slate-500 mb-1">Created By</p>
+                  <p className="font-medium text-slate-900">{opportunity.CreatedBy?.Name}, {formatDate(opportunity.CreatedDate)}</p>
                 </div>
+                <div>
+                  <p className="text-slate-500 mb-1">Last Modified By</p>
+                  <p className="font-medium text-slate-900">{opportunity.LastModifiedBy?.Name}, {formatDate(opportunity.LastModifiedDate)}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 mb-1">Probability (%)</p>
+                  <p className="font-medium text-slate-900">{opportunity.Probability}%</p>
+                </div>
+                {opportunity.Application_In_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Application In Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(opportunity.Application_In_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {opportunity.Contracts_In_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Contracts In Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(opportunity.Contracts_In_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {opportunity.Application_Missing_Info_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Application Missing Info Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(opportunity.Application_Missing_Info_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {opportunity.Renewal_Prospecting_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Renewal Prospecting Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(opportunity.Renewal_Prospecting_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {opportunity.Underwriting_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Underwriting Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(opportunity.Underwriting_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {opportunity.Funded_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Funded Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(opportunity.Funded_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {opportunity.Approved_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Approved Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(opportunity.Approved_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {opportunity.Declined_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Declined Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(opportunity.Declined_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
+                {opportunity.Contracts_Out_Date_Time__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Contracts Out Date/Time</p>
+                    <p className="font-medium text-slate-900">{new Date(opportunity.Contracts_Out_Date_Time__c).toLocaleString()}</p>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
             {/* Activity Timeline */}
             <ActivityTimeline
@@ -614,131 +419,30 @@ export default function OpportunityDetail() {
               onCallCompleted={() => setRefreshKey(prev => prev + 1)}
             />
 
-            {/* Timeline */}
+            {/* Opportunity Owner Info */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-[#08708E]" />
-                Timeline
-              </h3>
-              <div className="space-y-3 text-xs">
-                {opportunity.Application_In_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Application In</p>
-                    <p className="font-medium text-slate-900">{new Date(opportunity.Application_In_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {opportunity.Underwriting_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Underwriting</p>
-                    <p className="font-medium text-slate-900">{new Date(opportunity.Underwriting_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {opportunity.Approved_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Approved</p>
-                    <p className="font-medium text-slate-900">{new Date(opportunity.Approved_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {opportunity.Contracts_Out_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Contracts Out</p>
-                    <p className="font-medium text-slate-900">{new Date(opportunity.Contracts_Out_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {opportunity.Contracts_In_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Contracts In</p>
-                    <p className="font-medium text-slate-900">{new Date(opportunity.Contracts_In_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {opportunity.Funded_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Funded</p>
-                    <p className="font-medium text-slate-900">{new Date(opportunity.Funded_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {opportunity.Declined_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Declined</p>
-                    <p className="font-medium text-slate-900">{new Date(opportunity.Declined_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {opportunity.Application_Missing_Info_Date_Time__c && (
-                  <div>
-                    <p className="text-slate-500">Missing Info</p>
-                    <p className="font-medium text-slate-900">{new Date(opportunity.Application_Missing_Info_Date_Time__c).toLocaleString()}</p>
-                  </div>
-                )}
+              <h3 className="font-semibold text-slate-900 mb-4">Opportunity Owner</h3>
+              <div className="space-y-2 text-sm">
+                <p className="font-medium text-[#08708E]">{opportunity.Owner?.Name}</p>
               </div>
             </div>
 
-            {/* Paid In Tracking */}
-            {(opportunity.X60_Paid_In__c || opportunity.X20_Paid_In__c) && (
+            {/* Close Date */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h3 className="font-semibold text-slate-900 mb-2">Close Date</h3>
+              <p className="text-lg font-bold text-slate-900">{formatDate(opportunity.CloseDate)}</p>
+            </div>
+
+            {/* Amount */}
+            {opportunity.Amount && (
               <div className="bg-white rounded-2xl p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-900 mb-4">Paid In Progress</h3>
-                <div className="space-y-2 text-sm">
-                  {opportunity.X20_Paid_In__c && (
-                    <div>
-                      <p className="text-slate-500 text-xs mb-1">20% Paid In</p>
-                      <p className="font-medium text-slate-900">{formatDate(opportunity.X20_Paid_In__c)}</p>
-                    </div>
-                  )}
-                  {opportunity.X40_Paid_In__c && (
-                    <div>
-                      <p className="text-slate-500 text-xs mb-1">40% Paid In</p>
-                      <p className="font-medium text-slate-900">{formatDate(opportunity.X40_Paid_In__c)}</p>
-                    </div>
-                  )}
-                  {opportunity.X60_Paid_In__c && (
-                    <div>
-                      <p className="text-slate-500 text-xs mb-1">60% Paid In</p>
-                      <p className="font-medium text-slate-900">{formatDate(opportunity.X60_Paid_In__c)}</p>
-                    </div>
-                  )}
-                  {opportunity.X80_Paid_In__c && (
-                    <div>
-                      <p className="text-slate-500 text-xs mb-1">80% Paid In</p>
-                      <p className="font-medium text-slate-900">{formatDate(opportunity.X80_Paid_In__c)}</p>
-                    </div>
-                  )}
-                  {opportunity.X100_Paid_In__c && (
-                    <div>
-                      <p className="text-slate-500 text-xs mb-1">100% Paid In</p>
-                      <p className="font-medium text-slate-900">{formatDate(opportunity.X100_Paid_In__c)}</p>
-                    </div>
-                  )}
-                </div>
+                <h3 className="font-semibold text-slate-900 mb-2">Amount</h3>
+                <p className="text-2xl font-bold text-[#08708E]">{formatCurrency(opportunity.Amount)}</p>
               </div>
             )}
-
-            {/* System Info */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-900 mb-4">System Info</h3>
-              <div className="space-y-2 text-xs">
-                <div>
-                  <p className="text-slate-500">Created By</p>
-                  <p className="font-medium text-slate-900">{opportunity.CreatedBy?.Name}</p>
-                  <p className="text-slate-500">{formatDate(opportunity.CreatedDate)}</p>
-                </div>
-                <div>
-                  <p className="text-slate-500">Last Modified By</p>
-                  <p className="font-medium text-slate-900">{opportunity.LastModifiedBy?.Name}</p>
-                  <p className="text-slate-500">{formatDate(opportunity.LastModifiedDate)}</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
-
-      {/* Edit Modal */}
-      {editMode && (
-        <EditOpportunityModal
-          opportunity={opportunity}
-          onSave={handleUpdate}
-          onClose={() => setEditMode(false)}
-        />
-      )}
     </div>
   );
 }
