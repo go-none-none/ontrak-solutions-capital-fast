@@ -16,32 +16,38 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
     { name: 'Approved', label: 'Approved', color: 'from-green-500 to-green-600' },
     { name: 'Contracts Out', label: 'Contracts Out', color: 'from-yellow-500 to-yellow-600' },
     { name: 'Contracts In', label: 'Contracts In', color: 'from-indigo-500 to-indigo-600' },
-    { name: 'Closed - Funded', label: 'Funded', color: 'from-emerald-500 to-emerald-600' }
+    { name: 'Closed - Funded', label: 'Funded', color: 'from-emerald-500 to-emerald-600' },
+    { name: 'Declined', label: 'Declined', color: 'from-red-500 to-red-600' }
   ];
 
   const stages = activeTab === 'leads' ? leadStages : opportunityStages;
 
   const getPipelineData = () => {
-    if (activeTab === 'leads') {
-      return stages.map(stage => {
-        const stageLeads = leads.filter(l => l.Status === stage.name);
-        return {
-          ...stage,
-          count: stageLeads.length,
-          amount: 0
-        };
-      });
-    } else {
-      return stages.map(stage => {
-        const stageOpps = opportunities.filter(o => o.StageName === stage.name);
-        const totalAmount = stageOpps.reduce((sum, o) => sum + (o.Amount || 0), 0);
-        return {
-          ...stage,
-          count: stageOpps.length,
-          amount: totalAmount
-        };
-      });
-    }
+  if (activeTab === 'leads') {
+    return stages.map(stage => {
+      const stageLeads = leads.filter(l => l.Status === stage.name);
+      return {
+        ...stage,
+        count: stageLeads.length,
+        amount: 0
+      };
+    });
+  } else {
+    return stages.map(stage => {
+      let stageOpps;
+      if (stage.name === 'Declined') {
+        stageOpps = opportunities.filter(o => o.StageName && o.StageName.startsWith('Closed - Declined'));
+      } else {
+        stageOpps = opportunities.filter(o => o.StageName === stage.name);
+      }
+      const totalAmount = stageOpps.reduce((sum, o) => sum + (o.Amount || 0), 0);
+      return {
+        ...stage,
+        count: stageOpps.length,
+        amount: totalAmount
+      };
+    });
+  }
   };
 
   const pipelineData = getPipelineData();
@@ -72,7 +78,7 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
         </div>
       </div>
 
-      <div className={`grid gap-3 ${activeTab === 'leads' ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6'}`}>
+      <div className={`grid gap-3 ${activeTab === 'leads' ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-7'}`}>
         {pipelineData.map((stage, idx) => (
           <motion.div
             key={idx}
