@@ -15,25 +15,30 @@ Deno.serve(async (req) => {
     }
 
     // Initiate call via Dialpad API
-    const response = await fetch('https://dialpad.com/api/v2/calls/outbound', {
+    // Note: Dialpad may require specific OAuth or click-to-call setup
+    const response = await fetch('https://dialpad.com/api/v2/calls', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        to_number: phoneNumber,
-        from_number: callerId || undefined
+        external_number: phoneNumber,
+        phone_number: phoneNumber
       })
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      return Response.json({ error }, { status: response.status });
+      const errorText = await response.text();
+      console.error('Dialpad API error:', errorText);
+      return Response.json({ 
+        error: `Dialpad API error: ${errorText}. You may need to set up OAuth or use Dialpad's desktop/mobile app.`,
+        details: errorText 
+      }, { status: response.status });
     }
 
     const data = await response.json();
-    return Response.json({ callId: data.id, success: true });
+    return Response.json({ callId: data.id || data.call_id, success: true });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

@@ -216,6 +216,67 @@ export default function LeadDetail() {
               </div>
             </div>
 
+            {/* Business Information */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Business Information</h2>
+              <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                {lead.Monthly_Revenue__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Monthly Revenue</p>
+                    <p className="font-semibold text-[#08708E] text-lg">
+                      ${parseFloat(lead.Monthly_Revenue__c).toLocaleString()}
+                    </p>
+                  </div>
+                )}
+                {lead.Funding_Amount_Requested__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Funding Requested</p>
+                    <p className="font-semibold text-[#08708E] text-lg">
+                      ${parseFloat(lead.Funding_Amount_Requested__c).toLocaleString()}
+                    </p>
+                  </div>
+                )}
+                {lead.Time_in_Business__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Time in Business</p>
+                    <p className="font-medium text-slate-900">{lead.Time_in_Business__c}</p>
+                  </div>
+                )}
+                {lead.Use_of_Funds__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Use of Funds</p>
+                    <p className="font-medium text-slate-900">{lead.Use_of_Funds__c}</p>
+                  </div>
+                )}
+                {lead.Credit_Score__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Credit Score</p>
+                    <p className="font-medium text-slate-900">{lead.Credit_Score__c}</p>
+                  </div>
+                )}
+                {lead.Business_Type__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Business Type</p>
+                    <p className="font-medium text-slate-900">{lead.Business_Type__c}</p>
+                  </div>
+                )}
+                {lead.Annual_Revenue__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Annual Revenue</p>
+                    <p className="font-medium text-slate-900">
+                      ${parseFloat(lead.Annual_Revenue__c).toLocaleString()}
+                    </p>
+                  </div>
+                )}
+                {lead.Number_of_Employees__c && (
+                  <div>
+                    <p className="text-slate-500 mb-1">Employees</p>
+                    <p className="font-medium text-slate-900">{lead.Number_of_Employees__c}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Activity Timeline */}
             <ActivityTimeline
               key={refreshKey}
@@ -247,7 +308,7 @@ export default function LeadDetail() {
 
             {/* Additional Details */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-900 mb-4">Details</h3>
+              <h3 className="font-semibold text-slate-900 mb-4">Additional Details</h3>
               <div className="space-y-3 text-sm">
                 {lead.LeadSource && (
                   <div>
@@ -267,95 +328,106 @@ export default function LeadDetail() {
                     <p className="font-medium text-slate-900">{lead.Industry}</p>
                   </div>
                 )}
-                {lead.Monthly_Revenue__c && (
+                {lead.Street && (
                   <div>
-                    <p className="text-slate-500">Monthly Revenue</p>
-                    <p className="font-medium text-slate-900">${parseFloat(lead.Monthly_Revenue__c).toLocaleString()}</p>
+                    <p className="text-slate-500">Address</p>
+                    <p className="font-medium text-slate-900">
+                      {lead.Street}
+                      {lead.City && `, ${lead.City}`}
+                      {lead.State && `, ${lead.State}`}
+                      {lead.PostalCode && ` ${lead.PostalCode}`}
+                    </p>
                   </div>
                 )}
-                {lead.Funding_Amount_Requested__c && (
+                {lead.Website && (
                   <div>
-                    <p className="text-slate-500">Funding Requested</p>
-                    <p className="font-medium text-slate-900">${parseFloat(lead.Funding_Amount_Requested__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {lead.Time_in_Business__c && (
-                  <div>
-                    <p className="text-slate-500">Time in Business</p>
-                    <p className="font-medium text-slate-900">{lead.Time_in_Business__c}</p>
-                  </div>
-                )}
-                {lead.Use_of_Funds__c && (
-                  <div>
-                    <p className="text-slate-500">Use of Funds</p>
-                    <p className="font-medium text-slate-900">{lead.Use_of_Funds__c}</p>
+                    <p className="text-slate-500">Website</p>
+                    <a href={lead.Website} target="_blank" rel="noopener noreferrer" className="font-medium text-[#08708E] hover:underline">
+                      {lead.Website}
+                    </a>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Missing Documents */}
-            {lead.Status === 'Application Missing Info' && (
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-900 mb-4">Missing Documents</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={lead.Bank_Statements_Received__c || false}
-                      onChange={async (e) => {
-                        await base44.functions.invoke('updateSalesforceRecord', {
-                          objectType: 'Lead',
-                          recordId: lead.Id,
-                          data: { Bank_Statements_Received__c: e.target.checked },
-                          token: session.token,
-                          instanceUrl: session.instanceUrl
-                        });
-                        loadLead(session);
-                      }}
-                      className="w-4 h-4 rounded border-slate-300"
-                    />
-                    <label className="text-sm text-slate-700">Bank Statements</label>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={lead.Tax_Returns_Received__c || false}
-                      onChange={async (e) => {
-                        await base44.functions.invoke('updateSalesforceRecord', {
-                          objectType: 'Lead',
-                          recordId: lead.Id,
-                          data: { Tax_Returns_Received__c: e.target.checked },
-                          token: session.token,
-                          instanceUrl: session.instanceUrl
-                        });
-                        loadLead(session);
-                      }}
-                      className="w-4 h-4 rounded border-slate-300"
-                    />
-                    <label className="text-sm text-slate-700">Tax Returns</label>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={lead.Voided_Check_Received__c || false}
-                      onChange={async (e) => {
-                        await base44.functions.invoke('updateSalesforceRecord', {
-                          objectType: 'Lead',
-                          recordId: lead.Id,
-                          data: { Voided_Check_Received__c: e.target.checked },
-                          token: session.token,
-                          instanceUrl: session.instanceUrl
-                        });
-                        loadLead(session);
-                      }}
-                      className="w-4 h-4 rounded border-slate-300"
-                    />
-                    <label className="text-sm text-slate-700">Voided Check</label>
-                  </div>
+            {/* Document Tracking */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <h3 className="font-semibold text-slate-900 mb-4">Document Tracking</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200">
+                  <label className="text-sm text-slate-700 font-medium">Bank Statements</label>
+                  <input
+                    type="checkbox"
+                    checked={lead.Bank_Statements_Received__c || false}
+                    onChange={async (e) => {
+                      await base44.functions.invoke('updateSalesforceRecord', {
+                        objectType: 'Lead',
+                        recordId: lead.Id,
+                        data: { Bank_Statements_Received__c: e.target.checked },
+                        token: session.token,
+                        instanceUrl: session.instanceUrl
+                      });
+                      loadLead(session);
+                    }}
+                    className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                  />
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200">
+                  <label className="text-sm text-slate-700 font-medium">Tax Returns</label>
+                  <input
+                    type="checkbox"
+                    checked={lead.Tax_Returns_Received__c || false}
+                    onChange={async (e) => {
+                      await base44.functions.invoke('updateSalesforceRecord', {
+                        objectType: 'Lead',
+                        recordId: lead.Id,
+                        data: { Tax_Returns_Received__c: e.target.checked },
+                        token: session.token,
+                        instanceUrl: session.instanceUrl
+                      });
+                      loadLead(session);
+                    }}
+                    className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                  />
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200">
+                  <label className="text-sm text-slate-700 font-medium">Voided Check</label>
+                  <input
+                    type="checkbox"
+                    checked={lead.Voided_Check_Received__c || false}
+                    onChange={async (e) => {
+                      await base44.functions.invoke('updateSalesforceRecord', {
+                        objectType: 'Lead',
+                        recordId: lead.Id,
+                        data: { Voided_Check_Received__c: e.target.checked },
+                        token: session.token,
+                        instanceUrl: session.instanceUrl
+                      });
+                      loadLead(session);
+                    }}
+                    className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                  />
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg border border-slate-200">
+                  <label className="text-sm text-slate-700 font-medium">Driver's License</label>
+                  <input
+                    type="checkbox"
+                    checked={lead.Drivers_License_Received__c || false}
+                    onChange={async (e) => {
+                      await base44.functions.invoke('updateSalesforceRecord', {
+                        objectType: 'Lead',
+                        recordId: lead.Id,
+                        data: { Drivers_License_Received__c: e.target.checked },
+                        token: session.token,
+                        instanceUrl: session.instanceUrl
+                      });
+                      loadLead(session);
+                    }}
+                    className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                  />
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
