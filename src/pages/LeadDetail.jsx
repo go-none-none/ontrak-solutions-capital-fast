@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadWidget from '../components/rep/DialpadWidget.jsx';
+import SMSWidget from '../components/rep/SMSWidget';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 
 export default function LeadDetail() {
