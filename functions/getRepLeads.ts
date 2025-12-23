@@ -9,26 +9,30 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
     }
 
-    // Query leads owned by this rep
-    const query = `SELECT Id, Name, Company, Phone, Email, Status, LeadSource, CreatedDate, LastModifiedDate FROM Lead WHERE OwnerId = '${userId}' AND IsConverted = false ORDER BY LastModifiedDate DESC LIMIT 2000`;
+    // Query leads by specific statuses - 100 latest updated for each
+    const statuses = ['Contacted', 'Application Out', 'Application Missing Info'];
+    const allLeads = [];
     
-    const response = await fetch(
-      `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+    for (const status of statuses) {
+      const query = `SELECT Id, Name, Company, Phone, Email, Status, LeadSource, CreatedDate, LastModifiedDate FROM Lead WHERE OwnerId = '${userId}' AND Status = '${status}' AND IsConverted = false ORDER BY LastModifiedDate DESC LIMIT 100`;
+      
+      const response = await fetch(
+        `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
-      }
-    );
+      );
 
-    if (!response.ok) {
-      const error = await response.text();
-      return Response.json({ error }, { status: response.status });
+      if (response.ok) {
+        const data = await response.json();
+        allLeads.push(...data.records);
+      }
     }
 
-    const data = await response.json();
-    return Response.json({ leads: data.records });
+    return Response.json({ leads: allLeads });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
