@@ -29,7 +29,7 @@ export default function AdminPipeline() {
   const [allUsers, setAllUsers] = useState([]);
   const [repSearch, setRepSearch] = useState({}); // {repUserId: searchTerm}
   const [relatedRecordView, setRelatedRecordView] = useState(null); // {recordId, recordType, recordName}
-  const [repSort, setRepSort] = useState({}); // {repUserId: {column, direction}}
+  const [tableSort, setTableSort] = useState({ column: null, direction: 'asc' }); // {column, direction}
 
   useEffect(() => {
     checkSession();
@@ -272,9 +272,9 @@ export default function AdminPipeline() {
   ];
 
   const stages = activeView === 'leads' ? leadStages : activeView === 'opportunities' ? opportunityStages : taskCategories;
-  
+
   // Merge all users with reps data
-  const allRepsData = allUsers.map(user => {
+  let allRepsData = allUsers.map(user => {
     const existingRep = repsData.find(r => r.userId === user.Id);
     return existingRep || {
       userId: user.Id,
@@ -284,6 +284,25 @@ export default function AdminPipeline() {
       opportunities: []
     };
   });
+
+  // Apply sorting
+  if (tableSort.column) {
+    allRepsData = [...allRepsData].sort((a, b) => {
+      let aVal, bVal;
+
+      if (tableSort.column === 'name') {
+        aVal = a.name || '';
+        bVal = b.name || '';
+      } else {
+        // Sorting by stage/category count
+        aVal = getStageCount(a, tableSort.column);
+        bVal = getStageCount(b, tableSort.column);
+      }
+
+      const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+      return tableSort.direction === 'asc' ? comparison : -comparison;
+    });
+  }
 
   const totalLeads = allRepsData.reduce((sum, rep) => sum + (rep.leads?.length || 0), 0);
   const totalOpps = allRepsData.reduce((sum, rep) => sum + (rep.opportunities?.length || 0), 0);
@@ -450,10 +469,39 @@ export default function AdminPipeline() {
             <table className="w-full min-w-[1200px]">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700 min-w-[250px]">Rep Name</th>
+                  <th 
+                    className="text-left px-6 py-4 text-sm font-semibold text-slate-700 min-w-[250px] cursor-pointer hover:bg-slate-100 transition-colors"
+                    onClick={() => {
+                      setTableSort(prev => ({
+                        column: 'name',
+                        direction: prev.column === 'name' && prev.direction === 'asc' ? 'desc' : 'asc'
+                      }));
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      Rep Name
+                      {tableSort.column === 'name' ? (
+                        tableSort.direction === 'asc' ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />
+                      ) : <ArrowUpDown className="w-4 h-4 text-slate-400" />}
+                    </div>
+                  </th>
                   {stages.map((stage, idx) => (
-                    <th key={idx} className="text-center px-3 py-4 text-xs font-semibold text-slate-700">
-                      {stage.label}
+                    <th 
+                      key={idx} 
+                      className="text-center px-3 py-4 text-xs font-semibold text-slate-700 cursor-pointer hover:bg-slate-100 transition-colors"
+                      onClick={() => {
+                        setTableSort(prev => ({
+                          column: stage.name,
+                          direction: prev.column === stage.name && prev.direction === 'asc' ? 'desc' : 'asc'
+                        }));
+                      }}
+                    >
+                      <div className="flex items-center justify-center gap-1">
+                        {stage.label}
+                        {tableSort.column === stage.name ? (
+                          tableSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                        ) : <ArrowUpDown className="w-3 h-3 text-slate-400" />}
+                      </div>
                     </th>
                   ))}
                   <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700 min-w-[140px]">
@@ -575,210 +623,6 @@ export default function AdminPipeline() {
                                   className="pl-10"
                                 />
                               </div>
-                              {/* Sort Controls */}
-                              <div className="flex gap-2 mb-3 flex-wrap">
-                                {activeView === 'leads' && (
-                                  <>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const current = repSort[rep.userId];
-                                        setRepSort(prev => ({
-                                          ...prev,
-                                          [rep.userId]: {
-                                            column: 'Name',
-                                            direction: current?.column === 'Name' && current?.direction === 'asc' ? 'desc' : 'asc'
-                                          }
-                                        }));
-                                      }}
-                                      className="text-xs"
-                                    >
-                                      Name
-                                      {repSort[rep.userId]?.column === 'Name' ? (
-                                        repSort[rep.userId]?.direction === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />
-                                      ) : <ArrowUpDown className="w-3 h-3 ml-1" />}
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const current = repSort[rep.userId];
-                                        setRepSort(prev => ({
-                                          ...prev,
-                                          [rep.userId]: {
-                                            column: 'Company',
-                                            direction: current?.column === 'Company' && current?.direction === 'asc' ? 'desc' : 'asc'
-                                          }
-                                        }));
-                                      }}
-                                      className="text-xs"
-                                    >
-                                      Company
-                                      {repSort[rep.userId]?.column === 'Company' ? (
-                                        repSort[rep.userId]?.direction === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />
-                                      ) : <ArrowUpDown className="w-3 h-3 ml-1" />}
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const current = repSort[rep.userId];
-                                        setRepSort(prev => ({
-                                          ...prev,
-                                          [rep.userId]: {
-                                            column: 'Status',
-                                            direction: current?.column === 'Status' && current?.direction === 'asc' ? 'desc' : 'asc'
-                                          }
-                                        }));
-                                      }}
-                                      className="text-xs"
-                                    >
-                                      Status
-                                      {repSort[rep.userId]?.column === 'Status' ? (
-                                        repSort[rep.userId]?.direction === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />
-                                      ) : <ArrowUpDown className="w-3 h-3 ml-1" />}
-                                    </Button>
-                                  </>
-                                )}
-                                {activeView === 'opportunities' && (
-                                  <>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const current = repSort[rep.userId];
-                                        setRepSort(prev => ({
-                                          ...prev,
-                                          [rep.userId]: {
-                                            column: 'Name',
-                                            direction: current?.column === 'Name' && current?.direction === 'asc' ? 'desc' : 'asc'
-                                          }
-                                        }));
-                                      }}
-                                      className="text-xs"
-                                    >
-                                      Name
-                                      {repSort[rep.userId]?.column === 'Name' ? (
-                                        repSort[rep.userId]?.direction === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />
-                                      ) : <ArrowUpDown className="w-3 h-3 ml-1" />}
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const current = repSort[rep.userId];
-                                        setRepSort(prev => ({
-                                          ...prev,
-                                          [rep.userId]: {
-                                            column: 'Amount',
-                                            direction: current?.column === 'Amount' && current?.direction === 'asc' ? 'desc' : 'asc'
-                                          }
-                                        }));
-                                      }}
-                                      className="text-xs"
-                                    >
-                                      Amount
-                                      {repSort[rep.userId]?.column === 'Amount' ? (
-                                        repSort[rep.userId]?.direction === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />
-                                      ) : <ArrowUpDown className="w-3 h-3 ml-1" />}
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const current = repSort[rep.userId];
-                                        setRepSort(prev => ({
-                                          ...prev,
-                                          [rep.userId]: {
-                                            column: 'StageName',
-                                            direction: current?.column === 'StageName' && current?.direction === 'asc' ? 'desc' : 'asc'
-                                          }
-                                        }));
-                                      }}
-                                      className="text-xs"
-                                    >
-                                      Stage
-                                      {repSort[rep.userId]?.column === 'StageName' ? (
-                                        repSort[rep.userId]?.direction === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />
-                                      ) : <ArrowUpDown className="w-3 h-3 ml-1" />}
-                                    </Button>
-                                  </>
-                                )}
-                                {activeView === 'tasks' && (
-                                  <>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const current = repSort[rep.userId];
-                                        setRepSort(prev => ({
-                                          ...prev,
-                                          [rep.userId]: {
-                                            column: 'Subject',
-                                            direction: current?.column === 'Subject' && current?.direction === 'asc' ? 'desc' : 'asc'
-                                          }
-                                        }));
-                                      }}
-                                      className="text-xs"
-                                    >
-                                      Subject
-                                      {repSort[rep.userId]?.column === 'Subject' ? (
-                                        repSort[rep.userId]?.direction === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />
-                                      ) : <ArrowUpDown className="w-3 h-3 ml-1" />}
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const current = repSort[rep.userId];
-                                        setRepSort(prev => ({
-                                          ...prev,
-                                          [rep.userId]: {
-                                            column: 'ActivityDate',
-                                            direction: current?.column === 'ActivityDate' && current?.direction === 'asc' ? 'desc' : 'asc'
-                                          }
-                                        }));
-                                      }}
-                                      className="text-xs"
-                                    >
-                                      Due Date
-                                      {repSort[rep.userId]?.column === 'ActivityDate' ? (
-                                        repSort[rep.userId]?.direction === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />
-                                      ) : <ArrowUpDown className="w-3 h-3 ml-1" />}
-                                    </Button>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const current = repSort[rep.userId];
-                                        setRepSort(prev => ({
-                                          ...prev,
-                                          [rep.userId]: {
-                                            column: 'Status',
-                                            direction: current?.column === 'Status' && current?.direction === 'asc' ? 'desc' : 'asc'
-                                          }
-                                        }));
-                                      }}
-                                      className="text-xs"
-                                    >
-                                      Status
-                                      {repSort[rep.userId]?.column === 'Status' ? (
-                                        repSort[rep.userId]?.direction === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />
-                                      ) : <ArrowUpDown className="w-3 h-3 ml-1" />}
-                                    </Button>
-                                  </>
-                                )}
-                              </div>
                               <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
                                 {activeView === 'leads' 
                                   ? rep.leads?.filter(lead => {
@@ -790,13 +634,6 @@ export default function AdminPipeline() {
                                         lead.Email?.toLowerCase().includes(searchTerm) ||
                                         lead.Status?.toLowerCase().includes(searchTerm);
                                       return stageMatch && searchMatch;
-                                    }).sort((a, b) => {
-                                      const sort = repSort[rep.userId];
-                                      if (!sort) return 0;
-                                      const aVal = a[sort.column] || '';
-                                      const bVal = b[sort.column] || '';
-                                      const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-                                      return sort.direction === 'asc' ? comparison : -comparison;
                                     }).map((lead, idx) => (
                                       <button
                                         key={idx}
@@ -826,20 +663,6 @@ export default function AdminPipeline() {
                                           opp.Account?.Name?.toLowerCase().includes(searchTerm) ||
                                           opp.StageName?.toLowerCase().includes(searchTerm);
                                         return stageMatch && searchMatch;
-                                      }).sort((a, b) => {
-                                        const sort = repSort[rep.userId];
-                                        if (!sort) return 0;
-                                        let aVal = a[sort.column];
-                                        let bVal = b[sort.column];
-                                        if (sort.column === 'Amount') {
-                                          aVal = aVal || 0;
-                                          bVal = bVal || 0;
-                                        } else {
-                                          aVal = aVal || '';
-                                          bVal = bVal || '';
-                                        }
-                                        const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-                                        return sort.direction === 'asc' ? comparison : -comparison;
                                       }).map((opp, idx) => (
                                         <button
                                           key={idx}
@@ -879,23 +702,6 @@ export default function AdminPipeline() {
                                             task.Status?.toLowerCase().includes(searchTerm) ||
                                             task.What?.Name?.toLowerCase().includes(searchTerm)
                                           );
-                                        }
-
-                                        const sort = repSort[rep.userId];
-                                        if (sort) {
-                                          tasksToShow = [...tasksToShow].sort((a, b) => {
-                                            let aVal = a[sort.column];
-                                            let bVal = b[sort.column];
-                                            if (sort.column === 'ActivityDate') {
-                                              aVal = aVal || '9999-12-31';
-                                              bVal = bVal || '9999-12-31';
-                                            } else {
-                                              aVal = aVal || '';
-                                              bVal = bVal || '';
-                                            }
-                                            const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-                                            return sort.direction === 'asc' ? comparison : -comparison;
-                                          });
                                         }
 
                                         return tasksToShow.map((task, idx) => (
