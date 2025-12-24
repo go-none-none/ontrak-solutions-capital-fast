@@ -5,7 +5,6 @@ import { DollarSign, Calendar, Building2, TrendingUp } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
 export default function OpportunityCard({ opportunity, session, onUpdate, onOpenModal }) {
-  const [isHovered, setIsHovered] = useState(false);
 
   const stages = [
     { label: 'App In', name: 'Application In' },

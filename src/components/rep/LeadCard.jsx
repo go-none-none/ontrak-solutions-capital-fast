@@ -5,7 +5,6 @@ import { Phone, Mail, Building2, Calendar, DollarSign } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
 export default function LeadCard({ lead, session, onOpenModal }) {
-  const [isHovered, setIsHovered] = useState(false);
 
   const stages = [
     { label: 'New', status: 'Open - Not Contacted' },
@@ -53,15 +52,12 @@ export default function LeadCard({ lead, session, onOpenModal }) {
   };
 
   return (
-    <div className="relative">
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={handleClick}
-        className="border border-slate-200 rounded-xl p-5 bg-white transition-all cursor-pointer hover:shadow-lg hover:border-[#08708E]"
-      >
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      onClick={handleClick}
+      className="border border-slate-200 rounded-xl p-5 bg-white transition-all cursor-pointer hover:shadow-lg hover:border-[#08708E]"
+    >
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-slate-900 mb-1">{lead.Name}</h3>
@@ -132,59 +128,5 @@ export default function LeadCard({ lead, session, onOpenModal }) {
           )}
         </div>
       </motion.div>
-
-      <AnimatePresence>
-        {isHovered && (
-          <motion.div
-            initial={{ opacity: 0, x: -20, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -20, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border-2 border-[#08708E] p-6 z-50 min-w-[500px]"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <p className="text-xs text-slate-500">Company</p>
-                  <p className="font-medium text-slate-900">{lead.Company}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500">Email</p>
-                  <a href={`mailto:${lead.Email}`} className="font-medium text-[#08708E] hover:underline">
-                    {lead.Email}
-                  </a>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500">Phone</p>
-                  <a href={`tel:${lead.Phone}`} className="font-medium text-[#08708E] hover:underline">
-                    {lead.Phone}
-                  </a>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500">Funding Requested</p>
-                  <p className="font-semibold text-[#08708E]">{formatCurrency(lead.Amount_Requested__c)}</p>
-                </div>
-                {lead.LeadSource && (
-                  <div>
-                    <p className="text-xs text-slate-500">Source</p>
-                    <p className="font-medium text-slate-900">{lead.LeadSource}</p>
-                  </div>
-                )}
-                {lead.Industry && (
-                  <div>
-                    <p className="text-xs text-slate-500">Industry</p>
-                    <p className="font-medium text-slate-900">{lead.Industry}</p>
-                  </div>
-                )}
-              </div>
-              <p className="text-xs text-slate-500 text-center pt-2 border-t">Click anywhere to view full details</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
   );
 }
