@@ -61,24 +61,37 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-slate-900">My Pipeline - {activeTab === 'leads' ? 'Leads' : 'Opportunities'}</h2>
-        <div className="flex gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <Target className="w-4 h-4 text-slate-500" />
-            <span className="text-slate-600">{totalDeals} {activeTab === 'leads' ? 'Leads' : 'Deals'}</span>
+    <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl shadow-lg p-8 border-2 border-slate-200">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-1">Pipeline Overview</h2>
+          <p className="text-slate-600 text-sm">{activeTab === 'leads' ? 'Track your lead progress' : 'Monitor deal flow and stages'}</p>
+        </div>
+        <div className="flex gap-6">
+          <div className="bg-white rounded-xl px-6 py-3 shadow-sm border border-slate-200">
+            <div className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-[#08708E]" />
+              <div>
+                <p className="text-xs text-slate-500">Total {activeTab === 'leads' ? 'Leads' : 'Deals'}</p>
+                <p className="text-2xl font-bold text-slate-900">{totalDeals}</p>
+              </div>
+            </div>
           </div>
           {activeTab === 'opportunities' && (
-            <div className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-[#08708E]" />
-              <span className="font-semibold text-slate-900">{formatCurrency(totalPipeline)}</span>
+            <div className="bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-xl px-6 py-3 shadow-sm">
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-white" />
+                <div>
+                  <p className="text-xs text-white/80">Pipeline Value</p>
+                  <p className="text-2xl font-bold text-white">{formatCurrency(totalPipeline)}</p>
+                </div>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      <div className={`grid gap-3 ${activeTab === 'leads' ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-7'}`}>
+      <div className={`grid gap-4 ${activeTab === 'leads' ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-7'}`}>
         {pipelineData.map((stage, idx) => (
           <motion.div
             key={idx}
@@ -89,13 +102,18 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
           >
             <button
               onClick={() => onStageClick && onStageClick(stage.name)}
-              className={`w-full bg-gradient-to-br ${stage.color} rounded-xl p-4 text-white shadow-sm hover:shadow-lg hover:scale-105 transition-all text-left`}
+              className={`w-full bg-gradient-to-br ${stage.color} rounded-2xl p-5 text-white shadow-md hover:shadow-xl hover:scale-105 transition-all text-left relative overflow-hidden`}
             >
-              <div className="text-2xl font-bold mb-1">{stage.count}</div>
-              <div className="text-xs opacity-90 mb-2">{stage.label}</div>
-              {activeTab === 'opportunities' && (
-                <div className="text-sm font-semibold">{formatCurrency(stage.amount)}</div>
-              )}
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative">
+                <div className="text-3xl font-bold mb-2">{stage.count}</div>
+                <div className="text-xs font-medium opacity-90 mb-3">{stage.label}</div>
+                {activeTab === 'opportunities' && stage.amount > 0 && (
+                  <div className="text-sm font-semibold bg-white/20 rounded-lg px-2 py-1 inline-block">
+                    {formatCurrency(stage.amount)}
+                  </div>
+                )}
+              </div>
             </button>
           </motion.div>
         ))}
