@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
+import CreateTaskModal from '../components/admin/CreateTaskModal';
 
 export default function AdminPipeline() {
   const [session, setSession] = useState(null);
@@ -19,6 +20,8 @@ export default function AdminPipeline() {
   const [stageFilter, setStageFilter] = useState({}); // {repUserId: stageName}
   const [expandedRecord, setExpandedRecord] = useState(null);
   const [expandedRecordType, setExpandedRecordType] = useState(null);
+  const [showCreateTask, setShowCreateTask] = useState(false);
+  const [allTasks, setAllTasks] = useState([]);
 
   useEffect(() => {
     checkSession();
@@ -63,12 +66,19 @@ export default function AdminPipeline() {
     }
 
     try {
-      const response = await base44.functions.invoke('getAllRepsPipeline', {
-        token: sessionData.token,
-        instanceUrl: sessionData.instanceUrl
-      });
+      const [pipelineRes, tasksRes] = await Promise.all([
+        base44.functions.invoke('getAllRepsPipeline', {
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getAllSalesforceTasks', {
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        })
+      ]);
 
-      setRepsData(response.data.reps || []);
+      setRepsData(pipelineRes.data.reps || []);
+      setAllTasks(tasksRes.data.tasks || []);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
@@ -176,6 +186,8 @@ export default function AdminPipeline() {
   const totalLeads = repsData.reduce((sum, rep) => sum + (rep.leads?.length || 0), 0);
   const totalOpps = repsData.reduce((sum, rep) => sum + (rep.opportunities?.length || 0), 0);
   const totalPipelineValue = repsData.reduce((sum, rep) => sum + getTotalPipeline(rep), 0);
+  const totalTasks = allTasks.length;
+  const openTasks = allTasks.filter(t => t.Status !== 'Completed').length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -209,7 +221,7 @@ export default function AdminPipeline() {
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -276,25 +288,49 @@ export default function AdminPipeline() {
               </div>
             </div>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-2xl p-6 shadow-sm"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 mb-1">Open Tasks</p>
+                <p className="text-3xl font-bold text-slate-900">{openTasks}</p>
+                <p className="text-xs text-slate-500 mt-1">of {totalTasks} total</p>
+              </div>
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                <CheckSquare className="w-7 h-7 text-white" />
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        {/* View Toggle */}
-        <div className="flex gap-2 mb-6">
-          <Button
-            onClick={() => setActiveView('leads')}
-            variant={activeView === 'leads' ? 'default' : 'outline'}
-            className={activeView === 'leads' ? 'bg-[#08708E] hover:bg-[#065a72]' : ''}
-          >
-            <Target className="w-4 h-4 mr-2" />
-            Leads Pipeline
-          </Button>
-          <Button
-            onClick={() => setActiveView('opportunities')}
-            variant={activeView === 'opportunities' ? 'default' : 'outline'}
-            className={activeView === 'opportunities' ? 'bg-[#08708E] hover:bg-[#065a72]' : ''}
-          >
-            <TrendingUp className="w-4 h-4 mr-2" />
-            Opportunities Pipeline
+        {/* View Toggle & Create Task */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setActiveView('leads')}
+              variant={activeView === 'leads' ? 'default' : 'outline'}
+              className={activeView === 'leads' ? 'bg-[#08708E] hover:bg-[#065a72]' : ''}
+            >
+              <Target className="w-4 h-4 mr-2" />
+              Leads Pipeline
+            </Button>
+            <Button
+              onClick={() => setActiveView('opportunities')}
+              variant={activeView === 'opportunities' ? 'default' : 'outline'}
+              className={activeView === 'opportunities' ? 'bg-[#08708E] hover:bg-[#065a72]' : ''}
+            >
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Opportunities Pipeline
+            </Button>
+          </div>
+          <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700">
+            <Plus className="w-4 h-4 mr-2" />
+            Create Task
           </Button>
         </div>
 

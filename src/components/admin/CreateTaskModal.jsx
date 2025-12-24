@@ -1,0 +1,256 @@
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, Plus } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+
+export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, repsData }) {
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [formData, setFormData] = useState({
+    assignedTo: '',
+    subject: '',
+    dueDate: '',
+    priority: 'Normal',
+    status: 'Not Started',
+    relatedToId: '',
+    relatedToType: '',
+    description: ''
+  });
+  const [relatedRecords, setRelatedRecords] = useState([]);
+
+  useEffect(() => {
+    if (isOpen && users.length === 0) {
+      loadUsers();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (formData.assignedTo && repsData) {
+      const rep = repsData.find(r => r.userId === formData.assignedTo);
+      if (rep) {
+        const records = [];
+        rep.leads?.forEach(lead => {
+          records.push({ id: lead.Id, name: lead.Name, type: 'Lead' });
+        });
+        rep.opportunities?.forEach(opp => {
+          records.push({ id: opp.Id, name: opp.Name, type: 'Opportunity' });
+        });
+        setRelatedRecords(records);
+      } else {
+        setRelatedRecords([]);
+      }
+    }
+  }, [formData.assignedTo, repsData]);
+
+  const loadUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const response = await base44.functions.invoke('getSalesforceUsers', {
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      setUsers(response.data.users || []);
+    } catch (error) {
+      console.error('Error loading users:', error);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.assignedTo || !formData.subject) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await base44.functions.invoke('createSalesforceAdminTask', {
+        assignedTo: formData.assignedTo,
+        subject: formData.subject,
+        dueDate: formData.dueDate || null,
+        priority: formData.priority,
+        status: formData.status,
+        relatedToId: formData.relatedToId || null,
+        relatedToType: formData.relatedToType || null,
+        description: formData.description,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+
+      setFormData({
+        assignedTo: '',
+        subject: '',
+        dueDate: '',
+        priority: 'Normal',
+        status: 'Not Started',
+        relatedToId: '',
+        relatedToType: '',
+        description: ''
+      });
+      setRelatedRecords([]);
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error('Error creating task:', error);
+      alert('Failed to create task: ' + (error.response?.data?.error || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Create Task</DialogTitle>
+          <DialogDescription>Assign a new task to a rep</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">
+                Assign To <span className="text-red-500">*</span>
+              </label>
+              <Select
+                value={formData.assignedTo}
+                onValueChange={(val) => setFormData({ ...formData, assignedTo: val, relatedToId: '', relatedToType: '' })}
+                disabled={loadingUsers}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={loadingUsers ? "Loading..." : "Select rep"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map(user => (
+                    <SelectItem key={user.Id} value={user.Id}>
+                      {user.Name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Priority</label>
+              <Select value={formData.priority} onValueChange={(val) => setFormData({ ...formData, priority: val })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Normal">Normal</SelectItem>
+                  <SelectItem value="Low">Low</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-700 mb-1 block">
+              Subject <span className="text-red-500">*</span>
+            </label>
+            <Input
+              value={formData.subject}
+              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              placeholder="e.g., Follow up with client"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Due Date</label>
+              <Input
+                type="date"
+                value={formData.dueDate}
+                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Status</label>
+              <Select value={formData.status} onValueChange={(val) => setFormData({ ...formData, status: val })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Not Started">Not Started</SelectItem>
+                  <SelectItem value="In Progress">In Progress</SelectItem>
+                  <SelectItem value="Waiting">Waiting</SelectItem>
+                  <SelectItem value="Completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-700 mb-1 block">Related To</label>
+            <Select
+              value={formData.relatedToId}
+              onValueChange={(val) => {
+                const record = relatedRecords.find(r => r.id === val);
+                setFormData({ 
+                  ...formData, 
+                  relatedToId: val,
+                  relatedToType: record?.type || ''
+                });
+              }}
+              disabled={!formData.assignedTo || relatedRecords.length === 0}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={
+                  !formData.assignedTo 
+                    ? "Select rep first" 
+                    : relatedRecords.length === 0 
+                      ? "No records available" 
+                      : "Select lead or opportunity"
+                } />
+              </SelectTrigger>
+              <SelectContent>
+                {relatedRecords.map(record => (
+                  <SelectItem key={record.id} value={record.id}>
+                    {record.name} ({record.type})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-700 mb-1 block">Description</label>
+            <Textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Add task details..."
+              rows={3}
+            />
+          </div>
+
+          <div className="flex gap-3 justify-end pt-4 border-t">
+            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={loading} className="bg-[#08708E]">
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Task
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
