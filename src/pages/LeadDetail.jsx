@@ -432,15 +432,6 @@ export default function LeadDetail() {
               </div>
             </Collapsible>
 
-            {/* Email Client */}
-            <EmailClientCard
-              recipientEmail={lead.Email}
-              recipientName={lead.Name}
-              recordId={lead.Id}
-              recordType="Lead"
-              session={session}
-            />
-
             {/* Activity & Files */}
             <ActivityTimeline
               key={refreshKey}
@@ -465,6 +456,15 @@ export default function LeadDetail() {
               recordType="Lead"
               session={session}
               onCallCompleted={() => setRefreshKey(prev => prev + 1)}
+            />
+
+            {/* Email Client */}
+            <EmailClientCard
+              recipientEmail={lead.Email}
+              recipientName={lead.Name}
+              recordId={lead.Id}
+              recordType="Lead"
+              session={session}
             />
 
             <div className="bg-white rounded-xl p-6 shadow-sm">
