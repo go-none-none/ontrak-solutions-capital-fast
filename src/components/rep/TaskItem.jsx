@@ -164,47 +164,79 @@ export default function TaskItem({ task, session, onUpdate }) {
                 <TabsTrigger value="opportunities">Opportunities ({relatedRecords?.opportunities?.length || 0})</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="details" className="space-y-4">
+              <TabsContent value="details" className="space-y-4 mt-4">
                 <div className="grid grid-cols-2 gap-4">
-                  {accountData.Phone && (
+                  <div>
+                    <p className="text-xs text-slate-500 mb-1">Account Name</p>
+                    <p className="text-slate-900 font-semibold text-base">{accountData.Name || 'N/A'}</p>
+                  </div>
+                  {accountData.Phone ? (
                     <div>
-                      <p className="text-xs text-slate-500">Phone</p>
-                      <a href={`tel:${accountData.Phone}`} className="text-[#08708E] hover:underline">{accountData.Phone}</a>
+                      <p className="text-xs text-slate-500 mb-1">Phone</p>
+                      <a href={`tel:${accountData.Phone}`} className="text-[#08708E] hover:underline font-medium">{accountData.Phone}</a>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Phone</p>
+                      <p className="text-slate-400">Not available</p>
                     </div>
                   )}
-                  {accountData.Website && (
+                  {accountData.Website ? (
                     <div>
-                      <p className="text-xs text-slate-500">Website</p>
-                      <a href={accountData.Website} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline">{accountData.Website}</a>
+                      <p className="text-xs text-slate-500 mb-1">Website</p>
+                      <a href={accountData.Website} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline font-medium break-all">{accountData.Website}</a>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Website</p>
+                      <p className="text-slate-400">Not available</p>
                     </div>
                   )}
-                  {accountData.Type && (
+                  {accountData.Type ? (
                     <div>
-                      <p className="text-xs text-slate-500">Type</p>
-                      <p className="text-slate-900">{accountData.Type}</p>
+                      <p className="text-xs text-slate-500 mb-1">Type</p>
+                      <p className="text-slate-900 font-medium">{accountData.Type}</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Type</p>
+                      <p className="text-slate-400">Not available</p>
                     </div>
                   )}
-                  {accountData.Industry && (
+                  {accountData.Industry ? (
                     <div>
-                      <p className="text-xs text-slate-500">Industry</p>
-                      <p className="text-slate-900">{accountData.Industry}</p>
+                      <p className="text-xs text-slate-500 mb-1">Industry</p>
+                      <p className="text-slate-900 font-medium">{accountData.Industry}</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Industry</p>
+                      <p className="text-slate-400">Not available</p>
                     </div>
                   )}
                 </div>
-                {accountData.BillingStreet && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-1">Billing Address</p>
-                    <p className="text-slate-900">{accountData.BillingStreet}</p>
+                
+                {(accountData.BillingStreet || accountData.BillingCity) ? (
+                  <div className="border-t pt-4">
+                    <p className="text-xs text-slate-500 mb-2 font-semibold">Billing Address</p>
+                    {accountData.BillingStreet && <p className="text-slate-900">{accountData.BillingStreet}</p>}
                     {accountData.BillingCity && (
-                      <p className="text-slate-900">{accountData.BillingCity}, {accountData.BillingState} {accountData.BillingPostalCode}</p>
+                      <p className="text-slate-900">{accountData.BillingCity}{accountData.BillingState ? `, ${accountData.BillingState}` : ''} {accountData.BillingPostalCode || ''}</p>
                     )}
                     {accountData.BillingCountry && <p className="text-slate-900">{accountData.BillingCountry}</p>}
                   </div>
-                )}
-                {accountData.Description && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-1">Description</p>
-                    <p className="text-slate-900 text-sm">{accountData.Description}</p>
+                ) : null}
+                
+                {accountData.Description ? (
+                  <div className="border-t pt-4">
+                    <p className="text-xs text-slate-500 mb-2 font-semibold">Description</p>
+                    <p className="text-slate-900 text-sm leading-relaxed">{accountData.Description}</p>
+                  </div>
+                ) : null}
+                
+                {!accountData.Phone && !accountData.Website && !accountData.Type && !accountData.Industry && !accountData.BillingStreet && !accountData.Description && (
+                  <div className="text-center py-8">
+                    <p className="text-slate-500">No additional details available for this account</p>
                   </div>
                 )}
               </TabsContent>
