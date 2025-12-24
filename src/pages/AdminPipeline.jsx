@@ -561,6 +561,15 @@ export default function AdminPipeline() {
           </div>
         </div>
       )}
+
+      {/* Create Task Modal */}
+      <CreateTaskModal
+        isOpen={showCreateTask}
+        onClose={() => setShowCreateTask(false)}
+        session={session}
+        repsData={repsData}
+        onSuccess={() => loadAllRepsData(session, true)}
+      />
     </div>
   );
 }
