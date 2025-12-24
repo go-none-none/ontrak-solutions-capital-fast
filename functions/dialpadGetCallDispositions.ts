@@ -3,23 +3,20 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { phoneNumber, dispositionId } = await req.json();
+    const { phoneNumber } = await req.json();
 
     const apiKey = Deno.env.get('DIALPAD_API_KEY');
     if (!apiKey) {
       return Response.json({ error: 'Dialpad API key not configured' }, { status: 500 });
     }
 
-    // Use the disposition ID (default to a common ID if not provided)
-    const id = dispositionId || '1'; // You may need to adjust this ID
-
-    // Fetch specific disposition list from Dialpad
+    // Fetch all disposition lists from Dialpad
     const response = await fetch(
-      `https://dialpad.com/api/v2/dispositions/${id}`,
+      'https://dialpad.com/api/v2/dispositions',
       {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
+          'accept': 'application/json'
         }
       }
     );
@@ -35,22 +32,26 @@ Deno.serve(async (req) => {
 
     const data = await response.json();
     
-    // Extract disposition names from formatted_dispositions
+    // Extract all disposition names from all lists
     const dispositions = [];
-    if (data.formatted_dispositions) {
-      for (const item of data.formatted_dispositions) {
-        dispositions.push(item.name);
-        // Also add sub-dispositions if they exist
-        if (item.dispositions) {
-          for (const sub of item.dispositions) {
-            dispositions.push(`${item.name} - ${sub.name}`);
+    if (data.items && data.items.length > 0) {
+      for (const item of data.items) {
+        if (item.formatted_dispositions) {
+          for (const disp of item.formatted_dispositions) {
+            dispositions.push(disp.name);
+            // Also add sub-dispositions if they exist
+            if (disp.dispositions) {
+              for (const sub of disp.dispositions) {
+                dispositions.push(`${disp.name} - ${sub.name}`);
+              }
+            }
           }
         }
       }
     }
 
     return Response.json({ 
-      dispositions: dispositions,
+      dispositions: [...new Set(dispositions)], // Remove duplicates
       raw: data
     });
   } catch (error) {
