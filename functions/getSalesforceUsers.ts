@@ -10,8 +10,8 @@ Deno.serve(async (req) => {
       }, { status: 400 });
     }
 
-    // Fetch active Salesforce users
-    const query = `SELECT Id, Name, Email FROM User WHERE IsActive = true ORDER BY Name`;
+    // Fetch active human Salesforce users (exclude system/automated users)
+    const query = `SELECT Id, Name, Email FROM User WHERE IsActive = true AND UserType = 'Standard' ORDER BY Name`;
     const url = `${instanceUrl}/services/data/v57.0/query?q=${encodeURIComponent(query)}`;
 
     const response = await fetch(url, {
