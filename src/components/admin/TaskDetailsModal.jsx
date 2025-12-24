@@ -105,10 +105,10 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               <Textarea
                 value={editValues.Description}
                 onChange={(e) => setEditValues({ ...editValues, Description: e.target.value })}
-                rows={3}
+                rows={4}
               />
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium text-slate-700 mb-1 block">Priority</label>
                 <Select value={editValues.Priority} onValueChange={(val) => setEditValues({ ...editValues, Priority: val })}>
@@ -121,14 +121,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                     <SelectItem value="Low">Low</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-700 mb-1 block">Due Date</label>
-                <Input
-                  type="date"
-                  value={editValues.ActivityDate}
-                  onChange={(e) => setEditValues({ ...editValues, ActivityDate: e.target.value })}
-                />
               </div>
               <div>
                 <label className="text-sm font-medium text-slate-700 mb-1 block">Status</label>
@@ -145,6 +137,66 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                 </Select>
               </div>
             </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Due Date</label>
+              <Input
+                type="date"
+                value={editValues.ActivityDate}
+                onChange={(e) => setEditValues({ ...editValues, ActivityDate: e.target.value })}
+              />
+            </div>
+
+            {/* Display read-only fields */}
+            {(task.WhatId || task.WhoId || task.Owner) && (
+              <div className="border-t pt-4 space-y-3">
+                <p className="text-sm font-semibold text-slate-700">Read-Only Information</p>
+                
+                {task.Owner && (
+                  <div>
+                    <p className="text-xs text-slate-500 mb-1 flex items-center gap-1">
+                      <User className="w-3 h-3" />
+                      Assigned To
+                    </p>
+                    <p className="text-slate-900 font-medium">{task.Owner.Name}</p>
+                  </div>
+                )}
+
+                {task.WhatId && task.What?.Name && (
+                  <div>
+                    <p className="text-xs text-slate-500 mb-2">Related To</p>
+                    <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                      {task.WhatId.startsWith('00Q') ? (
+                        <UsersIcon className="w-4 h-4 text-blue-600" />
+                      ) : task.WhatId.startsWith('006') ? (
+                        <TrendingUp className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <Building className="w-4 h-4 text-slate-600" />
+                      )}
+                      <div className="flex-1">
+                        <p className="font-medium text-slate-900">{task.What.Name}</p>
+                        <p className="text-xs text-slate-500">
+                          {task.WhatId.startsWith('00Q') ? 'Lead' : task.WhatId.startsWith('006') ? 'Opportunity' : task.What.Type || 'Record'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {task.WhoId && task.Who?.Name && (
+                  <div>
+                    <p className="text-xs text-slate-500 mb-2">Contact</p>
+                    <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                      <User className="w-4 h-4 text-purple-600" />
+                      <div>
+                        <p className="font-medium text-slate-900">{task.Who.Name}</p>
+                        <p className="text-xs text-slate-500">Contact</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="flex gap-2 pt-4 border-t">
               <Button onClick={handleSave} disabled={saving} className="bg-purple-600">
                 <Save className="w-4 h-4 mr-2" />
