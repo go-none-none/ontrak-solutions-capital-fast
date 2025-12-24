@@ -88,7 +88,8 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       if (onCallCompleted) onCallCompleted();
     } catch (error) {
       console.error('Disposition error:', error);
-      alert('Failed to save call log');
+      console.error('Error response:', error.response?.data);
+      alert('Failed to save call log: ' + (error.response?.data?.error || error.message));
     } finally {
       setSaving(false);
     }
