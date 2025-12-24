@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare, Search } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
@@ -26,6 +27,7 @@ export default function AdminPipeline() {
   const [allTasks, setAllTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
+  const [repSearch, setRepSearch] = useState({}); // {repUserId: searchTerm}
 
   useEffect(() => {
     checkSession();
@@ -543,11 +545,31 @@ export default function AdminPipeline() {
                                   </Button>
                                 )}
                               </div>
+                              {/* Search Input */}
+                              <div className="relative mb-3">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Input
+                                  placeholder={`Search ${activeView === 'leads' ? 'leads' : activeView === 'opportunities' ? 'opportunities' : 'tasks'}...`}
+                                  value={repSearch[rep.userId] || ''}
+                                  onChange={(e) => {
+                                    e.stopPropagation();
+                                    setRepSearch(prev => ({ ...prev, [rep.userId]: e.target.value }));
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="pl-10"
+                                />
+                              </div>
                               <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
                                 {activeView === 'leads' 
                                   ? rep.leads?.filter(lead => {
-                                      if (!stageFilter[rep.userId]) return true;
-                                      return lead.Status === stageFilter[rep.userId];
+                                      const stageMatch = !stageFilter[rep.userId] || lead.Status === stageFilter[rep.userId];
+                                      const searchTerm = (repSearch[rep.userId] || '').toLowerCase();
+                                      const searchMatch = !searchTerm || 
+                                        lead.Name?.toLowerCase().includes(searchTerm) ||
+                                        lead.Company?.toLowerCase().includes(searchTerm) ||
+                                        lead.Email?.toLowerCase().includes(searchTerm) ||
+                                        lead.Status?.toLowerCase().includes(searchTerm);
+                                      return stageMatch && searchMatch;
                                     }).map((lead, idx) => (
                                       <button
                                         key={idx}
@@ -569,11 +591,14 @@ export default function AdminPipeline() {
                                     ))
                                   : activeView === 'opportunities'
                                     ? rep.opportunities?.filter(opp => {
-                                        if (!stageFilter[rep.userId]) return true;
-                                        if (stageFilter[rep.userId] === 'Declined') {
-                                          return opp.StageName?.includes('Declined');
-                                        }
-                                        return opp.StageName === stageFilter[rep.userId];
+                                        const stageMatch = !stageFilter[rep.userId] || 
+                                          (stageFilter[rep.userId] === 'Declined' ? opp.StageName?.includes('Declined') : opp.StageName === stageFilter[rep.userId]);
+                                        const searchTerm = (repSearch[rep.userId] || '').toLowerCase();
+                                        const searchMatch = !searchTerm ||
+                                          opp.Name?.toLowerCase().includes(searchTerm) ||
+                                          opp.Account?.Name?.toLowerCase().includes(searchTerm) ||
+                                          opp.StageName?.toLowerCase().includes(searchTerm);
+                                        return stageMatch && searchMatch;
                                       }).map((opp, idx) => (
                                         <button
                                           key={idx}
@@ -603,6 +628,16 @@ export default function AdminPipeline() {
                                         
                                         if (stageFilter[rep.userId]) {
                                           tasksToShow = categorized[stageFilter[rep.userId]] || [];
+                                        }
+
+                                        const searchTerm = (repSearch[rep.userId] || '').toLowerCase();
+                                        if (searchTerm) {
+                                          tasksToShow = tasksToShow.filter(task =>
+                                            task.Subject?.toLowerCase().includes(searchTerm) ||
+                                            task.Description?.toLowerCase().includes(searchTerm) ||
+                                            task.Status?.toLowerCase().includes(searchTerm) ||
+                                            task.What?.Name?.toLowerCase().includes(searchTerm)
+                                          );
                                         }
 
                                         return tasksToShow.map((task, idx) => (
