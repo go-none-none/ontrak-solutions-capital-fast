@@ -57,11 +57,6 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
             </div>
           )}
         </div>
-        <Link to={`${createPageUrl('OpportunityDetail')}?id=${opportunity.Id}`}>
-          <Button variant="outline" size="sm">
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </Link>
       </div>
 
       {/* Stage Progress Bar */}

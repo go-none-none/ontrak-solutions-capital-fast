@@ -45,11 +45,6 @@ export default function LeadCard({ lead, session }) {
             <span className="text-sm">{lead.Company}</span>
           </div>
         </div>
-        <Link to={`${createPageUrl('LeadDetail')}?id=${lead.Id}`}>
-          <Button variant="outline" size="sm">
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </Link>
       </div>
 
       {/* Stage Progress Bar */}
