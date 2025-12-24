@@ -10,9 +10,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Dialpad API key not configured' }, { status: 500 });
     }
 
-    // Get recent calls to this number to find disposition options
+    // Fetch disposition options from Dialpad
     const response = await fetch(
-      `https://dialpad.com/api/v2/stats/calls?target=${phoneNumber?.replace(/\D/g, '') || ''}&limit=50`,
+      'https://dialpad.com/api/v2/calldispositions',
       {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
@@ -25,26 +25,19 @@ Deno.serve(async (req) => {
       const errorText = await response.text();
       console.error('Dialpad API error:', errorText);
       return Response.json({ 
-        error: 'Failed to fetch call data',
+        error: 'Failed to fetch dispositions',
         details: errorText 
       }, { status: response.status });
     }
 
     const data = await response.json();
     
-    // Extract unique dispositions from call history
-    const dispositions = new Set();
-    if (data.items) {
-      data.items.forEach(call => {
-        if (call.disposition) {
-          dispositions.add(call.disposition);
-        }
-      });
-    }
+    // Extract disposition names
+    const dispositions = data.items?.map(item => item.name) || [];
 
     return Response.json({ 
-      dispositions: Array.from(dispositions),
-      calls: data.items || []
+      dispositions: dispositions,
+      raw: data
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
