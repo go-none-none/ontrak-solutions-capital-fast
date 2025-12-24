@@ -400,9 +400,12 @@ export default function RepPortal() {
                   </div>
                 ) : (
                   paginatedLeads.map(lead => (
-                    <div key={lead.Id} onClick={() => { setSelectedRecord(lead); setSelectedRecordType('lead'); }} className="cursor-pointer">
-                      <LeadCard lead={lead} session={session} />
-                    </div>
+                    <LeadCard 
+                      key={lead.Id} 
+                      lead={lead} 
+                      session={session}
+                      onShowDetails={() => { setSelectedRecord(lead); setSelectedRecordType('lead'); }}
+                    />
                   ))
                 )}
               </div>
@@ -475,13 +478,13 @@ export default function RepPortal() {
                   </div>
                 ) : (
                   paginatedOpportunities.map(opp => (
-                    <div key={opp.Id} onClick={() => { setSelectedRecord(opp); setSelectedRecordType('opportunity'); }} className="cursor-pointer">
-                      <OpportunityCard 
-                        opportunity={opp} 
-                        session={session}
-                        onUpdate={() => loadData(session)}
-                      />
-                    </div>
+                    <OpportunityCard 
+                      key={opp.Id}
+                      opportunity={opp} 
+                      session={session}
+                      onUpdate={() => loadData(session)}
+                      onShowDetails={() => { setSelectedRecord(opp); setSelectedRecordType('opportunity'); }}
+                    />
                   ))
                 )}
               </div>

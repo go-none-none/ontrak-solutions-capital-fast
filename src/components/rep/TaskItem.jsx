@@ -185,10 +185,10 @@ export default function TaskItem({ task, session, onUpdate }) {
                 <span className="px-2 py-1 rounded-full bg-white border border-slate-300">
                   {task.Status}
                 </span>
-                {task.What?.Name && task.What?.Type && (
+                {task.What?.Name && task.WhatId && (
                   <a
                     href={`${createPageUrl(
-                      task.What.Type.includes('Lead') || task.What.Type === 'Lead' 
+                      task.WhatId.startsWith('00Q') 
                         ? 'LeadDetail' 
                         : 'OpportunityDetail'
                     )}?id=${task.WhatId}`}

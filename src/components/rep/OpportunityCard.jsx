@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, Calendar, Building2, TrendingUp, ChevronDown, ChevronUp, MapPin, FileText, Briefcase } from 'lucide-react';
+import { DollarSign, Calendar, Building2, TrendingUp, Info } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 
-export default function OpportunityCard({ opportunity, session, onUpdate }) {
-  const [expanded, setExpanded] = useState(false);
+export default function OpportunityCard({ opportunity, session, onUpdate, onShowDetails }) {
   const stages = [
     { label: 'App In', name: 'Application In' },
     { label: 'Underwriting', name: 'Underwriting' },
@@ -110,90 +109,22 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
         </div>
         <div className="flex items-center gap-2">
           <span>Updated {formatDate(opportunity.LastModifiedDate)}</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setExpanded(!expanded);
-            }}
-            className="h-6 text-xs"
-          >
-            {expanded ? <ChevronUp className="w-3 h-3 mr-1" /> : <ChevronDown className="w-3 h-3 mr-1" />}
-            {expanded ? 'Less' : 'More'}
-          </Button>
+          {onShowDetails && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onShowDetails();
+              }}
+              className="h-7 text-xs"
+            >
+              <Info className="w-3 h-3 mr-1" />
+              More Info
+            </Button>
+          )}
         </div>
       </div>
-
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="pt-4 mt-4 border-t border-slate-200 space-y-3 text-sm">
-              {opportunity.Account?.BillingStreet && (
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-slate-500">Billing Address</p>
-                    <p className="text-slate-700">{opportunity.Account.BillingStreet}</p>
-                    {opportunity.Account.BillingCity && (
-                      <p className="text-slate-700">
-                        {opportunity.Account.BillingCity}, {opportunity.Account.BillingState} {opportunity.Account.BillingPostalCode}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-              {opportunity.Amount_Requested__c && (
-                <div className="flex items-start gap-2">
-                  <DollarSign className="w-4 h-4 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-slate-500">Amount Requested</p>
-                    <p className="text-slate-700">{formatCurrency(opportunity.Amount_Requested__c)}</p>
-                  </div>
-                </div>
-              )}
-              {opportunity.Estimated_Monthly_Revenue__c && (
-                <div className="flex items-start gap-2">
-                  <DollarSign className="w-4 h-4 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-slate-500">Monthly Revenue</p>
-                    <p className="text-slate-700">{formatCurrency(opportunity.Estimated_Monthly_Revenue__c)}</p>
-                  </div>
-                </div>
-              )}
-              {opportunity.Type && (
-                <div className="flex items-start gap-2">
-                  <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-slate-500">Type</p>
-                    <p className="text-slate-700">{opportunity.Type}</p>
-                  </div>
-                </div>
-              )}
-              {opportunity.LeadSource && (
-                <div className="flex items-start gap-2">
-                  <Briefcase className="w-4 h-4 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-slate-500">Lead Source</p>
-                    <p className="text-slate-700">{opportunity.LeadSource}</p>
-                  </div>
-                </div>
-              )}
-              {opportunity.Use_of_Proceeds__c && (
-                <div>
-                  <p className="text-xs text-slate-500 mb-1">Use of Funds</p>
-                  <p className="text-slate-700">{opportunity.Use_of_Proceeds__c}</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }

@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, Building2, Calendar, ChevronDown, ChevronUp, MapPin, DollarSign, Briefcase } from 'lucide-react';
+import { Phone, Mail, Building2, Calendar, Info } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import DialpadWidget from './DialpadWidget';
 
-export default function LeadCard({ lead, session }) {
-  const [expanded, setExpanded] = useState(false);
+export default function LeadCard({ lead, session, onShowDetails }) {
   const stages = [
     { label: 'New', status: 'Open - Not Contacted' },
     { label: 'Contacted', status: 'Working - Contacted' },
@@ -104,74 +103,22 @@ export default function LeadCard({ lead, session }) {
           {lead.LeadSource && (
             <span className="px-2 py-1 bg-slate-100 rounded">{lead.LeadSource}</span>
           )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setExpanded(!expanded);
-            }}
-            className="h-6 text-xs"
-          >
-            {expanded ? <ChevronUp className="w-3 h-3 mr-1" /> : <ChevronDown className="w-3 h-3 mr-1" />}
-            {expanded ? 'Less' : 'More'}
-          </Button>
+          {onShowDetails && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onShowDetails();
+              }}
+              className="h-7 text-xs"
+            >
+              <Info className="w-3 h-3 mr-1" />
+              More Info
+            </Button>
+          )}
         </div>
       </div>
-
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="pt-4 mt-4 border-t border-slate-200 space-y-3 text-sm">
-              {lead.Street && (
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-slate-500">Address</p>
-                    <p className="text-slate-700">{lead.Street}</p>
-                    {lead.City && <p className="text-slate-700">{lead.City}, {lead.State} {lead.PostalCode}</p>}
-                  </div>
-                </div>
-              )}
-              {lead.Industry && (
-                <div className="flex items-start gap-2">
-                  <Briefcase className="w-4 h-4 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-slate-500">Industry</p>
-                    <p className="text-slate-700">{lead.Industry}</p>
-                  </div>
-                </div>
-              )}
-              {lead.Estimated_Monthly_Revenue__c && (
-                <div className="flex items-start gap-2">
-                  <DollarSign className="w-4 h-4 text-slate-400 mt-0.5" />
-                  <div>
-                    <p className="text-xs text-slate-500">Monthly Revenue</p>
-                    <p className="text-slate-700">${parseFloat(lead.Estimated_Monthly_Revenue__c).toLocaleString()}</p>
-                  </div>
-                </div>
-              )}
-              {lead.Rating && (
-                <div>
-                  <p className="text-xs text-slate-500">Rating</p>
-                  <Badge variant="outline">{lead.Rating}</Badge>
-                </div>
-              )}
-              {lead.Use_of_Proceeds__c && (
-                <div>
-                  <p className="text-xs text-slate-500 mb-1">Use of Funds</p>
-                  <p className="text-slate-700">{lead.Use_of_Proceeds__c}</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }
