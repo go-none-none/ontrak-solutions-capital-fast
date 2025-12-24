@@ -274,7 +274,7 @@ export default function OpportunityDetail() {
                 const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
                 const isActive = idx <= currentStageIndex;
                 const isFunded = opportunity.StageName === 'Closed - Funded' && stage.name === 'Closed - Funded';
-                const isLastStage = idx === 5 || idx === 6;
+                const isDeclined = opportunity.StageName?.includes('Declined') && stage.name === 'Declined';
                 
                 return (
                   <button
@@ -286,15 +286,21 @@ export default function OpportunityDetail() {
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
-                      isFunded && isLastStage
+                      isFunded
                         ? 'bg-green-600 text-white shadow-lg'
+                        : isDeclined
+                        ? 'bg-red-600 text-white shadow-lg'
                         : isActive && idx < 6
                         ? 'bg-[#08708E] text-white shadow-lg' 
                         : stage.name === 'Declined'
                         ? 'bg-red-100 text-red-600 hover:bg-red-200'
                         : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
                     }`}>
-                      {stage.name === 'Declined' ? (
+                      {isFunded ? (
+                        <CheckCircle2 className="w-5 h-5" />
+                      ) : isDeclined ? (
+                        <XCircle className="w-5 h-5" />
+                      ) : stage.name === 'Declined' ? (
                         <XCircle className="w-5 h-5" />
                       ) : idx < currentStageIndex && idx < 6 ? (
                         <CheckCircle2 className="w-5 h-5" />
@@ -310,12 +316,14 @@ export default function OpportunityDetail() {
               })}
             </div>
             <div className="flex gap-1">
-              {[0,1,2,3,4,5].map((idx) => {
+              {[0,1,2,3,4,5,6].map((idx) => {
                 const stages = ['Application In', 'Underwriting', 'Approved', 'Contracts Out', 'Contracts In', 'Closed - Funded'];
                 const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
+                const isFunded = opportunity.StageName === 'Closed - Funded' && idx === 5;
+                const isDeclined = opportunity.StageName?.includes('Declined') && idx === 6;
                 return (
                   <div key={idx} className={`h-2 flex-1 rounded transition-all ${
-                    idx <= currentStageIndex ? 'bg-[#08708E]' : 'bg-slate-200'
+                    isFunded || isDeclined ? 'bg-[#08708E]' : idx <= currentStageIndex ? 'bg-[#08708E]' : 'bg-slate-200'
                   }`} />
                 );
               })}
@@ -456,15 +464,6 @@ export default function OpportunityDetail() {
                     </CollapsibleContent>
                   </div>
                 </Collapsible>
-
-                {/* Email Client */}
-                <EmailClientCard
-                  recipientEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
-                  recipientName={contactRoles[0]?.Contact?.Name || opportunity.Account?.Name}
-                  recordId={opportunity.Id}
-                  recordType="Opportunity"
-                  session={session}
-                />
 
                 {/* Activity & Files */}
                 <ActivityTimeline
@@ -634,6 +633,15 @@ export default function OpportunityDetail() {
               recordType="Opportunity"
               session={session}
               onCallCompleted={() => setRefreshKey(prev => prev + 1)}
+            />
+
+            {/* Email Client */}
+            <EmailClientCard
+              recipientEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
+              recipientName={contactRoles[0]?.Contact?.Name || opportunity.Account?.Name}
+              recordId={opportunity.Id}
+              recordType="Opportunity"
+              session={session}
             />
 
             {/* Contact Roles */}
