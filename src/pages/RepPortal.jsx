@@ -406,6 +406,10 @@ export default function RepPortal() {
                       key={lead.Id} 
                       lead={lead} 
                       session={session}
+                      onOpenModal={(record, type) => {
+                        setExpandedRecord(record);
+                        setExpandedRecordType(type);
+                      }}
                     />
                   ))
                 )}
@@ -484,6 +488,10 @@ export default function RepPortal() {
                       opportunity={opp} 
                       session={session}
                       onUpdate={() => loadData(session)}
+                      onOpenModal={(record, type) => {
+                        setExpandedRecord(record);
+                        setExpandedRecordType(type);
+                      }}
                     />
                   ))
                   )}

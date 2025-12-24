@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, Building2, Calendar, DollarSign } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
-export default function LeadCard({ lead, session }) {
+export default function LeadCard({ lead, session, onOpenModal }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const stages = [
@@ -38,7 +38,9 @@ export default function LeadCard({ lead, session }) {
   };
 
   const handleClick = () => {
-    window.location.href = `${createPageUrl('LeadDetail')}?id=${lead.Id}`;
+    if (onOpenModal) {
+      onOpenModal(lead, 'lead');
+    }
   };
 
   const currentStage = getCurrentStageIndex();
@@ -134,10 +136,11 @@ export default function LeadCard({ lead, session }) {
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-xl border-2 border-[#08708E] p-4 z-10"
+            initial={{ opacity: 0, x: -20, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border-2 border-[#08708E] p-6 z-50 min-w-[500px]"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={(e) => e.stopPropagation()}

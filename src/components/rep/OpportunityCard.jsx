@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { DollarSign, Calendar, Building2, TrendingUp } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
-export default function OpportunityCard({ opportunity, session, onUpdate }) {
+export default function OpportunityCard({ opportunity, session, onUpdate, onOpenModal }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const stages = [
@@ -40,7 +40,9 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
   };
 
   const handleClick = () => {
-    window.location.href = `${createPageUrl('OpportunityDetail')}?id=${opportunity.Id}`;
+    if (onOpenModal) {
+      onOpenModal(opportunity, 'opportunity');
+    }
   };
 
   const currentStage = getCurrentStageIndex();
@@ -142,10 +144,11 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-xl border-2 border-[#08708E] p-4 z-10"
+            initial={{ opacity: 0, x: -20, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border-2 border-[#08708E] p-6 z-50 min-w-[500px]"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={(e) => e.stopPropagation()}
