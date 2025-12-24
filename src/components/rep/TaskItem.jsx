@@ -11,7 +11,7 @@ import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
 
-export default function TaskItem({ task, session, onUpdate }) {
+export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [accountData, setAccountData] = useState(null);
   const [loadingAccount, setLoadingAccount] = useState(false);

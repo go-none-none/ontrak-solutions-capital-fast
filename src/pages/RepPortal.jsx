@@ -13,6 +13,7 @@ import PipelineView from '../components/rep/PipelineView';
 import TaskCard from '../components/rep/TaskCard';
 import TaskItem from '../components/rep/TaskItem';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
+import TaskDetailsModal from '../components/admin/TaskDetailsModal';
 
 export default function RepPortal() {
   const [session, setSession] = useState(null);
@@ -32,6 +33,7 @@ export default function RepPortal() {
   const [selectedRecordType, setSelectedRecordType] = useState(null);
   const [expandedRecord, setExpandedRecord] = useState(null);
   const [expandedRecordType, setExpandedRecordType] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
   const itemsPerPage = 100;
 
   useEffect(() => {
@@ -586,6 +588,7 @@ export default function RepPortal() {
                           task={task} 
                           session={session}
                           onUpdate={() => loadData(session, true)}
+                          onOpenModal={(task) => setSelectedTask(task)}
                         />
                       ))
                     )}
@@ -663,6 +666,20 @@ export default function RepPortal() {
         onClose={() => {
           setSelectedRecord(null);
           setSelectedRecordType(null);
+        }}
+      />
+
+      {/* Task Details Modal */}
+      <TaskDetailsModal
+        task={selectedTask}
+        isOpen={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        session={session}
+        onUpdate={() => loadData(session, true)}
+        onOpenRelated={(recordInfo) => {
+          setExpandedRecord({ Id: recordInfo.recordId, Name: recordInfo.recordName });
+          setExpandedRecordType(recordInfo.recordType);
+          setSelectedTask(null);
         }}
       />
 
