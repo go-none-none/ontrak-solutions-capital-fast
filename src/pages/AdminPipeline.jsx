@@ -18,6 +18,7 @@ export default function AdminPipeline() {
   const [modalType, setModalType] = useState(null);
   const [stageFilter, setStageFilter] = useState({}); // {repUserId: stageName}
   const [expandedRecord, setExpandedRecord] = useState(null);
+  const [expandedRecordType, setExpandedRecordType] = useState(null);
 
   useEffect(() => {
     checkSession();
@@ -485,7 +486,10 @@ export default function AdminPipeline() {
         type={modalType}
         isOpen={!!selectedRecord && !expandedRecord}
         expandable={true}
-        onExpand={() => setExpandedRecord(selectedRecord)}
+        onExpand={() => {
+          setExpandedRecord(selectedRecord);
+          setExpandedRecordType(modalType);
+        }}
         onClose={() => {
           setSelectedRecord(null);
           setModalType(null);
@@ -498,19 +502,22 @@ export default function AdminPipeline() {
           <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
               <h2 className="text-xl font-bold text-slate-900">
-                {modalType === 'lead' ? 'Lead Details' : 'Opportunity Details'}: {expandedRecord.Name}
+                {expandedRecordType === 'lead' ? 'Lead Details' : 'Opportunity Details'}: {expandedRecord.Name}
               </h2>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setExpandedRecord(null)}
+                onClick={() => {
+                  setExpandedRecord(null);
+                  setExpandedRecordType(null);
+                }}
               >
                 <X className="w-5 h-5" />
               </Button>
             </div>
             <div className="p-6">
               <iframe
-                src={`${createPageUrl(modalType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${expandedRecord.Id}`}
+                src={`${createPageUrl(expandedRecordType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${expandedRecord.Id}`}
                 className="w-full h-[calc(90vh-120px)] border-0"
                 title="Record Details"
               />
