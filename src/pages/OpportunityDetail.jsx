@@ -379,16 +379,16 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableField label="Opportunity Name" field="Name" value={opportunity.Name} />
-                        <EditableField label="Account Name" field="AccountId" value={opportunity.Account?.Name} />
-                        <EditableField label="Amount" field="Amount" value={formatCurrency(opportunity.Amount)} />
-                        <EditableField label="Close Date" field="CloseDate" value={formatDate(opportunity.CloseDate)} type="date" />
-                        <EditableField label="Stage" field="StageName" value={opportunity.StageName} disabled={true} />
-                        <EditableField label="Stage Detail" field="Stage_Detail__c" value={opportunity.Stage_Detail__c} />
-                        <EditableField label="Type" field="Type" value={opportunity.Type} />
-                        <EditableField label="Lead Source" field="LeadSource" value={opportunity.LeadSource} />
-                        <EditableField label="ISO" field="ISO__c" value={opportunity.ISO__c} />
-                        <EditableField label="Line of Credit" field="Line_of_Credit__c" value={opportunity.Line_of_Credit__c} />
+                        <EditableFieldWrapper label="Opportunity Name" field="Name" value={opportunity.Name} />
+                        <EditableFieldWrapper label="Account Name" field="AccountId" value={opportunity.Account?.Name} />
+                        <EditableFieldWrapper label="Amount" field="Amount" value={formatCurrency(opportunity.Amount)} />
+                        <EditableFieldWrapper label="Close Date" field="CloseDate" value={opportunity.CloseDate} />
+                        <EditableFieldWrapper label="Stage" field="StageName" value={opportunity.StageName} disabled={true} />
+                        <EditableFieldWrapper label="Stage Detail" field="Stage_Detail__c" value={opportunity.Stage_Detail__c} />
+                        <EditableFieldWrapper label="Type" field="Type" value={opportunity.Type} />
+                        <EditableFieldWrapper label="Lead Source" field="LeadSource" value={opportunity.LeadSource} />
+                        <EditableFieldWrapper label="ISO" field="ISO__c" value={opportunity.ISO__c} />
+                        <EditableFieldWrapper label="Line of Credit" field="Line_of_Credit__c" value={opportunity.Line_of_Credit__c} />
                         {opportunity.Description && (
                           <div className="col-span-2">
                             <p className="text-slate-500 text-xs mb-1">Description</p>
