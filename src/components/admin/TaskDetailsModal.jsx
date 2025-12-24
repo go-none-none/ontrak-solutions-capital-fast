@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,25 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editValues, setEditValues] = useState({
-    Subject: task?.Subject || '',
-    Description: task?.Description || '',
-    Priority: task?.Priority || 'Normal',
-    Status: task?.Status || 'Not Started',
-    ActivityDate: task?.ActivityDate || ''
+    Subject: '',
+    Description: '',
+    Priority: 'Normal',
+    Status: 'Not Started',
+    ActivityDate: ''
   });
+
+  useEffect(() => {
+    if (task) {
+      setEditValues({
+        Subject: task.Subject || '',
+        Description: task.Description || '',
+        Priority: task.Priority || 'Normal',
+        Status: task.Status || 'Not Started',
+        ActivityDate: task.ActivityDate || ''
+      });
+      setIsEditing(false);
+    }
+  }, [task]);
 
   if (!task) return null;
 
