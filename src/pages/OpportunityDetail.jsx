@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ArrowLeft, Edit, Loader2, Check, X, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Edit, Loader2, Check, X, ChevronDown, CheckCircle2, XCircle } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
@@ -23,6 +24,8 @@ export default function OpportunityDetail() {
   const [editValues, setEditValues] = useState({});
   const [refreshKey, setRefreshKey] = useState(0);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [showDeclinedReasons, setShowDeclinedReasons] = useState(false);
+  const [selectedDeclinedReason, setSelectedDeclinedReason] = useState('');
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
@@ -70,6 +73,11 @@ export default function OpportunityDetail() {
   const handleStatusChange = async (newStage) => {
     if (opportunity.StageName === newStage) return;
     
+    if (newStage === 'Declined') {
+      setShowDeclinedReasons(true);
+      return;
+    }
+    
     setUpdatingStatus(true);
     try {
       await base44.functions.invoke('updateSalesforceRecord', {
@@ -81,6 +89,36 @@ export default function OpportunityDetail() {
       });
       
       await loadOpportunity(session);
+    } catch (error) {
+      console.error('Status update error:', error);
+      alert('Failed to update status');
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
+  const handleDeclinedWithReason = async () => {
+    if (!selectedDeclinedReason) {
+      alert('Please select a decline reason');
+      return;
+    }
+    
+    setUpdatingStatus(true);
+    try {
+      await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Opportunity',
+        recordId: opportunity.Id,
+        data: { 
+          StageName: 'Closed - Declined',
+          Stage_Detail__c: selectedDeclinedReason
+        },
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      await loadOpportunity(session);
+      setShowDeclinedReasons(false);
+      setSelectedDeclinedReason('');
     } catch (error) {
       console.error('Status update error:', error);
       alert('Failed to update status');
@@ -105,14 +143,14 @@ export default function OpportunityDetail() {
     }
   };
 
-  const EditableField = ({ label, field, value, type = 'text' }) => {
+  const EditableField = ({ label, field, value, type = 'text', disabled = false }) => {
     const isEditing = editing[field];
     const displayValue = isEditing ? editValues[field] : value;
 
     return (
-      <div>
+      <div className={disabled ? 'opacity-50' : ''}>
         <p className="text-slate-500 text-xs mb-1">{label}</p>
-        {isEditing ? (
+        {isEditing && !disabled ? (
           <div className="flex items-center gap-2">
             <Input
               type={type}
@@ -130,17 +168,19 @@ export default function OpportunityDetail() {
         ) : (
           <div className="flex items-center gap-2 group">
             <p className="font-medium text-slate-900">{value || <span className="text-slate-400 text-sm">Not set</span>}</p>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="opacity-0 group-hover:opacity-100"
-              onClick={() => {
-                setEditValues({ ...editValues, [field]: value || '' });
-                setEditing({ ...editing, [field]: true });
-              }}
-            >
-              <Edit className="w-3 h-3" />
-            </Button>
+            {!disabled && (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="opacity-0 group-hover:opacity-100"
+                onClick={() => {
+                  setEditValues({ ...editValues, [field]: value || '' });
+                  setEditing({ ...editing, [field]: true });
+                }}
+              >
+                <Edit className="w-3 h-3" />
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -217,7 +257,7 @@ export default function OpportunityDetail() {
 
       {/* Stage Progress */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        {!opportunity.StageName?.startsWith('Closed - Declined') ? (
+        {!opportunity.StageName?.includes('Declined') ? (
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <h3 className="text-sm font-semibold text-slate-700 mb-4">Opportunity Stage</h3>
             <div className="flex justify-between items-center mb-3">
@@ -227,11 +267,15 @@ export default function OpportunityDetail() {
                 { label: 'Approved', name: 'Approved' },
                 { label: 'Contracts Out', name: 'Contracts Out' },
                 { label: 'Contracts In', name: 'Contracts In' },
-                { label: 'Funded', name: 'Closed - Funded' }
+                { label: 'Funded', name: 'Closed - Funded' },
+                { label: 'Declined', name: 'Declined' }
               ].map((stage, idx) => {
                 const stages = ['Application In', 'Underwriting', 'Approved', 'Contracts Out', 'Contracts In', 'Closed - Funded'];
                 const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
                 const isActive = idx <= currentStageIndex;
+                const isFunded = opportunity.StageName === 'Closed - Funded' && stage.name === 'Closed - Funded';
+                const isLastStage = idx === 5 || idx === 6;
+                
                 return (
                   <button
                     key={idx}
@@ -242,14 +286,22 @@ export default function OpportunityDetail() {
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
-                      isActive 
+                      isFunded && isLastStage
+                        ? 'bg-green-600 text-white shadow-lg'
+                        : isActive && idx < 6
                         ? 'bg-[#08708E] text-white shadow-lg' 
+                        : stage.name === 'Declined'
+                        ? 'bg-red-100 text-red-600 hover:bg-red-200'
                         : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
                     }`}>
-                      {idx < currentStageIndex ? (
+                      {stage.name === 'Declined' ? (
+                        <XCircle className="w-5 h-5" />
+                      ) : idx < currentStageIndex && idx < 6 ? (
                         <CheckCircle2 className="w-5 h-5" />
-                      ) : (
+                      ) : idx < 6 ? (
                         idx + 1
+                      ) : (
+                        <CheckCircle2 className="w-5 h-5" />
                       )}
                     </div>
                     <span className="text-xs text-slate-600 mt-2 text-center">{stage.label}</span>
@@ -268,11 +320,57 @@ export default function OpportunityDetail() {
                 );
               })}
             </div>
+            
+            {/* Declined Reason Modal */}
+            {showDeclinedReasons && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Select Decline Reason</h3>
+                  <Select value={selectedDeclinedReason} onValueChange={setSelectedDeclinedReason}>
+                    <SelectTrigger className="mb-4">
+                      <SelectValue placeholder="Choose a reason..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Credit">Credit</SelectItem>
+                      <SelectItem value="NSFs">NSFs</SelectItem>
+                      <SelectItem value="Low Revenue">Low Revenue</SelectItem>
+                      <SelectItem value="Time In Business">Time In Business</SelectItem>
+                      <SelectItem value="Industry">Industry</SelectItem>
+                      <SelectItem value="Existing Debt">Existing Debt</SelectItem>
+                      <SelectItem value="Customer Declined">Customer Declined</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => {
+                        setShowDeclinedReasons(false);
+                        setSelectedDeclinedReason('');
+                      }}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      onClick={handleDeclinedWithReason}
+                      disabled={!selectedDeclinedReason || updatingStatus}
+                      className="flex-1 bg-red-600 hover:bg-red-700"
+                    >
+                      {updatingStatus ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Decline'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
               <p className="text-lg font-semibold text-red-800">{opportunity.StageName}</p>
+              {opportunity.Stage_Detail__c && (
+                <p className="text-sm text-red-600 mt-1">Reason: {opportunity.Stage_Detail__c}</p>
+              )}
             </div>
           </div>
         )}
@@ -308,7 +406,7 @@ export default function OpportunityDetail() {
                         <EditableField label="Account Name" field="AccountId" value={opportunity.Account?.Name} />
                         <EditableField label="Amount" field="Amount" value={formatCurrency(opportunity.Amount)} />
                         <EditableField label="Close Date" field="CloseDate" value={formatDate(opportunity.CloseDate)} type="date" />
-                        <EditableField label="Stage" field="StageName" value={opportunity.StageName} />
+                        <EditableField label="Stage" field="StageName" value={opportunity.StageName} disabled={true} />
                         <EditableField label="Stage Detail" field="Stage_Detail__c" value={opportunity.Stage_Detail__c} />
                         <EditableField label="Type" field="Type" value={opportunity.Type} />
                         <EditableField label="Lead Source" field="LeadSource" value={opportunity.LeadSource} />
