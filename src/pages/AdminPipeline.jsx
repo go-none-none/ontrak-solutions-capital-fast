@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
@@ -28,6 +28,7 @@ export default function AdminPipeline() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
   const [searchTerms, setSearchTerms] = useState({}); // {repUserId: searchTerm}
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
   useEffect(() => {
     checkSession();
@@ -90,14 +91,23 @@ export default function AdminPipeline() {
         base44.functions.invoke('getAllRepsPipeline', {
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
+        }).catch(err => {
+          console.error('Pipeline error:', err);
+          return { data: { reps: [] } };
         }),
         base44.functions.invoke('getAllSalesforceTasks', {
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
+        }).catch(err => {
+          console.error('Tasks error:', err);
+          return { data: { tasks: [] } };
         }),
         base44.functions.invoke('getSalesforceUsers', {
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
+        }).catch(err => {
+          console.error('Users error:', err);
+          return { data: { users: [] } };
         })
       ]);
 
@@ -267,6 +277,52 @@ export default function AdminPipeline() {
     };
   });
 
+  // Sort function
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
+  // Apply sorting
+  const sortedRepsData = [...allRepsData].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+
+    let aValue, bValue;
+
+    switch (sortConfig.key) {
+      case 'name':
+        aValue = a.name?.toLowerCase() || '';
+        bValue = b.name?.toLowerCase() || '';
+        break;
+      case 'total':
+        if (activeView === 'leads') {
+          aValue = a.leads?.length || 0;
+          bValue = b.leads?.length || 0;
+        } else if (activeView === 'opportunities') {
+          aValue = a.opportunities?.length || 0;
+          bValue = b.opportunities?.length || 0;
+        } else {
+          aValue = getRepTasks(a.userId).length;
+          bValue = getRepTasks(b.userId).length;
+        }
+        break;
+      case 'pipeline':
+        aValue = getTotalPipeline(a);
+        bValue = getTotalPipeline(b);
+        break;
+      default:
+        // Stage sorting
+        aValue = getStageCount(a, sortConfig.key);
+        bValue = getStageCount(b, sortConfig.key);
+    }
+
+    if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
   const totalLeads = allRepsData.reduce((sum, rep) => sum + (rep.leads?.length || 0), 0);
   const totalOpps = allRepsData.reduce((sum, rep) => sum + (rep.opportunities?.length || 0), 0);
   const totalPipelineValue = allRepsData.reduce((sum, rep) => sum + getTotalPipeline(rep), 0);
@@ -432,19 +488,51 @@ export default function AdminPipeline() {
             <table className="w-full min-w-[1200px]">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700 min-w-[250px]">Rep Name</th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700 min-w-[250px]">
+                    <button 
+                      onClick={() => handleSort('name')}
+                      className="flex items-center gap-2 hover:text-[#08708E] transition-colors"
+                    >
+                      Rep Name
+                      {sortConfig.key === 'name' ? (
+                        sortConfig.direction === 'asc' ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />
+                      ) : (
+                        <ArrowUpDown className="w-4 h-4 text-slate-400" />
+                      )}
+                    </button>
+                  </th>
                   {stages.map((stage, idx) => (
                     <th key={idx} className="text-center px-3 py-4 text-xs font-semibold text-slate-700">
-                      {stage.label}
+                      <button
+                        onClick={() => handleSort(stage.name)}
+                        className="mx-auto flex items-center justify-center gap-1 hover:text-[#08708E] transition-colors"
+                      >
+                        {stage.label}
+                        {sortConfig.key === stage.name ? (
+                          sortConfig.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                        ) : (
+                          <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                        )}
+                      </button>
                     </th>
                   ))}
                   <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700 min-w-[140px]">
-                    {activeView === 'opportunities' ? 'Pipeline' : activeView === 'tasks' ? 'Tasks' : 'Total'}
+                    <button
+                      onClick={() => handleSort(activeView === 'opportunities' ? 'pipeline' : 'total')}
+                      className="ml-auto flex items-center gap-2 hover:text-[#08708E] transition-colors"
+                    >
+                      {activeView === 'opportunities' ? 'Pipeline' : activeView === 'tasks' ? 'Tasks' : 'Total'}
+                      {sortConfig.key === (activeView === 'opportunities' ? 'pipeline' : 'total') ? (
+                        sortConfig.direction === 'asc' ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />
+                      ) : (
+                        <ArrowUpDown className="w-4 h-4 text-slate-400" />
+                      )}
+                    </button>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {allRepsData.map((rep, repIdx) => {
+                {sortedRepsData.map((rep, repIdx) => {
                   const totalCount = activeView === 'leads' 
                     ? rep.leads?.length || 0 
                     : activeView === 'opportunities'
