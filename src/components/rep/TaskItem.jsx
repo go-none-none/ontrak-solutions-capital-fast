@@ -148,7 +148,9 @@ export default function TaskItem({ task, session, onUpdate }) {
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Account: {accountData?.Name || 'Loading...'}</DialogTitle>
-            <DialogDescription>View account information and related records</DialogDescription>
+            <DialogDescription>
+              View account information and related records
+            </DialogDescription>
           </DialogHeader>
           {loadingAccount ? (
             <div className="flex items-center justify-center py-12">
@@ -156,11 +158,10 @@ export default function TaskItem({ task, session, onUpdate }) {
             </div>
           ) : accountData ? (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="details">Details</TabsTrigger>
                 <TabsTrigger value="leads">Leads ({relatedRecords?.leads?.length || 0})</TabsTrigger>
                 <TabsTrigger value="opportunities">Opportunities ({relatedRecords?.opportunities?.length || 0})</TabsTrigger>
-                <TabsTrigger value="contacts">Contacts ({relatedRecords?.contacts?.length || 0})</TabsTrigger>
               </TabsList>
 
               <TabsContent value="details" className="space-y-4">
@@ -262,32 +263,7 @@ export default function TaskItem({ task, session, onUpdate }) {
                 )}
               </TabsContent>
 
-              <TabsContent value="contacts" className="space-y-2">
-                {relatedRecords?.contacts?.length > 0 ? (
-                  relatedRecords.contacts.map(contact => (
-                    <button
-                      key={contact.Id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIframeUrl(`https://venminder--develop.sandbox.lightning.force.com/lightning/r/Contact/${contact.Id}/view`);
-                        setIframeTitle(`Contact: ${contact.Name}`);
-                        setIframeModal(true);
-                      }}
-                      className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
-                    >
-                      <p className="font-semibold text-slate-900">{contact.Name}</p>
-                      {contact.Title && <p className="text-xs text-slate-500">{contact.Title}</p>}
-                      <div className="text-sm text-slate-600 mt-1">
-                        {contact.Email && <p>{contact.Email}</p>}
-                        {contact.Phone && <p>{contact.Phone}</p>}
-                      </div>
-                    </button>
-                  ))
-                ) : (
-                  <p className="text-slate-500 text-center py-8">No contacts found</p>
-                )}
-              </TabsContent>
-            </Tabs>
+              </Tabs>
           ) : null}
         </DialogContent>
       </Dialog>
@@ -297,6 +273,9 @@ export default function TaskItem({ task, session, onUpdate }) {
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0">
           <DialogHeader className="px-6 py-4 border-b">
             <DialogTitle>{iframeTitle}</DialogTitle>
+            <DialogDescription className="sr-only">
+              View detailed record information
+            </DialogDescription>
           </DialogHeader>
           <div className="h-[calc(90vh-80px)]">
             <iframe
