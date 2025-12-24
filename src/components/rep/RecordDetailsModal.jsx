@@ -284,6 +284,9 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4 border-t">
+            <Button variant="outline" onClick={onClose} className="flex-1">
+              Close
+            </Button>
             {expandable && onExpand && (
               <Button 
                 onClick={() => {
@@ -293,12 +296,9 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
                 className="flex-1 bg-[#08708E] hover:bg-[#065a72]"
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
-                View More Details
+                Full Info
               </Button>
             )}
-            <Button variant="outline" onClick={onClose} className="flex-1">
-              Close
-            </Button>
           </div>
         </div>
       </DialogContent>

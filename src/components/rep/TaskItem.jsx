@@ -185,19 +185,27 @@ export default function TaskItem({ task, session, onUpdate }) {
                 <span className="px-2 py-1 rounded-full bg-white border border-slate-300">
                   {task.Status}
                 </span>
-                {task.What?.Name && task.WhatId && (
-                  <a
-                    href={`${createPageUrl(
-                      task.WhatId.startsWith('00Q') 
-                        ? 'LeadDetail' 
-                        : 'OpportunityDetail'
-                    )}?id=${task.WhatId}`}
-                    className="px-2 py-1 rounded-full bg-[#08708E] text-white hover:bg-[#065a72] flex items-center gap-1"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {task.What.Name}
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
+                {task.WhatId && (
+                  <>
+                    {task.WhatId.startsWith('001') && task.Account?.Name ? (
+                      <span className="px-2 py-1 rounded-full bg-slate-200 text-slate-700 text-xs">
+                        Account: {task.Account.Name}
+                      </span>
+                    ) : task.What?.Name && (
+                      <a
+                        href={`${createPageUrl(
+                          task.WhatId.startsWith('00Q') 
+                            ? 'LeadDetail' 
+                            : 'OpportunityDetail'
+                        )}?id=${task.WhatId}`}
+                        className="px-2 py-1 rounded-full bg-[#08708E] text-white hover:bg-[#065a72] flex items-center gap-1"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {task.What.Name}
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </>
                 )}
               </div>
             </div>

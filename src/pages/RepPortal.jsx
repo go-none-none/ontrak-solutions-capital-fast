@@ -636,6 +636,13 @@ export default function RepPortal() {
         record={selectedRecord}
         type={selectedRecordType}
         isOpen={!!selectedRecord}
+        expandable={true}
+        onExpand={() => {
+          window.open(
+            `${createPageUrl(selectedRecordType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${selectedRecord.Id}`,
+            '_blank'
+          );
+        }}
         onClose={() => {
           setSelectedRecord(null);
           setSelectedRecordType(null);

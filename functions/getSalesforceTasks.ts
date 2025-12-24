@@ -13,7 +13,8 @@ Deno.serve(async (req) => {
     const query = `
       SELECT Id, Subject, Description, Status, Priority, ActivityDate, 
              IsClosed, IsHighPriority, WhatId, What.Name, What.Type,
-             WhoId, Who.Name, Who.Type, CreatedDate, LastModifiedDate
+             WhoId, Who.Name, Who.Type, CreatedDate, LastModifiedDate,
+             Account.Name, Account.Id
       FROM Task 
       WHERE OwnerId = '${userId}' 
         AND IsClosed = false
