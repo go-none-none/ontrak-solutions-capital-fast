@@ -288,16 +288,16 @@ export default function AdminPipeline() {
         {/* Reps Pipeline Table */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full table-fixed">
+            <table className="w-full min-w-[1200px]">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700 w-64 sticky left-0 bg-slate-50">Rep Name</th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-slate-700 min-w-[250px]">Rep Name</th>
                   {stages.map((stage, idx) => (
-                    <th key={idx} className="text-center px-2 py-4 text-xs font-semibold text-slate-700 w-28">
+                    <th key={idx} className="text-center px-3 py-4 text-xs font-semibold text-slate-700">
                       {stage.label}
                     </th>
                   ))}
-                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700 w-32">
+                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700 min-w-[140px]">
                     {activeView === 'opportunities' ? 'Pipeline' : 'Total'}
                   </th>
                 </tr>
@@ -319,14 +319,14 @@ export default function AdminPipeline() {
                         className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer"
                         onClick={() => setExpandedRep(isExpanded ? null : rep.userId)}
                       >
-                        <td className="px-6 py-4 sticky left-0 bg-white">
+                        <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <button className="text-slate-400 hover:text-slate-600 flex-shrink-0">
                               {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                             </button>
-                            <div className="min-w-0">
-                              <p className="font-medium text-slate-900 truncate">{rep.name}</p>
-                              <p className="text-xs text-slate-500 truncate">{rep.email}</p>
+                            <div>
+                              <p className="font-medium text-slate-900">{rep.name}</p>
+                              <p className="text-xs text-slate-500">{rep.email}</p>
                             </div>
                           </div>
                         </td>
@@ -334,7 +334,7 @@ export default function AdminPipeline() {
                           const count = getStageCount(rep, stage.name);
                           const amount = getStageAmount(rep, stage.name);
                           return (
-                            <td key={idx} className="px-2 py-4 text-center">
+                            <td key={idx} className="px-3 py-4 text-center">
                               <div className="flex flex-col items-center gap-1">
                                 <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ${count > 0 ? stage.color : 'bg-slate-200'} text-white font-semibold text-sm`}>
                                   {count}

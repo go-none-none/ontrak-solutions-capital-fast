@@ -9,49 +9,53 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing token or instanceUrl' }, { status: 400 });
     }
 
-    // Fetch all leads
-    const leadsResponse = await fetch(
-      `${instanceUrl}/services/data/v58.0/query?q=${encodeURIComponent(
-        "SELECT Id, Name, Company, Email, Phone, Status, OwnerId, Owner.Name, Owner.Email FROM Lead WHERE IsConverted = false"
-      )}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+    // Helper function to fetch all records with pagination
+    const fetchAllRecords = async (query) => {
+      let allRecords = [];
+      let nextRecordsUrl = null;
+      let url = `${instanceUrl}/services/data/v58.0/query?q=${encodeURIComponent(query)}`;
+
+      while (url) {
+        const response = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Query failed: ${JSON.stringify(errorData)}`);
+        }
+
+        const data = await response.json();
+        allRecords = allRecords.concat(data.records || []);
+
+        // Check if there are more records
+        if (data.nextRecordsUrl) {
+          url = `${instanceUrl}${data.nextRecordsUrl}`;
+        } else {
+          url = null;
         }
       }
+
+      return allRecords;
+    };
+
+    // Fetch all leads (with pagination)
+    const leads = await fetchAllRecords(
+      "SELECT Id, Name, Company, Email, Phone, Status, OwnerId, Owner.Name, Owner.Email FROM Lead WHERE IsConverted = false"
     );
 
-    // Fetch all opportunities (excluding closed won)
-    const oppsResponse = await fetch(
-      `${instanceUrl}/services/data/v58.0/query?q=${encodeURIComponent(
-        "SELECT Id, Name, StageName, Amount, OwnerId, Owner.Name, Owner.Email, Account.Name FROM Opportunity WHERE (IsClosed = false OR StageName LIKE '%Declined%')"
-      )}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      }
+    // Fetch all opportunities (with pagination, excluding closed won)
+    const opportunities = await fetchAllRecords(
+      "SELECT Id, Name, StageName, Amount, OwnerId, Owner.Name, Owner.Email, Account.Name FROM Opportunity WHERE (IsClosed = false OR StageName LIKE '%Declined%')"
     );
-
-    if (!leadsResponse.ok || !oppsResponse.ok) {
-      const leadsError = !leadsResponse.ok ? await leadsResponse.json() : null;
-      const oppsError = !oppsResponse.ok ? await oppsResponse.json() : null;
-      return Response.json({ 
-        error: 'Failed to fetch data', 
-        leadsError, 
-        oppsError 
-      }, { status: 400 });
-    }
-
-    const leadsData = await leadsResponse.json();
-    const oppsData = await oppsResponse.json();
 
     // Group by owner
     const repMap = {};
 
-    (leadsData.records || []).forEach(lead => {
+    leads.forEach(lead => {
       if (!repMap[lead.OwnerId]) {
         repMap[lead.OwnerId] = {
           userId: lead.OwnerId,
@@ -64,7 +68,7 @@ Deno.serve(async (req) => {
       repMap[lead.OwnerId].leads.push(lead);
     });
 
-    (oppsData.records || []).forEach(opp => {
+    opportunities.forEach(opp => {
       if (!repMap[opp.OwnerId]) {
         repMap[opp.OwnerId] = {
           userId: opp.OwnerId,
@@ -77,7 +81,7 @@ Deno.serve(async (req) => {
       repMap[opp.OwnerId].opportunities.push(opp);
     });
 
-    const reps = Object.values(repMap);
+    const reps = Object.values(repMap).sort((a, b) => a.name.localeCompare(b.name));
 
     return Response.json({ reps });
   } catch (error) {
