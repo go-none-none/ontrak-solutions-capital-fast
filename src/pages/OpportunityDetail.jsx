@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ArrowLeft, Edit, Loader2, Check, X, ChevronDown, CheckCircle2, XCircle } from 'lucide-react';
+import { ArrowLeft, Loader2, ChevronDown, CheckCircle2, XCircle } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -12,6 +11,7 @@ import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadWidget from '../components/rep/DialpadWidget.jsx';
+import EditableField from '../components/rep/EditableField.jsx';
 
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 
@@ -64,10 +64,6 @@ export default function OpportunityDetail() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleFieldEdit = (field, value) => {
-    setEditValues({ ...editValues, [field]: value });
   };
 
   const handleStatusChange = async (newStage) => {
@@ -129,6 +125,7 @@ export default function OpportunityDetail() {
 
   const handleFieldSave = async (field) => {
     try {
+      setEditing({ ...editing, [field]: true });
       await base44.functions.invoke('updateSalesforceRecord', {
         objectType: 'Opportunity',
         recordId: opportunity.Id,
@@ -140,50 +137,23 @@ export default function OpportunityDetail() {
       setEditing({ ...editing, [field]: false });
     } catch (error) {
       console.error('Update error:', error);
+      setEditing({ ...editing, [field]: false });
     }
   };
 
-  const EditableField = ({ label, field, value, type = 'text', disabled = false }) => {
-    const isEditing = editing[field];
-    const displayValue = isEditing ? editValues[field] : value;
-
+  const EditableFieldWrapper = ({ label, field, value, disabled = false }) => {
     return (
-      <div className={disabled ? 'opacity-50' : ''}>
-        <p className="text-slate-500 text-xs mb-1">{label}</p>
-        {isEditing && !disabled ? (
-          <div className="flex items-center gap-2">
-            <Input
-              type={type}
-              value={displayValue || ''}
-              onChange={(e) => handleFieldEdit(field, e.target.value)}
-              className="h-8 text-sm"
-            />
-            <Button size="sm" variant="ghost" onClick={() => handleFieldSave(field)}>
-              <Check className="w-4 h-4 text-green-600" />
-            </Button>
-            <Button size="sm" variant="ghost" onClick={() => setEditing({ ...editing, [field]: false })}>
-              <X className="w-4 h-4 text-red-600" />
-            </Button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 group">
-            <p className="font-medium text-slate-900">{value || <span className="text-slate-400 text-sm">Not set</span>}</p>
-            {!disabled && (
-              <Button
-                size="sm"
-                variant="ghost"
-                className="opacity-0 group-hover:opacity-100"
-                onClick={() => {
-                  setEditValues({ ...editValues, [field]: value || '' });
-                  setEditing({ ...editing, [field]: true });
-                }}
-              >
-                <Edit className="w-3 h-3" />
-              </Button>
-            )}
-          </div>
-        )}
-      </div>
+      <EditableField
+        label={label}
+        field={field}
+        value={value}
+        editing={editing}
+        editValues={editValues}
+        disabled={disabled}
+        onEdit={(field, value) => setEditValues({ ...editValues, [field]: value })}
+        onSave={handleFieldSave}
+        onCancel={(field) => setEditing({ ...editing, [field]: false })}
+      />
     );
   };
 
