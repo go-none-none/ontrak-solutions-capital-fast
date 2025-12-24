@@ -448,17 +448,84 @@ export default function OpportunityDetail() {
                   </div>
                 </Collapsible>
 
-                {/* Owners */}
+                {/* Owner Information */}
                 <Collapsible defaultOpen={false}>
                   <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                     <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Owners</h2>
+                      <h2 className="text-lg font-semibold text-slate-900">Owner Information</h2>
                       <ChevronDown className="w-5 h-5 transition-transform" />
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableField label="Owner 1" field="Owner__c" value={opportunity.Owner__c} />
-                        <EditableField label="Owner 2" field="Owner_2__c" value={opportunity.Owner_2__c} />
+                        <EditableField label="Name" field="Name" value={opportunity.Name} />
+                        <EditableField label="Title" field="Title" value={opportunity.Title} />
+                        <EditableField label="Birthdate" field="csbs__Birthdate__c" value={formatDate(opportunity.csbs__Birthdate__c)} type="date" />
+                        <EditableField label="Social Security Number" field="csbs__Social_Security_Number_Unencrypted__c" value={opportunity.csbs__Social_Security_Number_Unencrypted__c} />
+                        <EditableField label="Ownership %" field="csbs__Ownership_Percentage__c" value={opportunity.csbs__Ownership_Percentage__c} />
+                        <EditableField label="Credit Score" field="csbs__CreditScore__c" value={opportunity.csbs__CreditScore__c} />
+                        <EditableField label="Application Federal Tax Id" field="csbs__Application_Federal_Tax_Id__c" value={opportunity.csbs__Application_Federal_Tax_Id__c} />
+                        <EditableField label="Application SSN" field="csbs__Application_SSN__c" value={opportunity.csbs__Application_SSN__c} />
+                        <EditableField label="Application Owner 2 SSN" field="csbs__Application_Owner_2_SSN__c" value={opportunity.csbs__Application_Owner_2_SSN__c} />
+                        <EditableField label="Mobile" field="MobilePhone" value={opportunity.MobilePhone} />
+                        <EditableField label="Email" field="Email" value={opportunity.Email} />
+                        <EditableField label="Home Address Street" field="csbs__Home_Address_Street__c" value={opportunity.csbs__Home_Address_Street__c} />
+                        <EditableField label="Home Address City" field="csbs__Home_Address_City__c" value={opportunity.csbs__Home_Address_City__c} />
+                        <EditableField label="Home Address State" field="csbs__Home_Address_State__c" value={opportunity.csbs__Home_Address_State__c} />
+                        <EditableField label="Home Address Zip Code" field="csbs__Home_Address_Zip_Code__c" value={opportunity.csbs__Home_Address_Zip_Code__c} />
+                        <EditableField label="Home Address Country" field="csbs__Home_Address_Country__c" value={opportunity.csbs__Home_Address_Country__c} />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+
+                {/* Owner 2 Information */}
+                <Collapsible defaultOpen={false}>
+                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                      <h2 className="text-lg font-semibold text-slate-900">Owner 2 Information</h2>
+                      <ChevronDown className="w-5 h-5 transition-transform" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
+                        <EditableField label="Owner 2 First Name" field="csbs__Owner_2_First_Name__c" value={opportunity.csbs__Owner_2_First_Name__c} />
+                        <EditableField label="Owner 2 Last Name" field="csbs__Owner_2_Last_Name__c" value={opportunity.csbs__Owner_2_Last_Name__c} />
+                        <EditableField label="Owner 2 Title" field="csbs__Owner_2_Title__c" value={opportunity.csbs__Owner_2_Title__c} />
+                        <EditableField label="Owner 2 Birthday" field="csbs__Owner_2_Birthday__c" value={formatDate(opportunity.csbs__Owner_2_Birthday__c)} type="date" />
+                        <EditableField label="Owner 2 Social Security Number" field="csbs__Owner_2_Social_Security_Number__c" value={opportunity.csbs__Owner_2_Social_Security_Number__c} />
+                        <EditableField label="Owner 2 Ownership %" field="csbs__Owner_2_Ownership__c" value={opportunity.csbs__Owner_2_Ownership__c} />
+                        <EditableField label="Owner 2 Credit Score" field="csbs__Owner_2_CreditScore__c" value={opportunity.csbs__Owner_2_CreditScore__c} />
+                        <EditableField label="Owner 2 Mobile" field="csbs__Owner_2_Mobile__c" value={opportunity.csbs__Owner_2_Mobile__c} />
+                        <EditableField label="Owner 2 Email" field="csbs__Owner_2_Email__c" value={opportunity.csbs__Owner_2_Email__c} />
+                        <EditableField label="Owner 2 Home Address Street" field="csbs__Owner_2_Home_Address_Street__c" value={opportunity.csbs__Owner_2_Home_Address_Street__c} />
+                        <EditableField label="Owner 2 Home Address City" field="csbs__Owner_2_Home_Address_City__c" value={opportunity.csbs__Owner_2_Home_Address_City__c} />
+                        <EditableField label="Owner 2 Home Address State" field="csbs__Owner_2_Home_Address_State__c" value={opportunity.csbs__Owner_2_Home_Address_State__c} />
+                        <EditableField label="Owner 2 Home Address Zip Code" field="csbs__Owner_2_Home_Address_Zip_Code__c" value={opportunity.csbs__Owner_2_Home_Address_Zip_Code__c} />
+                        <EditableField label="Owner 2 Home Address Country" field="csbs__Owner_2_Home_Address_Country__c" value={opportunity.csbs__Owner_2_Home_Address_Country__c} />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+
+                {/* Business Information */}
+                <Collapsible defaultOpen={false}>
+                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                      <h2 className="text-lg font-semibold text-slate-900">Business Information</h2>
+                      <ChevronDown className="w-5 h-5 transition-transform" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
+                        <EditableField label="Application Industry" field="csbs__Application_Industry__c" value={opportunity.csbs__Application_Industry__c} />
+                        <EditableField label="Industry" field="Industry" value={opportunity.Industry} />
+                        <EditableField label="Entity Type" field="csbs__Entity_Type__c" value={opportunity.csbs__Entity_Type__c} />
+                        <EditableField label="Federal Tax ID" field="csbs__Federal_Tax_ID_Unencrypted__c" value={opportunity.csbs__Federal_Tax_ID_Unencrypted__c} />
+                        <EditableField label="State of Incorporation" field="csbs__State_of_Incorporation__c" value={opportunity.csbs__State_of_Incorporation__c} />
+                        <EditableField label="Business Start Date" field="csbs__Business_Start_Date_Current_Ownership__c" value={formatDate(opportunity.csbs__Business_Start_Date_Current_Ownership__c)} type="date" />
+                        <EditableField label="Seasonal Business" field="csbs__Seasonal_Business__c" value={opportunity.csbs__Seasonal_Business__c} />
+                        <EditableField label="Seasonal Peak Months" field="csbs__Seasonal_Peak_Months__c" value={opportunity.csbs__Seasonal_Peak_Months__c} />
+                        <EditableField label="E-Commerce" field="csbs__E_Commerce__c" value={opportunity.csbs__E_Commerce__c} />
+                        <EditableField label="Franchise" field="csbs__Franchise__c" value={opportunity.csbs__Franchise__c} />
+                        <EditableField label="Home-Based Business" field="csbs__Home_Based_Business__c" value={opportunity.csbs__Home_Based_Business__c} />
                       </div>
                     </CollapsibleContent>
                   </div>
