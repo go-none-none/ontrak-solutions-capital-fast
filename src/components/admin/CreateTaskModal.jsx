@@ -22,6 +22,8 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
     description: ''
   });
   const [relatedRecords, setRelatedRecords] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     if (isOpen && users.length === 0) {
@@ -190,35 +192,72 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
 
           <div>
             <label className="text-sm font-medium text-slate-700 mb-1 block">Related To</label>
-            <Select
-              value={formData.relatedToId}
-              onValueChange={(val) => {
-                const record = relatedRecords.find(r => r.id === val);
-                setFormData({ 
-                  ...formData, 
-                  relatedToId: val,
-                  relatedToType: record?.type || ''
-                });
-              }}
-              disabled={!formData.assignedTo || relatedRecords.length === 0}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={
+            <div className="relative">
+              <Input
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setShowDropdown(true);
+                }}
+                onFocus={() => setShowDropdown(true)}
+                placeholder={
                   !formData.assignedTo 
                     ? "Select rep first" 
                     : relatedRecords.length === 0 
                       ? "No records available" 
-                      : "Select lead or opportunity"
-                } />
-              </SelectTrigger>
-              <SelectContent>
-                {relatedRecords.map(record => (
-                  <SelectItem key={record.id} value={record.id}>
-                    {record.name} ({record.type})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                      : "Search leads or opportunities..."
+                }
+                disabled={!formData.assignedTo || relatedRecords.length === 0}
+              />
+              {showDropdown && relatedRecords.length > 0 && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  {relatedRecords
+                    .filter(r => 
+                      r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      r.type.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map(record => (
+                      <button
+                        key={record.id}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ 
+                            ...formData, 
+                            relatedToId: record.id,
+                            relatedToType: record.type
+                          });
+                          setSearchTerm(`${record.name} (${record.type})`);
+                          setShowDropdown(false);
+                        }}
+                        className="w-full text-left px-3 py-2 hover:bg-slate-100 transition-colors border-b border-slate-100 last:border-0"
+                      >
+                        <p className="font-medium text-slate-900">{record.name}</p>
+                        <p className="text-xs text-slate-500">{record.type}</p>
+                      </button>
+                    ))}
+                  {relatedRecords.filter(r => 
+                    r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    r.type.toLowerCase().includes(searchTerm.toLowerCase())
+                  ).length === 0 && (
+                    <div className="px-3 py-4 text-center text-sm text-slate-500">
+                      No matches found
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            {formData.relatedToId && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData({ ...formData, relatedToId: '', relatedToType: '' });
+                  setSearchTerm('');
+                }}
+                className="text-xs text-slate-500 hover:text-slate-700 mt-1"
+              >
+                Clear selection
+              </button>
+            )}
           </div>
 
           <div>

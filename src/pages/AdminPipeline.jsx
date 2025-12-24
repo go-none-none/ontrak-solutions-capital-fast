@@ -14,7 +14,7 @@ export default function AdminPipeline() {
   const [refreshing, setRefreshing] = useState(false);
   const [repsData, setRepsData] = useState([]);
   const [expandedRep, setExpandedRep] = useState(null);
-  const [activeView, setActiveView] = useState('leads'); // 'leads' or 'opportunities'
+  const [activeView, setActiveView] = useState('leads'); // 'leads', 'opportunities', or 'tasks'
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [stageFilter, setStageFilter] = useState({}); // {repUserId: stageName}
@@ -120,14 +120,53 @@ export default function AdminPipeline() {
     return `$${amount.toFixed(0)}`;
   };
 
+  const getRepTasks = (repUserId) => {
+    return allTasks.filter(t => t.OwnerId === repUserId);
+  };
+
+  const categorizeTasksByDueDate = (tasks) => {
+    const today = new Date().toISOString().split('T')[0];
+    const weekEnd = new Date();
+    weekEnd.setDate(weekEnd.getDate() + 7);
+    const weekEndStr = weekEnd.toISOString().split('T')[0];
+
+    const categorized = {
+      overdue: [],
+      dueToday: [],
+      dueThisWeek: [],
+      upcoming: []
+    };
+
+    tasks.forEach(task => {
+      if (!task.ActivityDate) {
+        categorized.upcoming.push(task);
+      } else if (task.ActivityDate < today) {
+        categorized.overdue.push(task);
+      } else if (task.ActivityDate === today) {
+        categorized.dueToday.push(task);
+      } else if (task.ActivityDate <= weekEndStr) {
+        categorized.dueThisWeek.push(task);
+      } else {
+        categorized.upcoming.push(task);
+      }
+    });
+
+    return categorized;
+  };
+
   const getStageCount = (rep, stageName) => {
     if (activeView === 'leads') {
       return rep.leads?.filter(l => l.Status === stageName).length || 0;
-    } else {
+    } else if (activeView === 'opportunities') {
       if (stageName === 'Declined') {
         return rep.opportunities?.filter(o => o.StageName?.includes('Declined')).length || 0;
       }
       return rep.opportunities?.filter(o => o.StageName === stageName).length || 0;
+    } else {
+      // tasks view
+      const repTasks = getRepTasks(rep.userId);
+      const categorized = categorizeTasksByDueDate(repTasks);
+      return categorized[stageName]?.length || 0;
     }
   };
 
@@ -182,7 +221,14 @@ export default function AdminPipeline() {
     );
   }
 
-  const stages = activeView === 'leads' ? leadStages : opportunityStages;
+  const taskCategories = [
+    { name: 'overdue', label: 'Overdue', color: 'bg-red-500' },
+    { name: 'dueToday', label: 'Today', color: 'bg-orange-500' },
+    { name: 'dueThisWeek', label: 'This Week', color: 'bg-blue-500' },
+    { name: 'upcoming', label: 'Upcoming', color: 'bg-slate-500' }
+  ];
+
+  const stages = activeView === 'leads' ? leadStages : activeView === 'opportunities' ? opportunityStages : taskCategories;
   const totalLeads = repsData.reduce((sum, rep) => sum + (rep.leads?.length || 0), 0);
   const totalOpps = repsData.reduce((sum, rep) => sum + (rep.opportunities?.length || 0), 0);
   const totalPipelineValue = repsData.reduce((sum, rep) => sum + getTotalPipeline(rep), 0);
@@ -327,6 +373,14 @@ export default function AdminPipeline() {
               <TrendingUp className="w-4 h-4 mr-2" />
               Opportunities Pipeline
             </Button>
+            <Button
+              onClick={() => setActiveView('tasks')}
+              variant={activeView === 'tasks' ? 'default' : 'outline'}
+              className={activeView === 'tasks' ? 'bg-[#08708E] hover:bg-[#065a72]' : ''}
+            >
+              <CheckSquare className="w-4 h-4 mr-2" />
+              Tasks
+            </Button>
           </div>
           <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700">
             <Plus className="w-4 h-4 mr-2" />
@@ -347,7 +401,7 @@ export default function AdminPipeline() {
                     </th>
                   ))}
                   <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700 min-w-[140px]">
-                    {activeView === 'opportunities' ? 'Pipeline' : 'Total'}
+                    {activeView === 'opportunities' ? 'Pipeline' : activeView === 'tasks' ? 'Tasks' : 'Total'}
                   </th>
                 </tr>
               </thead>
@@ -355,7 +409,9 @@ export default function AdminPipeline() {
                 {repsData.map((rep, repIdx) => {
                   const totalCount = activeView === 'leads' 
                     ? rep.leads?.length || 0 
-                    : rep.opportunities?.length || 0;
+                    : activeView === 'opportunities'
+                      ? rep.opportunities?.length || 0
+                      : getRepTasks(rep.userId).length;
                   const pipelineValue = getTotalPipeline(rep);
                   const isExpanded = expandedRep === rep.userId;
 
@@ -414,7 +470,7 @@ export default function AdminPipeline() {
                         <td className="px-6 py-4 text-right">
                           <div className="flex flex-col items-end">
                             <span className="font-bold text-slate-900 text-lg">{totalCount}</span>
-                            {activeView === 'opportunities' && (
+                            {activeView === 'opportunities' && pipelineValue > 0 && (
                               <span className="text-sm text-[#08708E] font-semibold whitespace-nowrap">{formatCurrency(pipelineValue)}</span>
                             )}
                           </div>
@@ -428,7 +484,7 @@ export default function AdminPipeline() {
                             <div className="space-y-2">
                               <div className="flex items-center justify-between mb-3">
                                 <h4 className="font-semibold text-slate-900">
-                                  {activeView === 'leads' ? 'Leads' : 'Opportunities'} Details
+                                  {activeView === 'leads' ? 'Leads' : activeView === 'opportunities' ? 'Opportunities' : 'Tasks'} Details
                                   {stageFilter[rep.userId] && (
                                     <span className="ml-2 text-sm font-normal text-slate-600">
                                       (Filtered by: {stages.find(s => s.name === stageFilter[rep.userId])?.label})
@@ -473,34 +529,73 @@ export default function AdminPipeline() {
                                         </span>
                                       </button>
                                     ))
-                                  : rep.opportunities?.filter(opp => {
-                                      if (!stageFilter[rep.userId]) return true;
-                                      if (stageFilter[rep.userId] === 'Declined') {
-                                        return opp.StageName?.includes('Declined');
-                                      }
-                                      return opp.StageName === stageFilter[rep.userId];
-                                    }).map((opp, idx) => (
-                                      <button
-                                        key={idx}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setSelectedRecord(opp);
-                                          setModalType('opportunity');
-                                        }}
-                                        className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full"
-                                      >
-                                        <div>
-                                          <p className="font-medium text-slate-900">{opp.Name}</p>
-                                          <p className="text-xs text-slate-500">{opp.Account?.Name}</p>
-                                        </div>
-                                        <div className="text-right">
-                                          <p className="font-semibold text-[#08708E]">{formatCurrency(opp.Amount || 0)}</p>
-                                          <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700">
-                                            {opp.StageName}
-                                          </span>
-                                        </div>
-                                      </button>
-                                    ))
+                                  : activeView === 'opportunities'
+                                    ? rep.opportunities?.filter(opp => {
+                                        if (!stageFilter[rep.userId]) return true;
+                                        if (stageFilter[rep.userId] === 'Declined') {
+                                          return opp.StageName?.includes('Declined');
+                                        }
+                                        return opp.StageName === stageFilter[rep.userId];
+                                      }).map((opp, idx) => (
+                                        <button
+                                          key={idx}
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setSelectedRecord(opp);
+                                            setModalType('opportunity');
+                                          }}
+                                          className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full"
+                                        >
+                                          <div>
+                                            <p className="font-medium text-slate-900">{opp.Name}</p>
+                                            <p className="text-xs text-slate-500">{opp.Account?.Name}</p>
+                                          </div>
+                                          <div className="text-right">
+                                            <p className="font-semibold text-[#08708E]">{formatCurrency(opp.Amount || 0)}</p>
+                                            <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700">
+                                              {opp.StageName}
+                                            </span>
+                                          </div>
+                                        </button>
+                                      ))
+                                    : (() => {
+                                        const repTasks = getRepTasks(rep.userId);
+                                        const categorized = categorizeTasksByDueDate(repTasks);
+                                        let tasksToShow = repTasks;
+                                        
+                                        if (stageFilter[rep.userId]) {
+                                          tasksToShow = categorized[stageFilter[rep.userId]] || [];
+                                        }
+
+                                        return tasksToShow.map((task, idx) => (
+                                          <div
+                                            key={idx}
+                                            className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md hover:border-purple-500 transition-all"
+                                          >
+                                            <div className="flex justify-between items-start">
+                                              <div className="flex-1">
+                                                <p className="font-medium text-slate-900">{task.Subject}</p>
+                                                {task.Description && (
+                                                  <p className="text-xs text-slate-500 mt-1 line-clamp-1">{task.Description}</p>
+                                                )}
+                                                {task.What?.Name && (
+                                                  <p className="text-xs text-purple-600 mt-1">Related: {task.What.Name}</p>
+                                                )}
+                                              </div>
+                                              <div className="text-right ml-3">
+                                                <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700 block mb-1">
+                                                  {task.Status}
+                                                </span>
+                                                {task.ActivityDate && (
+                                                  <span className="text-xs text-slate-500">
+                                                    {new Date(task.ActivityDate).toLocaleDateString()}
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ));
+                                      })()
                                 }
                               </div>
                             </div>
