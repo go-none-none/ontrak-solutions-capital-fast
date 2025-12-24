@@ -38,8 +38,9 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
     setLoadingDispositions(true);
     try {
       const response = await base44.functions.invoke('dialpadGetCallDispositions', {
-        phoneNumber
+        phoneNumber: phoneNumber.replace(/\D/g, '')
       });
+      console.log('Dispositions response:', response.data);
       if (response.data.dispositions && response.data.dispositions.length > 0) {
         setDispositions(response.data.dispositions);
       } else {
