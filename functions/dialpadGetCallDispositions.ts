@@ -3,16 +3,19 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { phoneNumber } = await req.json();
+    const { phoneNumber, dispositionId } = await req.json();
 
     const apiKey = Deno.env.get('DIALPAD_API_KEY');
     if (!apiKey) {
       return Response.json({ error: 'Dialpad API key not configured' }, { status: 500 });
     }
 
-    // Fetch all dispositions from Dialpad
+    // Use the disposition ID (default to a common ID if not provided)
+    const id = dispositionId || '1'; // You may need to adjust this ID
+
+    // Fetch specific disposition list from Dialpad
     const response = await fetch(
-      'https://dialpad.com/api/v2/dispositions',
+      `https://dialpad.com/api/v2/dispositions/${id}`,
       {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
@@ -32,8 +35,19 @@ Deno.serve(async (req) => {
 
     const data = await response.json();
     
-    // Extract disposition names
-    const dispositions = data.items?.map(item => item.name) || [];
+    // Extract disposition names from formatted_dispositions
+    const dispositions = [];
+    if (data.formatted_dispositions) {
+      for (const item of data.formatted_dispositions) {
+        dispositions.push(item.name);
+        // Also add sub-dispositions if they exist
+        if (item.dispositions) {
+          for (const sub of item.dispositions) {
+            dispositions.push(`${item.name} - ${sub.name}`);
+          }
+        }
+      }
+    }
 
     return Response.json({ 
       dispositions: dispositions,
