@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckSquare, AlertCircle, Clock, Calendar } from 'lucide-react';
 
-export default function TaskCard({ tasksData, onClick, loading }) {
+export default function TaskCard({ tasksData, onClick, loading, isActive }) {
   if (loading) {
     return (
       <motion.div
@@ -28,7 +28,9 @@ export default function TaskCard({ tasksData, onClick, loading }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
       onClick={onClick}
-      className="bg-white rounded-2xl p-6 shadow-sm cursor-pointer hover:shadow-md transition-all ring-2 ring-transparent hover:ring-[#08708E]"
+      className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all ${
+        isActive ? 'ring-2 ring-[#08708E] shadow-md' : 'ring-2 ring-transparent hover:ring-[#08708E] hover:shadow-md'
+      }`}
     >
       <div className="flex items-center justify-between">
         <div>

@@ -11,7 +11,7 @@ import LeadCard from '../components/rep/LeadCard';
 import OpportunityCard from '../components/rep/OpportunityCard';
 import PipelineView from '../components/rep/PipelineView';
 import TaskCard from '../components/rep/TaskCard';
-import TasksExpandedView from '../components/rep/TasksExpandedView';
+import TaskItem from '../components/rep/TaskItem';
 
 export default function RepPortal() {
   const [session, setSession] = useState(null);
@@ -20,13 +20,13 @@ export default function RepPortal() {
   const [opportunities, setOpportunities] = useState([]);
   const [tasks, setTasks] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('leads');
+  const [activeTab, setActiveTab] = useState('leads'); // 'leads', 'opportunities', or 'tasks'
   const [stageFilter, setStageFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showTasksExpanded, setShowTasksExpanded] = useState(false);
   const [loadingTasks, setLoadingTasks] = useState(true);
+  const [taskFilter, setTaskFilter] = useState('all');
   const itemsPerPage = 100;
 
   useEffect(() => {
@@ -311,31 +311,75 @@ export default function RepPortal() {
           <TaskCard 
             tasksData={tasks} 
             loading={loadingTasks}
-            onClick={() => setShowTasksExpanded(true)} 
+            onClick={() => { setActiveTab('tasks'); setTaskFilter('all'); setCurrentPage(1); }}
+            isActive={activeTab === 'tasks'}
           />
         </div>
 
         {/* Pipeline */}
-        <PipelineView 
-          leads={leads} 
-          opportunities={opportunities} 
-          activeTab={activeTab}
-          onStageClick={handleStageClick} 
-        />
+        {activeTab !== 'tasks' && (
+          <PipelineView 
+            leads={leads} 
+            opportunities={opportunities} 
+            activeTab={activeTab}
+            onStageClick={handleStageClick} 
+          />
+        )}
 
         {/* Search & Content */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mt-6">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <Input
-                placeholder="Search by name, company, or email..."
-                value={searchTerm}
-                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="pl-10 h-12"
+          {activeTab !== 'tasks' && (
+            <div className="flex items-center gap-4 mb-6">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Input
+                  placeholder="Search by name, company, or email..."
+                  value={searchTerm}
+                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                  className="pl-10 h-12"
                 />
-                </div>
-                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'tasks' && (
+            <div className="mb-6">
+              <div className="flex gap-2">
+                <Button
+                  variant={taskFilter === 'all' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setTaskFilter('all'); setCurrentPage(1); }}
+                  className={taskFilter === 'all' ? 'bg-purple-600' : ''}
+                >
+                  All ({tasks?.total || 0})
+                </Button>
+                <Button
+                  variant={taskFilter === 'overdue' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setTaskFilter('overdue'); setCurrentPage(1); }}
+                  className={taskFilter === 'overdue' ? 'bg-red-600' : ''}
+                >
+                  Overdue ({tasks?.categorized?.overdue?.length || 0})
+                </Button>
+                <Button
+                  variant={taskFilter === 'today' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setTaskFilter('today'); setCurrentPage(1); }}
+                  className={taskFilter === 'today' ? 'bg-orange-600' : ''}
+                >
+                  Due Today ({tasks?.categorized?.dueToday?.length || 0})
+                </Button>
+                <Button
+                  variant={taskFilter === 'week' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setTaskFilter('week'); setCurrentPage(1); }}
+                  className={taskFilter === 'week' ? 'bg-blue-600' : ''}
+                >
+                  This Week ({tasks?.categorized?.dueThisWeek?.length || 0})
+                </Button>
+              </div>
+            </div>
+          )}
 
           {activeTab === 'leads' && (
             <div>
@@ -487,17 +531,96 @@ export default function RepPortal() {
               )}
             </div>
             )}
+
+        {activeTab === 'tasks' && (
+          <div>
+            <div className="space-y-3">
+              {(() => {
+                let filteredTasks = tasks?.tasks || [];
+                if (taskFilter === 'overdue') filteredTasks = tasks?.categorized?.overdue || [];
+                else if (taskFilter === 'today') filteredTasks = tasks?.categorized?.dueToday || [];
+                else if (taskFilter === 'week') filteredTasks = tasks?.categorized?.dueThisWeek || [];
+
+                const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+                const startIdx = (currentPage - 1) * itemsPerPage;
+                const endIdx = startIdx + itemsPerPage;
+                const paginatedTasks = filteredTasks.slice(startIdx, endIdx);
+
+                return (
+                  <>
+                    {filteredTasks.length === 0 ? (
+                      <div className="text-center py-12">
+                        <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <p className="text-slate-600">No tasks found</p>
+                      </div>
+                    ) : (
+                      paginatedTasks.map(task => (
+                        <TaskItem 
+                          key={task.Id} 
+                          task={task} 
+                          session={session}
+                          onUpdate={() => loadData(session, true)}
+                        />
+                      ))
+                    )}
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-between mt-6 pt-6 border-t">
+                        <p className="text-sm text-slate-600">
+                          Showing {startIdx + 1}-{Math.min(endIdx, filteredTasks.length)} of {filteredTasks.length}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                          >
+                            Previous
+                          </Button>
+                          <div className="flex items-center gap-1">
+                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                              let pageNum;
+                              if (totalPages <= 5) {
+                                pageNum = i + 1;
+                              } else if (currentPage <= 3) {
+                                pageNum = i + 1;
+                              } else if (currentPage >= totalPages - 2) {
+                                pageNum = totalPages - 4 + i;
+                              } else {
+                                pageNum = currentPage - 2 + i;
+                              }
+                              return (
+                                <Button
+                                  key={pageNum}
+                                  variant={currentPage === pageNum ? "default" : "outline"}
+                                  size="sm"
+                                  onClick={() => setCurrentPage(pageNum)}
+                                  className="w-10"
+                                >
+                                  {pageNum}
+                                </Button>
+                              );
+                            })}
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                          >
+                            Next
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        )}
         </div>
       </div>
-
-      {/* Tasks Expanded View */}
-      <TasksExpandedView
-        isOpen={showTasksExpanded}
-        onClose={() => setShowTasksExpanded(false)}
-        tasksData={tasks}
-        session={session}
-        onRefresh={() => loadData(session, true)}
-      />
     </div>
   );
 }
