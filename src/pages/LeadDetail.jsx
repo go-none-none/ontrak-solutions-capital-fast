@@ -276,14 +276,14 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableField label="Company" field="Company" value={lead.Company} />
-                    <EditableField label="Email" field="Email" value={lead.Email} type="email" />
-                    <EditableField label="Phone" field="Phone" value={lead.Phone} />
-                    <EditableField label="Mobile" field="MobilePhone" value={lead.MobilePhone} />
-                    <EditableField label="Title" field="Title" value={lead.Title} />
-                    <EditableField label="Lead Source" field="LeadSource" value={lead.LeadSource} />
-                    <EditableField label="Industry" field="Industry" value={lead.Industry} />
-                    <EditableField label="Status" field="Status" value={lead.Status} />
+                    <EditableFieldWrapper label="Company" field="Company" value={lead.Company} />
+                    <EditableFieldWrapper label="Email" field="Email" value={lead.Email} />
+                    <EditableFieldWrapper label="Phone" field="Phone" value={lead.Phone} />
+                    <EditableFieldWrapper label="Mobile" field="MobilePhone" value={lead.MobilePhone} />
+                    <EditableFieldWrapper label="Title" field="Title" value={lead.Title} />
+                    <EditableFieldWrapper label="Lead Source" field="LeadSource" value={lead.LeadSource} />
+                    <EditableFieldWrapper label="Industry" field="Industry" value={lead.Industry} />
+                    <EditableFieldWrapper label="Status" field="Status" value={lead.Status} />
                   </div>
                 </CollapsibleContent>
               </div>
@@ -298,22 +298,22 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableField label="Name" field="Name" value={lead.Name} />
-                    <EditableField label="Title" field="Title" value={lead.Title} />
-                    <EditableField label="Birthdate" field="csbs__Birthdate__c" value={lead.csbs__Birthdate__c} type="date" />
-                    <EditableField label="Social Security Number" field="csbs__Social_Security_Number_Unencrypted__c" value={lead.csbs__Social_Security_Number_Unencrypted__c} />
-                    <EditableField label="Ownership %" field="csbs__Ownership_Percentage__c" value={lead.csbs__Ownership_Percentage__c} />
-                    <EditableField label="Credit Score" field="csbs__CreditScore__c" value={lead.csbs__CreditScore__c} />
-                    <EditableField label="Application Federal Tax Id" field="csbs__Application_Federal_Tax_Id__c" value={lead.csbs__Application_Federal_Tax_Id__c} />
-                    <EditableField label="Application SSN" field="csbs__Application_SSN__c" value={lead.csbs__Application_SSN__c} />
-                    <EditableField label="Application Owner 2 SSN" field="csbs__Application_Owner_2_SSN__c" value={lead.csbs__Application_Owner_2_SSN__c} />
-                    <EditableField label="Mobile" field="MobilePhone" value={lead.MobilePhone} />
-                    <EditableField label="Email" field="Email" value={lead.Email} />
-                    <EditableField label="Home Address Street" field="csbs__Home_Address_Street__c" value={lead.csbs__Home_Address_Street__c} />
-                    <EditableField label="Home Address City" field="csbs__Home_Address_City__c" value={lead.csbs__Home_Address_City__c} />
-                    <EditableField label="Home Address State" field="csbs__Home_Address_State__c" value={lead.csbs__Home_Address_State__c} />
-                    <EditableField label="Home Address Zip Code" field="csbs__Home_Address_Zip_Code__c" value={lead.csbs__Home_Address_Zip_Code__c} />
-                    <EditableField label="Home Address Country" field="csbs__Home_Address_Country__c" value={lead.csbs__Home_Address_Country__c} />
+                    <EditableFieldWrapper label="Name" field="Name" value={lead.Name} />
+                    <EditableFieldWrapper label="Title" field="Title" value={lead.Title} />
+                    <EditableFieldWrapper label="Birthdate" field="csbs__Birthdate__c" value={lead.csbs__Birthdate__c} />
+                    <EditableFieldWrapper label="Social Security Number" field="csbs__Social_Security_Number_Unencrypted__c" value={lead.csbs__Social_Security_Number_Unencrypted__c} />
+                    <EditableFieldWrapper label="Ownership %" field="csbs__Ownership_Percentage__c" value={lead.csbs__Ownership_Percentage__c} />
+                    <EditableFieldWrapper label="Credit Score" field="csbs__CreditScore__c" value={lead.csbs__CreditScore__c} />
+                    <EditableFieldWrapper label="Application Federal Tax Id" field="csbs__Application_Federal_Tax_Id__c" value={lead.csbs__Application_Federal_Tax_Id__c} />
+                    <EditableFieldWrapper label="Application SSN" field="csbs__Application_SSN__c" value={lead.csbs__Application_SSN__c} />
+                    <EditableFieldWrapper label="Application Owner 2 SSN" field="csbs__Application_Owner_2_SSN__c" value={lead.csbs__Application_Owner_2_SSN__c} />
+                    <EditableFieldWrapper label="Mobile" field="MobilePhone" value={lead.MobilePhone} />
+                    <EditableFieldWrapper label="Email" field="Email" value={lead.Email} />
+                    <EditableFieldWrapper label="Home Address Street" field="csbs__Home_Address_Street__c" value={lead.csbs__Home_Address_Street__c} />
+                    <EditableFieldWrapper label="Home Address City" field="csbs__Home_Address_City__c" value={lead.csbs__Home_Address_City__c} />
+                    <EditableFieldWrapper label="Home Address State" field="csbs__Home_Address_State__c" value={lead.csbs__Home_Address_State__c} />
+                    <EditableFieldWrapper label="Home Address Zip Code" field="csbs__Home_Address_Zip_Code__c" value={lead.csbs__Home_Address_Zip_Code__c} />
+                    <EditableFieldWrapper label="Home Address Country" field="csbs__Home_Address_Country__c" value={lead.csbs__Home_Address_Country__c} />
                   </div>
                 </CollapsibleContent>
               </div>
@@ -328,20 +328,20 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableField label="Owner 2 First Name" field="csbs__Owner_2_First_Name__c" value={lead.csbs__Owner_2_First_Name__c} />
-                    <EditableField label="Owner 2 Last Name" field="csbs__Owner_2_Last_Name__c" value={lead.csbs__Owner_2_Last_Name__c} />
-                    <EditableField label="Owner 2 Title" field="csbs__Owner_2_Title__c" value={lead.csbs__Owner_2_Title__c} />
-                    <EditableField label="Owner 2 Birthday" field="csbs__Owner_2_Birthday__c" value={lead.csbs__Owner_2_Birthday__c} type="date" />
-                    <EditableField label="Owner 2 Social Security Number" field="csbs__Owner_2_Social_Security_Number__c" value={lead.csbs__Owner_2_Social_Security_Number__c} />
-                    <EditableField label="Owner 2 Ownership %" field="csbs__Owner_2_Ownership__c" value={lead.csbs__Owner_2_Ownership__c} />
-                    <EditableField label="Owner 2 Credit Score" field="csbs__Owner_2_CreditScore__c" value={lead.csbs__Owner_2_CreditScore__c} />
-                    <EditableField label="Owner 2 Mobile" field="csbs__Owner_2_Mobile__c" value={lead.csbs__Owner_2_Mobile__c} />
-                    <EditableField label="Owner 2 Email" field="csbs__Owner_2_Email__c" value={lead.csbs__Owner_2_Email__c} type="email" />
-                    <EditableField label="Owner 2 Home Address Street" field="csbs__Owner_2_Home_Address_Street__c" value={lead.csbs__Owner_2_Home_Address_Street__c} />
-                    <EditableField label="Owner 2 Home Address City" field="csbs__Owner_2_Home_Address_City__c" value={lead.csbs__Owner_2_Home_Address_City__c} />
-                    <EditableField label="Owner 2 Home Address State" field="csbs__Owner_2_Home_Address_State__c" value={lead.csbs__Owner_2_Home_Address_State__c} />
-                    <EditableField label="Owner 2 Home Address Zip Code" field="csbs__Owner_2_Home_Address_Zip_Code__c" value={lead.csbs__Owner_2_Home_Address_Zip_Code__c} />
-                    <EditableField label="Owner 2 Home Address Country" field="csbs__Owner_2_Home_Address_Country__c" value={lead.csbs__Owner_2_Home_Address_Country__c} />
+                    <EditableFieldWrapper label="Owner 2 First Name" field="csbs__Owner_2_First_Name__c" value={lead.csbs__Owner_2_First_Name__c} />
+                    <EditableFieldWrapper label="Owner 2 Last Name" field="csbs__Owner_2_Last_Name__c" value={lead.csbs__Owner_2_Last_Name__c} />
+                    <EditableFieldWrapper label="Owner 2 Title" field="csbs__Owner_2_Title__c" value={lead.csbs__Owner_2_Title__c} />
+                    <EditableFieldWrapper label="Owner 2 Birthday" field="csbs__Owner_2_Birthday__c" value={lead.csbs__Owner_2_Birthday__c} />
+                    <EditableFieldWrapper label="Owner 2 Social Security Number" field="csbs__Owner_2_Social_Security_Number__c" value={lead.csbs__Owner_2_Social_Security_Number__c} />
+                    <EditableFieldWrapper label="Owner 2 Ownership %" field="csbs__Owner_2_Ownership__c" value={lead.csbs__Owner_2_Ownership__c} />
+                    <EditableFieldWrapper label="Owner 2 Credit Score" field="csbs__Owner_2_CreditScore__c" value={lead.csbs__Owner_2_CreditScore__c} />
+                    <EditableFieldWrapper label="Owner 2 Mobile" field="csbs__Owner_2_Mobile__c" value={lead.csbs__Owner_2_Mobile__c} />
+                    <EditableFieldWrapper label="Owner 2 Email" field="csbs__Owner_2_Email__c" value={lead.csbs__Owner_2_Email__c} />
+                    <EditableFieldWrapper label="Owner 2 Home Address Street" field="csbs__Owner_2_Home_Address_Street__c" value={lead.csbs__Owner_2_Home_Address_Street__c} />
+                    <EditableFieldWrapper label="Owner 2 Home Address City" field="csbs__Owner_2_Home_Address_City__c" value={lead.csbs__Owner_2_Home_Address_City__c} />
+                    <EditableFieldWrapper label="Owner 2 Home Address State" field="csbs__Owner_2_Home_Address_State__c" value={lead.csbs__Owner_2_Home_Address_State__c} />
+                    <EditableFieldWrapper label="Owner 2 Home Address Zip Code" field="csbs__Owner_2_Home_Address_Zip_Code__c" value={lead.csbs__Owner_2_Home_Address_Zip_Code__c} />
+                    <EditableFieldWrapper label="Owner 2 Home Address Country" field="csbs__Owner_2_Home_Address_Country__c" value={lead.csbs__Owner_2_Home_Address_Country__c} />
                   </div>
                 </CollapsibleContent>
               </div>
@@ -356,10 +356,10 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableField label="Amount Requested" field="Amount_Requested__c" value={lead.Amount_Requested__c} />
-                    <EditableField label="Use of Proceeds" field="Use_of_Proceeds__c" value={lead.Use_of_Proceeds__c} />
-                    <EditableField label="Monthly Revenue" field="Estimated_Monthly_Revenue__c" value={lead.Estimated_Monthly_Revenue__c} />
-                    <EditableField label="Annual Revenue" field="Annual_Revenue__c" value={lead.Annual_Revenue__c} />
+                    <EditableFieldWrapper label="Amount Requested" field="Amount_Requested__c" value={lead.Amount_Requested__c} />
+                    <EditableFieldWrapper label="Use of Proceeds" field="Use_of_Proceeds__c" value={lead.Use_of_Proceeds__c} />
+                    <EditableFieldWrapper label="Monthly Revenue" field="Estimated_Monthly_Revenue__c" value={lead.Estimated_Monthly_Revenue__c} />
+                    <EditableFieldWrapper label="Annual Revenue" field="Annual_Revenue__c" value={lead.Annual_Revenue__c} />
                   </div>
                 </CollapsibleContent>
               </div>
@@ -374,17 +374,17 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableField label="Application Industry" field="csbs__Application_Industry__c" value={lead.csbs__Application_Industry__c} />
-                    <EditableField label="Industry" field="Industry" value={lead.Industry} />
-                    <EditableField label="Entity Type" field="csbs__Entity_Type__c" value={lead.csbs__Entity_Type__c} />
-                    <EditableField label="Federal Tax ID" field="csbs__Federal_Tax_ID_Unencrypted__c" value={lead.csbs__Federal_Tax_ID_Unencrypted__c} />
-                    <EditableField label="State of Incorporation" field="csbs__State_of_Incorporation__c" value={lead.csbs__State_of_Incorporation__c} />
-                    <EditableField label="Business Start Date" field="csbs__Business_Start_Date_Current_Ownership__c" value={lead.csbs__Business_Start_Date_Current_Ownership__c} type="date" />
-                    <EditableField label="Seasonal Business" field="csbs__Seasonal_Business__c" value={lead.csbs__Seasonal_Business__c} />
-                    <EditableField label="Seasonal Peak Months" field="csbs__Seasonal_Peak_Months__c" value={lead.csbs__Seasonal_Peak_Months__c} />
-                    <EditableField label="E-Commerce" field="csbs__E_Commerce__c" value={lead.csbs__E_Commerce__c} />
-                    <EditableField label="Franchise" field="csbs__Franchise__c" value={lead.csbs__Franchise__c} />
-                    <EditableField label="Home-Based Business" field="csbs__Home_Based_Business__c" value={lead.csbs__Home_Based_Business__c} />
+                    <EditableFieldWrapper label="Application Industry" field="csbs__Application_Industry__c" value={lead.csbs__Application_Industry__c} />
+                    <EditableFieldWrapper label="Industry" field="Industry" value={lead.Industry} />
+                    <EditableFieldWrapper label="Entity Type" field="csbs__Entity_Type__c" value={lead.csbs__Entity_Type__c} />
+                    <EditableFieldWrapper label="Federal Tax ID" field="csbs__Federal_Tax_ID_Unencrypted__c" value={lead.csbs__Federal_Tax_ID_Unencrypted__c} />
+                    <EditableFieldWrapper label="State of Incorporation" field="csbs__State_of_Incorporation__c" value={lead.csbs__State_of_Incorporation__c} />
+                    <EditableFieldWrapper label="Business Start Date" field="csbs__Business_Start_Date_Current_Ownership__c" value={lead.csbs__Business_Start_Date_Current_Ownership__c} />
+                    <EditableFieldWrapper label="Seasonal Business" field="csbs__Seasonal_Business__c" value={lead.csbs__Seasonal_Business__c} />
+                    <EditableFieldWrapper label="Seasonal Peak Months" field="csbs__Seasonal_Peak_Months__c" value={lead.csbs__Seasonal_Peak_Months__c} />
+                    <EditableFieldWrapper label="E-Commerce" field="csbs__E_Commerce__c" value={lead.csbs__E_Commerce__c} />
+                    <EditableFieldWrapper label="Franchise" field="csbs__Franchise__c" value={lead.csbs__Franchise__c} />
+                    <EditableFieldWrapper label="Home-Based Business" field="csbs__Home_Based_Business__c" value={lead.csbs__Home_Based_Business__c} />
                   </div>
                 </CollapsibleContent>
               </div>
@@ -402,17 +402,17 @@ export default function LeadDetail() {
                     <div>
                       <p className="text-xs font-semibold text-slate-600 mb-2">Trade References</p>
                       <div className="grid sm:grid-cols-3 gap-4 text-sm">
-                        <EditableField label="Reference 1" field="Business_Trade_Reference_1__c" value={lead.Business_Trade_Reference_1__c} />
-                        <EditableField label="Reference 2" field="Business_Trade_Reference_2__c" value={lead.Business_Trade_Reference_2__c} />
-                        <EditableField label="Reference 3" field="Business_Trade_Reference_3__c" value={lead.Business_Trade_Reference_3__c} />
+                        <EditableFieldWrapper label="Reference 1" field="Business_Trade_Reference_1__c" value={lead.Business_Trade_Reference_1__c} />
+                        <EditableFieldWrapper label="Reference 2" field="Business_Trade_Reference_2__c" value={lead.Business_Trade_Reference_2__c} />
+                        <EditableFieldWrapper label="Reference 3" field="Business_Trade_Reference_3__c" value={lead.Business_Trade_Reference_3__c} />
                       </div>
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-slate-600 mb-2">Existing Lenders</p>
                       <div className="grid sm:grid-cols-3 gap-4 text-sm">
-                        <EditableField label="Lender 1" field="Lender_Name_1__c" value={lead.Lender_Name_1__c} />
-                        <EditableField label="Lender 2" field="Lender_Name_2__c" value={lead.Lender_Name_2__c} />
-                        <EditableField label="Lender 3" field="Lender_Name_3__c" value={lead.Lender_Name_3__c} />
+                        <EditableFieldWrapper label="Lender 1" field="Lender_Name_1__c" value={lead.Lender_Name_1__c} />
+                        <EditableFieldWrapper label="Lender 2" field="Lender_Name_2__c" value={lead.Lender_Name_2__c} />
+                        <EditableFieldWrapper label="Lender 3" field="Lender_Name_3__c" value={lead.Lender_Name_3__c} />
                       </div>
                     </div>
                   </div>
