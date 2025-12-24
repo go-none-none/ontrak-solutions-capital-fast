@@ -67,10 +67,12 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
       await base44.functions.invoke('createSalesforceActivity', {
         recordId,
         recordType,
-        subject: `Call - ${disposition}`,
-        description: notes || `Called ${phoneNumber}`,
-        status: 'Completed',
         activityType: 'Task',
+        data: {
+          subject: `Call - ${disposition}`,
+          description: notes || `Called ${phoneNumber}`,
+          status: 'Completed'
+        },
         token: session.token,
         instanceUrl: session.instanceUrl
       });
