@@ -4,12 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle2, Clock, AlertCircle, Calendar, Edit, X, ExternalLink, Save } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CheckCircle2, Clock, AlertCircle, Calendar, Edit, X, ExternalLink, Save, Building, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
 
 export default function TaskItem({ task, session, onUpdate }) {
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const [accountData, setAccountData] = useState(null);
+  const [loadingAccount, setLoadingAccount] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValues, setEditValues] = useState({
     Subject: task.Subject,
@@ -65,16 +69,18 @@ export default function TaskItem({ task, session, onUpdate }) {
   const handleMarkComplete = async () => {
     setSaving(true);
     try {
-      await base44.functions.invoke('updateSalesforceTask', {
+      const response = await base44.functions.invoke('updateSalesforceTask', {
         taskId: task.Id,
-        updates: { Status: 'Completed', IsClosed: true },
+        updates: { Status: 'Completed' },
         token: session.token,
         instanceUrl: session.instanceUrl
       });
+      console.log('Task update response:', response);
       await onUpdate();
     } catch (error) {
       console.error('Error completing task:', error);
-      alert('Failed to complete task');
+      console.error('Full error:', JSON.stringify(error, null, 2));
+      alert(`Failed to complete task: ${error.response?.data?.error || error.message}`);
     } finally {
       setSaving(false);
     }
@@ -99,7 +105,91 @@ export default function TaskItem({ task, session, onUpdate }) {
     }
   };
 
+  const handleViewAccount = async () => {
+    if (!task.Account?.Id) return;
+    
+    setLoadingAccount(true);
+    setShowAccountModal(true);
+    
+    try {
+      const response = await base44.functions.invoke('getSalesforceAccount', {
+        accountId: task.Account.Id,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      setAccountData(response.data.account);
+    } catch (error) {
+      console.error('Error loading account:', error);
+      alert('Failed to load account details');
+      setShowAccountModal(false);
+    } finally {
+      setLoadingAccount(false);
+    }
+  };
+
   return (
+    <>
+      <Dialog open={showAccountModal} onOpenChange={setShowAccountModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Account Details</DialogTitle>
+          </DialogHeader>
+          {loadingAccount ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-[#08708E]" />
+            </div>
+          ) : accountData ? (
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">{accountData.Name}</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {accountData.Phone && (
+                  <div>
+                    <p className="text-xs text-slate-500">Phone</p>
+                    <a href={`tel:${accountData.Phone}`} className="text-[#08708E] hover:underline">{accountData.Phone}</a>
+                  </div>
+                )}
+                {accountData.Website && (
+                  <div>
+                    <p className="text-xs text-slate-500">Website</p>
+                    <a href={accountData.Website} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline">{accountData.Website}</a>
+                  </div>
+                )}
+                {accountData.Type && (
+                  <div>
+                    <p className="text-xs text-slate-500">Type</p>
+                    <p className="text-slate-900">{accountData.Type}</p>
+                  </div>
+                )}
+                {accountData.Industry && (
+                  <div>
+                    <p className="text-xs text-slate-500">Industry</p>
+                    <p className="text-slate-900">{accountData.Industry}</p>
+                  </div>
+                )}
+              </div>
+              {accountData.BillingStreet && (
+                <div>
+                  <p className="text-xs text-slate-500 mb-1">Billing Address</p>
+                  <p className="text-slate-900">{accountData.BillingStreet}</p>
+                  {accountData.BillingCity && (
+                    <p className="text-slate-900">{accountData.BillingCity}, {accountData.BillingState} {accountData.BillingPostalCode}</p>
+                  )}
+                  {accountData.BillingCountry && <p className="text-slate-900">{accountData.BillingCountry}</p>}
+                </div>
+              )}
+              {accountData.Description && (
+                <div>
+                  <p className="text-xs text-slate-500 mb-1">Description</p>
+                  <p className="text-slate-900 text-sm">{accountData.Description}</p>
+                </div>
+              )}
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
+    
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -188,9 +278,16 @@ export default function TaskItem({ task, session, onUpdate }) {
                 {task.WhatId && (
                   <>
                     {task.WhatId.startsWith('001') && task.Account?.Name ? (
-                      <span className="px-2 py-1 rounded-full bg-slate-200 text-slate-700 text-xs">
-                        Account: {task.Account.Name}
-                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewAccount();
+                        }}
+                        className="px-2 py-1 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300 flex items-center gap-1 text-xs transition-colors"
+                      >
+                        <Building className="w-3 h-3" />
+                        {task.Account.Name}
+                      </button>
                     ) : task.What?.Name && (
                       <a
                         href={`${createPageUrl(
@@ -231,5 +328,6 @@ export default function TaskItem({ task, session, onUpdate }) {
         </div>
       )}
     </motion.div>
+    </>
   );
 }

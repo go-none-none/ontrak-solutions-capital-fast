@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield } from 'lucide-react';
+import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
@@ -30,6 +30,8 @@ export default function RepPortal() {
   const [taskFilter, setTaskFilter] = useState('all');
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [selectedRecordType, setSelectedRecordType] = useState(null);
+  const [expandedRecord, setExpandedRecord] = useState(null);
+  const [expandedRecordType, setExpandedRecordType] = useState(null);
   const itemsPerPage = 100;
 
   useEffect(() => {
@@ -635,19 +637,49 @@ export default function RepPortal() {
       <RecordDetailsModal
         record={selectedRecord}
         type={selectedRecordType}
-        isOpen={!!selectedRecord}
+        isOpen={!!selectedRecord && !expandedRecord}
         expandable={true}
         onExpand={() => {
-          window.open(
-            `${createPageUrl(selectedRecordType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${selectedRecord.Id}`,
-            '_blank'
-          );
+          setExpandedRecord(selectedRecord);
+          setExpandedRecordType(selectedRecordType);
+          setSelectedRecord(null);
+          setSelectedRecordType(null);
         }}
         onClose={() => {
           setSelectedRecord(null);
           setSelectedRecordType(null);
         }}
       />
+
+      {/* Expanded Record View */}
+      {expandedRecord && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900">
+                {expandedRecordType === 'lead' ? 'Lead Details' : 'Opportunity Details'}: {expandedRecord.Name}
+              </h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  setExpandedRecord(null);
+                  setExpandedRecordType(null);
+                }}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="p-6">
+              <iframe
+                src={`${createPageUrl(expandedRecordType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${expandedRecord.Id}`}
+                className="w-full h-[calc(90vh-120px)] border-0"
+                title="Record Details"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
