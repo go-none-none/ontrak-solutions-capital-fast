@@ -5,6 +5,7 @@ import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, Chev
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
+import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 
 export default function AdminPipeline() {
   const [session, setSession] = useState(null);
@@ -13,6 +14,8 @@ export default function AdminPipeline() {
   const [repsData, setRepsData] = useState([]);
   const [expandedRep, setExpandedRep] = useState(null);
   const [activeView, setActiveView] = useState('leads'); // 'leads' or 'opportunities'
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [modalType, setModalType] = useState(null);
 
   useEffect(() => {
     checkSession();
