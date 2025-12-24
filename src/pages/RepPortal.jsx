@@ -406,7 +406,6 @@ export default function RepPortal() {
                       key={lead.Id} 
                       lead={lead} 
                       session={session}
-                      onShowDetails={() => { setSelectedRecord(lead); setSelectedRecordType('lead'); }}
                     />
                   ))
                 )}
@@ -485,10 +484,9 @@ export default function RepPortal() {
                       opportunity={opp} 
                       session={session}
                       onUpdate={() => loadData(session)}
-                      onShowDetails={() => { setSelectedRecord(opp); setSelectedRecordType('opportunity'); }}
                     />
                   ))
-                )}
+                  )}
               </div>
               {totalOppPages > 1 && (
                 <div className="flex items-center justify-between mt-6 pt-6 border-t">

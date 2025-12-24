@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { CheckCircle2, Clock, AlertCircle, Calendar, Edit, X, ExternalLink, Save, Building, Loader2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CheckCircle2, Clock, AlertCircle, Calendar, Edit, X, ExternalLink, Save, Building, Loader2, Users, TrendingUp, Contact } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
@@ -14,6 +15,8 @@ export default function TaskItem({ task, session, onUpdate }) {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [accountData, setAccountData] = useState(null);
   const [loadingAccount, setLoadingAccount] = useState(false);
+  const [relatedRecords, setRelatedRecords] = useState(null);
+  const [activeTab, setActiveTab] = useState('details');
   const [isEditing, setIsEditing] = useState(false);
   const [editValues, setEditValues] = useState({
     Subject: task.Subject,
@@ -110,14 +113,23 @@ export default function TaskItem({ task, session, onUpdate }) {
     
     setLoadingAccount(true);
     setShowAccountModal(true);
+    setActiveTab('details');
     
     try {
-      const response = await base44.functions.invoke('getSalesforceAccount', {
-        accountId: task.Account.Id,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
-      setAccountData(response.data.account);
+      const [accountRes, relatedRes] = await Promise.all([
+        base44.functions.invoke('getSalesforceAccount', {
+          accountId: task.Account.Id,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforceAccountRelated', {
+          accountId: task.Account.Id,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
+      ]);
+      setAccountData(accountRes.data.account);
+      setRelatedRecords(relatedRes.data);
     } catch (error) {
       console.error('Error loading account:', error);
       alert('Failed to load account details');
@@ -130,63 +142,135 @@ export default function TaskItem({ task, session, onUpdate }) {
   return (
     <>
       <Dialog open={showAccountModal} onOpenChange={setShowAccountModal}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Account Details</DialogTitle>
-            <DialogDescription>View account information from Salesforce</DialogDescription>
+            <DialogTitle>Account: {accountData?.Name || 'Loading...'}</DialogTitle>
+            <DialogDescription>View account information and related records</DialogDescription>
           </DialogHeader>
           {loadingAccount ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-[#08708E]" />
             </div>
           ) : accountData ? (
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-xl font-bold text-slate-900">{accountData.Name}</h3>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {accountData.Phone && (
-                  <div>
-                    <p className="text-xs text-slate-500">Phone</p>
-                    <a href={`tel:${accountData.Phone}`} className="text-[#08708E] hover:underline">{accountData.Phone}</a>
-                  </div>
-                )}
-                {accountData.Website && (
-                  <div>
-                    <p className="text-xs text-slate-500">Website</p>
-                    <a href={accountData.Website} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline">{accountData.Website}</a>
-                  </div>
-                )}
-                {accountData.Type && (
-                  <div>
-                    <p className="text-xs text-slate-500">Type</p>
-                    <p className="text-slate-900">{accountData.Type}</p>
-                  </div>
-                )}
-                {accountData.Industry && (
-                  <div>
-                    <p className="text-xs text-slate-500">Industry</p>
-                    <p className="text-slate-900">{accountData.Industry}</p>
-                  </div>
-                )}
-              </div>
-              {accountData.BillingStreet && (
-                <div>
-                  <p className="text-xs text-slate-500 mb-1">Billing Address</p>
-                  <p className="text-slate-900">{accountData.BillingStreet}</p>
-                  {accountData.BillingCity && (
-                    <p className="text-slate-900">{accountData.BillingCity}, {accountData.BillingState} {accountData.BillingPostalCode}</p>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="details">Details</TabsTrigger>
+                <TabsTrigger value="leads">Leads ({relatedRecords?.leads?.length || 0})</TabsTrigger>
+                <TabsTrigger value="opportunities">Opportunities ({relatedRecords?.opportunities?.length || 0})</TabsTrigger>
+                <TabsTrigger value="contacts">Contacts ({relatedRecords?.contacts?.length || 0})</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="details" className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  {accountData.Phone && (
+                    <div>
+                      <p className="text-xs text-slate-500">Phone</p>
+                      <a href={`tel:${accountData.Phone}`} className="text-[#08708E] hover:underline">{accountData.Phone}</a>
+                    </div>
                   )}
-                  {accountData.BillingCountry && <p className="text-slate-900">{accountData.BillingCountry}</p>}
+                  {accountData.Website && (
+                    <div>
+                      <p className="text-xs text-slate-500">Website</p>
+                      <a href={accountData.Website} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline">{accountData.Website}</a>
+                    </div>
+                  )}
+                  {accountData.Type && (
+                    <div>
+                      <p className="text-xs text-slate-500">Type</p>
+                      <p className="text-slate-900">{accountData.Type}</p>
+                    </div>
+                  )}
+                  {accountData.Industry && (
+                    <div>
+                      <p className="text-xs text-slate-500">Industry</p>
+                      <p className="text-slate-900">{accountData.Industry}</p>
+                    </div>
+                  )}
                 </div>
-              )}
-              {accountData.Description && (
-                <div>
-                  <p className="text-xs text-slate-500 mb-1">Description</p>
-                  <p className="text-slate-900 text-sm">{accountData.Description}</p>
-                </div>
-              )}
-            </div>
+                {accountData.BillingStreet && (
+                  <div>
+                    <p className="text-xs text-slate-500 mb-1">Billing Address</p>
+                    <p className="text-slate-900">{accountData.BillingStreet}</p>
+                    {accountData.BillingCity && (
+                      <p className="text-slate-900">{accountData.BillingCity}, {accountData.BillingState} {accountData.BillingPostalCode}</p>
+                    )}
+                    {accountData.BillingCountry && <p className="text-slate-900">{accountData.BillingCountry}</p>}
+                  </div>
+                )}
+                {accountData.Description && (
+                  <div>
+                    <p className="text-xs text-slate-500 mb-1">Description</p>
+                    <p className="text-slate-900 text-sm">{accountData.Description}</p>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="leads" className="space-y-2">
+                {relatedRecords?.leads?.length > 0 ? (
+                  relatedRecords.leads.map(lead => (
+                    <a
+                      key={lead.Id}
+                      href={`${createPageUrl('LeadDetail')}?id=${lead.Id}`}
+                      target="_blank"
+                      className="block p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-slate-900">{lead.Name}</p>
+                          <p className="text-sm text-slate-600">{lead.Email} • {lead.Phone}</p>
+                        </div>
+                        <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">{lead.Status}</span>
+                      </div>
+                    </a>
+                  ))
+                ) : (
+                  <p className="text-slate-500 text-center py-8">No leads found</p>
+                )}
+              </TabsContent>
+
+              <TabsContent value="opportunities" className="space-y-2">
+                {relatedRecords?.opportunities?.length > 0 ? (
+                  relatedRecords.opportunities.map(opp => (
+                    <a
+                      key={opp.Id}
+                      href={`${createPageUrl('OpportunityDetail')}?id=${opp.Id}`}
+                      target="_blank"
+                      className="block p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-slate-900">{opp.Name}</p>
+                          <p className="text-sm text-slate-600">${(opp.Amount || 0).toLocaleString()} • {new Date(opp.CloseDate).toLocaleDateString()}</p>
+                        </div>
+                        <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">{opp.StageName}</span>
+                      </div>
+                    </a>
+                  ))
+                ) : (
+                  <p className="text-slate-500 text-center py-8">No opportunities found</p>
+                )}
+              </TabsContent>
+
+              <TabsContent value="contacts" className="space-y-2">
+                {relatedRecords?.contacts?.length > 0 ? (
+                  relatedRecords.contacts.map(contact => (
+                    <div
+                      key={contact.Id}
+                      className="p-3 bg-slate-50 rounded-lg border border-slate-200"
+                    >
+                      <p className="font-semibold text-slate-900">{contact.Name}</p>
+                      {contact.Title && <p className="text-xs text-slate-500">{contact.Title}</p>}
+                      <div className="text-sm text-slate-600 mt-1">
+                        {contact.Email && <p>{contact.Email}</p>}
+                        {contact.Phone && <p>{contact.Phone}</p>}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-slate-500 text-center py-8">No contacts found</p>
+                )}
+              </TabsContent>
+            </Tabs>
           ) : null}
         </DialogContent>
       </Dialog>
