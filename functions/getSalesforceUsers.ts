@@ -2,11 +2,15 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const { token, instanceUrl } = await req.json();
+    const body = await req.json();
+    console.log('Received body:', body);
+    const { token, instanceUrl } = body;
 
     if (!token || !instanceUrl) {
+      console.error('Missing fields - token:', !!token, 'instanceUrl:', !!instanceUrl);
       return Response.json({ 
-        error: 'Missing required fields: token, instanceUrl' 
+        error: 'Missing required fields: token, instanceUrl',
+        received: Object.keys(body)
       }, { status: 400 });
     }
 
