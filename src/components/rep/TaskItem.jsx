@@ -208,11 +208,13 @@ export default function TaskItem({ task, session, onUpdate }) {
               <TabsContent value="leads" className="space-y-2">
                 {relatedRecords?.leads?.length > 0 ? (
                   relatedRecords.leads.map(lead => (
-                    <a
+                    <button
                       key={lead.Id}
-                      href={`${createPageUrl('LeadDetail')}?id=${lead.Id}`}
-                      target="_blank"
-                      className="block p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(`${createPageUrl('LeadDetail')}?id=${lead.Id}`, '_blank');
+                      }}
+                      className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
                     >
                       <div className="flex justify-between items-start">
                         <div>
@@ -221,7 +223,7 @@ export default function TaskItem({ task, session, onUpdate }) {
                         </div>
                         <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">{lead.Status}</span>
                       </div>
-                    </a>
+                    </button>
                   ))
                 ) : (
                   <p className="text-slate-500 text-center py-8">No leads found</p>
@@ -231,11 +233,13 @@ export default function TaskItem({ task, session, onUpdate }) {
               <TabsContent value="opportunities" className="space-y-2">
                 {relatedRecords?.opportunities?.length > 0 ? (
                   relatedRecords.opportunities.map(opp => (
-                    <a
+                    <button
                       key={opp.Id}
-                      href={`${createPageUrl('OpportunityDetail')}?id=${opp.Id}`}
-                      target="_blank"
-                      className="block p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(`${createPageUrl('OpportunityDetail')}?id=${opp.Id}`, '_blank');
+                      }}
+                      className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
                     >
                       <div className="flex justify-between items-start">
                         <div>
@@ -244,7 +248,7 @@ export default function TaskItem({ task, session, onUpdate }) {
                         </div>
                         <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">{opp.StageName}</span>
                       </div>
-                    </a>
+                    </button>
                   ))
                 ) : (
                   <p className="text-slate-500 text-center py-8">No opportunities found</p>

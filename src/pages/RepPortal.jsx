@@ -96,11 +96,25 @@ export default function RepPortal() {
   
 
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (session?.token && session?.instanceUrl) {
+      try {
+        // Revoke Salesforce token
+        await fetch(`${session.instanceUrl}/services/oauth2/revoke`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `token=${session.token}`
+        });
+      } catch (error) {
+        console.error('Error revoking token:', error);
+      }
+    }
+    
     sessionStorage.removeItem('sfSession');
     setSession(null);
     setLeads([]);
     setOpportunities([]);
+    setTasks(null);
   };
 
   const loadData = async (sessionData, isRefresh = false) => {
