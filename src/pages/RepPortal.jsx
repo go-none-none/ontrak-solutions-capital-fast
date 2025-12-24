@@ -12,6 +12,7 @@ import OpportunityCard from '../components/rep/OpportunityCard';
 import PipelineView from '../components/rep/PipelineView';
 import TaskCard from '../components/rep/TaskCard';
 import TaskItem from '../components/rep/TaskItem';
+import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 
 export default function RepPortal() {
   const [session, setSession] = useState(null);
@@ -27,6 +28,8 @@ export default function RepPortal() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [taskFilter, setTaskFilter] = useState('all');
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [selectedRecordType, setSelectedRecordType] = useState(null);
   const itemsPerPage = 100;
 
   useEffect(() => {
@@ -397,7 +400,9 @@ export default function RepPortal() {
                   </div>
                 ) : (
                   paginatedLeads.map(lead => (
-                    <LeadCard key={lead.Id} lead={lead} session={session} />
+                    <div key={lead.Id} onClick={() => { setSelectedRecord(lead); setSelectedRecordType('lead'); }} className="cursor-pointer">
+                      <LeadCard lead={lead} session={session} />
+                    </div>
                   ))
                 )}
               </div>
@@ -470,12 +475,13 @@ export default function RepPortal() {
                   </div>
                 ) : (
                   paginatedOpportunities.map(opp => (
-                    <OpportunityCard 
-                      key={opp.Id} 
-                      opportunity={opp} 
-                      session={session}
-                      onUpdate={() => loadData(session)}
-                    />
+                    <div key={opp.Id} onClick={() => { setSelectedRecord(opp); setSelectedRecordType('opportunity'); }} className="cursor-pointer">
+                      <OpportunityCard 
+                        opportunity={opp} 
+                        session={session}
+                        onUpdate={() => loadData(session)}
+                      />
+                    </div>
                   ))
                 )}
               </div>
@@ -621,6 +627,17 @@ export default function RepPortal() {
         )}
         </div>
       </div>
+
+      {/* Record Details Modal */}
+      <RecordDetailsModal
+        record={selectedRecord}
+        type={selectedRecordType}
+        isOpen={!!selectedRecord}
+        onClose={() => {
+          setSelectedRecord(null);
+          setSelectedRecordType(null);
+        }}
+      />
     </div>
   );
 }

@@ -185,9 +185,13 @@ export default function TaskItem({ task, session, onUpdate }) {
                 <span className="px-2 py-1 rounded-full bg-white border border-slate-300">
                   {task.Status}
                 </span>
-                {task.What?.Name && (
+                {task.What?.Name && task.What?.Type && (
                   <a
-                    href={`${createPageUrl(task.What.Type === 'Lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${task.WhatId}`}
+                    href={`${createPageUrl(
+                      task.What.Type.includes('Lead') || task.What.Type === 'Lead' 
+                        ? 'LeadDetail' 
+                        : 'OpportunityDetail'
+                    )}?id=${task.WhatId}`}
                     className="px-2 py-1 rounded-full bg-[#08708E] text-white hover:bg-[#065a72] flex items-center gap-1"
                     onClick={(e) => e.stopPropagation()}
                   >
