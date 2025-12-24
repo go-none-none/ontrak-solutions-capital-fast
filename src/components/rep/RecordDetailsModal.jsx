@@ -138,6 +138,64 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
             )}
           </div>
 
+          {/* Owner & Company Information */}
+          <div className="border-t pt-4">
+            <h3 className="font-semibold text-slate-900 mb-3">Owner & Company Details</h3>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <p className="text-slate-500 text-xs">Record Owner</p>
+                <p className="font-medium text-slate-900">{record.Owner?.Name || 'N/A'}</p>
+              </div>
+              {record.Owner?.Email && (
+                <div>
+                  <p className="text-slate-500 text-xs">Owner Email</p>
+                  <a href={`mailto:${record.Owner.Email}`} className="font-medium text-[#08708E] hover:underline text-xs">
+                    {record.Owner.Email}
+                  </a>
+                </div>
+              )}
+              {isLead ? (
+                <>
+                  {record.Street && (
+                    <div>
+                      <p className="text-slate-500 text-xs">Address</p>
+                      <p className="font-medium text-slate-900">{record.Street}</p>
+                    </div>
+                  )}
+                  {record.City && (
+                    <div>
+                      <p className="text-slate-500 text-xs">City</p>
+                      <p className="font-medium text-slate-900">{record.City}, {record.State} {record.PostalCode}</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  {record.Account?.BillingStreet && (
+                    <div>
+                      <p className="text-slate-500 text-xs">Billing Address</p>
+                      <p className="font-medium text-slate-900">{record.Account.BillingStreet}</p>
+                    </div>
+                  )}
+                  {record.Account?.BillingCity && (
+                    <div>
+                      <p className="text-slate-500 text-xs">City</p>
+                      <p className="font-medium text-slate-900">{record.Account.BillingCity}, {record.Account.BillingState} {record.Account.BillingPostalCode}</p>
+                    </div>
+                  )}
+                  {record.Account?.Phone && (
+                    <div>
+                      <p className="text-slate-500 text-xs">Company Phone</p>
+                      <a href={`tel:${record.Account.Phone}`} className="font-medium text-[#08708E] hover:underline">
+                        {record.Account.Phone}
+                      </a>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+
           {/* Additional Details */}
           <div className="border-t pt-4">
             <h3 className="font-semibold text-slate-900 mb-3">Additional Information</h3>
@@ -171,6 +229,24 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
                 </>
               ) : (
                 <>
+                  {record.Probability != null && (
+                    <div>
+                      <p className="text-slate-500 text-xs">Probability</p>
+                      <p className="font-medium text-slate-900">{record.Probability}%</p>
+                    </div>
+                  )}
+                  {record.Amount_Requested__c && (
+                    <div>
+                      <p className="text-slate-500 text-xs">Amount Requested</p>
+                      <p className="font-medium text-slate-900">{formatCurrency(record.Amount_Requested__c)}</p>
+                    </div>
+                  )}
+                  {record.Estimated_Monthly_Revenue__c && (
+                    <div>
+                      <p className="text-slate-500 text-xs">Monthly Revenue</p>
+                      <p className="font-medium text-slate-900">{formatCurrency(record.Estimated_Monthly_Revenue__c)}</p>
+                    </div>
+                  )}
                   {record.Type && (
                     <div>
                       <p className="text-slate-500 text-xs">Type</p>
@@ -196,16 +272,7 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4 border-t">
-            <Link 
-              to={`${createPageUrl(isLead ? 'LeadDetail' : 'OpportunityDetail')}?id=${record.Id}`}
-              className="flex-1"
-            >
-              <Button className="w-full bg-[#08708E] hover:bg-[#065a72]">
-                <ExternalLink className="w-4 h-4 mr-2" />
-                View Full Details
-              </Button>
-            </Link>
-            <Button variant="outline" onClick={onClose} className="flex-1">
+            <Button variant="outline" onClick={onClose} className="w-full">
               Close
             </Button>
           </div>
