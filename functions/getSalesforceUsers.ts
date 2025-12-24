@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
     }
 
     // Fetch active human Salesforce users (exclude system/automated users)
-    const query = `SELECT Id, Name, Email FROM User WHERE IsActive = true AND UserType = 'Standard' AND Name NOT LIKE '%Integration%' AND Name NOT LIKE '%API%' AND Name NOT LIKE '%System%' ORDER BY Name`;
+    const query = `SELECT Id, Name, Email FROM User WHERE IsActive = true AND UserType = 'Standard' ORDER BY Name`;
     const url = `${instanceUrl}/services/data/v57.0/query?q=${encodeURIComponent(query)}`;
 
     const response = await fetch(url, {
@@ -24,7 +24,16 @@ Deno.serve(async (req) => {
     }
 
     const data = await response.json();
-    return Response.json({ users: data.records || [] });
+    
+    // Filter out system/integration users
+    const filteredUsers = (data.records || []).filter(user => {
+      const name = user.Name?.toLowerCase() || '';
+      return !name.includes('integration') && 
+             !name.includes('api') && 
+             !name.includes('system');
+    });
+    
+    return Response.json({ users: filteredUsers });
 
   } catch (error) {
     console.error('Error fetching users:', error);
