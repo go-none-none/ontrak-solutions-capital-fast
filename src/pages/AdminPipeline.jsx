@@ -28,9 +28,24 @@ export default function AdminPipeline() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
   const [repSearch, setRepSearch] = useState({}); // {repUserId: searchTerm}
+  const [relatedRecordView, setRelatedRecordView] = useState(null); // {recordId, recordType, recordName}
 
   useEffect(() => {
     checkSession();
+  }, []);
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data.type === 'openRelatedRecord') {
+        setRelatedRecordView({
+          recordId: event.data.recordId,
+          recordType: event.data.recordType,
+          recordName: event.data.recordName
+        });
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
   const checkSession = () => {
@@ -752,6 +767,32 @@ export default function AdminPipeline() {
         onUpdate={() => loadAllRepsData(session, true)}
       />
 
+      {/* Related Record View from Task */}
+      {relatedRecordView && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900">
+                {relatedRecordView.recordType === 'lead' ? 'Lead Details' : 'Opportunity Details'}: {relatedRecordView.recordName}
+              </h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setRelatedRecordView(null)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="p-6">
+              <iframe
+                src={`${createPageUrl(relatedRecordView.recordType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${relatedRecordView.recordId}`}
+                className="w-full h-[calc(90vh-120px)] border-0"
+                title="Related Record Details"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

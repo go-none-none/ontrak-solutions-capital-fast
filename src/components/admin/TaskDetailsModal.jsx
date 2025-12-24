@@ -208,7 +208,20 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
             {task.WhatId && task.What?.Name && (
               <div className="border-t pt-4">
                 <p className="text-xs text-slate-500 mb-2 font-semibold">Related To</p>
-                <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <button
+                  onClick={() => {
+                    if (task.WhatId.startsWith('00Q') || task.WhatId.startsWith('006')) {
+                      window.parent.postMessage({
+                        type: 'openRelatedRecord',
+                        recordId: task.WhatId,
+                        recordType: task.WhatId.startsWith('00Q') ? 'lead' : 'opportunity',
+                        recordName: task.What.Name
+                      }, '*');
+                      onClose();
+                    }
+                  }}
+                  className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 hover:border-[#08708E] transition-all w-full text-left cursor-pointer"
+                >
                   {task.WhatId.startsWith('00Q') ? (
                     <UsersIcon className="w-4 h-4 text-blue-600" />
                   ) : task.WhatId.startsWith('006') ? (
@@ -216,13 +229,16 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                   ) : (
                     <Building className="w-4 h-4 text-slate-600" />
                   )}
-                  <div>
+                  <div className="flex-1">
                     <p className="font-medium text-slate-900">{task.What.Name}</p>
                     <p className="text-xs text-slate-500">
                       {task.WhatId.startsWith('00Q') ? 'Lead' : task.WhatId.startsWith('006') ? 'Opportunity' : task.What.Type || 'Record'}
                     </p>
                   </div>
-                </div>
+                  {(task.WhatId.startsWith('00Q') || task.WhatId.startsWith('006')) && (
+                    <span className="text-xs text-[#08708E]">View →</span>
+                  )}
+                </button>
               </div>
             )}
 
