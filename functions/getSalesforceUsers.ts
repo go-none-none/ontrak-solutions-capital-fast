@@ -2,15 +2,11 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const body = await req.json();
-    console.log('Received body:', body);
-    const { token, instanceUrl } = body;
+    const { token, instanceUrl } = await req.json();
 
     if (!token || !instanceUrl) {
-      console.error('Missing fields - token:', !!token, 'instanceUrl:', !!instanceUrl);
       return Response.json({ 
-        error: 'Missing required fields: token, instanceUrl',
-        received: Object.keys(body)
+        error: 'Missing required fields: token, instanceUrl' 
       }, { status: 400 });
     }
 
@@ -24,9 +20,7 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.text();
-      console.error('Salesforce API error:', error);
-      console.error('Query was:', query);
-      return Response.json({ error, query }, { status: response.status });
+      return Response.json({ error }, { status: response.status });
     }
 
     const data = await response.json();
