@@ -58,12 +58,34 @@ Deno.serve(async (req) => {
       const subParts = userInfo.sub.split('/');
       const userId = subParts[subParts.length - 1];
       
+      // Check if user is admin by querying their profile
+      const profileResponse = await fetch(
+        `${tokenData.instance_url}/services/data/v58.0/query?q=${encodeURIComponent(
+          `SELECT Profile.Name FROM User WHERE Id = '${userId}'`
+        )}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${tokenData.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      let isAdmin = false;
+      if (profileResponse.ok) {
+        const profileData = await profileResponse.json();
+        const profileName = profileData.records?.[0]?.Profile?.Name || '';
+        isAdmin = profileName.toLowerCase().includes('system administrator') || 
+                  profileName.toLowerCase().includes('admin');
+      }
+      
       return Response.json({
         userId: userId,
         email: userInfo.email,
         name: userInfo.name,
         instanceUrl: tokenData.instance_url,
-        token: tokenData.access_token
+        token: tokenData.access_token,
+        isAdmin
       });
     }
     
