@@ -37,20 +37,23 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
     setShowDisposition(true);
     setLoadingDispositions(true);
     try {
-      const response = await base44.functions.invoke('dialpadGetCallDispositions', {
-        phoneNumber: phoneNumber.replace(/\D/g, '')
+      // Fetch allowed picklist values from Salesforce
+      const response = await base44.functions.invoke('getSalesforcePicklistValues', {
+        objectType: recordType,
+        fieldName: 'Call_Disposition__c',
+        token: session.token,
+        instanceUrl: session.instanceUrl
       });
-      console.log('Dispositions response:', response.data);
-      if (response.data.dispositions && response.data.dispositions.length > 0) {
-        setDispositions(response.data.dispositions);
+      console.log('Salesforce picklist values:', response.data);
+      if (response.data.values && response.data.values.length > 0) {
+        setDispositions(response.data.values);
       } else {
-        // Fallback to common dispositions if none found
-        setDispositions(['Connected', 'Voicemail', 'No Answer', 'Busy', 'Wrong Number', 'Callback Requested', 'Not Interested']);
+        // Fallback if field doesn't exist
+        setDispositions(['Connected', 'Voicemail', 'No Answer', 'Busy', 'Wrong Number']);
       }
     } catch (error) {
       console.error('Failed to load dispositions:', error);
-      // Fallback to common dispositions
-      setDispositions(['Connected', 'Voicemail', 'No Answer', 'Busy', 'Wrong Number', 'Callback Requested', 'Not Interested']);
+      setDispositions(['Connected', 'Voicemail', 'No Answer', 'Busy', 'Wrong Number']);
     } finally {
       setLoadingDispositions(false);
     }
