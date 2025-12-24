@@ -24,7 +24,9 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.text();
-      return Response.json({ error }, { status: response.status });
+      console.error('Salesforce API error:', error);
+      console.error('Query was:', query);
+      return Response.json({ error, query }, { status: response.status });
     }
 
     const data = await response.json();
