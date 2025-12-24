@@ -64,15 +64,17 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
 
     setSaving(true);
     try {
-      await base44.functions.invoke('createSalesforceActivity', {
+      // Update the Lead/Opportunity record with call disposition
+      const updateData = {
+        Call_Disposition__c: disposition,
+        Last_Call_Notes__c: notes || `Called ${phoneNumber}`,
+        Last_Call_Date__c: new Date().toISOString()
+      };
+
+      await base44.functions.invoke('updateSalesforceRecord', {
         recordId,
         recordType,
-        activityType: 'Task',
-        data: {
-          subject: `Call - ${disposition}`,
-          description: notes || `Called ${phoneNumber}`,
-          status: 'Completed'
-        },
+        data: updateData,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
