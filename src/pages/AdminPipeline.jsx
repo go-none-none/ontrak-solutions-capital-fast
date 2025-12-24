@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
+import { Link } from 'react-router-dom';
 
 export default function AdminPipeline() {
   const [session, setSession] = useState(null);
@@ -181,6 +182,12 @@ export default function AdminPipeline() {
               <p className="text-sm text-slate-600">Overview of all reps' performance</p>
             </div>
             <div className="flex gap-2">
+              <Link to={createPageUrl('RepPortal')}>
+                <Button variant="outline">
+                  <LayoutDashboard className="w-4 h-4 mr-2" />
+                  Rep Portal
+                </Button>
+              </Link>
               <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
                 <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
                 Refresh
@@ -367,7 +374,11 @@ export default function AdminPipeline() {
                               <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
                                 {activeView === 'leads' 
                                   ? rep.leads?.map((lead, idx) => (
-                                      <div key={idx} className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center">
+                                      <Link 
+                                        key={idx} 
+                                        to={`${createPageUrl('LeadDetail')}?id=${lead.Id}`}
+                                        className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all"
+                                      >
                                         <div>
                                           <p className="font-medium text-slate-900">{lead.Name}</p>
                                           <p className="text-xs text-slate-500">{lead.Company} • {lead.Email}</p>
@@ -375,10 +386,14 @@ export default function AdminPipeline() {
                                         <span className="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-700">
                                           {lead.Status}
                                         </span>
-                                      </div>
+                                      </Link>
                                     ))
                                   : rep.opportunities?.map((opp, idx) => (
-                                      <div key={idx} className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center">
+                                      <Link 
+                                        key={idx} 
+                                        to={`${createPageUrl('OpportunityDetail')}?id=${opp.Id}`}
+                                        className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all"
+                                      >
                                         <div>
                                           <p className="font-medium text-slate-900">{opp.Name}</p>
                                           <p className="text-xs text-slate-500">{opp.Account?.Name}</p>
@@ -389,7 +404,7 @@ export default function AdminPipeline() {
                                             {opp.StageName}
                                           </span>
                                         </div>
-                                      </div>
+                                      </Link>
                                     ))
                                 }
                               </div>

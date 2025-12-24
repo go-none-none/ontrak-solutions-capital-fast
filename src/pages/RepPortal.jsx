@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw } from 'lucide-react';
+import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
+import { Link } from 'react-router-dom';
 import LeadCard from '../components/rep/LeadCard';
 import OpportunityCard from '../components/rep/OpportunityCard';
 import PipelineView from '../components/rep/PipelineView';
@@ -20,6 +21,7 @@ export default function RepPortal() {
   const [stageFilter, setStageFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const itemsPerPage = 100;
 
   useEffect(() => {
@@ -31,6 +33,7 @@ export default function RepPortal() {
     if (sessionData) {
       const parsed = JSON.parse(sessionData);
       setSession(parsed);
+      setIsAdmin(parsed.isAdmin || false);
       loadData(parsed);
     } else {
       const urlParams = new URLSearchParams(window.location.search);
@@ -57,6 +60,7 @@ export default function RepPortal() {
       
       sessionStorage.setItem('sfSession', JSON.stringify(sessionData));
       setSession(sessionData);
+      setIsAdmin(response.data.isAdmin || false);
       window.history.replaceState({}, '', createPageUrl('RepPortal'));
       loadData(sessionData);
     } catch (error) {
@@ -225,6 +229,14 @@ export default function RepPortal() {
               <p className="text-sm text-slate-600">Welcome back, {session.name}</p>
               </div>
               <div className="flex gap-2">
+              {isAdmin && (
+                <Link to={createPageUrl('AdminPipeline')}>
+                  <Button variant="outline">
+                    <Shield className="w-4 h-4 mr-2" />
+                    Admin Pipeline
+                  </Button>
+                </Link>
+              )}
               <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
                 <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
                 Refresh

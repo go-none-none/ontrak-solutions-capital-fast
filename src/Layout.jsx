@@ -5,7 +5,7 @@ import Footer from './components/shared/Footer';
 
 export default function Layout({ children, currentPageName }) {
   const { pathname } = useLocation();
-  const isRepPortal = currentPageName === 'RepPortal' || currentPageName === 'LeadDetail' || currentPageName === 'OpportunityDetail';
+  const isRepPortal = currentPageName === 'RepPortal' || currentPageName === 'LeadDetail' || currentPageName === 'OpportunityDetail' || currentPageName === 'AdminPipeline';
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
