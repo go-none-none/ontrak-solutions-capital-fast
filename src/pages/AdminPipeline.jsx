@@ -374,10 +374,14 @@ export default function AdminPipeline() {
                               <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
                                 {activeView === 'leads' 
                                   ? rep.leads?.map((lead, idx) => (
-                                      <Link 
-                                        key={idx} 
-                                        to={`${createPageUrl('LeadDetail')}?id=${lead.Id}`}
-                                        className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all"
+                                      <button
+                                        key={idx}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setSelectedRecord(lead);
+                                          setModalType('lead');
+                                        }}
+                                        className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full"
                                       >
                                         <div>
                                           <p className="font-medium text-slate-900">{lead.Name}</p>
@@ -386,13 +390,17 @@ export default function AdminPipeline() {
                                         <span className="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-700">
                                           {lead.Status}
                                         </span>
-                                      </Link>
+                                      </button>
                                     ))
                                   : rep.opportunities?.map((opp, idx) => (
-                                      <Link 
-                                        key={idx} 
-                                        to={`${createPageUrl('OpportunityDetail')}?id=${opp.Id}`}
-                                        className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all"
+                                      <button
+                                        key={idx}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setSelectedRecord(opp);
+                                          setModalType('opportunity');
+                                        }}
+                                        className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full"
                                       >
                                         <div>
                                           <p className="font-medium text-slate-900">{opp.Name}</p>
@@ -404,7 +412,7 @@ export default function AdminPipeline() {
                                             {opp.StageName}
                                           </span>
                                         </div>
-                                      </Link>
+                                      </button>
                                     ))
                                 }
                               </div>
@@ -420,6 +428,17 @@ export default function AdminPipeline() {
           </div>
         </div>
       </div>
+
+      {/* Record Details Modal */}
+      <RecordDetailsModal
+        record={selectedRecord}
+        type={modalType}
+        isOpen={!!selectedRecord}
+        onClose={() => {
+          setSelectedRecord(null);
+          setModalType(null);
+        }}
+      />
     </div>
   );
 }
