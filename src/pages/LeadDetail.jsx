@@ -41,7 +41,7 @@ export default function LeadDetail() {
     { label: 'Contacted', status: 'Working - Contacted' },
     { label: 'App Out', status: 'Working - Application Out' },
     { label: 'Missing Info', status: 'Application Missing Info' },
-    { label: 'Converted', status: 'Converted' }
+    { label: 'Not Converted', status: 'Closed - Not Converted' }
   ];
 
   useEffect(() => {
