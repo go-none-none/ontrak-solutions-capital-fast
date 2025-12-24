@@ -267,15 +267,13 @@ export default function OpportunityDetail() {
                 { label: 'Approved', name: 'Approved' },
                 { label: 'Contracts Out', name: 'Contracts Out' },
                 { label: 'Contracts In', name: 'Contracts In' },
-                { label: 'Funded', name: 'Closed - Funded' },
-                { label: 'Declined', name: 'Declined' }
+                { label: 'Funded', name: 'Closed - Funded' }
               ].map((stage, idx) => {
                 const stages = ['Application In', 'Underwriting', 'Approved', 'Contracts Out', 'Contracts In', 'Closed - Funded'];
                 const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
                 const isActive = idx <= currentStageIndex;
                 const isFunded = opportunity.StageName === 'Closed - Funded' && stage.name === 'Closed - Funded';
-                const isDeclined = opportunity.StageName?.includes('Declined') && stage.name === 'Declined';
-                
+
                 return (
                   <button
                     key={idx}
@@ -288,26 +286,16 @@ export default function OpportunityDetail() {
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
                       isFunded
                         ? 'bg-green-600 text-white shadow-lg'
-                        : isDeclined
-                        ? 'bg-red-600 text-white shadow-lg'
-                        : isActive && idx < 6
+                        : isActive
                         ? 'bg-[#08708E] text-white shadow-lg' 
-                        : stage.name === 'Declined'
-                        ? 'bg-red-100 text-red-600 hover:bg-red-200'
                         : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
                     }`}>
                       {isFunded ? (
                         <CheckCircle2 className="w-5 h-5" />
-                      ) : isDeclined ? (
-                        <XCircle className="w-5 h-5" />
-                      ) : stage.name === 'Declined' ? (
-                        <XCircle className="w-5 h-5" />
-                      ) : idx < currentStageIndex && idx < 6 ? (
+                      ) : idx < currentStageIndex ? (
                         <CheckCircle2 className="w-5 h-5" />
-                      ) : idx < 6 ? (
-                        idx + 1
                       ) : (
-                        <CheckCircle2 className="w-5 h-5" />
+                        idx + 1
                       )}
                     </div>
                     <span className="text-xs text-slate-600 mt-2 text-center">{stage.label}</span>
@@ -315,20 +303,31 @@ export default function OpportunityDetail() {
                 );
               })}
             </div>
-            <div className="flex gap-1">
-              {[0,1,2,3,4,5,6].map((idx) => {
+            <div className="flex gap-1 mb-4">
+              {[0,1,2,3,4,5].map((idx) => {
                 const stages = ['Application In', 'Underwriting', 'Approved', 'Contracts Out', 'Contracts In', 'Closed - Funded'];
                 const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
-                const isFunded = opportunity.StageName === 'Closed - Funded' && idx === 5;
-                const isDeclined = opportunity.StageName?.includes('Declined') && idx === 6;
                 return (
                   <div key={idx} className={`h-2 flex-1 rounded transition-all ${
-                    isFunded || isDeclined ? 'bg-[#08708E]' : idx <= currentStageIndex ? 'bg-[#08708E]' : 'bg-slate-200'
+                    idx <= currentStageIndex ? 'bg-[#08708E]' : 'bg-slate-200'
                   }`} />
                 );
               })}
             </div>
-            
+
+            {/* Decline Button */}
+            <div className="flex justify-center pt-2">
+              <Button
+                onClick={() => handleStatusChange('Declined')}
+                disabled={updatingStatus}
+                variant="outline"
+                className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+              >
+                <XCircle className="w-4 h-4 mr-2" />
+                Mark as Declined
+              </Button>
+            </div>
+
             {/* Declined Reason Modal */}
             {showDeclinedReasons && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

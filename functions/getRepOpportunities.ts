@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
     }
 
     // Query all opportunities - fetch everything and filter on frontend
-    const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, CreatedDate, LastModifiedDate, IsClosed FROM Opportunity WHERE OwnerId = '${userId}' ORDER BY LastModifiedDate DESC`;
+    const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, CreatedDate, LastModifiedDate, IsClosed, Owner.Name, Owner.Email, Owner.Phone FROM Opportunity WHERE OwnerId = '${userId}' ORDER BY LastModifiedDate DESC`;
     
     let response = await fetch(
       `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
