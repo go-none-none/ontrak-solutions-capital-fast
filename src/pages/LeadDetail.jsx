@@ -128,6 +128,7 @@ export default function LeadDetail() {
         onEdit={(field, value) => setEditValues({ ...editValues, [field]: value })}
         onSave={handleFieldSave}
         onCancel={(field) => setEditing({ ...editing, [field]: false })}
+        onStartEdit={(field) => setEditing({ ...editing, [field]: true })}
       />
     );
   };

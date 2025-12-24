@@ -105,7 +105,8 @@ export default function EditableField({
   disabled = false,
   onEdit,
   onSave,
-  onCancel
+  onCancel,
+  onStartEdit
 }) {
   const fieldConfig = FIELD_CONFIG[field] || { type: 'text' };
   const isEditing = editing[field];
@@ -232,11 +233,7 @@ export default function EditableField({
               className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0"
               onClick={() => {
                 onEdit(field, value || (fieldConfig.type === 'checkbox' ? false : ''));
-                // Trigger editing mode by calling parent handler
-                if (onEdit) {
-                  const newEditing = { [field]: true };
-                  // This will be handled by parent
-                }
+                onStartEdit(field);
               }}
             >
               <Edit className="w-3 h-3" />
