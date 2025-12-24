@@ -35,24 +35,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
 
   if (!task) return null;
 
-  const getTaskCategory = () => {
-    const today = new Date().toISOString().split('T')[0];
-    if (!task.ActivityDate) return 'upcoming';
-    if (task.ActivityDate < today) return 'overdue';
-    if (task.ActivityDate === today) return 'today';
-    return 'upcoming';
-  };
-
-  const category = getTaskCategory();
-
-  const getCategoryColor = () => {
-    switch (category) {
-      case 'overdue': return 'text-red-600 bg-red-50';
-      case 'today': return 'text-orange-600 bg-orange-50';
-      default: return 'text-blue-600 bg-blue-50';
-    }
-  };
-
   const formatDate = (dateStr) => {
     if (!dateStr) return 'No due date';
     try {
@@ -105,12 +87,7 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-3">
-            <div className={`px-3 py-1 rounded-lg ${getCategoryColor()} font-medium text-sm`}>
-              {category === 'overdue' ? 'Overdue' : category === 'today' ? 'Due Today' : 'Upcoming'}
-            </div>
-            <span className="text-slate-900">{task.Subject}</span>
-          </DialogTitle>
+          <DialogTitle className="text-slate-900">{task.Subject}</DialogTitle>
           <DialogDescription>Task details and information</DialogDescription>
         </DialogHeader>
 
@@ -251,6 +228,20 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                     <span className="text-xs text-[#08708E]">View →</span>
                   )}
                 </button>
+              </div>
+            )}
+
+            {/* Who (Contact) */}
+            {task.WhoId && task.Who?.Name && (
+              <div className="border-t pt-4">
+                <p className="text-xs text-slate-500 mb-2 font-semibold">Contact</p>
+                <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                  <User className="w-4 h-4 text-purple-600" />
+                  <div>
+                    <p className="font-medium text-slate-900">{task.Who.Name}</p>
+                    <p className="text-xs text-slate-500">Contact</p>
+                  </div>
+                </div>
               </div>
             )}
 
