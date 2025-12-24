@@ -322,7 +322,8 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`border-l-4 rounded-lg p-4 transition-all ${getCategoryColor()}`}
+      onClick={() => onOpenModal && onOpenModal(task)}
+      className={`border-l-4 rounded-lg p-4 transition-all cursor-pointer hover:shadow-md ${getCategoryColor()}`}
     >
       {isEditing ? (
         <div className="space-y-3">
@@ -386,7 +387,14 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
           </div>
         </div>
       ) : (
-        <div className="flex items-start justify-between gap-4">
+        <div 
+          className="flex items-start justify-between gap-4"
+          onClick={(e) => {
+            if (e.target.closest('button') || e.target.closest('a')) {
+              e.stopPropagation();
+            }
+          }}
+        >
           <div className="flex-1 flex items-start gap-3">
             {getCategoryIcon()}
             <div className="flex-1 min-w-0">
@@ -441,13 +449,19 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
             <Button
               size="sm"
               variant="outline"
-              onClick={() => setIsEditing(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(true);
+              }}
             >
               <Edit className="w-4 h-4" />
             </Button>
             <Button
               size="sm"
-              onClick={handleMarkComplete}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMarkComplete(e);
+              }}
               disabled={saving}
               className="bg-green-600 hover:bg-green-700"
             >
