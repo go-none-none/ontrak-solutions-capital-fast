@@ -47,9 +47,9 @@ Deno.serve(async (req) => {
       "SELECT Id, Name, Company, Email, Phone, Status, OwnerId, Owner.Name, Owner.Email FROM Lead WHERE IsConverted = false"
     );
 
-    // Fetch all opportunities (with pagination, excluding closed won)
+    // Fetch all opportunities (with pagination, excluding only truly closed/lost but keeping funded and declined)
     const opportunities = await fetchAllRecords(
-      "SELECT Id, Name, StageName, Amount, OwnerId, Owner.Name, Owner.Email, Account.Name FROM Opportunity WHERE (IsClosed = false OR StageName LIKE '%Declined%')"
+      "SELECT Id, Name, StageName, Amount, OwnerId, Owner.Name, Owner.Email, Account.Name FROM Opportunity WHERE (IsClosed = false OR StageName = 'Closed - Funded' OR StageName LIKE '%Declined%')"
     );
 
     // Group by owner

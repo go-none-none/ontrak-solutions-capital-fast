@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ArrowLeft, Edit, Loader2, CheckCircle2, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Edit, Loader2, CheckCircle2, ChevronDown, XCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
@@ -41,7 +41,7 @@ export default function LeadDetail() {
     { label: 'Contacted', status: 'Working - Contacted' },
     { label: 'App Out', status: 'Working - Application Out' },
     { label: 'Missing Info', status: 'Application Missing Info' },
-    { label: 'Not Converted', status: 'Closed - Not Converted' }
+    { label: 'Converted', status: 'Converted' }
   ];
 
   useEffect(() => {
@@ -179,41 +179,61 @@ export default function LeadDetail() {
           {/* Main Column */}
           <div className="lg:col-span-2 space-y-4">
             {/* Stage Progress */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h3 className="text-sm font-semibold text-slate-700 mb-4">Lead Stage</h3>
-              <div className="flex justify-between items-center mb-3">
-                {stages.map((stage, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleStatusChange(stage.status)}
+            {lead.Status !== 'Closed - Not Converted' ? (
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h3 className="text-sm font-semibold text-slate-700 mb-4">Lead Stage</h3>
+                <div className="flex justify-between items-center mb-3">
+                  {stages.map((stage, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleStatusChange(stage.status)}
+                      disabled={updatingStatus}
+                      className={`flex flex-col items-center flex-1 transition-all ${
+                        updatingStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'
+                      }`}
+                    >
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                        idx <= getCurrentStageIndex() 
+                          ? 'bg-[#08708E] text-white shadow-lg' 
+                          : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
+                      }`}>
+                        {idx < getCurrentStageIndex() ? (
+                          <CheckCircle2 className="w-5 h-5" />
+                        ) : (
+                          idx + 1
+                        )}
+                      </div>
+                      <span className="text-xs text-slate-600 mt-2 text-center">{stage.label}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-1 mb-4">
+                  {stages.map((_, idx) => (
+                    <div key={idx} className={`h-2 flex-1 rounded transition-all ${
+                      idx <= getCurrentStageIndex() ? 'bg-[#08708E]' : 'bg-slate-200'
+                    }`} />
+                  ))}
+                </div>
+                
+                {/* Not Converted Button */}
+                <div className="flex justify-center pt-2 border-t">
+                  <Button
+                    onClick={() => handleStatusChange('Closed - Not Converted')}
                     disabled={updatingStatus}
-                    className={`flex flex-col items-center flex-1 transition-all ${
-                      updatingStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'
-                    }`}
+                    variant="outline"
+                    className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
                   >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
-                      idx <= getCurrentStageIndex() 
-                        ? 'bg-[#08708E] text-white shadow-lg' 
-                        : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
-                    }`}>
-                      {idx < getCurrentStageIndex() ? (
-                        <CheckCircle2 className="w-5 h-5" />
-                      ) : (
-                        idx + 1
-                      )}
-                    </div>
-                    <span className="text-xs text-slate-600 mt-2 text-center">{stage.label}</span>
-                  </button>
-                ))}
+                    Mark as Not Converted
+                  </Button>
+                </div>
               </div>
-              <div className="flex gap-1">
-                {stages.map((_, idx) => (
-                  <div key={idx} className={`h-2 flex-1 rounded transition-all ${
-                    idx <= getCurrentStageIndex() ? 'bg-[#08708E]' : 'bg-slate-200'
-                  }`} />
-                ))}
+            ) : (
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
+                  <p className="text-lg font-semibold text-red-800">{lead.Status}</p>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Bank Statements Checklist - Only show when Application Missing Info */}
             {lead.Status === 'Application Missing Info' && (

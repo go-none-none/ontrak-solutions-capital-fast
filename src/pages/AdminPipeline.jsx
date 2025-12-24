@@ -97,6 +97,7 @@ export default function AdminPipeline() {
     { name: 'Approved', label: 'Approved', color: 'bg-green-500' },
     { name: 'Contracts Out', label: 'Contracts Out', color: 'bg-yellow-500' },
     { name: 'Contracts In', label: 'Contracts In', color: 'bg-indigo-500' },
+    { name: 'Closed - Funded', label: 'Funded', color: 'bg-green-600' },
     { name: 'Declined', label: 'Declined', color: 'bg-red-500' }
   ];
 
