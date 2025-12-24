@@ -7,7 +7,8 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
     { name: 'Open - Not Contacted', label: 'New', color: 'from-blue-500 to-blue-600' },
     { name: 'Working - Contacted', label: 'Contacted', color: 'from-yellow-500 to-yellow-600' },
     { name: 'Working - Application Out', label: 'App Out', color: 'from-purple-500 to-purple-600' },
-    { name: 'Application Missing Info', label: 'Missing Info', color: 'from-orange-500 to-orange-600' }
+    { name: 'Application Missing Info', label: 'Missing Info', color: 'from-orange-500 to-orange-600' },
+    { name: 'Closed - Not Converted', label: 'Not Converted', color: 'from-red-500 to-red-600' }
   ];
 
   const opportunityStages = [

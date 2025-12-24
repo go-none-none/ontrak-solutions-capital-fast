@@ -87,7 +87,8 @@ export default function AdminPipeline() {
     { name: 'Open - Not Contacted', label: 'New', color: 'bg-blue-500' },
     { name: 'Working - Contacted', label: 'Contacted', color: 'bg-yellow-500' },
     { name: 'Working - Application Out', label: 'App Out', color: 'bg-purple-500' },
-    { name: 'Application Missing Info', label: 'Missing Info', color: 'bg-orange-500' }
+    { name: 'Application Missing Info', label: 'Missing Info', color: 'bg-orange-500' },
+    { name: 'Closed - Not Converted', label: 'Not Converted', color: 'bg-red-500' }
   ];
 
   const opportunityStages = [

@@ -29,10 +29,11 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
 
   const isLead = type === 'lead';
   const statusColors = {
-    'new': 'bg-blue-100 text-blue-800',
-    'contacted': 'bg-purple-100 text-purple-800',
-    'qualified': 'bg-green-100 text-green-800',
-    'in_progress': 'bg-yellow-100 text-yellow-800',
+    'Open - Not Contacted': 'bg-blue-100 text-blue-800',
+    'Working - Contacted': 'bg-purple-100 text-purple-800',
+    'Working - Application Out': 'bg-yellow-100 text-yellow-800',
+    'Application Missing Info': 'bg-orange-100 text-orange-800',
+    'Closed - Not Converted': 'bg-red-100 text-red-800',
     'Application In': 'bg-blue-100 text-blue-800',
     'Underwriting': 'bg-purple-100 text-purple-800',
     'Approved': 'bg-green-100 text-green-800',
@@ -82,6 +83,31 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
                     </a>
                   </div>
                 </div>
+                <div className="flex items-start gap-3">
+                  <DollarSign className="w-5 h-5 text-slate-400 mt-1" />
+                  <div>
+                    <p className="text-xs text-slate-500">Funding Requested</p>
+                    <p className="font-semibold text-[#08708E]">{formatCurrency(record.Amount_Requested__c)}</p>
+                  </div>
+                </div>
+                {record.Estimated_Monthly_Revenue__c && (
+                  <div className="flex items-start gap-3">
+                    <DollarSign className="w-5 h-5 text-slate-400 mt-1" />
+                    <div>
+                      <p className="text-xs text-slate-500">Monthly Revenue</p>
+                      <p className="font-medium text-slate-900">{formatCurrency(record.Estimated_Monthly_Revenue__c)}</p>
+                    </div>
+                  </div>
+                )}
+                {record.Months_In_Business__c && (
+                  <div className="flex items-start gap-3">
+                    <Calendar className="w-5 h-5 text-slate-400 mt-1" />
+                    <div>
+                      <p className="text-xs text-slate-500">Time in Business</p>
+                      <p className="font-medium text-slate-900">{record.Months_In_Business__c} months</p>
+                    </div>
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -136,6 +162,12 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
                       <p className="font-medium text-slate-900">{record.Rating}</p>
                     </div>
                   )}
+                  {record.Use_of_Proceeds__c && (
+                    <div className="col-span-2">
+                      <p className="text-slate-500 text-xs">Use of Funds</p>
+                      <p className="font-medium text-slate-900">{record.Use_of_Proceeds__c}</p>
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
@@ -151,18 +183,14 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
                       <p className="font-medium text-slate-900">{record.LeadSource}</p>
                     </div>
                   )}
-                  {record.Probability != null && (
-                    <div>
-                      <p className="text-slate-500 text-xs">Probability</p>
-                      <p className="font-medium text-slate-900">{record.Probability}%</p>
+                  {record.Use_of_Proceeds__c && (
+                    <div className="col-span-2">
+                      <p className="text-slate-500 text-xs">Use of Funds</p>
+                      <p className="font-medium text-slate-900">{record.Use_of_Proceeds__c}</p>
                     </div>
                   )}
                 </>
               )}
-              <div>
-                <p className="text-slate-500 text-xs">Owner</p>
-                <p className="font-medium text-slate-900">{record.Owner?.Name || 'N/A'}</p>
-              </div>
             </div>
           </div>
 
