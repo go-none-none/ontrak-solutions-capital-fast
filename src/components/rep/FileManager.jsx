@@ -103,7 +103,17 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
         instanceUrl: session.instanceUrl
       });
       
-      setFileContent(response.data);
+      // Convert base64 to blob and create object URL
+      const byteCharacters = atob(response.data.content);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: response.data.contentType });
+      const objectUrl = URL.createObjectURL(blob);
+      
+      setFileContent({ ...response.data, objectUrl });
     } catch (error) {
       console.error('Error loading file:', error);
       alert('Failed to load file');
@@ -114,6 +124,9 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
   };
 
   const closeViewer = () => {
+    if (fileContent?.objectUrl) {
+      URL.revokeObjectURL(fileContent.objectUrl);
+    }
     setViewingFile(null);
     setFileContent(null);
   };
@@ -222,16 +235,16 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                 <div className="flex items-center justify-center h-full">
                   <Loader2 className="w-8 h-8 text-[#08708E] animate-spin" />
                 </div>
-              ) : fileContent ? (
+              ) : fileContent?.objectUrl ? (
                 viewingFile.ContentDocument.FileExtension?.toLowerCase() === 'pdf' ? (
                   <iframe
-                    src={`data:${fileContent.contentType};base64,${fileContent.content}`}
+                    src={fileContent.objectUrl}
                     className="w-full h-full border-0 rounded-lg"
                     title="PDF Viewer"
                   />
                 ) : (
                   <img
-                    src={`data:${fileContent.contentType};base64,${fileContent.content}`}
+                    src={fileContent.objectUrl}
                     alt={viewingFile.ContentDocument.Title}
                     className="max-w-full max-h-full mx-auto object-contain"
                   />
