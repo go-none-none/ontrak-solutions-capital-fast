@@ -26,6 +26,9 @@ export default function TaskItem({ task, session, onUpdate }) {
     ActivityDate: task.ActivityDate || ''
   });
   const [saving, setSaving] = useState(false);
+  const [iframeModal, setIframeModal] = useState(false);
+  const [iframeUrl, setIframeUrl] = useState('');
+  const [iframeTitle, setIframeTitle] = useState('');
 
   const getTaskCategory = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -212,7 +215,9 @@ export default function TaskItem({ task, session, onUpdate }) {
                       key={lead.Id}
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(`${createPageUrl('LeadDetail')}?id=${lead.Id}`, '_blank');
+                        setIframeUrl(`${createPageUrl('LeadDetail')}?id=${lead.Id}`);
+                        setIframeTitle(`Lead: ${lead.Name}`);
+                        setIframeModal(true);
                       }}
                       className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
                     >
@@ -237,7 +242,9 @@ export default function TaskItem({ task, session, onUpdate }) {
                       key={opp.Id}
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(`${createPageUrl('OpportunityDetail')}?id=${opp.Id}`, '_blank');
+                        setIframeUrl(`${createPageUrl('OpportunityDetail')}?id=${opp.Id}`);
+                        setIframeTitle(`Opportunity: ${opp.Name}`);
+                        setIframeModal(true);
                       }}
                       className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
                     >
@@ -258,9 +265,15 @@ export default function TaskItem({ task, session, onUpdate }) {
               <TabsContent value="contacts" className="space-y-2">
                 {relatedRecords?.contacts?.length > 0 ? (
                   relatedRecords.contacts.map(contact => (
-                    <div
+                    <button
                       key={contact.Id}
-                      className="p-3 bg-slate-50 rounded-lg border border-slate-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIframeUrl(`https://venminder--develop.sandbox.lightning.force.com/lightning/r/Contact/${contact.Id}/view`);
+                        setIframeTitle(`Contact: ${contact.Name}`);
+                        setIframeModal(true);
+                      }}
+                      className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
                     >
                       <p className="font-semibold text-slate-900">{contact.Name}</p>
                       {contact.Title && <p className="text-xs text-slate-500">{contact.Title}</p>}
@@ -268,7 +281,7 @@ export default function TaskItem({ task, session, onUpdate }) {
                         {contact.Email && <p>{contact.Email}</p>}
                         {contact.Phone && <p>{contact.Phone}</p>}
                       </div>
-                    </div>
+                    </button>
                   ))
                 ) : (
                   <p className="text-slate-500 text-center py-8">No contacts found</p>
@@ -276,6 +289,22 @@ export default function TaskItem({ task, session, onUpdate }) {
               </TabsContent>
             </Tabs>
           ) : null}
+        </DialogContent>
+      </Dialog>
+
+      {/* Iframe Modal */}
+      <Dialog open={iframeModal} onOpenChange={setIframeModal}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0">
+          <DialogHeader className="px-6 py-4 border-b">
+            <DialogTitle>{iframeTitle}</DialogTitle>
+          </DialogHeader>
+          <div className="h-[calc(90vh-80px)]">
+            <iframe
+              src={iframeUrl}
+              className="w-full h-full border-0"
+              title={iframeTitle}
+            />
+          </div>
         </DialogContent>
       </Dialog>
     
