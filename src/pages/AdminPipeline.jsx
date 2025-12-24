@@ -24,7 +24,6 @@ export default function AdminPipeline() {
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [allTasks, setAllTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [showUsersPanel, setShowUsersPanel] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
@@ -269,10 +268,6 @@ export default function AdminPipeline() {
               <p className="text-sm text-slate-600">Overview of all reps' performance</p>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setShowUsersPanel(true)}>
-                <Users className="w-4 h-4 mr-2" />
-                View Users ({allUsers.length})
-              </Button>
               <Link to={createPageUrl('RepPortal')}>
                 <Button variant="outline">
                   <LayoutDashboard className="w-4 h-4 mr-2" />
@@ -706,30 +701,7 @@ export default function AdminPipeline() {
         onUpdate={() => loadAllRepsData(session, true)}
       />
 
-      {/* Users Panel */}
-      {showUsersPanel && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">Salesforce Users ({allUsers.length})</h2>
-              <Button variant="ghost" size="icon" onClick={() => setShowUsersPanel(false)}>
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {allUsers.map(user => (
-                  <div key={user.Id} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                    <p className="font-semibold text-slate-900">{user.Name}</p>
-                    <p className="text-sm text-slate-600">{user.Email}</p>
-                    <p className="text-xs text-slate-500 mt-1">ID: {user.Id}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
