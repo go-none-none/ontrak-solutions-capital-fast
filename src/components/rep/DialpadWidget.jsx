@@ -66,10 +66,12 @@ export default function DialpadWidget({ phoneNumber, recordId, recordType, sessi
     try {
       // Update the Lead/Opportunity record with call disposition
       const updateData = {
-        Call_Disposition__c: disposition,
-        Last_Call_Notes__c: notes || `Called ${phoneNumber}`,
-        Last_Call_Date__c: new Date().toISOString()
+        Call_Disposition__c: disposition
       };
+      
+      if (notes) {
+        updateData.Description = notes;
+      }
 
       await base44.functions.invoke('updateSalesforceRecord', {
         recordId,
