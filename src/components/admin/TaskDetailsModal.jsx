@@ -8,10 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar, User, AlertCircle, Clock, CheckCircle2, Edit, Save, X, Building, Users as UsersIcon, TrendingUp } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { format } from 'date-fns';
+import { createPageUrl } from '@/utils';
 
 export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [iframeModal, setIframeModal] = useState(false);
+  const [iframeUrl, setIframeUrl] = useState('');
+  const [iframeTitle, setIframeTitle] = useState('');
   const [editValues, setEditValues] = useState({
     Subject: task?.Subject || '',
     Description: task?.Description || '',
@@ -208,7 +212,18 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
             {task.WhatId && task.What?.Name && (
               <div className="border-t pt-4">
                 <p className="text-xs text-slate-500 mb-2 font-semibold">Related To</p>
-                <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <button
+                  onClick={() => {
+                    const isLead = task.WhatId.startsWith('00Q');
+                    const isOpp = task.WhatId.startsWith('006');
+                    if (isLead || isOpp) {
+                      setIframeUrl(`${createPageUrl(isLead ? 'LeadDetail' : 'OpportunityDetail')}?id=${task.WhatId}`);
+                      setIframeTitle(`${isLead ? 'Lead' : 'Opportunity'}: ${task.What.Name}`);
+                      setIframeModal(true);
+                    }
+                  }}
+                  className="w-full flex items-center gap-2 p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 hover:border-purple-500 transition-all text-left"
+                >
                   {task.WhatId.startsWith('00Q') ? (
                     <UsersIcon className="w-4 h-4 text-blue-600" />
                   ) : task.WhatId.startsWith('006') ? (
@@ -222,7 +237,7 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                       {task.WhatId.startsWith('00Q') ? 'Lead' : task.WhatId.startsWith('006') ? 'Opportunity' : task.What.Type || 'Record'}
                     </p>
                   </div>
-                </div>
+                </button>
               </div>
             )}
 
@@ -256,6 +271,25 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
           </div>
         )}
       </DialogContent>
+
+      {/* Iframe Modal */}
+      <Dialog open={iframeModal} onOpenChange={setIframeModal}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0">
+          <DialogHeader className="px-6 py-4 border-b">
+            <DialogTitle>{iframeTitle}</DialogTitle>
+            <DialogDescription className="sr-only">
+              View detailed record information
+            </DialogDescription>
+          </DialogHeader>
+          <div className="h-[calc(90vh-80px)]">
+            <iframe
+              src={iframeUrl}
+              className="w-full h-full border-0"
+              title={iframeTitle}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }

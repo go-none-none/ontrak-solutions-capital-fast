@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -26,6 +27,7 @@ export default function AdminPipeline() {
   const [allTasks, setAllTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
+  const [searchTerms, setSearchTerms] = useState({}); // {repUserId: searchTerm}
 
   useEffect(() => {
     checkSession();
@@ -518,34 +520,52 @@ export default function AdminPipeline() {
                         <tr className="bg-slate-50">
                           <td colSpan={stages.length + 2} className="px-6 py-4">
                             <div className="space-y-2">
-                              <div className="flex items-center justify-between mb-3">
-                                <h4 className="font-semibold text-slate-900">
-                                  {activeView === 'leads' ? 'Leads' : activeView === 'opportunities' ? 'Opportunities' : 'Tasks'} Details
+                              <div className="mb-3">
+                                <div className="flex items-center justify-between mb-2">
+                                  <h4 className="font-semibold text-slate-900">
+                                    {activeView === 'leads' ? 'Leads' : activeView === 'opportunities' ? 'Opportunities' : 'Tasks'} Details
+                                    {stageFilter[rep.userId] && (
+                                      <span className="ml-2 text-sm font-normal text-slate-600">
+                                        (Filtered by: {stages.find(s => s.name === stageFilter[rep.userId])?.label})
+                                      </span>
+                                    )}
+                                  </h4>
                                   {stageFilter[rep.userId] && (
-                                    <span className="ml-2 text-sm font-normal text-slate-600">
-                                      (Filtered by: {stages.find(s => s.name === stageFilter[rep.userId])?.label})
-                                    </span>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setStageFilter(prev => ({ ...prev, [rep.userId]: null }));
+                                      }}
+                                      className="text-xs"
+                                    >
+                                      Clear Filter
+                                    </Button>
                                   )}
-                                </h4>
-                                {stageFilter[rep.userId] && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setStageFilter(prev => ({ ...prev, [rep.userId]: null }));
-                                    }}
-                                    className="text-xs"
-                                  >
-                                    Clear Filter
-                                  </Button>
-                                )}
+                                </div>
+                                <Input
+                                  placeholder={`Search ${activeView === 'leads' ? 'leads' : activeView === 'opportunities' ? 'opportunities' : 'tasks'}...`}
+                                  value={searchTerms[rep.userId] || ''}
+                                  onChange={(e) => {
+                                    e.stopPropagation();
+                                    setSearchTerms(prev => ({ ...prev, [rep.userId]: e.target.value }));
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="h-9"
+                                />
                               </div>
                               <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
                                 {activeView === 'leads' 
                                   ? rep.leads?.filter(lead => {
-                                      if (!stageFilter[rep.userId]) return true;
-                                      return lead.Status === stageFilter[rep.userId];
+                                      if (stageFilter[rep.userId] && lead.Status !== stageFilter[rep.userId]) return false;
+                                      if (searchTerms[rep.userId]) {
+                                        const search = searchTerms[rep.userId].toLowerCase();
+                                        return lead.Name?.toLowerCase().includes(search) || 
+                                               lead.Company?.toLowerCase().includes(search) || 
+                                               lead.Email?.toLowerCase().includes(search);
+                                      }
+                                      return true;
                                     }).map((lead, idx) => (
                                       <button
                                         key={idx}
@@ -567,11 +587,19 @@ export default function AdminPipeline() {
                                     ))
                                   : activeView === 'opportunities'
                                     ? rep.opportunities?.filter(opp => {
-                                        if (!stageFilter[rep.userId]) return true;
-                                        if (stageFilter[rep.userId] === 'Declined') {
-                                          return opp.StageName?.includes('Declined');
+                                        if (stageFilter[rep.userId]) {
+                                          if (stageFilter[rep.userId] === 'Declined') {
+                                            if (!opp.StageName?.includes('Declined')) return false;
+                                          } else if (opp.StageName !== stageFilter[rep.userId]) {
+                                            return false;
+                                          }
                                         }
-                                        return opp.StageName === stageFilter[rep.userId];
+                                        if (searchTerms[rep.userId]) {
+                                          const search = searchTerms[rep.userId].toLowerCase();
+                                          return opp.Name?.toLowerCase().includes(search) || 
+                                                 opp.Account?.Name?.toLowerCase().includes(search);
+                                        }
+                                        return true;
                                       }).map((opp, idx) => (
                                         <button
                                           key={idx}
@@ -601,6 +629,15 @@ export default function AdminPipeline() {
                                         
                                         if (stageFilter[rep.userId]) {
                                           tasksToShow = categorized[stageFilter[rep.userId]] || [];
+                                        }
+
+                                        if (searchTerms[rep.userId]) {
+                                          const search = searchTerms[rep.userId].toLowerCase();
+                                          tasksToShow = tasksToShow.filter(task => 
+                                            task.Subject?.toLowerCase().includes(search) || 
+                                            task.Description?.toLowerCase().includes(search) ||
+                                            task.What?.Name?.toLowerCase().includes(search)
+                                          );
                                         }
 
                                         return tasksToShow.map((task, idx) => (
