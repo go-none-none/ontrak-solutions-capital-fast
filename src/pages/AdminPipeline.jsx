@@ -101,9 +101,11 @@ export default function AdminPipeline() {
 
       setRepsData(pipelineRes.data.reps || []);
       setAllTasks(tasksRes.data.tasks || []);
+      console.log('Users response:', usersRes);
       setAllUsers(usersRes.data.users || []);
     } catch (error) {
       console.error('Load error:', error);
+      console.error('Users error:', error.response?.data || error);
     } finally {
       if (isRefresh) {
         setRefreshing(false);
