@@ -92,7 +92,7 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
         </div>
       </div>
 
-      <div className={`grid gap-4 ${activeTab === 'leads' ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-7'}`}>
+      <div className={`grid gap-4 ${activeTab === 'leads' ? 'grid-cols-5' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-7'}`}>
         {pipelineData.map((stage, idx) => (
           <motion.div
             key={idx}
