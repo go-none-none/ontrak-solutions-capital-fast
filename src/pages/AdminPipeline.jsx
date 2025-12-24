@@ -1008,6 +1008,7 @@ export default function AdminPipeline() {
         onClose={() => setSelectedTask(null)}
         session={session}
         onUpdate={() => loadAllRepsData(session, true)}
+        onOpenRelated={(recordInfo) => setRelatedRecordView(recordInfo)}
       />
 
       {/* Related Record View from Task */}

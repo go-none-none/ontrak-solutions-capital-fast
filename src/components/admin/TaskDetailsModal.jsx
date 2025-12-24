@@ -9,7 +9,7 @@ import { Calendar, User, AlertCircle, Clock, CheckCircle2, Edit, Save, X, Buildi
 import { base44 } from '@/api/base44Client';
 import { format } from 'date-fns';
 
-export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpdate }) {
+export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpdate, onOpenRelated }) {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editValues, setEditValues] = useState({
@@ -210,13 +210,12 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                 <p className="text-xs text-slate-500 mb-2 font-semibold">Related To</p>
                 <button
                   onClick={() => {
-                    if (task.WhatId.startsWith('00Q') || task.WhatId.startsWith('006')) {
-                      window.parent.postMessage({
-                        type: 'openRelatedRecord',
+                    if ((task.WhatId.startsWith('00Q') || task.WhatId.startsWith('006')) && onOpenRelated) {
+                      onOpenRelated({
                         recordId: task.WhatId,
                         recordType: task.WhatId.startsWith('00Q') ? 'lead' : 'opportunity',
                         recordName: task.What.Name
-                      }, '*');
+                      });
                       onClose();
                     }
                   }}
