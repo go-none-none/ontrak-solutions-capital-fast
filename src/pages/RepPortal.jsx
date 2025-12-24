@@ -99,7 +99,6 @@ export default function RepPortal() {
   const handleLogout = async () => {
     if (session?.token && session?.instanceUrl) {
       try {
-        // Revoke Salesforce token
         await fetch(`${session.instanceUrl}/services/oauth2/revoke`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -115,6 +114,7 @@ export default function RepPortal() {
     setLeads([]);
     setOpportunities([]);
     setTasks(null);
+    window.location.reload();
   };
 
   const loadData = async (sessionData, isRefresh = false) => {

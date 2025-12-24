@@ -24,6 +24,8 @@ export default function AdminPipeline() {
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [allTasks, setAllTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [showUsersPanel, setShowUsersPanel] = useState(false);
+  const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
     checkSession();
@@ -54,10 +56,24 @@ export default function AdminPipeline() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (session?.token && session?.instanceUrl) {
+      try {
+        await fetch(`${session.instanceUrl}/services/oauth2/revoke`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `token=${session.token}`
+        });
+      } catch (error) {
+        console.error('Error revoking token:', error);
+      }
+    }
+    
     sessionStorage.removeItem('sfSession');
     setSession(null);
     setRepsData([]);
+    setAllTasks([]);
+    window.location.reload();
   };
 
   const loadAllRepsData = async (sessionData, isRefresh = false) => {
@@ -68,7 +84,7 @@ export default function AdminPipeline() {
     }
 
     try {
-      const [pipelineRes, tasksRes] = await Promise.all([
+      const [pipelineRes, tasksRes, usersRes] = await Promise.all([
         base44.functions.invoke('getAllRepsPipeline', {
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
@@ -76,11 +92,16 @@ export default function AdminPipeline() {
         base44.functions.invoke('getAllSalesforceTasks', {
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforceUsers', {
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
         })
       ]);
 
       setRepsData(pipelineRes.data.reps || []);
       setAllTasks(tasksRes.data.tasks || []);
+      setAllUsers(usersRes.data.users || []);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
@@ -248,6 +269,10 @@ export default function AdminPipeline() {
               <p className="text-sm text-slate-600">Overview of all reps' performance</p>
             </div>
             <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setShowUsersPanel(true)}>
+                <Users className="w-4 h-4 mr-2" />
+                View Users ({allUsers.length})
+              </Button>
               <Link to={createPageUrl('RepPortal')}>
                 <Button variant="outline">
                   <LayoutDashboard className="w-4 h-4 mr-2" />
@@ -680,6 +705,31 @@ export default function AdminPipeline() {
         session={session}
         onUpdate={() => loadAllRepsData(session, true)}
       />
+
+      {/* Users Panel */}
+      {showUsersPanel && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900">Salesforce Users ({allUsers.length})</h2>
+              <Button variant="ghost" size="icon" onClick={() => setShowUsersPanel(false)}>
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {allUsers.map(user => (
+                  <div key={user.Id} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                    <p className="font-semibold text-slate-900">{user.Name}</p>
+                    <p className="text-sm text-slate-600">{user.Email}</p>
+                    <p className="text-xs text-slate-500 mt-1">ID: {user.Id}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
