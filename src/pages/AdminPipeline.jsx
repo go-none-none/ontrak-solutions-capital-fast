@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -288,6 +289,29 @@ export default function AdminPipeline() {
       </div>
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Users Section */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-slate-900">Salesforce Users</h2>
+            <span className="text-sm text-slate-600">{allUsers.length} users</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            {allUsers.map(user => (
+              <div key={user.Id} className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4 border border-purple-200">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                    {user.Name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-slate-900 truncate">{user.Name}</p>
+                    <p className="text-xs text-slate-600 truncate">{user.Email}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Summary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <motion.div
