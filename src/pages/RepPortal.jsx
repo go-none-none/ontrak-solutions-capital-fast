@@ -10,18 +10,23 @@ import { Link } from 'react-router-dom';
 import LeadCard from '../components/rep/LeadCard';
 import OpportunityCard from '../components/rep/OpportunityCard';
 import PipelineView from '../components/rep/PipelineView';
+import TaskCard from '../components/rep/TaskCard';
+import TasksExpandedView from '../components/rep/TasksExpandedView';
 
 export default function RepPortal() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [leads, setLeads] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
+  const [tasks, setTasks] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('leads');
   const [stageFilter, setStageFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showTasksExpanded, setShowTasksExpanded] = useState(false);
+  const [loadingTasks, setLoadingTasks] = useState(true);
   const itemsPerPage = 100;
 
   useEffect(() => {
@@ -100,7 +105,7 @@ export default function RepPortal() {
       setLoading(true);
     }
     try {
-      const [leadsRes, oppsRes] = await Promise.all([
+      const [leadsRes, oppsRes, tasksRes] = await Promise.all([
         base44.functions.invoke('getRepLeads', {
           userId: sessionData.userId,
           token: sessionData.token,
@@ -110,13 +115,21 @@ export default function RepPortal() {
           userId: sessionData.userId,
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforceTasks', {
+          userId: sessionData.userId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
         })
       ]);
 
       setLeads(leadsRes.data.leads || []);
       setOpportunities(oppsRes.data.opportunities || []);
+      setTasks(tasksRes.data);
+      setLoadingTasks(false);
     } catch (error) {
       console.error('Load error:', error);
+      setLoadingTasks(false);
     } finally {
       if (isRefresh) {
         setRefreshing(false);
@@ -252,7 +265,7 @@ export default function RepPortal() {
 
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -294,6 +307,12 @@ export default function RepPortal() {
               </div>
             </div>
           </motion.div>
+
+          <TaskCard 
+            tasksData={tasks} 
+            loading={loadingTasks}
+            onClick={() => setShowTasksExpanded(true)} 
+          />
         </div>
 
         {/* Pipeline */}
@@ -470,6 +489,15 @@ export default function RepPortal() {
             )}
         </div>
       </div>
+
+      {/* Tasks Expanded View */}
+      <TasksExpandedView
+        isOpen={showTasksExpanded}
+        onClose={() => setShowTasksExpanded(false)}
+        tasksData={tasks}
+        session={session}
+        onRefresh={() => loadData(session, true)}
+      />
     </div>
   );
 }
