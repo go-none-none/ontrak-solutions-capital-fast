@@ -16,6 +16,7 @@ export default function AdminPipeline() {
   const [activeView, setActiveView] = useState('leads'); // 'leads' or 'opportunities'
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [modalType, setModalType] = useState(null);
+  const [stageFilter, setStageFilter] = useState({}); // {repUserId: stageName}
 
   useEffect(() => {
     checkSession();
@@ -345,10 +346,26 @@ export default function AdminPipeline() {
                         {stages.map((stage, idx) => {
                           const count = getStageCount(rep, stage.name);
                           const amount = getStageAmount(rep, stage.name);
+                          const isActiveFilter = stageFilter[rep.userId] === stage.name;
                           return (
-                            <td key={idx} className="px-3 py-4 text-center">
+                            <td 
+                              key={idx} 
+                              className="px-3 py-4 text-center cursor-pointer hover:bg-slate-100 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (count > 0) {
+                                  setStageFilter(prev => ({
+                                    ...prev,
+                                    [rep.userId]: prev[rep.userId] === stage.name ? null : stage.name
+                                  }));
+                                  if (!isExpanded) {
+                                    setExpandedRep(rep.userId);
+                                  }
+                                }
+                              }}
+                            >
                               <div className="flex flex-col items-center gap-1">
-                                <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ${count > 0 ? stage.color : 'bg-slate-200'} text-white font-semibold text-sm`}>
+                                <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ${count > 0 ? stage.color : 'bg-slate-200'} text-white font-semibold text-sm transition-all ${isActiveFilter ? 'ring-2 ring-offset-2 ring-slate-900' : ''}`}>
                                   {count}
                                 </span>
                                 {activeView === 'opportunities' && amount > 0 && (
@@ -373,12 +390,35 @@ export default function AdminPipeline() {
                         <tr className="bg-slate-50">
                           <td colSpan={stages.length + 2} className="px-6 py-4">
                             <div className="space-y-2">
-                              <h4 className="font-semibold text-slate-900 mb-3">
-                                {activeView === 'leads' ? 'Leads' : 'Opportunities'} Details
-                              </h4>
+                              <div className="flex items-center justify-between mb-3">
+                                <h4 className="font-semibold text-slate-900">
+                                  {activeView === 'leads' ? 'Leads' : 'Opportunities'} Details
+                                  {stageFilter[rep.userId] && (
+                                    <span className="ml-2 text-sm font-normal text-slate-600">
+                                      (Filtered by: {stages.find(s => s.name === stageFilter[rep.userId])?.label})
+                                    </span>
+                                  )}
+                                </h4>
+                                {stageFilter[rep.userId] && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setStageFilter(prev => ({ ...prev, [rep.userId]: null }));
+                                    }}
+                                    className="text-xs"
+                                  >
+                                    Clear Filter
+                                  </Button>
+                                )}
+                              </div>
                               <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
                                 {activeView === 'leads' 
-                                  ? rep.leads?.map((lead, idx) => (
+                                  ? rep.leads?.filter(lead => {
+                                      if (!stageFilter[rep.userId]) return true;
+                                      return lead.Status === stageFilter[rep.userId];
+                                    }).map((lead, idx) => (
                                       <button
                                         key={idx}
                                         onClick={(e) => {
@@ -397,7 +437,13 @@ export default function AdminPipeline() {
                                         </span>
                                       </button>
                                     ))
-                                  : rep.opportunities?.map((opp, idx) => (
+                                  : rep.opportunities?.filter(opp => {
+                                      if (!stageFilter[rep.userId]) return true;
+                                      if (stageFilter[rep.userId] === 'Declined') {
+                                        return opp.StageName?.includes('Declined');
+                                      }
+                                      return opp.StageName === stageFilter[rep.userId];
+                                    }).map((opp, idx) => (
                                       <button
                                         key={idx}
                                         onClick={(e) => {
