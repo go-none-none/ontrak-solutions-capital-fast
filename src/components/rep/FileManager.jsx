@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { FileText, Upload, Loader2, Download } from 'lucide-react';
+import { FileText, Upload, Loader2, Download, Eye, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function FileManager({ recordId, session, onFileUploaded }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [viewingFile, setViewingFile] = useState(null);
+  const [fileContent, setFileContent] = useState(null);
+  const [loadingFile, setLoadingFile] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -79,7 +82,44 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
     return FileText;
   };
 
+  const handleViewFile = async (file) => {
+    const doc = file.ContentDocument;
+    const isPdf = doc.FileExtension?.toLowerCase() === 'pdf';
+    const isImage = ['png', 'jpg', 'jpeg', 'gif', 'bmp'].includes(doc.FileExtension?.toLowerCase());
+    
+    if (!isPdf && !isImage) {
+      // Download non-viewable files
+      window.open(`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`, '_blank');
+      return;
+    }
+
+    setViewingFile(file);
+    setLoadingFile(true);
+    
+    try {
+      const response = await base44.functions.invoke('getSalesforceFileContent', {
+        contentDocumentId: file.ContentDocumentId,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      setFileContent(response.data);
+    } catch (error) {
+      console.error('Error loading file:', error);
+      alert('Failed to load file');
+      setViewingFile(null);
+    } finally {
+      setLoadingFile(false);
+    }
+  };
+
+  const closeViewer = () => {
+    setViewingFile(null);
+    setFileContent(null);
+  };
+
   return (
+    <>
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-slate-900">Files & Attachments</h2>
@@ -142,21 +182,66 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                     </p>
                   </div>
                 </div>
-                <a
-                  href={`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-shrink-0"
-                >
-                  <Button variant="ghost" size="sm">
-                    <Download className="w-4 h-4" />
+                <div className="flex gap-1 flex-shrink-0">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => handleViewFile(file)}
+                    title="View file"
+                  >
+                    <Eye className="w-4 h-4" />
                   </Button>
-                </a>
+                  <a
+                    href={`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`}
+                    download
+                    title="Download file"
+                  >
+                    <Button variant="ghost" size="sm">
+                      <Download className="w-4 h-4" />
+                    </Button>
+                  </a>
+                </div>
               </motion.div>
             );
           })}
         </div>
       )}
+
+      {/* File Viewer Modal */}
+      {viewingFile && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+              <h3 className="text-lg font-semibold text-slate-900">{viewingFile.ContentDocument.Title}</h3>
+              <Button variant="ghost" size="icon" onClick={closeViewer}>
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="flex-1 overflow-hidden p-4">
+              {loadingFile ? (
+                <div className="flex items-center justify-center h-full">
+                  <Loader2 className="w-8 h-8 text-[#08708E] animate-spin" />
+                </div>
+              ) : fileContent ? (
+                viewingFile.ContentDocument.FileExtension?.toLowerCase() === 'pdf' ? (
+                  <iframe
+                    src={`data:${fileContent.contentType};base64,${fileContent.content}`}
+                    className="w-full h-full border-0 rounded-lg"
+                    title="PDF Viewer"
+                  />
+                ) : (
+                  <img
+                    src={`data:${fileContent.contentType};base64,${fileContent.content}`}
+                    alt={viewingFile.ContentDocument.Title}
+                    className="max-w-full max-h-full mx-auto object-contain"
+                  />
+                )
+              ) : null}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+    </>
   );
 }
