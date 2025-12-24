@@ -6,7 +6,7 @@ import { ExternalLink, Mail, Phone, DollarSign, Calendar, Building } from 'lucid
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 
-export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
+export default function RecordDetailsModal({ record, type, isOpen, onClose, expandable = false, onExpand }) {
   if (!record) return null;
 
   const formatCurrency = (amount) => {
@@ -138,48 +138,54 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
             )}
           </div>
 
-          {/* Owner & Company Information */}
+          {/* Company & Address Information */}
           <div className="border-t pt-4">
-            <h3 className="font-semibold text-slate-900 mb-3">Owner & Company Details</h3>
+            <h3 className="font-semibold text-slate-900 mb-3">Company & Address Details</h3>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <p className="text-slate-500 text-xs">Record Owner</p>
-                <p className="font-medium text-slate-900">{record.Owner?.Name || 'N/A'}</p>
-              </div>
-              {record.Owner?.Email && (
-                <div>
-                  <p className="text-slate-500 text-xs">Owner Email</p>
-                  <a href={`mailto:${record.Owner.Email}`} className="font-medium text-[#08708E] hover:underline text-xs">
-                    {record.Owner.Email}
-                  </a>
-                </div>
-              )}
               {isLead ? (
                 <>
+                  {record.Company && (
+                    <div className="col-span-2">
+                      <p className="text-slate-500 text-xs">Company Name</p>
+                      <p className="font-medium text-slate-900 text-base">{record.Company}</p>
+                    </div>
+                  )}
                   {record.Street && (
                     <div>
-                      <p className="text-slate-500 text-xs">Address</p>
+                      <p className="text-slate-500 text-xs">Street Address</p>
                       <p className="font-medium text-slate-900">{record.Street}</p>
                     </div>
                   )}
                   {record.City && (
                     <div>
-                      <p className="text-slate-500 text-xs">City</p>
+                      <p className="text-slate-500 text-xs">City, State, Zip</p>
                       <p className="font-medium text-slate-900">{record.City}, {record.State} {record.PostalCode}</p>
+                    </div>
+                  )}
+                  {record.Country && (
+                    <div>
+                      <p className="text-slate-500 text-xs">Country</p>
+                      <p className="font-medium text-slate-900">{record.Country}</p>
                     </div>
                   )}
                 </>
               ) : (
                 <>
+                  {record.Account?.Name && (
+                    <div className="col-span-2">
+                      <p className="text-slate-500 text-xs">Account Name</p>
+                      <p className="font-medium text-slate-900 text-base">{record.Account.Name}</p>
+                    </div>
+                  )}
                   {record.Account?.BillingStreet && (
                     <div>
-                      <p className="text-slate-500 text-xs">Billing Address</p>
+                      <p className="text-slate-500 text-xs">Billing Street</p>
                       <p className="font-medium text-slate-900">{record.Account.BillingStreet}</p>
                     </div>
                   )}
                   {record.Account?.BillingCity && (
                     <div>
-                      <p className="text-slate-500 text-xs">City</p>
+                      <p className="text-slate-500 text-xs">City, State, Zip</p>
                       <p className="font-medium text-slate-900">{record.Account.BillingCity}, {record.Account.BillingState} {record.Account.BillingPostalCode}</p>
                     </div>
                   )}
@@ -189,6 +195,12 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
                       <a href={`tel:${record.Account.Phone}`} className="font-medium text-[#08708E] hover:underline">
                         {record.Account.Phone}
                       </a>
+                    </div>
+                  )}
+                  {record.Account?.BillingCountry && (
+                    <div>
+                      <p className="text-slate-500 text-xs">Country</p>
+                      <p className="font-medium text-slate-900">{record.Account.BillingCountry}</p>
                     </div>
                   )}
                 </>
@@ -272,7 +284,19 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose }) {
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4 border-t">
-            <Button variant="outline" onClick={onClose} className="w-full">
+            {expandable && onExpand && (
+              <Button 
+                onClick={() => {
+                  onClose();
+                  onExpand();
+                }}
+                className="flex-1 bg-[#08708E] hover:bg-[#065a72]"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                View More Details
+              </Button>
+            )}
+            <Button variant="outline" onClick={onClose} className="flex-1">
               Close
             </Button>
           </div>

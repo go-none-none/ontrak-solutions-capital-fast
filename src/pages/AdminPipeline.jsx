@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
@@ -17,6 +17,7 @@ export default function AdminPipeline() {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [modalType, setModalType] = useState(null);
   const [stageFilter, setStageFilter] = useState({}); // {repUserId: stageName}
+  const [expandedRecord, setExpandedRecord] = useState(null);
 
   useEffect(() => {
     checkSession();
@@ -122,17 +123,15 @@ export default function AdminPipeline() {
   const getStageAmount = (rep, stageName) => {
     if (activeView === 'leads') return 0;
     
-    let opps;
-    if (stageName === 'Declined') {
-      opps = rep.opportunities?.filter(o => o.StageName?.includes('Declined')) || [];
-    } else {
-      opps = rep.opportunities?.filter(o => o.StageName === stageName) || [];
-    }
+    // Don't show amounts for declined stage
+    if (stageName === 'Declined') return 0;
+    
+    const opps = rep.opportunities?.filter(o => o.StageName === stageName) || [];
     return opps.reduce((sum, o) => sum + (o.Amount || 0), 0);
   };
 
   const getTotalPipeline = (rep) => {
-    return rep.opportunities?.reduce((sum, o) => sum + (o.Amount || 0), 0) || 0;
+    return rep.opportunities?.filter(o => !o.StageName?.includes('Declined')).reduce((sum, o) => sum + (o.Amount || 0), 0) || 0;
   };
 
   if (loading) {
@@ -484,12 +483,41 @@ export default function AdminPipeline() {
       <RecordDetailsModal
         record={selectedRecord}
         type={modalType}
-        isOpen={!!selectedRecord}
+        isOpen={!!selectedRecord && !expandedRecord}
+        expandable={true}
+        onExpand={() => setExpandedRecord(selectedRecord)}
         onClose={() => {
           setSelectedRecord(null);
           setModalType(null);
         }}
       />
+
+      {/* Expanded Record View */}
+      {expandedRecord && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900">
+                {modalType === 'lead' ? 'Lead Details' : 'Opportunity Details'}: {expandedRecord.Name}
+              </h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setExpandedRecord(null)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="p-6">
+              <iframe
+                src={`${createPageUrl(modalType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${expandedRecord.Id}`}
+                className="w-full h-[calc(90vh-120px)] border-0"
+                title="Record Details"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
