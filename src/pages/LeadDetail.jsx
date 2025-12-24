@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ArrowLeft, Edit, Loader2, Check, X, CheckCircle2, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Edit, Loader2, CheckCircle2, ChevronDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadWidget from '../components/rep/DialpadWidget.jsx';
+import EditableField from '../components/rep/EditableField.jsx';
 
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 
@@ -98,12 +97,9 @@ export default function LeadDetail() {
     }
   };
 
-  const handleFieldEdit = (field, value) => {
-    setEditValues({ ...editValues, [field]: value });
-  };
-
   const handleFieldSave = async (field) => {
     try {
+      setEditing({ ...editing, [field]: true });
       await base44.functions.invoke('updateSalesforceRecord', {
         objectType: 'Lead',
         recordId: lead.Id,
@@ -116,57 +112,23 @@ export default function LeadDetail() {
       setRefreshKey(prev => prev + 1);
     } catch (error) {
       console.error('Update error:', error);
+      setEditing({ ...editing, [field]: false });
     }
   };
 
-  const EditableField = ({ label, field, value, type = 'text', multiline = false }) => {
-    const isEditing = editing[field];
-    const displayValue = isEditing ? editValues[field] : value;
-
+  const EditableFieldWrapper = ({ label, field, value, disabled = false }) => {
     return (
-      <div>
-        <p className="text-slate-500 text-xs mb-1">{label}</p>
-        {isEditing ? (
-          <div className="flex items-start gap-2">
-            {multiline ? (
-              <Textarea
-                value={displayValue || ''}
-                onChange={(e) => handleFieldEdit(field, e.target.value)}
-                className="text-sm"
-                rows={3}
-              />
-            ) : (
-              <Input
-                type={type}
-                value={displayValue || ''}
-                onChange={(e) => handleFieldEdit(field, e.target.value)}
-                className="h-8 text-sm"
-              />
-            )}
-            <Button size="sm" variant="ghost" onClick={() => handleFieldSave(field)} className="mt-1">
-              <Check className="w-4 h-4 text-green-600" />
-            </Button>
-            <Button size="sm" variant="ghost" onClick={() => setEditing({ ...editing, [field]: false })} className="mt-1">
-              <X className="w-4 h-4 text-red-600" />
-            </Button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 group">
-            <p className="font-medium text-slate-900">{value || <span className="text-slate-400 text-sm">Not set - Click to add</span>}</p>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0"
-              onClick={() => {
-                setEditValues({ ...editValues, [field]: value || '' });
-                setEditing({ ...editing, [field]: true });
-              }}
-            >
-              <Edit className="w-3 h-3" />
-            </Button>
-          </div>
-        )}
-      </div>
+      <EditableField
+        label={label}
+        field={field}
+        value={value}
+        editing={editing}
+        editValues={editValues}
+        disabled={disabled}
+        onEdit={(field, value) => setEditValues({ ...editValues, [field]: value })}
+        onSave={handleFieldSave}
+        onCancel={(field) => setEditing({ ...editing, [field]: false })}
+      />
     );
   };
 
