@@ -467,6 +467,32 @@ export default function LeadDetail() {
               session={session}
             />
 
+            {/* Contact Information */}
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h3 className="font-semibold text-slate-900 mb-4">Contact Information</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="font-medium text-slate-900">{lead.Name}</p>
+                  <p className="text-xs text-slate-500 mb-2">{lead.Title || 'Contact'}</p>
+                </div>
+                {lead.Email && (
+                  <a href={`mailto:${lead.Email}`} className="text-sm text-[#08708E] hover:underline block">
+                    {lead.Email}
+                  </a>
+                )}
+                {lead.Phone && (
+                  <a href={`tel:${lead.Phone}`} className="text-sm text-[#08708E] hover:underline block">
+                    {lead.Phone}
+                  </a>
+                )}
+                {lead.MobilePhone && (
+                  <a href={`tel:${lead.MobilePhone}`} className="text-sm text-slate-600 hover:underline block">
+                    Mobile: {lead.MobilePhone}
+                  </a>
+                )}
+              </div>
+            </div>
+
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h3 className="font-semibold text-slate-900 mb-4">Quick Info</h3>
               <div className="space-y-3 text-sm">
