@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, User, AlertCircle, Clock, CheckCircle2, Edit, Save, X, Building, Users as UsersIcon, TrendingUp } from 'lucide-react';
+import { Calendar, User, AlertCircle, Clock, CheckCircle2, Edit, Save, X, Building, Users as UsersIcon, TrendingUp, Search } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { format } from 'date-fns';
 
@@ -17,8 +17,13 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
     Description: '',
     Priority: 'Normal',
     Status: 'Not Started',
-    ActivityDate: ''
+    ActivityDate: '',
+    WhatId: ''
   });
+  const [relatedSearch, setRelatedSearch] = useState('');
+  const [relatedResults, setRelatedResults] = useState([]);
+  const [searchingRelated, setSearchingRelated] = useState(false);
+  const [selectedRelated, setSelectedRelated] = useState(null);
 
   useEffect(() => {
     if (task) {
@@ -27,11 +32,50 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
         Description: task.Description || '',
         Priority: task.Priority || 'Normal',
         Status: task.Status || 'Not Started',
-        ActivityDate: task.ActivityDate || ''
+        ActivityDate: task.ActivityDate || '',
+        WhatId: task.WhatId || ''
       });
+      setSelectedRelated(task.WhatId && task.What?.Name ? { Id: task.WhatId, Name: task.What.Name, Type: task.What.Type } : null);
       setIsEditing(false);
     }
   }, [task]);
+
+  const searchRelatedRecords = async (searchTerm) => {
+    if (!searchTerm || searchTerm.length < 2) {
+      setRelatedResults([]);
+      return;
+    }
+
+    setSearchingRelated(true);
+    try {
+      // Search both leads and opportunities
+      const leadsQuery = `SELECT Id, Name, Company FROM Lead WHERE Name LIKE '%${searchTerm}%' OR Company LIKE '%${searchTerm}%' LIMIT 5`;
+      const oppsQuery = `SELECT Id, Name, Account.Name FROM Opportunity WHERE Name LIKE '%${searchTerm}%' OR Account.Name LIKE '%${searchTerm}%' LIMIT 5`;
+
+      const [leadsRes, oppsRes] = await Promise.all([
+        fetch(`${session.instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(leadsQuery)}`, {
+          headers: { 'Authorization': `Bearer ${session.token}` }
+        }),
+        fetch(`${session.instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(oppsQuery)}`, {
+          headers: { 'Authorization': `Bearer ${session.token}` }
+        })
+      ]);
+
+      const leadsData = await leadsRes.json();
+      const oppsData = await oppsRes.json();
+
+      const results = [
+        ...(leadsData.records || []).map(r => ({ ...r, Type: 'Lead' })),
+        ...(oppsData.records || []).map(r => ({ ...r, Type: 'Opportunity' }))
+      ];
+
+      setRelatedResults(results);
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setSearchingRelated(false);
+    }
+  };
 
   if (!task) return null;
 
@@ -47,9 +91,13 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
   const handleSave = async () => {
     setSaving(true);
     try {
+      const updates = { ...editValues };
+      if (selectedRelated) {
+        updates.WhatId = selectedRelated.Id;
+      }
       await base44.functions.invoke('updateSalesforceTask', {
         taskId: task.Id,
-        updates: editValues,
+        updates,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
@@ -146,8 +194,77 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               />
             </div>
 
+            {/* Related To Search */}
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Related To (Optional)</label>
+              <div className="space-y-2">
+                {selectedRelated ? (
+                  <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    {selectedRelated.Id?.startsWith('00Q') ? (
+                      <UsersIcon className="w-4 h-4 text-blue-600" />
+                    ) : (
+                      <TrendingUp className="w-4 h-4 text-green-600" />
+                    )}
+                    <div className="flex-1">
+                      <p className="font-medium text-slate-900">{selectedRelated.Name}</p>
+                      <p className="text-xs text-slate-500">{selectedRelated.Type}</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedRelated(null);
+                        setEditValues({ ...editValues, WhatId: '' });
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <Input
+                      placeholder="Search leads or opportunities..."
+                      value={relatedSearch}
+                      onChange={(e) => {
+                        setRelatedSearch(e.target.value);
+                        searchRelatedRecords(e.target.value);
+                      }}
+                      className="pl-10"
+                    />
+                    {relatedResults.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        {relatedResults.map((result) => (
+                          <button
+                            key={result.Id}
+                            onClick={() => {
+                              setSelectedRelated(result);
+                              setEditValues({ ...editValues, WhatId: result.Id });
+                              setRelatedSearch('');
+                              setRelatedResults([]);
+                            }}
+                            className="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center gap-2 border-b border-slate-100 last:border-0"
+                          >
+                            {result.Type === 'Lead' ? (
+                              <UsersIcon className="w-4 h-4 text-blue-600" />
+                            ) : (
+                              <TrendingUp className="w-4 h-4 text-green-600" />
+                            )}
+                            <div className="flex-1">
+                              <p className="font-medium text-sm text-slate-900">{result.Name}</p>
+                              <p className="text-xs text-slate-500">{result.Type} {result.Company ? `• ${result.Company}` : result.Account?.Name ? `• ${result.Account.Name}` : ''}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Display read-only fields */}
-            {(task.WhatId || task.WhoId || task.Owner) && (
+            {(task.WhoId || task.Owner) && (
               <div className="border-t pt-4 space-y-3">
                 <p className="text-sm font-semibold text-slate-700">Read-Only Information</p>
                 
@@ -161,26 +278,7 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                   </div>
                 )}
 
-                {task.WhatId && task.What?.Name && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-2">Related To</p>
-                    <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                      {task.WhatId.startsWith('00Q') ? (
-                        <UsersIcon className="w-4 h-4 text-blue-600" />
-                      ) : task.WhatId.startsWith('006') ? (
-                        <TrendingUp className="w-4 h-4 text-green-600" />
-                      ) : (
-                        <Building className="w-4 h-4 text-slate-600" />
-                      )}
-                      <div className="flex-1">
-                        <p className="font-medium text-slate-900">{task.What.Name}</p>
-                        <p className="text-xs text-slate-500">
-                          {task.WhatId.startsWith('00Q') ? 'Lead' : task.WhatId.startsWith('006') ? 'Opportunity' : task.What.Type || 'Record'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
+
 
                 {task.WhoId && task.Who?.Name && (
                   <div>
@@ -202,7 +300,13 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                 <Save className="w-4 h-4 mr-2" />
                 Save Changes
               </Button>
-              <Button variant="outline" onClick={() => { setIsEditing(false); setEditValues({ Subject: task.Subject, Description: task.Description || '', Priority: task.Priority, Status: task.Status, ActivityDate: task.ActivityDate || '' }); }}>
+              <Button variant="outline" onClick={() => { 
+                setIsEditing(false); 
+                setEditValues({ Subject: task.Subject, Description: task.Description || '', Priority: task.Priority, Status: task.Status, ActivityDate: task.ActivityDate || '', WhatId: task.WhatId || '' });
+                setSelectedRelated(task.WhatId && task.What?.Name ? { Id: task.WhatId, Name: task.What.Name, Type: task.What.Type } : null);
+                setRelatedSearch('');
+                setRelatedResults([]);
+              }}>
                 <X className="w-4 h-4 mr-2" />
                 Cancel
               </Button>
