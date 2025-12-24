@@ -10,9 +10,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Dialpad API key not configured' }, { status: 500 });
     }
 
-    // Fetch disposition lists from Dialpad
+    // Fetch all dispositions from Dialpad
     const response = await fetch(
-      'https://dialpad.com/api/v2/calldispositionlists',
+      'https://dialpad.com/api/v2/dispositions',
       {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
@@ -32,11 +32,8 @@ Deno.serve(async (req) => {
 
     const data = await response.json();
     
-    // Find "Sales Dispositions" list or use the first list
-    const salesList = data.items?.find(list => list.name === 'Sales Dispositions') || data.items?.[0];
-    
-    // Extract disposition names from the list
-    const dispositions = salesList?.dispositions?.map(disp => disp.name) || [];
+    // Extract disposition names
+    const dispositions = data.items?.map(item => item.name) || [];
 
     return Response.json({ 
       dispositions: dispositions,
