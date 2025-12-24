@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Mail, Phone, DollarSign, Calendar, Building } from 'lucide-react';
@@ -51,6 +51,9 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
               {isLead ? record.Status : record.StageName}
             </Badge>
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            {isLead ? 'Lead details and information' : 'Opportunity details and information'}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 mt-4">
