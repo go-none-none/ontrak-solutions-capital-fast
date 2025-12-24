@@ -7,6 +7,7 @@ import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import CreateTaskModal from '../components/admin/CreateTaskModal';
+import TaskDetailsModal from '../components/admin/TaskDetailsModal';
 
 export default function AdminPipeline() {
   const [session, setSession] = useState(null);
@@ -22,6 +23,7 @@ export default function AdminPipeline() {
   const [expandedRecordType, setExpandedRecordType] = useState(null);
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [allTasks, setAllTasks] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   useEffect(() => {
     checkSession();
@@ -568,9 +570,13 @@ export default function AdminPipeline() {
                                         }
 
                                         return tasksToShow.map((task, idx) => (
-                                          <div
+                                          <button
                                             key={idx}
-                                            className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md hover:border-purple-500 transition-all"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setSelectedTask(task);
+                                            }}
+                                            className="w-full bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md hover:border-purple-500 transition-all text-left"
                                           >
                                             <div className="flex justify-between items-start">
                                               <div className="flex-1">
@@ -593,7 +599,7 @@ export default function AdminPipeline() {
                                                 )}
                                               </div>
                                             </div>
-                                          </div>
+                                          </button>
                                         ));
                                       })()
                                 }
@@ -664,6 +670,15 @@ export default function AdminPipeline() {
         session={session}
         repsData={repsData}
         onSuccess={() => loadAllRepsData(session, true)}
+      />
+
+      {/* Task Details Modal */}
+      <TaskDetailsModal
+        task={selectedTask}
+        isOpen={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        session={session}
+        onUpdate={() => loadAllRepsData(session, true)}
       />
     </div>
   );
