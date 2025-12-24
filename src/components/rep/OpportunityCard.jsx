@@ -57,19 +57,16 @@ export default function OpportunityCard({ opportunity, session, onUpdate, onOpen
   };
 
   return (
-    <div className="relative">
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={handleClick}
-        className={`border rounded-xl p-5 bg-white transition-all cursor-pointer ${
-          isDeclined 
-            ? 'border-red-200 bg-red-50/50 hover:shadow-lg hover:border-red-400' 
-            : 'border-slate-200 hover:shadow-lg hover:border-[#08708E]'
-        }`}
-      >
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      onClick={handleClick}
+      className={`border rounded-xl p-5 bg-white transition-all cursor-pointer ${
+        isDeclined 
+          ? 'border-red-200 bg-red-50/50 hover:shadow-lg hover:border-red-400' 
+          : 'border-slate-200 hover:shadow-lg hover:border-[#08708E]'
+      }`}
+    >
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-slate-900 mb-1">{opportunity.Name}</h3>
@@ -138,58 +135,6 @@ export default function OpportunityCard({ opportunity, session, onUpdate, onOpen
           </div>
           <span>Updated {formatDate(opportunity.LastModifiedDate)}</span>
         </div>
-      </motion.div>
-
-      <AnimatePresence>
-        {isHovered && (
-          <motion.div
-            initial={{ opacity: 0, x: -20, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -20, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl border-2 border-[#08708E] p-6 z-50 min-w-[500px]"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <p className="text-xs text-slate-500">Account</p>
-                  <p className="font-medium text-slate-900">{opportunity.Account?.Name || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500">Amount</p>
-                  <p className="font-semibold text-[#08708E] text-lg">{formatCurrency(opportunity.Amount)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500">Close Date</p>
-                  <p className="font-medium text-slate-900">
-                    {formatDate(opportunity.CloseDate)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500">Probability</p>
-                  <p className="font-medium text-slate-900">{opportunity.Probability || 0}%</p>
-                </div>
-                {opportunity.Amount_Requested__c && (
-                  <div>
-                    <p className="text-xs text-slate-500">Requested</p>
-                    <p className="font-medium text-slate-900">${(opportunity.Amount_Requested__c).toLocaleString()}</p>
-                  </div>
-                )}
-                {opportunity.Type && (
-                  <div>
-                    <p className="text-xs text-slate-500">Type</p>
-                    <p className="font-medium text-slate-900">{opportunity.Type}</p>
-                  </div>
-                )}
-              </div>
-              <p className="text-xs text-slate-500 text-center pt-2 border-t">Click anywhere to view full details</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
