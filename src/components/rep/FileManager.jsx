@@ -246,17 +246,19 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                 </div>
               ) : fileContent?.objectUrl ? (
                 viewingFile.ContentDocument.FileExtension?.toLowerCase() === 'pdf' ? (
-                  <object
-                    data={fileContent.objectUrl}
-                    type="application/pdf"
-                    className="w-full h-full rounded-lg"
-                  >
-                    <embed
-                      src={fileContent.objectUrl}
-                      type="application/pdf"
-                      className="w-full h-full rounded-lg"
+                  <div className="w-full h-full flex flex-col">
+                    <iframe
+                      src={`${fileContent.objectUrl}#view=FitH`}
+                      className="w-full flex-1 border-0 rounded-lg bg-white"
+                      title="PDF Viewer"
+                      style={{ minHeight: '600px' }}
                     />
-                  </object>
+                    <div className="flex justify-center gap-2 mt-2">
+                      <a href={fileContent.objectUrl} download={viewingFile.ContentDocument.Title} className="text-sm text-[#08708E] hover:underline">
+                        Download PDF
+                      </a>
+                    </div>
+                  </div>
                 ) : fileContent.contentType?.startsWith('image/') ? (
                   <img
                     src={fileContent.objectUrl}
