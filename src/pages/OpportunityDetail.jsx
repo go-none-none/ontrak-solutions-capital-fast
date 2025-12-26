@@ -10,8 +10,7 @@ import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
-import DialpadWidget from '../components/rep/DialpadWidget.jsx';
-import DialpadSMSWidget from '../components/rep/DialpadSMSWidget.jsx';
+import DialpadCard from '../components/rep/DialpadCard.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
@@ -664,10 +663,11 @@ export default function OpportunityDetail() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Dialpad SMS Widget */}
-            <DialpadSMSWidget
+            {/* Dialpad Card */}
+            <DialpadCard
               phoneNumber={opportunity.Phone || contactRoles[0]?.Contact?.MobilePhone || contactRoles[0]?.Contact?.Phone}
               contactName={contactRoles[0]?.Contact?.Name || opportunity.Account?.Name}
+              session={session}
             />
 
             {/* Email Client */}

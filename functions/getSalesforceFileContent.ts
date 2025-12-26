@@ -46,10 +46,18 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Failed to fetch file' }, { status: binaryResponse.status });
     }
 
-    // Convert binary to base64
+    // Convert binary to base64 efficiently
     const arrayBuffer = await binaryResponse.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    const base64 = btoa(String.fromCharCode.apply(null, uint8Array));
+    const bytes = new Uint8Array(arrayBuffer);
+    let binaryString = '';
+    const chunkSize = 8192;
+    
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+      binaryString += String.fromCharCode(...chunk);
+    }
+    
+    const base64 = btoa(binaryString);
 
     // Determine MIME type
     const mimeTypes = {
