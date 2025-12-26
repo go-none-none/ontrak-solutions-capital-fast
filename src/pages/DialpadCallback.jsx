@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function DialpadCallback() {
   const [status, setStatus] = useState('processing');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     handleCallback();
@@ -15,29 +16,26 @@ export default function DialpadCallback() {
       const code = urlParams.get('code');
       const state = urlParams.get('state');
 
-      if (!code || !state) {
+      if (!code) {
         setStatus('error');
+        setError('No authorization code received');
         return;
       }
 
-      // Extract SF user ID from state
-      const sfUserId = state.replace('sf_', '');
-
-      await base44.functions.invoke('dialpadManagement', {
-        action: 'exchangeToken',
-        code: code,
-        sfUserId: sfUserId
+      await base44.functions.invoke('dialpadOAuthNew', {
+        action: 'exchangeCode',
+        code: code
       });
 
       setStatus('success');
       
-      // Close window after 2 seconds
       setTimeout(() => {
         window.close();
       }, 2000);
     } catch (error) {
       console.error('Callback error:', error);
       setStatus('error');
+      setError(error.message || 'Failed to connect');
     }
   };
 
@@ -48,31 +46,28 @@ export default function DialpadCallback() {
           <>
             <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-slate-900 mb-2">Connecting Dialpad...</h2>
-            <p className="text-slate-600">Please wait while we complete the connection.</p>
+            <p className="text-slate-600">Please wait</p>
           </>
         )}
         
         {status === 'success' && (
           <>
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+              <CheckCircle className="w-6 h-6 text-green-600" />
             </div>
             <h2 className="text-xl font-semibold text-slate-900 mb-2">Connected!</h2>
-            <p className="text-slate-600">Dialpad has been successfully connected. This window will close automatically.</p>
+            <p className="text-slate-600">Dialpad connected successfully. This window will close automatically.</p>
           </>
         )}
         
         {status === 'error' && (
           <>
             <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <XCircle className="w-6 h-6 text-red-600" />
             </div>
             <h2 className="text-xl font-semibold text-slate-900 mb-2">Connection Failed</h2>
-            <p className="text-slate-600">Unable to connect Dialpad. Please try again.</p>
+            <p className="text-slate-600 mb-2">{error || 'Unable to connect Dialpad.'}</p>
+            <p className="text-sm text-slate-500">You can close this window and try again.</p>
           </>
         )}
       </div>

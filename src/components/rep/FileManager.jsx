@@ -3,14 +3,13 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { FileText, Upload, Loader2, Download, Eye, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import PDFViewer from './PDFViewer';
 
 export default function FileManager({ recordId, session, onFileUploaded }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [viewingFile, setViewingFile] = useState(null);
-  const [fileContent, setFileContent] = useState(null);
-  const [loadingFile, setLoadingFile] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -82,52 +81,20 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
     return FileText;
   };
 
-  const handleViewFile = async (file) => {
+  const handleViewFile = (file) => {
     const doc = file.ContentDocument;
     const isPdf = doc.FileExtension?.toLowerCase() === 'pdf';
-    const isImage = ['png', 'jpg', 'jpeg', 'gif', 'bmp'].includes(doc.FileExtension?.toLowerCase());
     
-    if (!isPdf && !isImage) {
-      // Download non-viewable files
+    if (isPdf) {
+      setViewingFile(file);
+    } else {
+      // Download non-PDF files
       window.open(`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`, '_blank');
-      return;
-    }
-
-    setViewingFile(file);
-    setLoadingFile(true);
-    
-    try {
-      const response = await base44.functions.invoke('getSalesforceFileContent', {
-        contentDocumentId: file.ContentDocumentId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
-
-      if (!response.data || !response.data.file) {
-        throw new Error('No file content received');
-      }
-
-      // Convert base64 to blob and create object URL
-      const base64Content = response.data.file;
-      const mimeType = response.data.mimeType || 'application/octet-stream';
-
-      // Use data URL instead of blob URL for better browser compatibility
-      const dataUrl = `data:${mimeType};base64,${base64Content}`;
-
-      console.log('PDF data URL created:', { mimeType, length: base64Content.length });
-      setFileContent({ objectUrl: dataUrl, contentType: mimeType });
-    } catch (error) {
-      console.error('Error loading file:', error);
-      alert(`Failed to load file: ${error.message}`);
-      setViewingFile(null);
-    } finally {
-      setLoadingFile(false);
     }
   };
 
   const closeViewer = () => {
     setViewingFile(null);
-    setFileContent(null);
   };
 
   return (

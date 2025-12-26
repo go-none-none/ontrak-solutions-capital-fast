@@ -7,7 +7,7 @@ import { MessageSquare, Phone, Send, Loader2, RefreshCw } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { format } from 'date-fns';
 
-export default function DialpadCard({ phoneNumber, contactName, session }) {
+export default function DialpadCard({ phoneNumber, contactName }) {
   const [messages, setMessages] = useState([]);
   const [calls, setCalls] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -30,9 +30,8 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
 
   const checkConnection = async () => {
     try {
-      const response = await base44.functions.invoke('dialpadManagement', {
-        action: 'checkConnection',
-        sfUserId: session.userId
+      const response = await base44.functions.invoke('dialpadOAuthNew', {
+        action: 'checkConnection'
       });
       setIsConnected(response.data.connected || false);
     } catch (error) {
@@ -44,28 +43,35 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
   const handleConnect = async () => {
     setConnecting(true);
     try {
-      const response = await base44.functions.invoke('dialpadManagement', {
-        action: 'connect',
-        sfUserId: session.userId
+      const response = await base44.functions.invoke('dialpadOAuthNew', {
+        action: 'getAuthUrl'
       });
       
       if (response.data.authUrl) {
-        const authWindow = window.open(response.data.authUrl, '_blank', 'width=600,height=700');
+        window.open(response.data.authUrl, 'dialpad-auth', 'width=600,height=700');
         
         // Poll for connection
         const checkInterval = setInterval(async () => {
-          await checkConnection();
-          if (isConnected) {
-            clearInterval(checkInterval);
-            if (authWindow) authWindow.close();
-            setConnecting(false);
+          try {
+            const connResponse = await base44.functions.invoke('dialpadOAuthNew', {
+              action: 'checkConnection'
+            });
+            
+            if (connResponse.data.connected) {
+              clearInterval(checkInterval);
+              setIsConnected(true);
+              setConnecting(false);
+            }
+          } catch (error) {
+            console.error('Poll error:', error);
           }
         }, 2000);
 
+        // Stop polling after 2 minutes
         setTimeout(() => {
           clearInterval(checkInterval);
           setConnecting(false);
-        }, 60000);
+        }, 120000);
       }
     } catch (error) {
       console.error('Connect error:', error);
@@ -76,10 +82,9 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
   const loadMessages = async () => {
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('dialpadManagement', {
+      const response = await base44.functions.invoke('dialpadAPI', {
         action: 'getMessages',
-        phoneNumber: phoneNumber,
-        sfUserId: session.userId
+        phoneNumber: phoneNumber
       });
       setMessages(response.data.messages || []);
     } catch (error) {
@@ -91,10 +96,9 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
 
   const loadCalls = async () => {
     try {
-      const response = await base44.functions.invoke('dialpadManagement', {
+      const response = await base44.functions.invoke('dialpadAPI', {
         action: 'getCalls',
-        phoneNumber: phoneNumber,
-        sfUserId: session.userId
+        phoneNumber: phoneNumber
       });
       setCalls(response.data.calls || []);
     } catch (error) {
@@ -107,11 +111,10 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
 
     setSending(true);
     try {
-      await base44.functions.invoke('dialpadManagement', {
+      await base44.functions.invoke('dialpadAPI', {
         action: 'sendMessage',
         phoneNumber: phoneNumber,
-        message: newMessage,
-        sfUserId: session.userId
+        message: newMessage
       });
       
       setNewMessage('');
@@ -122,15 +125,6 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
     } finally {
       setSending(false);
     }
-  };
-
-  const handleCall = () => {
-    const deepLink = `dialpad://call?number=${encodeURIComponent(phoneNumber)}`;
-    window.location.href = deepLink;
-    
-    setTimeout(() => {
-      loadCalls();
-    }, 5000);
   };
 
   if (!isConnected) {
@@ -171,15 +165,9 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
           </TabsList>
 
           <TabsContent value="sms" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <Button size="sm" variant="outline" onClick={loadMessages}>
-                <RefreshCw className="w-4 h-4" />
-              </Button>
-              <Button size="sm" onClick={handleCall} className="bg-green-600">
-                <Phone className="w-4 h-4 mr-2" />
-                Call via Dialpad App
-              </Button>
-            </div>
+            <Button size="sm" variant="outline" onClick={loadMessages}>
+              <RefreshCw className="w-4 h-4" />
+            </Button>
 
             {loading ? (
               <div className="flex justify-center py-8">
@@ -198,7 +186,7 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
                   >
                     <p className="text-sm text-slate-900">{msg.text}</p>
                     <p className="text-xs text-slate-500 mt-1">
-                      {format(new Date(msg.date_created), 'MMM d, h:mm a')}
+                      {msg.date_created ? format(new Date(msg.date_created), 'MMM d, h:mm a') : ''}
                     </p>
                   </div>
                 ))}
@@ -241,15 +229,10 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
                       <div>
                         <p className="font-medium text-sm">{call.direction === 'outbound' ? 'Outbound' : 'Inbound'}</p>
                         <p className="text-xs text-slate-500">
-                          {format(new Date(call.start_time), 'MMM d, h:mm a')} • {call.duration}s
+                          {call.start_time ? format(new Date(call.start_time * 1000), 'MMM d, h:mm a') : ''} • {call.duration || 0}s
                         </p>
                       </div>
                     </div>
-                    {call.disposition && (
-                      <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded">
-                        {call.disposition}
-                      </span>
-                    )}
                   </div>
                 </div>
               ))}
