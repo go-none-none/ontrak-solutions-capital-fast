@@ -102,25 +102,25 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-      
-      if (!response.data || !response.data.content) {
+
+      if (!response.data || !response.data.file) {
         throw new Error('No file content received');
       }
-      
+
       // Convert base64 to blob and create object URL
-      const base64Content = response.data.content;
-      const contentType = response.data.contentType || 'application/octet-stream';
-      
+      const base64Content = response.data.file;
+      const mimeType = response.data.mimeType || 'application/octet-stream';
+
       const byteCharacters = atob(base64Content);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: contentType });
+      const blob = new Blob([byteArray], { type: mimeType });
       const objectUrl = URL.createObjectURL(blob);
-      
-      setFileContent({ objectUrl, contentType });
+
+      setFileContent({ objectUrl, contentType: mimeType });
     } catch (error) {
       console.error('Error loading file:', error);
       alert(`Failed to load file: ${error.message}`);
