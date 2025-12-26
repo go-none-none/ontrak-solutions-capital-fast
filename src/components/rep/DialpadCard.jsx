@@ -30,9 +30,8 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
 
   const checkConnection = async () => {
     try {
-      const response = await base44.functions.invoke('dialpadCheckConnection', {
-        sfToken: session.token,
-        sfInstanceUrl: session.instanceUrl,
+      const response = await base44.functions.invoke('dialpadManagement', {
+        action: 'checkConnection',
         sfUserId: session.userId
       });
       setIsConnected(response.data.connected || false);
@@ -45,9 +44,8 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
   const handleConnect = async () => {
     setConnecting(true);
     try {
-      const response = await base44.functions.invoke('dialpadConnect', {
-        sfToken: session.token,
-        sfInstanceUrl: session.instanceUrl,
+      const response = await base44.functions.invoke('dialpadManagement', {
+        action: 'connect',
         sfUserId: session.userId
       });
       
@@ -78,10 +76,9 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
   const loadMessages = async () => {
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('dialpadGetMessages', {
+      const response = await base44.functions.invoke('dialpadManagement', {
+        action: 'getMessages',
         phoneNumber: phoneNumber,
-        sfToken: session.token,
-        sfInstanceUrl: session.instanceUrl,
         sfUserId: session.userId
       });
       setMessages(response.data.messages || []);
@@ -94,10 +91,9 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
 
   const loadCalls = async () => {
     try {
-      const response = await base44.functions.invoke('dialpadGetCalls', {
+      const response = await base44.functions.invoke('dialpadManagement', {
+        action: 'getCalls',
         phoneNumber: phoneNumber,
-        sfToken: session.token,
-        sfInstanceUrl: session.instanceUrl,
         sfUserId: session.userId
       });
       setCalls(response.data.calls || []);
@@ -111,11 +107,10 @@ export default function DialpadCard({ phoneNumber, contactName, session }) {
 
     setSending(true);
     try {
-      await base44.functions.invoke('dialpadSendMessage', {
+      await base44.functions.invoke('dialpadManagement', {
+        action: 'sendMessage',
         phoneNumber: phoneNumber,
         message: newMessage,
-        sfToken: session.token,
-        sfInstanceUrl: session.instanceUrl,
         sfUserId: session.userId
       });
       

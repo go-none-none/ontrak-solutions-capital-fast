@@ -249,12 +249,16 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                     className="w-full h-full border-0 rounded-lg"
                     title="PDF Viewer"
                   />
-                ) : (
+                ) : fileContent.contentType?.startsWith('image/') ? (
                   <img
                     src={fileContent.objectUrl}
                     alt={viewingFile.ContentDocument.Title}
                     className="max-w-full max-h-full mx-auto object-contain"
                   />
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <p className="text-slate-500">Preview not available for this file type</p>
+                  </div>
                 )
               ) : null}
             </div>
