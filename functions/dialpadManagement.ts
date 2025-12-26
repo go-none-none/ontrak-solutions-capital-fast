@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'connect') {
-      const redirectUri = `${Deno.env.get('BASE44_APP_URL') || 'https://base44.app'}/dialpad/callback`;
+      const redirectUri = 'https://ontrak.co';
       
       const authUrl = `https://dialpad.com/oauth2/authorize?` +
         `client_id=${CLIENT_ID}&` +

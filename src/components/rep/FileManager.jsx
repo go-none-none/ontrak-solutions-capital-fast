@@ -111,18 +111,11 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
       const base64Content = response.data.file;
       const mimeType = response.data.mimeType || 'application/octet-stream';
 
-      // Decode base64 to binary
-      const byteCharacters = atob(base64Content);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: mimeType });
-      const objectUrl = URL.createObjectURL(blob);
+      // Use data URL instead of blob URL for better browser compatibility
+      const dataUrl = `data:${mimeType};base64,${base64Content}`;
 
-      console.log('PDF blob created:', { size: blob.size, type: blob.type, url: objectUrl });
-      setFileContent({ objectUrl, contentType: mimeType });
+      console.log('PDF data URL created:', { mimeType, length: base64Content.length });
+      setFileContent({ objectUrl: dataUrl, contentType: mimeType });
     } catch (error) {
       console.error('Error loading file:', error);
       alert(`Failed to load file: ${error.message}`);
@@ -133,9 +126,6 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
   };
 
   const closeViewer = () => {
-    if (fileContent?.objectUrl) {
-      URL.revokeObjectURL(fileContent.objectUrl);
-    }
     setViewingFile(null);
     setFileContent(null);
   };
