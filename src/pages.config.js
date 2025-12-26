@@ -27,6 +27,7 @@ import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
+import DialpadCallback from './pages/DialpadCallback';
 import __Layout from './Layout.jsx';
 
 
@@ -60,6 +61,7 @@ export const PAGES = {
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
+    "DialpadCallback": DialpadCallback,
 }
 
 export const pagesConfig = {

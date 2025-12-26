@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'connect') {
-      const redirectUri = 'https://ontrak.co';
+      const redirectUri = 'https://ontrak.co/DialpadCallback';
       
       const authUrl = `https://dialpad.com/oauth2/authorize?` +
         `client_id=${CLIENT_ID}&` +
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
         return Response.json({ error: 'Missing authorization code' }, { status: 400 });
       }
 
-      const redirectUri = `${Deno.env.get('BASE44_APP_URL') || 'https://base44.app'}/dialpad/callback`;
+      const redirectUri = 'https://ontrak.co/DialpadCallback';
       
       const tokenResponse = await fetch('https://dialpad.com/oauth2/token', {
         method: 'POST',
@@ -55,6 +55,8 @@ Deno.serve(async (req) => {
       });
 
       if (!tokenResponse.ok) {
+        const errorText = await tokenResponse.text();
+        console.error('Token exchange error:', errorText);
         return Response.json({ error: 'Token exchange failed' }, { status: tokenResponse.status });
       }
 

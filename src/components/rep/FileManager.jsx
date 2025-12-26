@@ -236,18 +236,26 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                 </div>
               ) : fileContent?.objectUrl ? (
                 viewingFile.ContentDocument.FileExtension?.toLowerCase() === 'pdf' ? (
-                  <div className="w-full h-full flex flex-col">
-                    <iframe
-                      src={`${fileContent.objectUrl}#view=FitH`}
-                      className="w-full flex-1 border-0 rounded-lg bg-white"
-                      title="PDF Viewer"
-                      style={{ minHeight: '600px' }}
-                    />
-                    <div className="flex justify-center gap-2 mt-2">
-                      <a href={fileContent.objectUrl} download={viewingFile.ContentDocument.Title} className="text-sm text-[#08708E] hover:underline">
-                        Download PDF
-                      </a>
-                    </div>
+                  <div className="w-full h-full flex flex-col bg-slate-100">
+                    <object
+                      data={fileContent.objectUrl}
+                      type="application/pdf"
+                      width="100%"
+                      height="100%"
+                      className="flex-1"
+                      style={{ minHeight: '70vh' }}
+                    >
+                      <div className="flex flex-col items-center justify-center h-full p-8">
+                        <p className="text-slate-600 mb-4">Unable to display PDF in browser.</p>
+                        <a 
+                          href={fileContent.objectUrl} 
+                          download={viewingFile.ContentDocument.Title}
+                          className="px-4 py-2 bg-[#08708E] text-white rounded-lg hover:bg-[#065a72]"
+                        >
+                          Download PDF
+                        </a>
+                      </div>
+                    </object>
                   </div>
                 ) : fileContent.contentType?.startsWith('image/') ? (
                   <img
