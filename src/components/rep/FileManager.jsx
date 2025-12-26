@@ -111,6 +111,7 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
       const base64Content = response.data.file;
       const mimeType = response.data.mimeType || 'application/octet-stream';
 
+      // Decode base64 to binary
       const byteCharacters = atob(base64Content);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
@@ -120,6 +121,7 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
       const blob = new Blob([byteArray], { type: mimeType });
       const objectUrl = URL.createObjectURL(blob);
 
+      console.log('PDF blob created:', { size: blob.size, type: blob.type, url: objectUrl });
       setFileContent({ objectUrl, contentType: mimeType });
     } catch (error) {
       console.error('Error loading file:', error);
@@ -244,11 +246,17 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                 </div>
               ) : fileContent?.objectUrl ? (
                 viewingFile.ContentDocument.FileExtension?.toLowerCase() === 'pdf' ? (
-                  <iframe
-                    src={fileContent.objectUrl}
-                    className="w-full h-full border-0 rounded-lg"
-                    title="PDF Viewer"
-                  />
+                  <object
+                    data={fileContent.objectUrl}
+                    type="application/pdf"
+                    className="w-full h-full rounded-lg"
+                  >
+                    <embed
+                      src={fileContent.objectUrl}
+                      type="application/pdf"
+                      className="w-full h-full rounded-lg"
+                    />
+                  </object>
                 ) : fileContent.contentType?.startsWith('image/') ? (
                   <img
                     src={fileContent.objectUrl}

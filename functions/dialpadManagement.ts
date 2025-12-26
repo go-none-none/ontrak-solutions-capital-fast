@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
 
     if (action === 'connect') {
       const redirectUri = `${Deno.env.get('BASE44_APP_URL') || 'https://base44.app'}/dialpad/callback`;
-      const scopes = ['messages.read', 'messages.write', 'calls.read', 'users.read', 'dispositions.read'];
+      const scopes = ['sms', 'call_history'];
       
       const authUrl = `https://dialpad.com/oauth2/authorize?` +
         `client_id=${CLIENT_ID}&` +
