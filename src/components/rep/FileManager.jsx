@@ -186,60 +186,12 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
         </div>
       )}
 
-      {/* File Viewer Modal */}
-      {viewingFile && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-900">{viewingFile.ContentDocument.Title}</h3>
-              <Button variant="ghost" size="icon" onClick={closeViewer}>
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-            <div className="flex-1 overflow-hidden p-4">
-              {loadingFile ? (
-                <div className="flex items-center justify-center h-full">
-                  <Loader2 className="w-8 h-8 text-[#08708E] animate-spin" />
-                </div>
-              ) : fileContent?.objectUrl ? (
-                viewingFile.ContentDocument.FileExtension?.toLowerCase() === 'pdf' ? (
-                  <div className="w-full h-full flex flex-col bg-slate-100">
-                    <object
-                      data={fileContent.objectUrl}
-                      type="application/pdf"
-                      width="100%"
-                      height="100%"
-                      className="flex-1"
-                      style={{ minHeight: '70vh' }}
-                    >
-                      <div className="flex flex-col items-center justify-center h-full p-8">
-                        <p className="text-slate-600 mb-4">Unable to display PDF in browser.</p>
-                        <a 
-                          href={fileContent.objectUrl} 
-                          download={viewingFile.ContentDocument.Title}
-                          className="px-4 py-2 bg-[#08708E] text-white rounded-lg hover:bg-[#065a72]"
-                        >
-                          Download PDF
-                        </a>
-                      </div>
-                    </object>
-                  </div>
-                ) : fileContent.contentType?.startsWith('image/') ? (
-                  <img
-                    src={fileContent.objectUrl}
-                    alt={viewingFile.ContentDocument.Title}
-                    className="max-w-full max-h-full mx-auto object-contain"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <p className="text-slate-500">Preview not available for this file type</p>
-                  </div>
-                )
-              ) : null}
-            </div>
-          </div>
-        </div>
-      )}
+      <PDFViewer 
+        file={viewingFile}
+        session={session}
+        isOpen={!!viewingFile}
+        onClose={closeViewer}
+      />
     </div>
     </>
   );
