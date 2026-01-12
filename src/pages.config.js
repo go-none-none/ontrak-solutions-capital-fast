@@ -3,7 +3,6 @@ import AdminPipeline from './pages/AdminPipeline';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Contact from './pages/Contact';
-import DialpadCallback from './pages/DialpadCallback';
 import FAQ from './pages/FAQ';
 import Home from './pages/Home';
 import HowItWorks from './pages/HowItWorks';
@@ -37,7 +36,6 @@ export const PAGES = {
     "Blog": Blog,
     "BlogPost": BlogPost,
     "Contact": Contact,
-    "DialpadCallback": DialpadCallback,
     "FAQ": FAQ,
     "Home": Home,
     "HowItWorks": HowItWorks,
