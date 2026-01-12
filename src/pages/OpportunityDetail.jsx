@@ -609,7 +609,7 @@ export default function OpportunityDetail() {
 
               {/* Statements Tab */}
               <TabsContent value="statements" className="space-y-4">
-                <BankStatementAnalyzer opportunityId={opportunity.Id} session={session} />
+                <BankStatementAnalyzer opportunityId={opportunity.Id} />
               </TabsContent>
 
               {/* Debt Tab */}

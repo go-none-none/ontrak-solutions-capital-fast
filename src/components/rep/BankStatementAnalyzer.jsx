@@ -1,40 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Loader2, Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import BankStatementSummary from './BankStatementSummary';
 import TransactionTable from './TransactionTable';
 import RecurringPatternsList from './RecurringPatternsList';
 
-export default function BankStatementAnalyzer({ opportunityId, session }) {
+export default function BankStatementAnalyzer({ opportunityId }) {
   const [bankStatement, setBankStatement] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [patterns, setPatterns] = useState([]);
-  const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [parsing, setParsing] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [dataVerified, setDataVerified] = useState(false);
-  const [selectedFileId, setSelectedFileId] = useState('');
 
   useEffect(() => {
-    loadData();
+    loadBankStatementData();
   }, [opportunityId]);
 
-  const loadData = async () => {
+  const loadBankStatementData = async () => {
     setLoading(true);
     try {
-      const [stmtRes, txnRes, pattRes, filesRes] = await Promise.all([
+      const [stmtRes, txnRes, pattRes] = await Promise.all([
         base44.entities.BankStatement.filter({ opportunity_id: opportunityId }, '-created_date', 1),
         base44.entities.Transaction.filter({ opportunity_id: opportunityId }, '-transaction_date', 1000),
-        base44.entities.RecurringPattern.filter({ opportunity_id: opportunityId }, '-confidence_score', 100),
-        base44.functions.invoke('getSalesforceFiles', {
-          recordId: opportunityId,
-          token: session?.token,
-          instanceUrl: session?.instanceUrl
-        })
+        base44.entities.RecurringPattern.filter({ opportunity_id: opportunityId }, '-confidence_score', 100)
       ]);
 
       if (stmtRes.length > 0) {
@@ -43,45 +35,35 @@ export default function BankStatementAnalyzer({ opportunityId, session }) {
       }
       setTransactions(txnRes);
       setPatterns(pattRes);
-      
-      const pdfFiles = filesRes.data?.files?.filter(f => f.FileExtension?.toLowerCase() === 'pdf') || [];
-      setFiles(filesRes.data?.files || []);
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('Error loading bank statement data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleParseFile = async () => {
-    if (!selectedFileId) return;
-    
-    const file = files.find(f => f.Id === selectedFileId);
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
-    setParsing(true);
+    setUploading(true);
     try {
-      // Get file content URL
-      const contentRes = await base44.functions.invoke('getSalesforceFileContent', {
-        fileId: selectedFileId,
-        token: session?.token,
-        instanceUrl: session?.instanceUrl
-      });
+      // Upload file
+      const uploadRes = await base44.integrations.Core.UploadFile({ file });
       
       // Parse it
       await base44.functions.invoke('parseBankStatement', {
-        fileUrl: contentRes.data.contentUrl,
+        fileUrl: uploadRes.file_url,
         opportunityId: opportunityId
       });
 
       // Reload data
-      await loadData();
-      setSelectedFileId('');
+      await loadBankStatementData();
     } catch (error) {
-      console.error('Parse error:', error);
-      alert('Failed to parse statement');
+      console.error('Upload error:', error);
+      alert('Failed to upload and parse statement');
     } finally {
-      setParsing(false);
+      setUploading(false);
     }
   };
 
@@ -109,42 +91,26 @@ export default function BankStatementAnalyzer({ opportunityId, session }) {
     );
   }
 
-  const pdfFiles = files.filter(f => f.FileExtension?.toLowerCase() === 'pdf');
-
   return (
     <div className="space-y-6">
-      {/* File Selection Section */}
-      {!bankStatement && (
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">Select Bank Statement</h3>
-          {pdfFiles.length > 0 ? (
-            <div className="space-y-3">
-              <Select value={selectedFileId} onValueChange={setSelectedFileId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a PDF statement..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {pdfFiles.map(file => (
-                    <SelectItem key={file.Id} value={file.Id}>
-                      {file.Title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button
-                onClick={handleParseFile}
-                disabled={!selectedFileId || parsing}
-                className="w-full bg-[#08708E] hover:bg-[#065a75]"
-              >
-                {parsing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                Parse Statement
-              </Button>
-            </div>
-          ) : (
-            <p className="text-sm text-slate-500">No PDF files found. Upload statements to the Files section first.</p>
-          )}
-        </div>
-      )}
+      {/* Upload Section */}
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">Bank Statements</h3>
+        <label className="flex items-center justify-center w-full px-4 py-8 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-[#08708E] transition-colors">
+          <div className="text-center">
+            <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+            <p className="text-sm font-medium text-slate-900">Upload Bank Statement</p>
+            <p className="text-xs text-slate-500">PDF format, any bank</p>
+          </div>
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={handleFileUpload}
+            disabled={uploading}
+            className="hidden"
+          />
+        </label>
+      </div>
 
       {/* Verification Banner */}
       {bankStatement && !dataVerified && (
