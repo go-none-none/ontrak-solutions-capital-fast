@@ -17,6 +17,13 @@ export default function DialpadCard({ phoneNumber, contactName }) {
   const [isConnected, setIsConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
 
+  const handleLaunchDialer = (action = 'call') => {
+    const event = new CustomEvent('openMiniDialer', {
+      detail: { phoneNumber, action }
+    });
+    window.dispatchEvent(event);
+  };
+
   useEffect(() => {
     checkConnection();
   }, []);
@@ -158,9 +165,26 @@ export default function DialpadCard({ phoneNumber, contactName }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
+        <div className="flex gap-2 mb-4">
+          <Button
+            onClick={() => handleLaunchDialer('call')}
+            className="flex-1 bg-[#08708E] hover:bg-[#065a72]"
+          >
+            <Phone className="w-4 h-4 mr-2" />
+            Call
+          </Button>
+          <Button
+            onClick={() => handleLaunchDialer('sms')}
+            className="flex-1 bg-[#08708E] hover:bg-[#065a72]"
+          >
+            <MessageSquare className="w-4 h-4 mr-2" />
+            SMS
+          </Button>
+        </div>
+
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="sms">SMS</TabsTrigger>
+            <TabsTrigger value="sms">History</TabsTrigger>
             <TabsTrigger value="calls">Calls</TabsTrigger>
           </TabsList>
 
