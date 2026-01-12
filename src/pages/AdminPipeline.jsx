@@ -732,14 +732,12 @@ export default function AdminPipeline() {
                     </React.Fragment>
                   );
                 })}
-              </tbody>
-              </table>
-              </div>
-              </div>
+            </tbody>
+          </table>
+          </div>
         </div>
-      </div>
 
-      {/* Create Task Modal */}
+        {/* Create Task Modal */}
       <CreateTaskModal
         isOpen={showCreateTask}
         onClose={() => setShowCreateTask(false)}
@@ -756,7 +754,7 @@ export default function AdminPipeline() {
         session={session}
         onUpdate={() => loadAllRepsData(session, true)}
       />
-
+      </div>
     </div>
   );
 }
