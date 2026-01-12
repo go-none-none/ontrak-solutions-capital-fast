@@ -7,7 +7,7 @@ import { ArrowLeft, Loader2, ChevronDown, CheckCircle2, XCircle } from 'lucide-r
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadCard from '../components/rep/DialpadCard.jsx';
@@ -16,6 +16,7 @@ import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 
 export default function OpportunityDetail() {
+  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [opportunity, setOpportunity] = useState(null);
   const [contactRoles, setContactRoles] = useState([]);
@@ -26,6 +27,8 @@ export default function OpportunityDetail() {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [showDeclinedReasons, setShowDeclinedReasons] = useState(false);
   const [selectedDeclinedReason, setSelectedDeclinedReason] = useState('');
+  const [users, setUsers] = useState([]);
+  const [changingOwner, setChangingOwner] = useState(false);
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
@@ -33,8 +36,10 @@ export default function OpportunityDetail() {
       window.location.href = createPageUrl('RepPortal');
       return;
     }
-    setSession(JSON.parse(sessionData));
-    loadOpportunity(JSON.parse(sessionData));
+    const session = JSON.parse(sessionData);
+    setSession(session);
+    loadOpportunity(session);
+    loadUsers(session);
   }, []);
 
   const loadOpportunity = async (sessionData) => {
@@ -123,6 +128,18 @@ export default function OpportunityDetail() {
     }
   };
 
+  const loadUsers = async (sessionData) => {
+    try {
+      const response = await base44.functions.invoke('getSalesforceUsers', {
+        token: sessionData.token,
+        instanceUrl: sessionData.instanceUrl
+      });
+      setUsers(response.data.users || []);
+    } catch (error) {
+      console.error('Load users error:', error);
+    }
+  };
+
   const handleFieldSave = async (field) => {
     try {
       setEditing({ ...editing, [field]: true });
@@ -138,6 +155,31 @@ export default function OpportunityDetail() {
     } catch (error) {
       console.error('Update error:', error);
       setEditing({ ...editing, [field]: false });
+    }
+  };
+
+  const handleOwnerChange = async (newOwnerId) => {
+    setChangingOwner(true);
+    try {
+      await base44.functions.invoke('updateRecordOwner', {
+        recordId: opportunity.Id,
+        objectType: 'Opportunity',
+        ownerId: newOwnerId,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+
+      const newOwner = users.find(u => u.Id === newOwnerId);
+      setOpportunity({ 
+        ...opportunity, 
+        OwnerId: newOwnerId,
+        Owner: { Id: newOwnerId, Name: newOwner?.Name || 'Unknown' }
+      });
+    } catch (error) {
+      console.error('Change owner error:', error);
+      alert('Failed to change owner');
+    } finally {
+      setChangingOwner(false);
     }
   };
 
@@ -727,7 +769,24 @@ export default function OpportunityDetail() {
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs mb-1">Owner</p>
-                  <p className="font-medium text-slate-900">{opportunity.Owner?.Name}</p>
+                  <Select
+                    value={opportunity.OwnerId}
+                    onValueChange={handleOwnerChange}
+                    disabled={changingOwner}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue>
+                        {changingOwner ? 'Changing...' : opportunity.Owner?.Name || 'Select Owner'}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users.map(user => (
+                        <SelectItem key={user.Id} value={user.Id}>
+                          {user.Name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
