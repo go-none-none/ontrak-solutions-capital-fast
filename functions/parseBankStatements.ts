@@ -8,22 +8,23 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const base44 = createClientFromRequest(req);
+    // Use service role - no need for user auth since we're using Salesforce token
+    const base44 = createClientFromRequest(req).asServiceRole;
 
     // Create or update analysis record
-    const existingAnalysis = await base44.asServiceRole.entities.FinancialAnalysis.filter({ 
+    const existingAnalysis = await base44.entities.FinancialAnalysis.filter({ 
       opportunity_id: opportunityId 
     });
 
     let analysisId;
     if (existingAnalysis.length > 0) {
       analysisId = existingAnalysis[0].id;
-      await base44.asServiceRole.entities.FinancialAnalysis.update(analysisId, {
+      await base44.entities.FinancialAnalysis.update(analysisId, {
         parsing_status: 'processing',
         analysis_date: new Date().toISOString()
       });
     } else {
-      const newAnalysis = await base44.asServiceRole.entities.FinancialAnalysis.create({
+      const newAnalysis = await base44.entities.FinancialAnalysis.create({
         opportunity_id: opportunityId,
         parsing_status: 'processing',
         analysis_date: new Date().toISOString()
@@ -47,7 +48,7 @@ Deno.serve(async (req) => {
     const filesData = await filesResponse.json();
     
     if (!filesData.records) {
-      await base44.asServiceRole.entities.FinancialAnalysis.update(analysisId, {
+      await base44.entities.FinancialAnalysis.update(analysisId, {
         parsing_status: 'failed',
         error_message: 'Failed to fetch files from Salesforce'
       });
@@ -90,7 +91,7 @@ Deno.serve(async (req) => {
         const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBuffer)));
         
         // Upload to Base44 for processing
-        const uploadResponse = await base44.asServiceRole.integrations.Core.UploadFile({
+        const uploadResponse = await base44.integrations.Core.UploadFile({
           file: pdfBase64
         });
         
@@ -124,7 +125,7 @@ Deno.serve(async (req) => {
           }
         };
 
-        const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        const llmResponse = await base44.integrations.Core.InvokeLLM({
           prompt: `Parse this bank statement PDF and extract ALL transactions. For each transaction, provide:
 - Transaction date (YYYY-MM-DD format)
 - Description/memo (clean, exact text)
@@ -167,15 +168,15 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
     // Bulk create transactions
     if (allTransactions.length > 0) {
       // Delete old transactions for this opportunity
-      const oldTransactions = await base44.asServiceRole.entities.BankTransaction.filter({
+      const oldTransactions = await base44.entities.BankTransaction.filter({
         opportunity_id: opportunityId
       });
       for (const old of oldTransactions) {
-        await base44.asServiceRole.entities.BankTransaction.delete(old.id);
+        await base44.entities.BankTransaction.delete(old.id);
       }
 
       // Create new transactions
-      await base44.asServiceRole.entities.BankTransaction.bulkCreate(allTransactions);
+      await base44.entities.BankTransaction.bulkCreate(allTransactions);
     }
 
     // Calculate summary metrics
@@ -204,7 +205,7 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
     const negativeDays = allTransactions.filter(t => t.balance < 0).length;
 
     // Update analysis
-    await base44.asServiceRole.entities.FinancialAnalysis.update(analysisId, {
+    await base44.entities.FinancialAnalysis.update(analysisId, {
       parsing_status: 'completed',
       pdf_count: pdfFilenames.length,
       pdf_filenames: pdfFilenames,
