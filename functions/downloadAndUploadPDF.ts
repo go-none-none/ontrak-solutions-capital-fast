@@ -17,24 +17,14 @@ Deno.serve(async (req) => {
       return Response.json({ error: `Failed to download PDF: ${pdfResponse.status}` }, { status: 400 });
     }
 
-    const pdfBuffer = await pdfResponse.arrayBuffer();
-    console.log(`Downloaded ${pdfBuffer.byteLength} bytes`);
-
-    // Write to temp file with timestamp
-    const tempPath = `/tmp/statement_${Date.now()}.pdf`;
-    await Deno.writeFile(tempPath, new Uint8Array(pdfBuffer));
-    console.log(`Wrote to temp file: ${tempPath}`);
+    const pdfBlob = await pdfResponse.blob();
+    console.log(`Downloaded ${pdfBlob.size} bytes`);
     
-    const file = await Deno.open(tempPath);
-    
-    // Upload to Base44 public storage (for parsing)
-    console.log(`Uploading PDF to Base44 storage (${pdfBuffer.byteLength} bytes)`);
+    // Upload blob directly to Base44 public storage
+    console.log(`Uploading PDF to Base44 storage (${pdfBlob.size} bytes)`);
     const uploadResult = await base44.integrations.Core.UploadFile({
-      file: file
+      file: pdfBlob
     });
-
-    file.close();
-    await Deno.remove(tempPath);
 
     console.log(`PDF uploaded to Base44: ${uploadResult.file_url}`);
 
