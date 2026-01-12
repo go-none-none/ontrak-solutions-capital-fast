@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('Salesforce error:', error);
+      console.error('Salesforce error for userId:', userId, 'Error:', error);
       return Response.json({ error: 'Failed to fetch opportunities', details: error }, { status: 500 });
     }
 
@@ -49,7 +49,8 @@ Deno.serve(async (req) => {
       allOpportunities = allOpportunities.concat(data.records || []);
     }
     
-    console.log('Fetched opportunities count:', allOpportunities.length);
+    console.log('Fetched opportunities count for userId', userId, ':', allOpportunities.length);
+    console.log('Query used:', query);
 
     return Response.json({ opportunities: allOpportunities });
   } catch (error) {
