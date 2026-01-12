@@ -1,9 +1,11 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
-  try {
-    const base44 = createClientFromRequest(req);
-    const { userId, token, instanceUrl } = await req.json();
+        try {
+          console.log('getRepLeads - Function called');
+          const base44 = createClientFromRequest(req);
+          const { userId, token, instanceUrl } = await req.json();
+          console.log('getRepLeads - Received params. userId:', userId, 'token present:', !!token, 'instanceUrl:', instanceUrl);
 
     if (!userId || !token || !instanceUrl) {
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
