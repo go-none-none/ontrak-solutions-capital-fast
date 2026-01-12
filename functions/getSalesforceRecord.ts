@@ -9,9 +9,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
-    // Get all fields for the record
+    // Query to get record with Owner information
+    const query = `SELECT FIELDS(ALL), Owner.Name, Owner.Id FROM ${recordType} WHERE Id = '${recordId}' LIMIT 1`;
     const response = await fetch(
-      `${instanceUrl}/services/data/v59.0/sobjects/${recordType}/${recordId}`,
+      `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -26,7 +27,13 @@ Deno.serve(async (req) => {
     }
 
     const data = await response.json();
-    return Response.json({ record: data });
+    const record = data.records && data.records[0] ? data.records[0] : null;
+    
+    if (!record) {
+      return Response.json({ error: 'Record not found' }, { status: 404 });
+    }
+    
+    return Response.json({ record });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
