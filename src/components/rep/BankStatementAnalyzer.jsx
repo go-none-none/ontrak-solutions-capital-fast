@@ -27,10 +27,9 @@ export default function BankStatementAnalyzer({ recordId, session }) {
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-      const pdfFiles = (response.data.files || []).filter(f => 
-        f.FileType === 'PDF' || f.Title?.toLowerCase().endsWith('.pdf')
-      );
-      setFiles(pdfFiles);
+      // Accept all files (PDFs and others) for parsing
+      const allFiles = response.data.files || [];
+      setFiles(allFiles);
     } catch (error) {
       console.error('Load files error:', error);
     }
@@ -99,7 +98,7 @@ export default function BankStatementAnalyzer({ recordId, session }) {
   return (
     <div className="space-y-6">
       {/* File Selection & Parsing */}
-      {files.length > 0 && bankStatements.length === 0 && (
+      {files.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm p-6 border-2 border-blue-200">
           <h3 className="text-lg font-semibold text-slate-900 mb-4">Parse Bank Statements</h3>
           <div className="space-y-4">
@@ -110,7 +109,7 @@ export default function BankStatementAnalyzer({ recordId, session }) {
                 onChange={(e) => setSelectedFileUrl(e.target.value)}
                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#08708E]"
               >
-                <option value="">Choose a PDF...</option>
+                <option value="">Choose a file...</option>
                 {files.map(file => (
                   <option key={file.Id} value={file.LatestPublishedVersionId}>
                     {file.Title}
