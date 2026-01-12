@@ -617,7 +617,7 @@ export default function MiniDialer({ session }) {
                     ))
                   )}
                 </div>
-              ))}
+              )}
             </div>
           </div>
         )}
