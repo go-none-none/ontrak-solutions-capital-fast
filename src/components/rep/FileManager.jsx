@@ -120,22 +120,28 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
         .filter(f => selectedPDFs.includes(f.ContentDocumentId))
         .map(f => ({
           Id: f.ContentDocument?.LatestPublishedVersionId || f.ContentDocumentId,
-          Title: f.ContentDocument?.Title || '',
-          VersionId: f.ContentDocument?.LatestPublishedVersionId
+          Title: f.ContentDocument?.Title || ''
         }));
 
-      await base44.functions.invoke('parseBankStatements', {
+      const parseResponse = await base44.functions.invoke('parseBankStatements', {
         opportunityId: recordId,
         files: selectedFiles,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
 
+      // After parsing succeeds, detect patterns
+      if (parseResponse.data?.success) {
+        await base44.functions.invoke('detectRecurringPatterns', {
+          opportunityId: recordId
+        });
+      }
+
       setSelectedPDFs([]);
       if (onFileUploaded) onFileUploaded();
     } catch (error) {
       console.error('Parse error:', error);
-      alert('Failed to parse statements');
+      alert('Failed to parse statements: ' + error.message);
     } finally {
       setParsing(false);
     }
