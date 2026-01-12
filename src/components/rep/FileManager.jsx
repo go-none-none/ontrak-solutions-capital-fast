@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { FileText, Upload, Loader2, Download, Eye, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import PDFViewerWithParser from './PDFViewerWithParser';
+import PDFViewer from './PDFViewer';
 
 export default function FileManager({ recordId, session, onFileUploaded }) {
   const [files, setFiles] = useState([]);
@@ -186,7 +186,7 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
         </div>
       )}
 
-      <PDFViewerWithParser 
+      <PDFViewer 
         file={viewingFile}
         session={session}
         isOpen={!!viewingFile}
