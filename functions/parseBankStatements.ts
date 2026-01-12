@@ -32,58 +32,24 @@ Deno.serve(async (req) => {
       analysisId = newAnalysis.id;
     }
 
-    // Fetch all PDF files from Salesforce for this specific opportunity
-    const filesResponse = await fetch(
-      `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(
-        `SELECT ContentDocumentId, ContentDocument.Title, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLink WHERE LinkedEntityId = '${opportunityId}'`
-      )}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-
-    const filesData = await filesResponse.json();
-    
-    if (!filesData.records) {
-      await base44.entities.FinancialAnalysis.update(analysisId, {
-        parsing_status: 'failed',
-        error_message: 'Failed to fetch files from Salesforce'
-      });
-      return Response.json({ error: 'Failed to fetch files from Salesforce' }, { status: 400 });
-    }
-
-    const pdfFiles = filesData.records.filter(r => 
-      r.ContentDocument?.Title?.toLowerCase().endsWith('.pdf')
-    );
-
-    if (pdfFiles.length === 0) {
-      await base44.asServiceRole.entities.FinancialAnalysis.update(analysisId, {
-        parsing_status: 'failed',
-        error_message: 'No PDF files found'
-      });
-      return Response.json({ error: 'No PDF files found' }, { status: 400 });
-    }
-
     const allTransactions = [];
     const pdfFilenames = [];
 
-    // Process each PDF
-    for (const file of pdfFiles) {
+    // Process each selected file (passed from frontend)
+    for (const file of files) {
       try {
-        // Get file content
-        const versionId = file.ContentDocument.LatestPublishedVersionId;
+        const fileName = file.Title;
+        
+        // Fetch file content from Salesforce using ContentVersion
         const contentResponse = await fetch(
-          `${instanceUrl}/services/data/v59.0/sobjects/ContentVersion/${versionId}/VersionData`,
+          `${instanceUrl}/services/data/v59.0/sobjects/ContentVersion/${file.Id}/VersionData`,
           {
             headers: { 'Authorization': `Bearer ${token}` }
           }
         );
 
         if (!contentResponse.ok) {
-          console.error(`Failed to fetch file ${file.ContentDocument.Title}`);
+          console.error(`Failed to fetch file ${fileName}`);
           continue;
         }
 
@@ -96,7 +62,7 @@ Deno.serve(async (req) => {
         });
         
         const fileUrl = uploadResponse.file_url;
-        pdfFilenames.push(file.ContentDocument.Title);
+        pdfFilenames.push(fileName);
 
         // Use LLM with structured extraction
         const extractionSchema = {
