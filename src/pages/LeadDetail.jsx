@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ArrowLeft, Edit, Loader2, CheckCircle2, ChevronDown, XCircle } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Edit, Loader2, CheckCircle2, ChevronDown, XCircle, ArrowRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadCard from '../components/rep/DialpadCard.jsx';
@@ -13,13 +14,17 @@ import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 
 export default function LeadDetail() {
+  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [lead, setLead] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [converting, setConverting] = useState(false);
   const [editing, setEditing] = useState({});
   const [editValues, setEditValues] = useState({});
   const [refreshKey, setRefreshKey] = useState(0);
+  const [users, setUsers] = useState([]);
+  const [changingOwner, setChangingOwner] = useState(false);
   const [openSections, setOpenSections] = useState({
     contact: true,
     owner1: false,
@@ -50,8 +55,10 @@ export default function LeadDetail() {
       window.location.href = createPageUrl('RepPortal');
       return;
     }
-    setSession(JSON.parse(sessionData));
-    loadLead(JSON.parse(sessionData));
+    const session = JSON.parse(sessionData);
+    setSession(session);
+    loadLead(session);
+    loadUsers(session);
   }, []);
 
   const loadLead = async (sessionData) => {
@@ -97,6 +104,18 @@ export default function LeadDetail() {
     }
   };
 
+  const loadUsers = async (sessionData) => {
+    try {
+      const response = await base44.functions.invoke('getSalesforceUsers', {
+        token: sessionData.token,
+        instanceUrl: sessionData.instanceUrl
+      });
+      setUsers(response.data.users || []);
+    } catch (error) {
+      console.error('Load users error:', error);
+    }
+  };
+
   const handleFieldSave = async (field) => {
     try {
       setEditing({ ...editing, [field]: true });
@@ -113,6 +132,58 @@ export default function LeadDetail() {
     } catch (error) {
       console.error('Update error:', error);
       setEditing({ ...editing, [field]: false });
+    }
+  };
+
+  const handleOwnerChange = async (newOwnerId) => {
+    setChangingOwner(true);
+    try {
+      await base44.functions.invoke('updateRecordOwner', {
+        recordId: lead.Id,
+        objectType: 'Lead',
+        ownerId: newOwnerId,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+
+      const newOwner = users.find(u => u.Id === newOwnerId);
+      setLead({ 
+        ...lead, 
+        OwnerId: newOwnerId,
+        Owner: { Id: newOwnerId, Name: newOwner?.Name || 'Unknown' }
+      });
+    } catch (error) {
+      console.error('Change owner error:', error);
+      alert('Failed to change owner');
+    } finally {
+      setChangingOwner(false);
+    }
+  };
+
+  const handleConvertLead = async () => {
+    if (!confirm('Are you sure you want to convert this lead to an opportunity? This action cannot be undone.')) {
+      return;
+    }
+
+    setConverting(true);
+    try {
+      const response = await base44.functions.invoke('convertLead', {
+        leadId: lead.Id,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+
+      if (response.data.success && response.data.opportunityId) {
+        navigate(createPageUrl('OpportunityDetail') + `?id=${response.data.opportunityId}`);
+      } else {
+        alert('Lead converted successfully');
+        navigate(createPageUrl('RepPortal'));
+      }
+    } catch (error) {
+      console.error('Convert lead error:', error);
+      alert('Failed to convert lead: ' + (error.message || 'Unknown error'));
+    } finally {
+      setConverting(false);
     }
   };
 
@@ -159,16 +230,28 @@ export default function LeadDetail() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <Link to={createPageUrl('RepPortal')}>
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">{lead.Name}</h1>
-              <p className="text-sm text-slate-600">{lead.Company}</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link to={createPageUrl('RepPortal')}>
+                <Button variant="outline" size="sm">
+                  <ArrowLeft className="w-4 h-4" />
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900">{lead.Name}</h1>
+                <p className="text-sm text-slate-600">{lead.Company}</p>
+              </div>
             </div>
+            {!lead.IsConverted && (
+              <Button 
+                onClick={handleConvertLead} 
+                disabled={converting}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {converting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ArrowRight className="w-4 h-4 mr-2" />}
+                Convert to Opportunity
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -508,8 +591,25 @@ export default function LeadDetail() {
                   <p className="text-xl font-bold text-[#08708E]">${lead.Amount_Requested__c ? parseFloat(lead.Amount_Requested__c).toLocaleString() : '0'}</p>
                 </div>
                 <div>
-                  <p className="text-slate-500 text-xs">Lead Owner</p>
-                  <p className="font-medium text-slate-900">{lead.Owner?.Name}</p>
+                  <p className="text-slate-500 text-xs mb-1">Lead Owner</p>
+                  <Select
+                    value={lead.OwnerId}
+                    onValueChange={handleOwnerChange}
+                    disabled={changingOwner}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue>
+                        {changingOwner ? 'Changing...' : lead.Owner?.Name || 'Select Owner'}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users.map(user => (
+                        <SelectItem key={user.Id} value={user.Id}>
+                          {user.Name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs">Status</p>
