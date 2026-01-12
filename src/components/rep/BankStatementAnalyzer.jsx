@@ -102,14 +102,9 @@ export default function BankStatementAnalyzer({ recordId, session }) {
           throw new Error('Failed to upload PDF to Base44');
         }
 
-        // Create signed URL for parsing
-        const signedUrlResponse = await base44.functions.invoke('getSignedFileUrl', {
-          file_uri: uploadResponse.data.file_uri
-        });
-
-        // Parse using the signed URL
+        // Parse using the Base44 URL
         await base44.functions.invoke('parseBankStatement', {
-          fileUrl: signedUrlResponse.data.signed_url,
+          fileUrl: uploadResponse.data.file_url,
           opportunityId: recordId
         });
       }

@@ -18,19 +18,19 @@ Deno.serve(async (req) => {
     }
 
     const pdfBuffer = await pdfResponse.arrayBuffer();
-    const uint8Array = new Uint8Array(pdfBuffer);
+    const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
 
-    // Upload to Base44 private storage
-    console.log(`Uploading PDF to Base44 storage (${uint8Array.length} bytes)`);
-    const uploadResult = await base44.integrations.Core.UploadPrivateFile({
-      file: uint8Array
+    // Upload to Base44 public storage (for parsing)
+    console.log(`Uploading PDF to Base44 storage (${blob.size} bytes)`);
+    const uploadResult = await base44.integrations.Core.UploadFile({
+      file: blob
     });
 
-    console.log(`PDF uploaded to Base44: ${uploadResult.file_uri}`);
+    console.log(`PDF uploaded to Base44: ${uploadResult.file_url}`);
 
     return Response.json({
       success: true,
-      file_uri: uploadResult.file_uri
+      file_url: uploadResult.file_url
     });
 
   } catch (error) {
