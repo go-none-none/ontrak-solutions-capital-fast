@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare, Search, ArrowUpDown, ArrowUp, ArrowDown, FileText } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
@@ -315,6 +315,63 @@ export default function AdminPipeline() {
   const totalTasks = allTasks.length;
   const openTasks = allTasks.filter(t => t.Status !== 'Completed').length;
 
+  // Universal Search
+  const handleUniversalSearch = (searchTerm) => {
+    setUniversalSearch(searchTerm);
+    
+    if (!searchTerm.trim()) {
+      setSearchResults({ leads: [], opportunities: [], tasks: [] });
+      return;
+    }
+
+    const term = searchTerm.toLowerCase();
+    const results = { leads: [], opportunities: [], tasks: [] };
+
+    // Search through all leads
+    allRepsData.forEach(rep => {
+      rep.leads?.forEach(lead => {
+        if (
+          lead.Name?.toLowerCase().includes(term) ||
+          lead.Company?.toLowerCase().includes(term) ||
+          lead.Email?.toLowerCase().includes(term) ||
+          lead.Phone?.toLowerCase().includes(term) ||
+          lead.Status?.toLowerCase().includes(term)
+        ) {
+          results.leads.push({ ...lead, ownerName: rep.name });
+        }
+      });
+    });
+
+    // Search through all opportunities
+    allRepsData.forEach(rep => {
+      rep.opportunities?.forEach(opp => {
+        if (
+          opp.Name?.toLowerCase().includes(term) ||
+          opp.Account?.Name?.toLowerCase().includes(term) ||
+          opp.StageName?.toLowerCase().includes(term) ||
+          (opp.Amount && opp.Amount.toString().includes(term))
+        ) {
+          results.opportunities.push({ ...opp, ownerName: rep.name });
+        }
+      });
+    });
+
+    // Search through all tasks
+    allTasks.forEach(task => {
+      if (
+        task.Subject?.toLowerCase().includes(term) ||
+        task.Description?.toLowerCase().includes(term) ||
+        task.Status?.toLowerCase().includes(term) ||
+        task.What?.Name?.toLowerCase().includes(term)
+      ) {
+        const owner = allUsers.find(u => u.Id === task.OwnerId);
+        results.tasks.push({ ...task, ownerName: owner?.Name });
+      }
+    });
+
+    setSearchResults(results);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header */}
@@ -441,6 +498,131 @@ export default function AdminPipeline() {
               </div>
             </div>
           </motion.div>
+        </div>
+
+        {/* Universal Search */}
+        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Input
+              placeholder="Search across all leads, opportunities, and tasks..."
+              value={universalSearch}
+              onChange={(e) => handleUniversalSearch(e.target.value)}
+              className="pl-10 h-12 text-base"
+            />
+            {universalSearch && (
+              <button
+                onClick={() => handleUniversalSearch('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+
+          {/* Search Results */}
+          {universalSearch && (
+            <div className="mt-4 space-y-4 max-h-96 overflow-y-auto">
+              {searchResults.leads.length === 0 && searchResults.opportunities.length === 0 && searchResults.tasks.length === 0 ? (
+                <p className="text-center text-slate-500 py-8">No results found</p>
+              ) : (
+                <>
+                  {/* Leads Results */}
+                  {searchResults.leads.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-700 mb-2">Leads ({searchResults.leads.length})</h4>
+                      <div className="space-y-2">
+                        {searchResults.leads.map(lead => (
+                          <button
+                            key={lead.Id}
+                            onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)}
+                            className="w-full bg-slate-50 hover:bg-slate-100 rounded-lg p-3 text-left transition-colors border border-slate-200"
+                          >
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-medium text-slate-900">{lead.Name}</p>
+                                <p className="text-xs text-slate-500">{lead.Company}</p>
+                                <p className="text-xs text-slate-600 mt-1">Owner: {lead.ownerName}</p>
+                              </div>
+                              <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+                                {lead.Status}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Opportunities Results */}
+                  {searchResults.opportunities.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-700 mb-2">Opportunities ({searchResults.opportunities.length})</h4>
+                      <div className="space-y-2">
+                        {searchResults.opportunities.map(opp => (
+                          <button
+                            key={opp.Id}
+                            onClick={() => navigate(createPageUrl('OpportunityDetail') + `?id=${opp.Id}`)}
+                            className="w-full bg-slate-50 hover:bg-slate-100 rounded-lg p-3 text-left transition-colors border border-slate-200"
+                          >
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-medium text-slate-900">{opp.Name}</p>
+                                <p className="text-xs text-slate-500">{opp.Account?.Name}</p>
+                                <p className="text-xs text-slate-600 mt-1">Owner: {opp.ownerName}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-semibold text-[#08708E] text-sm">{formatCurrency(opp.Amount || 0)}</p>
+                                <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800">
+                                  {opp.StageName}
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tasks Results */}
+                  {searchResults.tasks.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-700 mb-2">Tasks ({searchResults.tasks.length})</h4>
+                      <div className="space-y-2">
+                        {searchResults.tasks.map(task => (
+                          <button
+                            key={task.Id}
+                            onClick={() => setSelectedTask(task)}
+                            className="w-full bg-slate-50 hover:bg-slate-100 rounded-lg p-3 text-left transition-colors border border-slate-200"
+                          >
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <p className="font-medium text-slate-900">{task.Subject}</p>
+                                {task.What?.Name && (
+                                  <p className="text-xs text-purple-600 mt-1">Related: {task.What.Name}</p>
+                                )}
+                                <p className="text-xs text-slate-600 mt-1">Owner: {task.ownerName}</p>
+                              </div>
+                              <div className="text-right ml-3">
+                                <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800">
+                                  {task.Status}
+                                </span>
+                                {task.ActivityDate && (
+                                  <p className="text-xs text-slate-500 mt-1">
+                                    {new Date(task.ActivityDate).toLocaleDateString()}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Create Task Button */}
