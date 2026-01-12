@@ -7,6 +7,7 @@ import { Loader2, FileText, TrendingUp, TrendingDown, DollarSign, AlertTriangle,
 import { base44 } from '@/api/base44Client';
 import RecurringPatternsTable from './RecurringPatternsTable';
 import TransactionTable from './TransactionTable';
+import StatementFileSelector from './StatementFileSelector';
 
 export default function FinancialIntelligence({ opportunityId, session }) {
   const [analysis, setAnalysis] = useState(null);
@@ -43,11 +44,12 @@ export default function FinancialIntelligence({ opportunityId, session }) {
     }
   };
 
-  const handleParse = async () => {
+  const handleParse = async (selectedFiles) => {
     setParsing(true);
     try {
       await base44.functions.invoke('parseBankStatements', {
         opportunityId,
+        files: selectedFiles,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
@@ -110,21 +112,12 @@ export default function FinancialIntelligence({ opportunityId, session }) {
 
   if (!analysis || analysis.parsing_status === 'pending') {
     return (
-      <Card className="p-6">
-        <div className="text-center">
-          <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-slate-900 mb-2">
-            Financial Intelligence
-          </h3>
-          <p className="text-sm text-slate-600 mb-4">
-            Parse bank statements to extract financial insights and auto-populate opportunity fields.
-          </p>
-          <Button onClick={handleParse} disabled={parsing}>
-            {parsing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <FileText className="w-4 h-4 mr-2" />}
-            Parse Bank Statements
-          </Button>
-        </div>
-      </Card>
+      <StatementFileSelector
+        recordId={opportunityId}
+        session={session}
+        onParse={handleParse}
+        isParsing={parsing}
+      />
     );
   }
 

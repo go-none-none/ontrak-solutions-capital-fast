@@ -2,10 +2,10 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const { opportunityId, token, instanceUrl } = await req.json();
+    const { opportunityId, token, instanceUrl, files } = await req.json();
 
-    if (!opportunityId || !token || !instanceUrl) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!opportunityId || !token || !instanceUrl || !files || files.length === 0) {
+      return Response.json({ error: 'Missing required fields or no files selected' }, { status: 400 });
     }
 
     // Use service role - no need for user auth since we're using Salesforce token
@@ -147,7 +147,7 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
           
           const normalized = {
             opportunity_id: opportunityId,
-            pdf_filename: file.ContentDocument.Title,
+            pdf_filename: fileName,
             transaction_date: tx.date,
             description: tx.description,
             description_clean: cleanDescription(tx.description),
@@ -161,7 +161,7 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
           allTransactions.push(normalized);
         }
       } catch (fileError) {
-        console.error(`Error processing ${file.ContentDocument.Title}:`, fileError);
+        console.error(`Error processing ${fileName}:`, fileError);
       }
     }
 
