@@ -1,32 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import BankStatementSummary from './BankStatementSummary';
 import TransactionTable from './TransactionTable';
 import RecurringPatternsList from './RecurringPatternsList';
 
-export default function BankStatementAnalyzer({ opportunityId }) {
+export default function BankStatementAnalyzer({ opportunityId, session }) {
   const [bankStatement, setBankStatement] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [patterns, setPatterns] = useState([]);
+  const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  const [parsing, setParsing] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [dataVerified, setDataVerified] = useState(false);
+  const [selectedFileId, setSelectedFileId] = useState('');
 
   useEffect(() => {
-    loadBankStatementData();
+    loadData();
   }, [opportunityId]);
 
-  const loadBankStatementData = async () => {
+  const loadData = async () => {
     setLoading(true);
     try {
-      const [stmtRes, txnRes, pattRes] = await Promise.all([
+      const [stmtRes, txnRes, pattRes, filesRes] = await Promise.all([
         base44.entities.BankStatement.filter({ opportunity_id: opportunityId }, '-created_date', 1),
         base44.entities.Transaction.filter({ opportunity_id: opportunityId }, '-transaction_date', 1000),
-        base44.entities.RecurringPattern.filter({ opportunity_id: opportunityId }, '-confidence_score', 100)
+        base44.entities.RecurringPattern.filter({ opportunity_id: opportunityId }, '-confidence_score', 100),
+        base44.functions.invoke('getSalesforceFiles', {
+          recordId: opportunityId,
+          token: session?.token,
+          instanceUrl: session?.instanceUrl
+        })
       ]);
 
       if (stmtRes.length > 0) {
@@ -35,35 +43,45 @@ export default function BankStatementAnalyzer({ opportunityId }) {
       }
       setTransactions(txnRes);
       setPatterns(pattRes);
+      
+      const pdfFiles = filesRes.data?.files?.filter(f => f.FileExtension === 'pdf') || [];
+      setFiles(pdfFiles);
     } catch (error) {
-      console.error('Error loading bank statement data:', error);
+      console.error('Error loading data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
+  const handleParseFile = async () => {
+    if (!selectedFileId) return;
+    
+    const file = files.find(f => f.Id === selectedFileId);
     if (!file) return;
 
-    setUploading(true);
+    setParsing(true);
     try {
-      // Upload file
-      const uploadRes = await base44.integrations.Core.UploadFile({ file });
+      // Get file content URL
+      const contentRes = await base44.functions.invoke('getSalesforceFileContent', {
+        fileId: selectedFileId,
+        token: session?.token,
+        instanceUrl: session?.instanceUrl
+      });
       
       // Parse it
       await base44.functions.invoke('parseBankStatement', {
-        fileUrl: uploadRes.file_url,
+        fileUrl: contentRes.data.contentUrl,
         opportunityId: opportunityId
       });
 
       // Reload data
-      await loadBankStatementData();
+      await loadData();
+      setSelectedFileId('');
     } catch (error) {
-      console.error('Upload error:', error);
-      alert('Failed to upload and parse statement');
+      console.error('Parse error:', error);
+      alert('Failed to parse statement');
     } finally {
-      setUploading(false);
+      setParsing(false);
     }
   };
 
