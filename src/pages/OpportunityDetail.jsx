@@ -251,11 +251,9 @@ export default function OpportunityDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link to={createPageUrl('RepPortal')}>
-                <Button variant="outline" size="sm">
-                  <ArrowLeft className="w-4 h-4" />
-                </Button>
-              </Link>
+              <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">{opportunity.Name}</h1>
                 <p className="text-sm text-slate-600">{opportunity.Account?.Name}</p>
