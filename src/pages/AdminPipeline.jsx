@@ -368,7 +368,10 @@ export default function AdminPipeline() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="bg-white rounded-2xl p-6 shadow-sm"
+            onClick={() => setActiveView('leads')}
+            className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all hover:shadow-md ${
+              activeView === 'leads' ? 'ring-2 ring-[#08708E]' : ''
+            }`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -385,7 +388,10 @@ export default function AdminPipeline() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-sm"
+            onClick={() => setActiveView('opportunities')}
+            className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all hover:shadow-md ${
+              activeView === 'opportunities' ? 'ring-2 ring-[#08708E]' : ''
+            }`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -419,7 +425,10 @@ export default function AdminPipeline() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-2xl p-6 shadow-sm"
+            onClick={() => setActiveView('tasks')}
+            className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all hover:shadow-md ${
+              activeView === 'tasks' ? 'ring-2 ring-[#08708E]' : ''
+            }`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -434,34 +443,8 @@ export default function AdminPipeline() {
           </motion.div>
         </div>
 
-        {/* View Toggle & Create Task */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex gap-2">
-            <Button
-              onClick={() => setActiveView('leads')}
-              variant={activeView === 'leads' ? 'default' : 'outline'}
-              className={activeView === 'leads' ? 'bg-[#08708E] hover:bg-[#065a72]' : ''}
-            >
-              <Target className="w-4 h-4 mr-2" />
-              Leads Pipeline
-            </Button>
-            <Button
-              onClick={() => setActiveView('opportunities')}
-              variant={activeView === 'opportunities' ? 'default' : 'outline'}
-              className={activeView === 'opportunities' ? 'bg-[#08708E] hover:bg-[#065a72]' : ''}
-            >
-              <TrendingUp className="w-4 h-4 mr-2" />
-              Opportunities Pipeline
-            </Button>
-            <Button
-              onClick={() => setActiveView('tasks')}
-              variant={activeView === 'tasks' ? 'default' : 'outline'}
-              className={activeView === 'tasks' ? 'bg-[#08708E] hover:bg-[#065a72]' : ''}
-            >
-              <CheckSquare className="w-4 h-4 mr-2" />
-              Tasks
-            </Button>
-          </div>
+        {/* Create Task Button */}
+        <div className="flex justify-end mb-6">
           <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700">
             <Plus className="w-4 h-4 mr-2" />
             Create Task
