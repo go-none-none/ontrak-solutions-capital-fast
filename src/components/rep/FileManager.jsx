@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { FileText, Upload, Loader2, Download, Eye, X, Zap } from 'lucide-react';
+import { FileText, Upload, Loader2, Download, Eye, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import PDFViewer from './PDFViewer';
 
@@ -10,8 +10,6 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [viewingFile, setViewingFile] = useState(null);
-  const [selectedPDFs, setSelectedPDFs] = useState([]);
-  const [parsing, setParsing] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -99,70 +97,12 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
     setViewingFile(null);
   };
 
-  const getPdfFiles = () => {
-    return files.filter(f => f.ContentDocument?.FileExtension?.toLowerCase() === 'pdf');
-  };
-
-  const togglePdfSelection = (fileId) => {
-    if (selectedPDFs.includes(fileId)) {
-      setSelectedPDFs(selectedPDFs.filter(id => id !== fileId));
-    } else {
-      setSelectedPDFs([...selectedPDFs, fileId]);
-    }
-  };
-
-  const handleParsePDFs = async () => {
-    if (selectedPDFs.length === 0) return;
-
-    setParsing(true);
-    try {
-      const selectedFiles = files
-        .filter(f => selectedPDFs.includes(f.ContentDocumentId))
-        .map(f => ({
-          Id: f.ContentDocument?.LatestPublishedVersionId || f.ContentDocumentId,
-          Title: f.ContentDocument?.Title || ''
-        }));
-
-      await base44.functions.invoke('parseBankStatements', {
-        opportunityId: recordId,
-        files: selectedFiles,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
-
-      setSelectedPDFs([]);
-      if (onFileUploaded) onFileUploaded();
-    } catch (error) {
-      console.error('Parse error:', error);
-      alert('Failed to parse statements: ' + error.message);
-    } finally {
-      setParsing(false);
-    }
-  };
-
-  const pdfFiles = getPdfFiles();
-
   return (
     <>
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-slate-900">Files & Attachments</h2>
-        <div className="flex gap-2">
-          {selectedPDFs.length > 0 && (
-            <Button
-              size="sm"
-              onClick={handleParsePDFs}
-              disabled={parsing}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {parsing ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              ) : (
-                <Zap className="w-4 h-4 mr-2" />
-              )}
-              Parse {selectedPDFs.length} PDF{selectedPDFs.length !== 1 ? 's' : ''}
-            </Button>
-          )}
+        <div>
           <input
             ref={fileInputRef}
             type="file"
@@ -201,8 +141,6 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
           {files.map((file, i) => {
             const doc = file.ContentDocument;
             const Icon = getFileIcon(doc.FileExtension);
-            const isPdf = doc.FileExtension?.toLowerCase() === 'pdf';
-            const isSelected = selectedPDFs.includes(file.ContentDocumentId);
             
             return (
               <motion.div
@@ -210,21 +148,9 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
-                  isPdf && isSelected 
-                    ? 'bg-green-50 border-green-300' 
-                    : 'hover:bg-slate-50 border-slate-100'
-                }`}
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 border border-slate-100"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  {isPdf && (
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => togglePdfSelection(file.ContentDocumentId)}
-                      className="w-4 h-4 rounded cursor-pointer"
-                    />
-                  )}
                   <div className="w-10 h-10 rounded-lg bg-[#08708E]/10 flex items-center justify-center flex-shrink-0">
                     <Icon className="w-5 h-5 text-[#08708E]" />
                   </div>
