@@ -123,19 +123,12 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
           Title: f.ContentDocument?.Title || ''
         }));
 
-      const parseResponse = await base44.functions.invoke('parseBankStatements', {
+      await base44.functions.invoke('parseBankStatements', {
         opportunityId: recordId,
         files: selectedFiles,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-
-      // After parsing succeeds, detect patterns
-      if (parseResponse.data?.success) {
-        await base44.functions.invoke('detectRecurringPatterns', {
-          opportunityId: recordId
-        });
-      }
 
       setSelectedPDFs([]);
       if (onFileUploaded) onFileUploaded();
