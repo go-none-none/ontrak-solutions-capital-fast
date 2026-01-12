@@ -16,6 +16,7 @@ export default function MiniDialer({ session }) {
   const [showMatchSelection, setShowMatchSelection] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dialpadUserId, setDialpadUserId] = useState(null);
+  const [dialpadClientId, setDialpadClientId] = useState(null);
 
   // Listen for messages from Dialpad iframe
   useEffect(() => {
@@ -47,9 +48,22 @@ export default function MiniDialer({ session }) {
     return () => window.removeEventListener('message', handleMessage);
   }, [isOpen]);
 
+  // Load Dialpad client ID
+  useEffect(() => {
+    const loadClientId = async () => {
+      try {
+        const response = await base44.functions.invoke('getDialpadClientId');
+        setDialpadClientId(response.data.clientId);
+      } catch (error) {
+        console.error('Failed to load Dialpad client ID:', error);
+      }
+    };
+    loadClientId();
+  }, []);
+
   // Enable current tab on load
   useEffect(() => {
-    if (iframeRef.current && isOpen) {
+    if (iframeRef.current && isOpen && dialpadClientId) {
       setTimeout(() => {
         iframeRef.current.contentWindow.postMessage({
           api: 'opencti_dialpad',
@@ -58,7 +72,7 @@ export default function MiniDialer({ session }) {
         }, 'https://dialpad.com');
       }, 1000);
     }
-  }, [isOpen]);
+  }, [isOpen, dialpadClientId]);
 
   // Search for matching records
   const searchRecords = async (phoneNumber) => {
@@ -199,15 +213,21 @@ export default function MiniDialer({ session }) {
               )}
 
               {/* Dialpad iframe */}
-              <iframe
-                ref={iframeRef}
-                src={`https://dialpad.com/apps/${Deno.env.get('DIALPAD_CLIENT_ID')}`}
-                title="Dialpad CTI"
-                allow="microphone; speaker-selection; autoplay; camera; display-capture; hid"
-                sandbox="allow-popups allow-scripts allow-same-origin allow-forms"
-                className={`w-full border-0 ${matchedRecord ? 'mt-[120px]' : ''}`}
-                style={{ height: '550px' }}
-              />
+              {dialpadClientId ? (
+                <iframe
+                  ref={iframeRef}
+                  src={`https://dialpad.com/apps/${dialpadClientId}`}
+                  title="Dialpad CTI"
+                  allow="microphone; speaker-selection; autoplay; camera; display-capture; hid"
+                  sandbox="allow-popups allow-scripts allow-same-origin allow-forms"
+                  className={`w-full border-0 ${matchedRecord ? 'mt-[120px]' : ''}`}
+                  style={{ height: '550px' }}
+                />
+              ) : (
+                <div className="flex items-center justify-center" style={{ height: '550px' }}>
+                  <p className="text-slate-500">Loading Dialpad...</p>
+                </div>
+              )}
             </div>
           )}
 
