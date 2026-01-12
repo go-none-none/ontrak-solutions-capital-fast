@@ -4,8 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { DollarSign, Calendar, Building2, TrendingUp } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
-export default function OpportunityCard({ opportunity, session, onUpdate }) {
-  const navigate = useNavigate();
+export default function OpportunityCard({ opportunity, session, onUpdate, onOpenModal }) {
 
   const stages = [
     { label: 'App In', name: 'Application In' },
