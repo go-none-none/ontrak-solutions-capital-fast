@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     }
 
     // Query all leads with priority ordering - using standard fields only
-    const query = `SELECT Id, Name, Company, Phone, MobilePhone, Email, Status, LeadSource, CreatedDate, LastModifiedDate, Industry, Website, Description, Street, City, State, PostalCode, Country, Title, Rating, OwnerId, Owner.Name, Owner.Email, Owner.Phone FROM Lead WHERE OwnerId = '${userId}' AND IsConverted = false ORDER BY LastModifiedDate DESC`;
+    const query = `SELECT Id, Name, Company, Phone, MobilePhone, Email, Status, LeadSource, CreatedDate, LastModifiedDate, Industry, Website, Street, City, State, PostalCode, Country, Title, Rating, OwnerId, Owner.Name, Owner.Email, Owner.Phone FROM Lead WHERE OwnerId = '${userId}' AND IsConverted = false ORDER BY LastModifiedDate DESC`;
 
     console.log('getRepLeads - Looking for leads with OwnerId:', userId);
     console.log('getRepLeads - Query:', query);
