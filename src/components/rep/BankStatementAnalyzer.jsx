@@ -93,8 +93,7 @@ export default function BankStatementAnalyzer({ recordId, session }) {
         const versionId = doc.LatestPublishedVersionId || file.ContentDocumentId;
         const salesforceUrl = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${versionId}`;
 
-        // Download, extract, and create records all in one call
-        const response = await base44.functions.invoke('downloadAndUploadPDF', {
+        const response = await base44.functions.invoke('parsePDF', {
           fileUrl: salesforceUrl,
           opportunityId: recordId
         });
