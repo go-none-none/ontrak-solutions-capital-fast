@@ -29,7 +29,30 @@ export default function AdminPipeline() {
 
   useEffect(() => {
     checkSession();
+    
+    // Restore state from sessionStorage
+    const savedState = sessionStorage.getItem('adminPipelineState');
+    if (savedState) {
+      const state = JSON.parse(savedState);
+      setActiveView(state.activeView || 'leads');
+      setExpandedRep(state.expandedRep || null);
+      setStageFilter(state.stageFilter || {});
+      setRepSearch(state.repSearch || {});
+      setTableSort(state.tableSort || { column: null, direction: 'asc' });
+    }
   }, []);
+
+  useEffect(() => {
+    // Save state to sessionStorage whenever it changes
+    const state = {
+      activeView,
+      expandedRep,
+      stageFilter,
+      repSearch,
+      tableSort
+    };
+    sessionStorage.setItem('adminPipelineState', JSON.stringify(state));
+  }, [activeView, expandedRep, stageFilter, repSearch, tableSort]);
 
   const checkSession = () => {
     const sessionData = sessionStorage.getItem('sfSession');
