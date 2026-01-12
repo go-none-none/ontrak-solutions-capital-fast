@@ -10,18 +10,15 @@ Deno.serve(async (req) => {
       headers: { Authorization: `Bearer ${token}` }
     });
     
-    if (!pdfRes.ok) throw new Error(`Salesforce download failed: ${pdfRes.status}`);
+    if (!pdfRes.ok) throw new Error(`Download failed: ${pdfRes.status}`);
     const pdfBuffer = await pdfRes.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(pdfBuffer)));
     
-    // Upload to Base44 storage
-    const uploadRes = await base44.integrations.Core.UploadFile({
-      file: new Blob([pdfBuffer], { type: 'application/pdf' })
-    });
-    
-    // Extract from Base44 URL
-    const extracted = await base44.integrations.Core.ExtractDataFromUploadedFile({
-      file_url: uploadRes.file_url,
-      json_schema: {
+    // Use LLM to parse PDF
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `Extract bank statement data from this PDF. Return ONLY valid JSON with: bank_name, statement_start_date (YYYY-MM-DD), statement_end_date (YYYY-MM-DD), transactions (array with: transaction_date, description, amount, type as "debit" or "credit"), total_deposits, total_withdrawals.`,
+      file_urls: [`data:application/pdf;base64,${base64}`],
+      response_json_schema: {
         type: "object",
         properties: {
           bank_name: { type: "string" },
@@ -45,25 +42,23 @@ Deno.serve(async (req) => {
       }
     });
 
-    if (extracted.status !== 'success') throw new Error(extracted.details);
-
     const stmt = await base44.entities.BankStatement.create({
       opportunity_id: opportunityId,
-      file_url: uploadRes.file_url,
+      file_url: fileUrl,
       file_name: 'statement.pdf',
-      bank_name: extracted.output.bank_name,
-      statement_start_date: extracted.output.statement_start_date,
-      statement_end_date: extracted.output.statement_end_date,
-      total_deposits: extracted.output.total_deposits || 0,
-      total_withdrawals: extracted.output.total_withdrawals || 0,
-      net_cash_flow: (extracted.output.total_deposits || 0) - (extracted.output.total_withdrawals || 0),
-      transaction_count: extracted.output.transactions?.length || 0,
+      bank_name: result.bank_name,
+      statement_start_date: result.statement_start_date,
+      statement_end_date: result.statement_end_date,
+      total_deposits: result.total_deposits || 0,
+      total_withdrawals: result.total_withdrawals || 0,
+      net_cash_flow: (result.total_deposits || 0) - (result.total_withdrawals || 0),
+      transaction_count: result.transactions?.length || 0,
       parsing_status: 'completed'
     });
 
-    if (extracted.output.transactions?.length > 0) {
+    if (result.transactions?.length > 0) {
       await base44.entities.Transaction.bulkCreate(
-        extracted.output.transactions.map(t => ({
+        result.transactions.map(t => ({
           bank_statement_id: stmt.id,
           opportunity_id: opportunityId,
           transaction_date: t.transaction_date,
