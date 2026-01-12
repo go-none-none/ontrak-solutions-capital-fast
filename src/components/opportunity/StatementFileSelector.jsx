@@ -44,7 +44,9 @@ export default function StatementFileSelector({ recordId, session, onParse, isPa
   };
 
   const handleParse = () => {
-    const selectedFilesData = files.filter(f => selectedFiles.includes(f.Id));
+    const selectedFilesData = files
+      .filter(f => selectedFiles.includes(f.Id))
+      .map(f => ({ Id: f.Id, Title: f.Title }));
     onParse(selectedFilesData);
   };
 
