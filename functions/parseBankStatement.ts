@@ -9,6 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
+    // Get file content first
     const versionQuery = `SELECT Id FROM ContentVersion WHERE ContentDocumentId = '${contentDocumentId}' AND IsLatest = true LIMIT 1`;
     const versionResponse = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(versionQuery)}`,
@@ -22,6 +23,7 @@ Deno.serve(async (req) => {
 
     const contentVersionId = versionData.records[0].Id;
 
+    // Fetch binary
     const binaryResponse = await fetch(
       `${instanceUrl}/services/data/v59.0/sobjects/ContentVersion/${contentVersionId}/VersionData`,
       { headers: { 'Authorization': `Bearer ${token}` } }
@@ -39,6 +41,7 @@ Deno.serve(async (req) => {
     
     const base64 = btoa(binaryString);
 
+    // Use AI to parse the PDF
     const parseResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: `Analyze this bank statement PDF and extract the following financial data in JSON format:
       - avgDailyBalance (number)
