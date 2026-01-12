@@ -109,7 +109,7 @@ export default function BankStatementAnalyzer({ opportunityId, session }) {
     );
   }
 
-  const pdfFiles = files.filter(f => f.FileExtension === 'pdf');
+  const pdfFiles = files.filter(f => f.FileExtension?.toLowerCase() === 'pdf');
 
   return (
     <div className="space-y-6">
