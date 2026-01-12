@@ -168,7 +168,8 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
           allTransactions.push(normalized);
         }
       } catch (fileError) {
-        console.error(`Error processing ${fileName}:`, fileError);
+        console.error(`Error processing ${fileName}:`, fileError.message || fileError);
+        continue;
       }
     }
 
@@ -235,19 +236,21 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
     });
 
   } catch (error) {
-    console.error('Parse error:', error);
+    console.error('Parse error:', error.message || error);
+    console.error('Full error:', error);
+    const errorMsg = error?.message || String(error);
     try {
       // Try to update analysis with error
       if (analysisId) {
         await base44.entities.FinancialAnalysis.update(analysisId, {
           parsing_status: 'failed',
-          error_message: error.message
+          error_message: errorMsg
         }).catch(() => {});
       }
     } catch (updateError) {
-      console.error('Error updating analysis:', updateError);
+      console.error('Error updating analysis:', updateError.message || updateError);
     }
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: errorMsg }, { status: 500 });
   }
 });
 
