@@ -47,9 +47,15 @@ export default function FinancialIntelligence({ opportunityId, session }) {
   const handleParse = async (selectedFiles) => {
     setParsing(true);
     try {
+      // Ensure files are plain objects with only Id and Title
+      const cleanFiles = selectedFiles.map(f => ({
+        Id: typeof f.Id === 'string' ? f.Id : String(f.Id),
+        Title: typeof f.Title === 'string' ? f.Title : String(f.Title)
+      }));
+      
       await base44.functions.invoke('parseBankStatements', {
         opportunityId,
-        files: selectedFiles,
+        files: cleanFiles,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
