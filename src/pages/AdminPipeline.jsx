@@ -320,34 +320,34 @@ export default function AdminPipeline() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">Admin Pipeline Dashboard</h1>
-              <p className="text-sm text-slate-600">Overview of all reps' performance</p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Admin Pipeline</h1>
+              <p className="text-xs sm:text-sm text-slate-600 truncate">Manage team performance</p>
             </div>
-            <div className="flex gap-2">
-              <Link to={createPageUrl('RepPortal')}>
-                <Button variant="outline">
-                  <LayoutDashboard className="w-4 h-4 mr-2" />
-                  Rep Portal
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+              <Link to={createPageUrl('RepPortal')} className="flex-1 sm:flex-initial">
+                <Button variant="outline" className="w-full sm:w-auto min-h-[44px]">
+                  <Users className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Rep Portal</span>
                 </Button>
               </Link>
-              <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
-                <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                Refresh
+              <Button variant="outline" onClick={handleRefresh} disabled={refreshing} className="flex-1 sm:flex-initial min-h-[44px]">
+                <RefreshCw className={`w-4 h-4 sm:mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Refresh</span>
               </Button>
-              <Button variant="outline" onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
+              <Button variant="outline" onClick={handleLogout} className="flex-1 sm:flex-initial min-h-[44px]">
+                <LogOut className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Logout</span>
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -453,7 +453,7 @@ export default function AdminPipeline() {
 
         {/* Reps Pipeline Table */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
             <table className="w-full min-w-[1200px]">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
