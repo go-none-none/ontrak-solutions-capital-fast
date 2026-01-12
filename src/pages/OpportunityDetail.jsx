@@ -12,6 +12,7 @@ import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
+import BankStatementAnalyzer from '../components/rep/BankStatementAnalyzer.jsx';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -608,26 +609,7 @@ export default function OpportunityDetail() {
 
               {/* Statements Tab */}
               <TabsContent value="statements" className="space-y-4">
-                <Collapsible defaultOpen={true}>
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Financial Statements</h2>
-                      <ChevronDown className="w-5 h-5 transition-transform" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Avg Gross Monthly Sales" field="Avg_Gross_Monthly_Sales__c" value={opportunity.Avg_Gross_Monthly_Sales__c} />
-                        <EditableFieldWrapper label="Avg Bank Deposits $" field="Avg_Bank_Deposits__c" value={opportunity.Avg_Bank_Deposits__c} />
-                        <EditableFieldWrapper label="Avg Bank Deposits #" field="Avg_Bank_Deposits_Count__c" value={opportunity.Avg_Bank_Deposits_Count__c} />
-                        <EditableFieldWrapper label="Avg Credit Card Volume" field="Avg_Credit_Card_Volume__c" value={opportunity.Avg_Credit_Card_Volume__c} />
-                        <EditableFieldWrapper label="Avg Daily Balance" field="Avg_Daily_Balance__c" value={opportunity.Avg_Daily_Balance__c} />
-                        <EditableFieldWrapper label="Avg Credit Card Batches" field="Avg_Credit_Card_Batches__c" value={opportunity.Avg_Credit_Card_Batches__c} />
-                        <EditableFieldWrapper label="Avg NSFs" field="Avg_NSFs__c" value={opportunity.Avg_NSFs__c} />
-                        <EditableFieldWrapper label="Avg Negative Days" field="Avg_Negative_Days__c" value={opportunity.Avg_Negative_Days__c} />
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
+                <BankStatementAnalyzer opportunityId={opportunity.Id} />
               </TabsContent>
 
               {/* Debt Tab */}
