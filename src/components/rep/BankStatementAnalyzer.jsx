@@ -95,7 +95,8 @@ export default function BankStatementAnalyzer({ recordId, session }) {
 
         const response = await base44.functions.invoke('parsePDF', {
           fileUrl: salesforceUrl,
-          opportunityId: recordId
+          opportunityId: recordId,
+          token: session.token
         });
 
         if (!response.data.success) {
