@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, Calendar, Building2, TrendingUp } from 'lucide-react';
 import { createPageUrl } from '@/utils';
+import { useNavigate } from 'react-router-dom';
 
 export default function OpportunityCard({ opportunity, session, onUpdate }) {
   const navigate = useNavigate();
@@ -40,9 +41,11 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
   };
 
   const handleClick = () => {
-    if (onOpenModal) {
-      onOpenModal(opportunity, 'opportunity');
-    }
+    // Save current portal state for back navigation
+    const currentState = sessionStorage.getItem('repPortalState');
+    sessionStorage.setItem('opportunityDetailBackUrl', window.location.pathname + window.location.search);
+    sessionStorage.setItem('opportunityDetailBackState', currentState || '{}');
+    navigate(createPageUrl('OpportunityDetail') + `?id=${opportunity.Id}`);
   };
 
   const currentStage = getCurrentStageIndex();

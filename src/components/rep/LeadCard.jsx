@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, Building2, Calendar, DollarSign } from 'lucide-react';
 import { createPageUrl } from '@/utils';
+import { useNavigate } from 'react-router-dom';
 
 export default function LeadCard({ lead, session }) {
   const navigate = useNavigate();
@@ -38,9 +39,11 @@ export default function LeadCard({ lead, session }) {
   };
 
   const handleClick = () => {
-    if (onOpenModal) {
-      onOpenModal(lead, 'lead');
-    }
+    // Save current portal state for back navigation
+    const currentState = sessionStorage.getItem('repPortalState');
+    sessionStorage.setItem('leadDetailBackUrl', window.location.pathname + window.location.search);
+    sessionStorage.setItem('leadDetailBackState', currentState || '{}');
+    navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`);
   };
 
   const currentStage = getCurrentStageIndex();
