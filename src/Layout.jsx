@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
-import { Toaster } from 'sonner';
 
 export default function Layout({ children, currentPageName }) {
   const { pathname } = useLocation();
@@ -36,7 +35,6 @@ export default function Layout({ children, currentPageName }) {
         {children}
       </main>
       {!isRepPortal && <Footer />}
-      <Toaster position="top-right" />
     </div>
   );
 }
