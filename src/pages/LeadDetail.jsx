@@ -8,9 +8,7 @@ import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
-import DialpadCard from '../components/rep/DialpadCard.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
-
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 
 export default function LeadDetail() {
@@ -540,12 +538,6 @@ export default function LeadDetail() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <DialpadCard
-              phoneNumber={lead.MobilePhone || lead.Phone}
-              contactName={lead.Name}
-              session={session}
-            />
-
             {/* Email Client */}
             <EmailClientCard
               recipientEmail={lead.Email}
