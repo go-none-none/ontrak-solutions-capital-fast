@@ -18,12 +18,19 @@ Deno.serve(async (req) => {
     }
 
     const pdfBuffer = await pdfResponse.arrayBuffer();
-    const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
+    
+    // Convert to base64
+    const uint8Array = new Uint8Array(pdfBuffer);
+    let binaryString = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+      binaryString += String.fromCharCode(uint8Array[i]);
+    }
+    const base64String = btoa(binaryString);
 
     // Upload to Base44 public storage (for parsing)
-    console.log(`Uploading PDF to Base44 storage (${blob.size} bytes)`);
+    console.log(`Uploading PDF to Base44 storage (${pdfBuffer.byteLength} bytes)`);
     const uploadResult = await base44.integrations.Core.UploadFile({
-      file: blob
+      file: base64String
     });
 
     console.log(`PDF uploaded to Base44: ${uploadResult.file_url}`);
