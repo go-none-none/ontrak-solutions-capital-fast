@@ -9,37 +9,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing fileUrl or opportunityId' }, { status: 400 });
     }
 
-    console.log(`Downloading PDF from Salesforce: ${fileUrl}`);
+    console.log(`Extracting from Salesforce file: ${fileUrl}`);
 
-    // Download the PDF
-    const pdfResponse = await fetch(fileUrl);
-    if (!pdfResponse.ok) {
-      return Response.json({ error: `Failed to download: ${pdfResponse.status}` }, { status: 400 });
-    }
-
-    const pdfBlob = await pdfResponse.blob();
-    console.log(`Downloaded ${pdfBlob.size} bytes`);
-    
-    // Upload to private storage
-    console.log('Uploading to private storage...');
-    const uploadResult = await base44.integrations.Core.UploadPrivateFile({
-      file: pdfBlob
-    });
-    
-    const fileUri = uploadResult.file_uri;
-    console.log(`Uploaded to private storage: ${fileUri}`);
-
-    // Create signed URL for extraction
-    const signedUrlResult = await base44.integrations.Core.CreateFileSignedUrl({
-      file_uri: fileUri,
-      expires_in: 3600
-    });
-
-    console.log('Extracting bank statement data...');
-    
-    // Extract transaction data from PDF
+    // Extract directly from Salesforce URL
     const extractResult = await base44.integrations.Core.ExtractDataFromUploadedFile({
-      file_url: signedUrlResult.signed_url,
+      file_url: fileUrl,
       json_schema: {
         type: "object",
         properties: {
@@ -77,7 +51,7 @@ Deno.serve(async (req) => {
     // Create BankStatement record
     const bankStatement = await base44.entities.BankStatement.create({
       opportunity_id: opportunityId,
-      file_url: signedUrlResult.signed_url,
+      file_url: fileUrl,
       file_name: 'bank_statement.pdf',
       bank_name: data.bank_name,
       statement_start_date: data.statement_start_date,
