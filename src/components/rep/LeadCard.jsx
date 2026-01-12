@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, Building2, Calendar, DollarSign } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
-export default function LeadCard({ lead, session, onOpenModal }) {
+export default function LeadCard({ lead, session }) {
+  const navigate = useNavigate();
 
   const stages = [
     { label: 'New', status: 'Open - Not Contacted' },
