@@ -39,30 +39,30 @@ Deno.serve(async (req) => {
     for (const file of files) {
       try {
         const fileName = file.Title;
+        console.log(`Processing file: ${fileName}, ContentDocumentId: ${file.Id}`);
         
-        // Fetch file content from Salesforce using ContentVersion
-        const contentResponse = await fetch(
-          `${instanceUrl}/services/data/v59.0/sobjects/ContentVersion/${file.Id}/VersionData`,
-          {
-            headers: { 'Authorization': `Bearer ${token}` }
-          }
-        );
+        // Fetch file using the dedicated getSalesforceFileContent function
+        const fileResponse = await base44.asServiceRole.functions.invoke('getSalesforceFileContent', {
+          contentDocumentId: file.Id,
+          token: token,
+          instanceUrl: instanceUrl
+        });
 
-        if (!contentResponse.ok) {
+        if (!fileResponse.data?.file) {
           console.error(`Failed to fetch file ${fileName}`);
           continue;
         }
 
-        const pdfBuffer = await contentResponse.arrayBuffer();
-        const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBuffer)));
+        const fileBase64 = fileResponse.data.file;
         
         // Upload to Base44 for processing
         const uploadResponse = await base44.integrations.Core.UploadFile({
-          file: pdfBase64
+          file: fileBase64
         });
         
         const fileUrl = uploadResponse.file_url;
         pdfFilenames.push(fileName);
+        console.log(`File uploaded: ${fileName} -> ${fileUrl}`);
 
         // Use LLM with structured extraction
         const extractionSchema = {
@@ -91,6 +91,7 @@ Deno.serve(async (req) => {
           }
         };
 
+        console.log(`Invoking LLM for file: ${fileName}`);
         const llmResponse = await base44.integrations.Core.InvokeLLM({
           prompt: `Parse this bank statement PDF and extract ALL transactions. For each transaction, provide:
 - Transaction date (YYYY-MM-DD format)
@@ -105,6 +106,8 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
           response_json_schema: extractionSchema,
           file_urls: [fileUrl]
         });
+
+        console.log(`LLM extracted ${llmResponse.transactions?.length || 0} transactions from ${fileName}`);
 
         // Normalize and store transactions
         for (const tx of llmResponse.transactions || []) {
