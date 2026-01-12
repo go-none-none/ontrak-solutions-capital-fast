@@ -25,8 +25,7 @@ export default function BankStatementAnalyzer({ recordId, session }) {
     try {
       const response = await base44.functions.invoke('getSalesforceFiles', {
         recordId: recordId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
+        session: session
       });
       // Filter for PDF files only
       const pdfs = (response.data.files || []).filter(f => 
