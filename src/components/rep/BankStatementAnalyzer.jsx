@@ -24,13 +24,15 @@ export default function BankStatementAnalyzer({ recordId, session }) {
   const loadFiles = async () => {
     try {
       const response = await base44.functions.invoke('getSalesforceFiles', {
-        recordId: recordId,
-        session: session
+        recordId,
+        token: session.token,
+        instanceUrl: session.instanceUrl
       });
       // Filter for PDF files only
-      const pdfs = (response.data.files || []).filter(f => 
-        f.FileType === 'PDF' || f.Title?.toLowerCase().endsWith('.pdf')
-      );
+      const pdfs = (response.data.files || []).filter(f => {
+        const doc = f.ContentDocument;
+        return doc?.FileExtension?.toLowerCase() === 'pdf';
+      });
       setPdfFiles(pdfs);
     } catch (error) {
       console.error('Load files error:', error);
@@ -82,12 +84,13 @@ export default function BankStatementAnalyzer({ recordId, session }) {
     if (selectedFiles.size === 0) return;
 
     setParsing(true);
-    const filesToParse = pdfFiles.filter(f => selectedFiles.has(f.Id));
+    const filesToParse = pdfFiles.filter(f => selectedFiles.has(f.ContentDocumentId));
 
     try {
       for (const file of filesToParse) {
+        const downloadUrl = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`;
         await base44.functions.invoke('parseBankStatement', {
-          fileUrl: file.LatestPublishedVersionId,
+          fileUrl: downloadUrl,
           opportunityId: recordId
         });
       }
@@ -115,19 +118,29 @@ export default function BankStatementAnalyzer({ recordId, session }) {
         <div className="bg-white rounded-xl shadow-sm p-6 border-2 border-blue-200">
           <h3 className="text-lg font-semibold text-slate-900 mb-4">PDF Bank Statements</h3>
           <div className="space-y-3 mb-4">
-            {pdfFiles.map(file => (
-              <label key={file.Id} className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">
-                <Checkbox
-                  checked={selectedFiles.has(file.Id)}
-                  onCheckedChange={() => toggleFile(file.Id)}
-                />
-                <FileText className="w-4 h-4 text-slate-500 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-900 truncate">{file.Title}</p>
-                  <p className="text-xs text-slate-500">{new Date(file.CreatedDate).toLocaleDateString()}</p>
-                </div>
-              </label>
-            ))}
+            {pdfFiles.map(file => {
+              const doc = file.ContentDocument;
+              const fileSize = doc?.ContentSize ? (() => {
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB'];
+                const i = Math.floor(Math.log(doc.ContentSize) / Math.log(k));
+                return Math.round(doc.ContentSize / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+              })() : '0 B';
+              
+              return (
+                <label key={file.ContentDocumentId} className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">
+                  <Checkbox
+                    checked={selectedFiles.has(file.ContentDocumentId)}
+                    onCheckedChange={() => toggleFile(file.ContentDocumentId)}
+                  />
+                  <FileText className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-900 truncate">{doc?.Title}</p>
+                    <p className="text-xs text-slate-500">{fileSize} • {new Date(doc?.CreatedDate).toLocaleDateString()}</p>
+                  </div>
+                </label>
+              );
+            })}
           </div>
           <Button
             onClick={handleParseFiles}
