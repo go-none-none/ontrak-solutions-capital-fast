@@ -22,14 +22,18 @@ export default function StatementFileSelector({ recordId, session, onParse, isPa
         instanceUrl: session.instanceUrl
       });
       
-      // Filter for PDF files only
-      const pdfFiles = (response.data.files || []).filter(f => 
-        f.Title?.toLowerCase().endsWith('.pdf') || f.FileType === 'PDF'
-      );
+      // Filter for PDF files - check both Title and FileExtension
+      const pdfFiles = (response.data.files || []).filter(f => {
+        const title = f.ContentDocument?.Title || f.Title || '';
+        const ext = f.ContentDocument?.FileExtension || f.FileExtension || '';
+        return title.toLowerCase().endsWith('.pdf') || ext.toLowerCase() === 'pdf';
+      });
       
+      console.log('Loaded files:', response.data.files?.length, 'PDF files:', pdfFiles.length);
       setFiles(pdfFiles);
     } catch (error) {
       console.error('Load files error:', error);
+      setFiles([]);
     } finally {
       setLoading(false);
     }
@@ -45,11 +49,19 @@ export default function StatementFileSelector({ recordId, session, onParse, isPa
 
   const handleParse = () => {
     const selectedFilesData = files
-      .filter(f => selectedFiles.includes(f.Id))
-      .map(f => ({
-        Id: String(f.Id),
-        Title: String(f.Title)
-      }));
+      .filter(f => {
+        const fileId = f.ContentDocumentId || f.Id;
+        return selectedFiles.includes(fileId);
+      })
+      .map(f => {
+        const fileId = f.ContentDocumentId || f.Id;
+        const fileName = f.ContentDocument?.Title || f.Title;
+        return {
+          Id: String(fileId),
+          Title: String(fileName),
+          VersionId: f.ContentDocument?.LatestPublishedVersionId || f.VersionId
+        };
+      });
     onParse(selectedFilesData);
   };
 
@@ -85,22 +97,28 @@ export default function StatementFileSelector({ recordId, session, onParse, isPa
       <h3 className="font-semibold text-slate-900 mb-4">Select Bank Statements to Parse</h3>
       
       <div className="space-y-3 mb-4">
-        {files.map((file) => (
-          <div key={file.Id} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
-            <Checkbox
-              id={file.Id}
-              checked={selectedFiles.includes(file.Id)}
-              onCheckedChange={() => toggleFile(file.Id)}
-            />
-            <FileText className="w-4 h-4 text-slate-400" />
-            <label htmlFor={file.Id} className="flex-1 cursor-pointer">
-              <p className="text-sm font-medium text-slate-900">{file.Title}</p>
-              <p className="text-xs text-slate-500">
-                {file.ContentSize ? `${(file.ContentSize / 1024).toFixed(1)} KB` : 'Unknown size'}
-              </p>
-            </label>
-          </div>
-        ))}
+        {files.map((file) => {
+          const fileId = file.ContentDocumentId || file.Id;
+          const fileName = file.ContentDocument?.Title || file.Title;
+          const fileSize = file.ContentDocument?.ContentSize || file.ContentSize;
+          
+          return (
+            <div key={fileId} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+              <Checkbox
+                id={fileId}
+                checked={selectedFiles.includes(fileId)}
+                onCheckedChange={() => toggleFile(fileId)}
+              />
+              <FileText className="w-4 h-4 text-slate-400" />
+              <label htmlFor={fileId} className="flex-1 cursor-pointer">
+                <p className="text-sm font-medium text-slate-900">{fileName}</p>
+                <p className="text-xs text-slate-500">
+                  {fileSize ? `${(fileSize / 1024).toFixed(1)} KB` : 'Unknown size'}
+                </p>
+              </label>
+            </div>
+          );
+        })}
       </div>
 
       <div className="flex gap-2">
