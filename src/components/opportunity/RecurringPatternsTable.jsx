@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronRight, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
+import { ChevronDown, ChevronRight, AlertTriangle, CheckCircle, TrendingUp, Eye } from 'lucide-react';
+import PatternDetailDrawer from './PatternDetailDrawer';
 
-export default function RecurringPatternsTable({ patterns, transactions, onPatternClick }) {
+export default function RecurringPatternsTable({ patterns, transactions, onUpdate }) {
   const [expandedPatterns, setExpandedPatterns] = useState(new Set());
+  const [selectedPattern, setSelectedPattern] = useState(null);
 
   const togglePattern = (patternId) => {
     const newExpanded = new Set(expandedPatterns);
@@ -96,6 +98,7 @@ export default function RecurringPatternsTable({ patterns, transactions, onPatte
               <th className="text-right py-3 px-4 font-medium text-slate-600">Total</th>
               <th className="text-center py-3 px-4 font-medium text-slate-600">Count</th>
               <th className="text-center py-3 px-4 font-medium text-slate-600">Confidence</th>
+              <th className="text-center py-3 px-4 font-medium text-slate-600">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -134,6 +137,18 @@ export default function RecurringPatternsTable({ patterns, transactions, onPatte
                   </td>
                   <td className="py-3 px-4 text-center">{pattern.transaction_count}</td>
                   <td className="py-3 px-4 text-center">{getConfidenceBadge(pattern.confidence_score)}</td>
+                  <td className="py-3 px-4 text-center">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedPattern(pattern);
+                      }}
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                  </td>
                 </tr>
                 {expandedPatterns.has(pattern.id) && (
                   <tr>
@@ -183,6 +198,17 @@ export default function RecurringPatternsTable({ patterns, transactions, onPatte
           </tbody>
         </table>
       </div>
+
+      <PatternDetailDrawer
+        pattern={selectedPattern}
+        transactions={transactions}
+        isOpen={!!selectedPattern}
+        onClose={() => setSelectedPattern(null)}
+        onUpdate={() => {
+          setSelectedPattern(null);
+          onUpdate && onUpdate();
+        }}
+      />
     </Card>
   );
 }

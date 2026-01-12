@@ -278,6 +278,7 @@ export default function FinancialIntelligence({ opportunityId, session }) {
           <RecurringPatternsTable 
             patterns={patterns} 
             transactions={transactions}
+            onUpdate={loadAnalysis}
           />
         </TabsContent>
 
