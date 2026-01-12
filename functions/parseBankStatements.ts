@@ -39,21 +39,59 @@ Deno.serve(async (req) => {
     for (const file of files) {
       try {
         const fileName = file.Title;
-        console.log(`Processing file: ${fileName}, ContentDocumentId: ${file.Id}`);
+        const contentDocumentId = file.Id;
+        console.log(`Processing file: ${fileName}, ContentDocumentId: ${contentDocumentId}`);
         
-        // Fetch file using the dedicated getSalesforceFileContent function
-        const fileResponse = await base44.asServiceRole.functions.invoke('getSalesforceFileContent', {
-          contentDocumentId: file.Id,
-          token: token,
-          instanceUrl: instanceUrl
-        });
+        // Get latest ContentVersion
+        const versionQuery = `SELECT Id FROM ContentVersion WHERE ContentDocumentId = '${contentDocumentId}' AND IsLatest = true LIMIT 1`;
+        const versionResponse = await fetch(
+          `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(versionQuery)}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
 
-        if (!fileResponse.data?.file) {
-          console.error(`Failed to fetch file ${fileName}`);
+        if (!versionResponse.ok) {
+          console.error(`Failed to get version for ${fileName}`);
           continue;
         }
 
-        const fileBase64 = fileResponse.data.file;
+        const versionData = await versionResponse.json();
+        if (!versionData.records || versionData.records.length === 0) {
+          console.error(`No version found for ${fileName}`);
+          continue;
+        }
+
+        const contentVersionId = versionData.records[0].Id;
+
+        // Fetch binary data
+        const binaryResponse = await fetch(
+          `${instanceUrl}/services/data/v59.0/sobjects/ContentVersion/${contentVersionId}/VersionData`,
+          {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }
+        );
+
+        if (!binaryResponse.ok) {
+          console.error(`Failed to fetch binary for ${fileName}`);
+          continue;
+        }
+
+        // Convert to base64
+        const arrayBuffer = await binaryResponse.arrayBuffer();
+        const bytes = new Uint8Array(arrayBuffer);
+        let binaryString = '';
+        const chunkSize = 8192;
+        
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+          const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+          binaryString += String.fromCharCode(...chunk);
+        }
+        
+        const fileBase64 = btoa(binaryString);
         
         // Upload to Base44 for processing
         const uploadResponse = await base44.integrations.Core.UploadFile({
