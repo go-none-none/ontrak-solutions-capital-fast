@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserCog, Loader2 } from 'lucide-react';
+import { UserCog, Loader2, AlertCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 
 export default function ChangeOwnerButton({ record, recordType, session, onOwnerChanged }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,6 +13,7 @@ export default function ChangeOwnerButton({ record, recordType, session, onOwner
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     checkAdminStatus();
@@ -60,11 +62,16 @@ export default function ChangeOwnerButton({ record, recordType, session, onOwner
         instanceUrl: session.instanceUrl
       });
 
+      const selectedUser = users.find(u => u.Id === selectedUserId);
+      toast.success(`Record successfully reassigned to ${selectedUser?.Name || 'new owner'}`);
+      
       setIsOpen(false);
+      setShowConfirm(false);
+      setSelectedUserId('');
       if (onOwnerChanged) onOwnerChanged();
     } catch (error) {
       console.error('Error changing owner:', error);
-      alert('Failed to change owner: ' + error.message);
+      toast.error('Failed to change owner: ' + error.message);
     } finally {
       setSaving(false);
     }
@@ -141,12 +148,48 @@ export default function ChangeOwnerButton({ record, recordType, session, onOwner
               Cancel
             </Button>
             <Button 
-              onClick={handleChangeOwner} 
+              onClick={() => setShowConfirm(true)} 
               disabled={!selectedUserId || saving}
               className="bg-[#08708E]"
             >
+              Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-orange-500" />
+              Confirm Ownership Change
+            </DialogTitle>
+            <DialogDescription>
+              This action will update the record owner in Salesforce.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            <p className="text-slate-900">
+              Are you sure you want to assign this {recordType.toLowerCase()} to{' '}
+              <span className="font-semibold">
+                {users.find(u => u.Id === selectedUserId)?.Name}
+              </span>?
+            </p>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowConfirm(false)} disabled={saving}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleChangeOwner} 
+              disabled={saving}
+              className="bg-[#08708E]"
+            >
               {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              Assign
+              Confirm & Assign
             </Button>
           </DialogFooter>
         </DialogContent>

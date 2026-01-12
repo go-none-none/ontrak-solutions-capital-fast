@@ -38,7 +38,27 @@ export default function RepPortal() {
 
   useEffect(() => {
     checkSession();
+    
+    // Restore saved state from sessionStorage
+    const savedState = sessionStorage.getItem('repPortalState');
+    if (savedState) {
+      const state = JSON.parse(savedState);
+      if (state.activeTab) setActiveTab(state.activeTab);
+      if (state.searchQuery) setSearchQuery(state.searchQuery);
+      if (state.statusFilter) setStatusFilter(state.statusFilter);
+      if (state.sortBy) setSortBy(state.sortBy);
+    }
   }, []);
+
+  useEffect(() => {
+    // Save state to sessionStorage whenever it changes
+    sessionStorage.setItem('repPortalState', JSON.stringify({
+      activeTab,
+      searchQuery,
+      statusFilter,
+      sortBy
+    }));
+  }, [activeTab, searchQuery, statusFilter, sortBy]);
 
   const checkSession = () => {
     const sessionData = sessionStorage.getItem('sfSession');
