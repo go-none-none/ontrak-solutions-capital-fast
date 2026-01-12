@@ -229,6 +229,17 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
 
   } catch (error) {
     console.error('Parse error:', error);
+    try {
+      // Try to update analysis with error
+      if (analysisId) {
+        await base44.entities.FinancialAnalysis.update(analysisId, {
+          parsing_status: 'failed',
+          error_message: error.message
+        }).catch(() => {});
+      }
+    } catch (updateError) {
+      console.error('Error updating analysis:', updateError);
+    }
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

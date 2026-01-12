@@ -25,9 +25,9 @@ export default function FinancialIntelligence({ opportunityId, session }) {
   const loadAnalysis = async () => {
     try {
       const [analysisData, transactionData, patternsData] = await Promise.all([
-        base44.entities.FinancialAnalysis.filter({ opportunity_id: opportunityId }),
-        base44.entities.BankTransaction.filter({ opportunity_id: opportunityId }),
-        base44.entities.RecurringPattern.filter({ opportunity_id: opportunityId })
+        base44.entities.FinancialAnalysis.filter({ opportunity_id: opportunityId }).catch(() => []),
+        base44.entities.BankTransaction.filter({ opportunity_id: opportunityId }).catch(() => []),
+        base44.entities.RecurringPattern.filter({ opportunity_id: opportunityId }).catch(() => [])
       ]);
 
       setAnalysis(analysisData[0] || null);
@@ -35,6 +35,9 @@ export default function FinancialIntelligence({ opportunityId, session }) {
       setPatterns(patternsData || []);
     } catch (error) {
       console.error('Load error:', error);
+      setAnalysis(null);
+      setTransactions([]);
+      setPatterns([]);
     } finally {
       setLoading(false);
     }
