@@ -31,10 +31,10 @@ Deno.serve(async (req) => {
       analysisId = newAnalysis.id;
     }
 
-    // Fetch all PDF files from Salesforce
+    // Fetch all PDF files from Salesforce for this specific opportunity
     const filesResponse = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(
-        `SELECT Id, Title, LatestPublishedVersionId FROM ContentDocumentLink WHERE LinkedEntityId = '${opportunityId}'`
+        `SELECT ContentDocumentId, ContentDocument.Title, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLink WHERE LinkedEntityId = '${opportunityId}'`
       )}`,
       {
         headers: {
@@ -45,10 +45,18 @@ Deno.serve(async (req) => {
     );
 
     const filesData = await filesResponse.json();
-    const pdfFiles = filesData.records?.filter(r => 
-      r.ContentDocument?.LatestPublishedVersion?.FileType === 'PDF' || 
-      r.Title?.toLowerCase().endsWith('.pdf')
-    ) || [];
+    
+    if (!filesData.records) {
+      await base44.asServiceRole.entities.FinancialAnalysis.update(analysisId, {
+        parsing_status: 'failed',
+        error_message: 'Failed to fetch files from Salesforce'
+      });
+      return Response.json({ error: 'Failed to fetch files from Salesforce' }, { status: 400 });
+    }
+
+    const pdfFiles = filesData.records.filter(r => 
+      r.ContentDocument?.Title?.toLowerCase().endsWith('.pdf')
+    );
 
     if (pdfFiles.length === 0) {
       await base44.asServiceRole.entities.FinancialAnalysis.update(analysisId, {
@@ -65,13 +73,18 @@ Deno.serve(async (req) => {
     for (const file of pdfFiles) {
       try {
         // Get file content
-        const versionId = file.LatestPublishedVersionId || file.ContentDocument?.LatestPublishedVersionId;
+        const versionId = file.ContentDocument.LatestPublishedVersionId;
         const contentResponse = await fetch(
           `${instanceUrl}/services/data/v59.0/sobjects/ContentVersion/${versionId}/VersionData`,
           {
             headers: { 'Authorization': `Bearer ${token}` }
           }
         );
+
+        if (!contentResponse.ok) {
+          console.error(`Failed to fetch file ${file.ContentDocument.Title}`);
+          continue;
+        }
 
         const pdfBuffer = await contentResponse.arrayBuffer();
         const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBuffer)));
@@ -82,7 +95,7 @@ Deno.serve(async (req) => {
         });
         
         const fileUrl = uploadResponse.file_url;
-        pdfFilenames.push(file.Title);
+        pdfFilenames.push(file.ContentDocument.Title);
 
         // Use LLM with structured extraction
         const extractionSchema = {
@@ -133,7 +146,7 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
           
           const normalized = {
             opportunity_id: opportunityId,
-            pdf_filename: file.Title,
+            pdf_filename: file.ContentDocument.Title,
             transaction_date: tx.date,
             description: tx.description,
             description_clean: cleanDescription(tx.description),
@@ -147,7 +160,7 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
           allTransactions.push(normalized);
         }
       } catch (fileError) {
-        console.error(`Error processing ${file.Title}:`, fileError);
+        console.error(`Error processing ${file.ContentDocument.Title}:`, fileError);
       }
     }
 
