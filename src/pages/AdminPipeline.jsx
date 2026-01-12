@@ -6,47 +6,29 @@ import { Input } from "@/components/ui/input";
 import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import CreateTaskModal from '../components/admin/CreateTaskModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
 
 export default function AdminPipeline() {
+  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [repsData, setRepsData] = useState([]);
   const [expandedRep, setExpandedRep] = useState(null);
   const [activeView, setActiveView] = useState('leads'); // 'leads', 'opportunities', or 'tasks'
-  const [selectedRecord, setSelectedRecord] = useState(null);
-  const [modalType, setModalType] = useState(null);
   const [stageFilter, setStageFilter] = useState({}); // {repUserId: stageName}
-  const [expandedRecord, setExpandedRecord] = useState(null);
-  const [expandedRecordType, setExpandedRecordType] = useState(null);
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [allTasks, setAllTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
   const [repSearch, setRepSearch] = useState({}); // {repUserId: searchTerm}
-  const [relatedRecordView, setRelatedRecordView] = useState(null); // {recordId, recordType, recordName}
   const [tableSort, setTableSort] = useState({ column: null, direction: 'asc' }); // {column, direction}
 
   useEffect(() => {
     checkSession();
-  }, []);
-
-  useEffect(() => {
-    const handleMessage = (event) => {
-      if (event.data.type === 'openRelatedRecord') {
-        setRelatedRecordView({
-          recordId: event.data.recordId,
-          recordType: event.data.recordType,
-          recordName: event.data.recordName
-        });
-      }
-    };
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
   const checkSession = () => {
@@ -639,8 +621,7 @@ export default function AdminPipeline() {
                                         key={idx}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          setSelectedRecord(lead);
-                                          setModalType('lead');
+                                          navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`);
                                         }}
                                         className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full"
                                       >
@@ -668,8 +649,7 @@ export default function AdminPipeline() {
                                           key={idx}
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            setSelectedRecord(opp);
-                                            setModalType('opportunity');
+                                            navigate(createPageUrl('OpportunityDetail') + `?id=${opp.Id}`);
                                           }}
                                           className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full"
                                         >
@@ -752,52 +732,6 @@ export default function AdminPipeline() {
         </div>
       </div>
 
-      {/* Record Details Modal */}
-      <RecordDetailsModal
-        record={selectedRecord}
-        type={modalType}
-        isOpen={!!selectedRecord && !expandedRecord}
-        expandable={true}
-        onExpand={() => {
-          setExpandedRecord(selectedRecord);
-          setExpandedRecordType(modalType);
-        }}
-        onClose={() => {
-          setSelectedRecord(null);
-          setModalType(null);
-        }}
-      />
-
-      {/* Expanded Record View */}
-      {expandedRecord && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">
-                {expandedRecordType === 'lead' ? 'Lead Details' : 'Opportunity Details'}: {expandedRecord.Name}
-              </h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  setExpandedRecord(null);
-                  setExpandedRecordType(null);
-                }}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-            <div className="p-6">
-              <iframe
-                src={`${createPageUrl(expandedRecordType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${expandedRecord.Id}`}
-                className="w-full h-[calc(90vh-120px)] border-0"
-                title="Record Details"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Create Task Modal */}
       <CreateTaskModal
         isOpen={showCreateTask}
@@ -814,35 +748,7 @@ export default function AdminPipeline() {
         onClose={() => setSelectedTask(null)}
         session={session}
         onUpdate={() => loadAllRepsData(session, true)}
-        onOpenRelated={(recordInfo) => setRelatedRecordView(recordInfo)}
       />
-
-      {/* Related Record View from Task */}
-      {relatedRecordView && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">
-                {relatedRecordView.recordType === 'lead' ? 'Lead Details' : 'Opportunity Details'}: {relatedRecordView.recordName}
-              </h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setRelatedRecordView(null)}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-            <div className="p-6">
-              <iframe
-                src={`${createPageUrl(relatedRecordView.recordType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${relatedRecordView.recordId}`}
-                className="w-full h-[calc(90vh-120px)] border-0"
-                title="Related Record Details"
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );
