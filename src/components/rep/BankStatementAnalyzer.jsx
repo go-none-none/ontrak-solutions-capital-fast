@@ -44,8 +44,8 @@ export default function BankStatementAnalyzer({ opportunityId, session }) {
       setTransactions(txnRes);
       setPatterns(pattRes);
       
-      const pdfFiles = filesRes.data?.files?.filter(f => f.FileExtension === 'pdf') || [];
-      setFiles(pdfFiles);
+      const pdfFiles = filesRes.data?.files?.filter(f => f.FileExtension?.toLowerCase() === 'pdf') || [];
+      setFiles(filesRes.data?.files || []);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
