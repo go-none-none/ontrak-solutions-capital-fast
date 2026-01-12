@@ -351,15 +351,15 @@ export default function AdminPipeline() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl p-6 shadow-sm"
+            className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm min-h-[120px]"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between h-full">
               <div>
-                <p className="text-sm text-slate-600 mb-1">Total Users</p>
-                <p className="text-3xl font-bold text-slate-900">{allUsers.length}</p>
+                <p className="text-xs sm:text-sm text-slate-600 mb-1">Total Users</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{allUsers.length}</p>
               </div>
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center">
-                <Users className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center flex-shrink-0">
+                <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
           </motion.div>
@@ -369,17 +369,17 @@ export default function AdminPipeline() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
             onClick={() => setActiveView('leads')}
-            className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all hover:shadow-md ${
+            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all hover:shadow-md min-h-[120px] ${
               activeView === 'leads' ? 'ring-2 ring-[#08708E]' : ''
             }`}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between h-full">
               <div>
-                <p className="text-sm text-slate-600 mb-1">Total Leads</p>
-                <p className="text-3xl font-bold text-slate-900">{totalLeads}</p>
+                <p className="text-xs sm:text-sm text-slate-600 mb-1">Total Leads</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{totalLeads}</p>
               </div>
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                <Target className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                <Target className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
           </motion.div>
@@ -389,17 +389,17 @@ export default function AdminPipeline() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             onClick={() => setActiveView('opportunities')}
-            className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all hover:shadow-md ${
+            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all hover:shadow-md min-h-[120px] ${
               activeView === 'opportunities' ? 'ring-2 ring-[#08708E]' : ''
             }`}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between h-full">
               <div>
-                <p className="text-sm text-slate-600 mb-1">Total Opportunities</p>
-                <p className="text-3xl font-bold text-slate-900">{totalOpps}</p>
+                <p className="text-xs sm:text-sm text-slate-600 mb-1">Total Opportunities</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{totalOpps}</p>
               </div>
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-                <TrendingUp className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
           </motion.div>
@@ -408,15 +408,15 @@ export default function AdminPipeline() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl p-6 shadow-sm"
+            className="bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl p-4 sm:p-6 shadow-sm min-h-[120px]"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between h-full">
               <div>
-                <p className="text-sm text-white/80 mb-1">Total Pipeline</p>
-                <p className="text-3xl font-bold text-white">{formatCurrency(totalPipelineValue)}</p>
+                <p className="text-xs sm:text-sm text-white/80 mb-1">Total Pipeline</p>
+                <p className="text-2xl sm:text-3xl font-bold text-white">{formatCurrency(totalPipelineValue)}</p>
               </div>
-              <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
-                <DollarSign className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                <DollarSign className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
           </motion.div>
@@ -426,26 +426,26 @@ export default function AdminPipeline() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             onClick={() => setActiveView('tasks')}
-            className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all hover:shadow-md ${
+            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all hover:shadow-md min-h-[120px] ${
               activeView === 'tasks' ? 'ring-2 ring-[#08708E]' : ''
             }`}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between h-full">
               <div>
-                <p className="text-sm text-slate-600 mb-1">Open Tasks</p>
-                <p className="text-3xl font-bold text-slate-900">{openTasks}</p>
+                <p className="text-xs sm:text-sm text-slate-600 mb-1">Open Tasks</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{openTasks}</p>
                 <p className="text-xs text-slate-500 mt-1">of {totalTasks} total</p>
               </div>
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-                <CheckSquare className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                <CheckSquare className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
           </motion.div>
         </div>
 
         {/* Create Task Button */}
-        <div className="flex justify-end mb-6">
-          <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700">
+        <div className="flex justify-end mb-4 sm:mb-6">
+          <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700 min-h-[44px] w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             Create Task
           </Button>
@@ -733,8 +733,9 @@ export default function AdminPipeline() {
                   );
                 })}
               </tbody>
-            </table>
-          </div>
+              </table>
+              </div>
+              </div>
         </div>
       </div>
 

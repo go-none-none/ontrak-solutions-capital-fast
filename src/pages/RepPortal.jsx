@@ -271,51 +271,51 @@ export default function RepPortal() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">Rep Portal</h1>
-              <p className="text-sm text-slate-600">Welcome back, {session.name}</p>
-              </div>
-              <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Rep Portal</h1>
+              <p className="text-xs sm:text-sm text-slate-600 truncate">Welcome back, {session.name}</p>
+            </div>
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
               {isAdmin && (
-                <Link to={createPageUrl('AdminPipeline')}>
-                  <Button variant="outline">
-                    <Shield className="w-4 h-4 mr-2" />
-                    Admin Pipeline
+                <Link to={createPageUrl('AdminPipeline')} className="flex-1 sm:flex-initial">
+                  <Button variant="outline" className="w-full sm:w-auto min-h-[44px]">
+                    <Shield className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Admin Pipeline</span>
                   </Button>
                 </Link>
               )}
-              <Button variant="outline" onClick={handleRefresh} disabled={refreshing}>
-                <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                Refresh
+              <Button variant="outline" onClick={handleRefresh} disabled={refreshing} className="flex-1 sm:flex-initial min-h-[44px]">
+                <RefreshCw className={`w-4 h-4 sm:mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Refresh</span>
               </Button>
-              <Button variant="outline" onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
+              <Button variant="outline" onClick={handleLogout} className="flex-1 sm:flex-initial min-h-[44px]">
+                <LogOut className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Logout</span>
               </Button>
-              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             onClick={() => { setActiveTab('leads'); setStageFilter(null); setCurrentPage(1); }}
-            className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all ${
+            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
               activeTab === 'leads' ? 'ring-2 ring-[#08708E] shadow-md' : 'hover:shadow-md'
             }`}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between h-full">
               <div>
-                <p className="text-sm text-slate-600 mb-1">Active Leads</p>
-                <p className="text-3xl font-bold text-slate-900">{leads.length}</p>
+                <p className="text-xs sm:text-sm text-slate-600 mb-1">Active Leads</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{leads.length}</p>
               </div>
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                <Users className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
           </motion.div>
@@ -325,20 +325,20 @@ export default function RepPortal() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             onClick={() => { setActiveTab('opportunities'); setStageFilter(null); setCurrentPage(1); }}
-            className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all ${
+            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
               activeTab === 'opportunities' ? 'ring-2 ring-[#08708E] shadow-md' : 'hover:shadow-md'
             }`}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between h-full">
               <div>
-                <p className="text-sm text-slate-600 mb-1">Open Opportunities</p>
-                <p className="text-3xl font-bold text-slate-900">{opportunities.length}</p>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-xs sm:text-sm text-slate-600 mb-1">Open Opportunities</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{opportunities.length}</p>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1">
                   ${opportunities.reduce((sum, o) => sum + (o.Amount || 0), 0).toLocaleString()}
                 </p>
               </div>
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-                <TrendingUp className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
           </motion.div>
@@ -362,24 +362,24 @@ export default function RepPortal() {
         )}
 
         {/* Search & Content */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mt-6">
+        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 sm:mt-6">
           {activeTab !== 'tasks' && (
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
                 <Input
-                  placeholder="Search by name, company, or email..."
+                  placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                  className="pl-10 h-12"
+                  className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base"
                 />
               </div>
             </div>
           )}
 
           {activeTab === 'tasks' && (
-            <div className="mb-6">
-              <div className="flex gap-2">
+            <div className="mb-4 sm:mb-6">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   variant={taskFilter === 'all' ? 'default' : 'outline'}
                   size="sm"
