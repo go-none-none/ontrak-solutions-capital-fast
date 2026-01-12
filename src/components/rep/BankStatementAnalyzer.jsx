@@ -109,26 +109,42 @@ export default function BankStatementAnalyzer({ opportunityId, session }) {
     );
   }
 
+  const pdfFiles = files.filter(f => f.FileExtension === 'pdf');
+
   return (
     <div className="space-y-6">
-      {/* Upload Section */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">Bank Statements</h3>
-        <label className="flex items-center justify-center w-full px-4 py-8 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-[#08708E] transition-colors">
-          <div className="text-center">
-            <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-            <p className="text-sm font-medium text-slate-900">Upload Bank Statement</p>
-            <p className="text-xs text-slate-500">PDF format, any bank</p>
-          </div>
-          <input
-            type="file"
-            accept=".pdf"
-            onChange={handleFileUpload}
-            disabled={uploading}
-            className="hidden"
-          />
-        </label>
-      </div>
+      {/* File Selection Section */}
+      {!bankStatement && (
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">Select Bank Statement</h3>
+          {pdfFiles.length > 0 ? (
+            <div className="space-y-3">
+              <Select value={selectedFileId} onValueChange={setSelectedFileId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a PDF statement..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {pdfFiles.map(file => (
+                    <SelectItem key={file.Id} value={file.Id}>
+                      {file.Title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={handleParseFile}
+                disabled={!selectedFileId || parsing}
+                className="w-full bg-[#08708E] hover:bg-[#065a75]"
+              >
+                {parsing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                Parse Statement
+              </Button>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">No PDF files found. Upload statements to the Files section first.</p>
+          )}
+        </div>
+      )}
 
       {/* Verification Banner */}
       {bankStatement && !dataVerified && (
