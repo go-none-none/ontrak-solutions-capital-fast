@@ -134,6 +134,15 @@ export default function LeadDetail() {
   };
 
   const handleOwnerChange = async (newOwnerId) => {
+    if (newOwnerId === lead.OwnerId) return;
+
+    const newOwner = users.find(u => u.Id === newOwnerId);
+    const currentOwner = lead.Owner?.Name || 'Unknown';
+    
+    if (!confirm(`Change owner from ${currentOwner} to ${newOwner?.Name || 'Unknown'}?`)) {
+      return;
+    }
+
     setChangingOwner(true);
     try {
       await base44.functions.invoke('updateRecordOwner', {
@@ -144,7 +153,6 @@ export default function LeadDetail() {
         instanceUrl: session.instanceUrl
       });
 
-      const newOwner = users.find(u => u.Id === newOwnerId);
       setLead({ 
         ...lead, 
         OwnerId: newOwnerId,

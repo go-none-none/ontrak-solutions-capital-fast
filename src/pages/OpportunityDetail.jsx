@@ -157,6 +157,15 @@ export default function OpportunityDetail() {
   };
 
   const handleOwnerChange = async (newOwnerId) => {
+    if (newOwnerId === opportunity.OwnerId) return;
+
+    const newOwner = users.find(u => u.Id === newOwnerId);
+    const currentOwner = opportunity.Owner?.Name || 'Unknown';
+    
+    if (!confirm(`Change owner from ${currentOwner} to ${newOwner?.Name || 'Unknown'}?`)) {
+      return;
+    }
+
     setChangingOwner(true);
     try {
       await base44.functions.invoke('updateRecordOwner', {
@@ -167,7 +176,6 @@ export default function OpportunityDetail() {
         instanceUrl: session.instanceUrl
       });
 
-      const newOwner = users.find(u => u.Id === newOwnerId);
       setOpportunity({ 
         ...opportunity, 
         OwnerId: newOwnerId,
