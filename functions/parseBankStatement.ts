@@ -199,15 +199,6 @@ Return complete JSON with structure:
       parsing_status: 'completed'
     });
 
-    // Update Opportunity with parsed data
-    await base44.asServiceRole.entities.Opportunity.update(opportunityId, {
-      Bank_Statement_Analyzed__c: true,
-      Avg_Gross_Monthly_Sales__c: totalDeposits / 1,
-      Avg_Bank_Deposits__c: totalDeposits,
-      Avg_Negative_Days__c: nsfsCount,
-      Parsed_Data_Verified__c: false
-    }, { token: req.headers.get('authorization') });
-
     return Response.json({
       success: true,
       bankStatementId: bankStatement.id,
