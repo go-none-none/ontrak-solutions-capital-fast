@@ -29,16 +29,35 @@ export default function RepPortal() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [taskFilter, setTaskFilter] = useState('all');
-  const [selectedRecord, setSelectedRecord] = useState(null);
-  const [selectedRecordType, setSelectedRecordType] = useState(null);
-  const [expandedRecord, setExpandedRecord] = useState(null);
-  const [expandedRecordType, setExpandedRecordType] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const itemsPerPage = 100;
 
   useEffect(() => {
     checkSession();
+    
+    // Restore state from sessionStorage
+    const savedState = sessionStorage.getItem('repPortalState');
+    if (savedState) {
+      const state = JSON.parse(savedState);
+      setActiveTab(state.activeTab || 'leads');
+      setStageFilter(state.stageFilter || null);
+      setSearchTerm(state.searchTerm || '');
+      setCurrentPage(state.currentPage || 1);
+      setTaskFilter(state.taskFilter || 'all');
+    }
   }, []);
+
+  useEffect(() => {
+    // Save state to sessionStorage whenever it changes
+    const state = {
+      activeTab,
+      stageFilter,
+      searchTerm,
+      currentPage,
+      taskFilter
+    };
+    sessionStorage.setItem('repPortalState', JSON.stringify(state));
+  }, [activeTab, stageFilter, searchTerm, currentPage, taskFilter]);
 
   const checkSession = () => {
     const sessionData = sessionStorage.getItem('sfSession');
@@ -417,10 +436,6 @@ export default function RepPortal() {
                       key={lead.Id} 
                       lead={lead} 
                       session={session}
-                      onOpenModal={(record, type) => {
-                        setExpandedRecord(record);
-                        setExpandedRecordType(type);
-                      }}
                     />
                   ))
                 )}
@@ -499,10 +514,6 @@ export default function RepPortal() {
                       opportunity={opp} 
                       session={session}
                       onUpdate={() => loadData(session)}
-                      onOpenModal={(record, type) => {
-                        setExpandedRecord(record);
-                        setExpandedRecordType(type);
-                      }}
                     />
                   ))
                   )}
@@ -651,24 +662,6 @@ export default function RepPortal() {
         </div>
       </div>
 
-      {/* Record Details Modal */}
-      <RecordDetailsModal
-        record={selectedRecord}
-        type={selectedRecordType}
-        isOpen={!!selectedRecord && !expandedRecord}
-        expandable={true}
-        onExpand={() => {
-          setExpandedRecord(selectedRecord);
-          setExpandedRecordType(selectedRecordType);
-          setSelectedRecord(null);
-          setSelectedRecordType(null);
-        }}
-        onClose={() => {
-          setSelectedRecord(null);
-          setSelectedRecordType(null);
-        }}
-      />
-
       {/* Task Details Modal */}
       <TaskDetailsModal
         task={selectedTask}
@@ -676,42 +669,7 @@ export default function RepPortal() {
         onClose={() => setSelectedTask(null)}
         session={session}
         onUpdate={() => loadData(session, true)}
-        onOpenRelated={(recordInfo) => {
-          setExpandedRecord({ Id: recordInfo.recordId, Name: recordInfo.recordName });
-          setExpandedRecordType(recordInfo.recordType);
-          setSelectedTask(null);
-        }}
       />
-
-      {/* Expanded Record View */}
-      {expandedRecord && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900">
-                {expandedRecordType === 'lead' ? 'Lead Details' : 'Opportunity Details'}: {expandedRecord.Name}
-              </h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  setExpandedRecord(null);
-                  setExpandedRecordType(null);
-                }}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-            <div className="p-6">
-              <iframe
-                src={`${createPageUrl(expandedRecordType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${expandedRecord.Id}`}
-                className="w-full h-[calc(90vh-120px)] border-0"
-                title="Record Details"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

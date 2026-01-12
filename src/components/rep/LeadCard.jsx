@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { Phone, Mail, Building2, Calendar, DollarSign } from 'lucide-react';
 import { createPageUrl } from '@/utils';
+import { Link, useNavigate } from 'react-router-dom';
 
-export default function LeadCard({ lead, session, onOpenModal }) {
+export default function LeadCard({ lead, session }) {
+  const navigate = useNavigate();
 
   const stages = [
     { label: 'New', status: 'Open - Not Contacted' },
@@ -37,9 +39,7 @@ export default function LeadCard({ lead, session, onOpenModal }) {
   };
 
   const handleClick = () => {
-    if (onOpenModal) {
-      onOpenModal(lead, 'lead');
-    }
+    navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`);
   };
 
   const currentStage = getCurrentStageIndex();

@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, Calendar, Building2, TrendingUp } from 'lucide-react';
 import { createPageUrl } from '@/utils';
+import { useNavigate } from 'react-router-dom';
 
-export default function OpportunityCard({ opportunity, session, onUpdate, onOpenModal }) {
+export default function OpportunityCard({ opportunity, session, onUpdate }) {
+  const navigate = useNavigate();
 
   const stages = [
     { label: 'App In', name: 'Application In' },
@@ -39,9 +41,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, onOpen
   };
 
   const handleClick = () => {
-    if (onOpenModal) {
-      onOpenModal(opportunity, 'opportunity');
-    }
+    navigate(createPageUrl('OpportunityDetail') + `?id=${opportunity.Id}`);
   };
 
   const currentStage = getCurrentStageIndex();
