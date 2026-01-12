@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { base44 } from '@/api/base44Client';
 import { Loader2, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
 import BankStatementSummary from './BankStatementSummary';
@@ -7,8 +8,8 @@ import TransactionTable from './TransactionTable';
 import RecurringPatternsList from './RecurringPatternsList';
 
 export default function BankStatementAnalyzer({ recordId, session }) {
-  const [files, setFiles] = useState([]);
-  const [selectedFileUrl, setSelectedFileUrl] = useState(null);
+  const [pdfFiles, setPdfFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState(new Set());
   const [parsing, setParsing] = useState(false);
   const [bankStatements, setBankStatements] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -27,9 +28,11 @@ export default function BankStatementAnalyzer({ recordId, session }) {
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-      // Accept all files (PDFs and others) for parsing
-      const allFiles = response.data.files || [];
-      setFiles(allFiles);
+      // Filter for PDF files only
+      const pdfs = (response.data.files || []).filter(f => 
+        f.FileType === 'PDF' || f.Title?.toLowerCase().endsWith('.pdf')
+      );
+      setPdfFiles(pdfs);
     } catch (error) {
       console.error('Load files error:', error);
     }
@@ -66,20 +69,31 @@ export default function BankStatementAnalyzer({ recordId, session }) {
     }
   };
 
-  const handleParseFile = async () => {
-    if (!selectedFileUrl) return;
+  const toggleFile = (fileId) => {
+    const newSelected = new Set(selectedFiles);
+    if (newSelected.has(fileId)) {
+      newSelected.delete(fileId);
+    } else {
+      newSelected.add(fileId);
+    }
+    setSelectedFiles(newSelected);
+  };
+
+  const handleParseFiles = async () => {
+    if (selectedFiles.size === 0) return;
 
     setParsing(true);
-    try {
-      const response = await base44.functions.invoke('parseBankStatement', {
-        fileUrl: selectedFileUrl,
-        opportunityId: recordId
-      });
+    const filesToParse = pdfFiles.filter(f => selectedFiles.has(f.Id));
 
-      if (response.data.success) {
-        setSelectedFileUrl(null);
-        await loadParsedData();
+    try {
+      for (const file of filesToParse) {
+        await base44.functions.invoke('parseBankStatement', {
+          fileUrl: file.LatestPublishedVersionId,
+          opportunityId: recordId
+        });
       }
+      setSelectedFiles(new Set());
+      await loadParsedData();
     } catch (error) {
       console.error('Parse error:', error);
       alert(`Parse failed: ${error.response?.data?.error || error.message}`);
@@ -98,34 +112,32 @@ export default function BankStatementAnalyzer({ recordId, session }) {
   return (
     <div className="space-y-6">
       {/* File Selection & Parsing */}
-      {files.length > 0 && (
+      {pdfFiles.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm p-6 border-2 border-blue-200">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">Parse Bank Statements</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Select a file to analyze:</label>
-              <select
-                value={selectedFileUrl}
-                onChange={(e) => setSelectedFileUrl(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#08708E]"
-              >
-                <option value="">Choose a file...</option>
-                {files.map(file => (
-                  <option key={file.Id} value={file.LatestPublishedVersionId}>
-                    {file.Title}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <Button
-              onClick={handleParseFile}
-              disabled={!selectedFileUrl || parsing}
-              className="bg-[#08708E] hover:bg-[#065a72] w-full"
-            >
-              {parsing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FileText className="w-4 h-4 mr-2" />}
-              {parsing ? 'Analyzing...' : 'Analyze Bank Statement'}
-            </Button>
+          <h3 className="text-lg font-semibold text-slate-900 mb-4">PDF Bank Statements</h3>
+          <div className="space-y-3 mb-4">
+            {pdfFiles.map(file => (
+              <label key={file.Id} className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">
+                <Checkbox
+                  checked={selectedFiles.has(file.Id)}
+                  onCheckedChange={() => toggleFile(file.Id)}
+                />
+                <FileText className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-slate-900 truncate">{file.Title}</p>
+                  <p className="text-xs text-slate-500">{new Date(file.CreatedDate).toLocaleDateString()}</p>
+                </div>
+              </label>
+            ))}
           </div>
+          <Button
+            onClick={handleParseFiles}
+            disabled={selectedFiles.size === 0 || parsing}
+            className="w-full bg-[#08708E] hover:bg-[#065a72]"
+          >
+            {parsing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FileText className="w-4 h-4 mr-2" />}
+            {parsing ? 'Analyzing...' : `Analyze ${selectedFiles.size} ${selectedFiles.size === 1 ? 'Statement' : 'Statements'}`}
+          </Button>
         </div>
       )}
 
@@ -181,11 +193,11 @@ export default function BankStatementAnalyzer({ recordId, session }) {
       )}
 
       {/* Empty State */}
-      {bankStatements.length === 0 && files.length === 0 && (
+      {bankStatements.length === 0 && pdfFiles.length === 0 && (
         <div className="bg-slate-50 rounded-lg p-12 text-center">
           <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <p className="text-slate-600 mb-2">No bank statement files attached</p>
-          <p className="text-sm text-slate-500">Upload PDF bank statements in the Files section to analyze</p>
+          <p className="text-slate-600 mb-2">No PDF files attached to this opportunity</p>
+          <p className="text-sm text-slate-500">Attach bank statement PDFs to the Files section to analyze them</p>
         </div>
       )}
     </div>
