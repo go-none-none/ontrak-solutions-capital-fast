@@ -31,38 +31,14 @@ export default function RepPortal() {
   const [taskFilter, setTaskFilter] = useState('all');
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [selectedRecordType, setSelectedRecordType] = useState(null);
+  const [expandedRecord, setExpandedRecord] = useState(null);
+  const [expandedRecordType, setExpandedRecordType] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const itemsPerPage = 100;
 
   useEffect(() => {
     checkSession();
-    
-    // Restore saved portal state
-    const savedState = sessionStorage.getItem('repPortalState');
-    if (savedState) {
-      try {
-        const state = JSON.parse(savedState);
-        if (state.activeTab) setActiveTab(state.activeTab);
-        if (state.searchTerm) setSearchTerm(state.searchTerm);
-        if (state.stageFilter) setStageFilter(state.stageFilter);
-        if (state.currentPage) setCurrentPage(state.currentPage);
-        if (state.taskFilter) setTaskFilter(state.taskFilter);
-      } catch (e) {
-        console.error('Failed to restore state:', e);
-      }
-    }
   }, []);
-
-  // Save state whenever it changes
-  useEffect(() => {
-    sessionStorage.setItem('repPortalState', JSON.stringify({
-      activeTab,
-      searchTerm,
-      stageFilter,
-      currentPage,
-      taskFilter
-    }));
-  }, [activeTab, searchTerm, stageFilter, currentPage, taskFilter]);
 
   const checkSession = () => {
     const sessionData = sessionStorage.getItem('sfSession');
@@ -441,6 +417,10 @@ export default function RepPortal() {
                       key={lead.Id} 
                       lead={lead} 
                       session={session}
+                      onOpenModal={(record, type) => {
+                        setExpandedRecord(record);
+                        setExpandedRecordType(type);
+                      }}
                     />
                   ))
                 )}
@@ -519,6 +499,10 @@ export default function RepPortal() {
                       opportunity={opp} 
                       session={session}
                       onUpdate={() => loadData(session)}
+                      onOpenModal={(record, type) => {
+                        setExpandedRecord(record);
+                        setExpandedRecordType(type);
+                      }}
                     />
                   ))
                   )}
@@ -699,7 +683,35 @@ export default function RepPortal() {
         }}
       />
 
-
+      {/* Expanded Record View */}
+      {expandedRecord && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900">
+                {expandedRecordType === 'lead' ? 'Lead Details' : 'Opportunity Details'}: {expandedRecord.Name}
+              </h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  setExpandedRecord(null);
+                  setExpandedRecordType(null);
+                }}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="p-6">
+              <iframe
+                src={`${createPageUrl(expandedRecordType === 'lead' ? 'LeadDetail' : 'OpportunityDetail')}?id=${expandedRecord.Id}`}
+                className="w-full h-[calc(90vh-120px)] border-0"
+                title="Record Details"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

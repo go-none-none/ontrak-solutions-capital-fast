@@ -4,16 +4,15 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ArrowLeft, Edit, Loader2, CheckCircle2, ChevronDown, XCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadCard from '../components/rep/DialpadCard.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
+
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
-import ChangeOwnerButton from '../components/rep/ChangeOwnerButton.jsx';
 
 export default function LeadDetail() {
-  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [lead, setLead] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +28,6 @@ export default function LeadDetail() {
     business: false,
     references: false
   });
-  const [backUrl, setBackUrl] = useState(null);
 
   const bankStatementFields = [
     { label: 'Bank Statement - Month 1', field: 'Bank_Statement_Month_1__c' },
@@ -54,12 +52,6 @@ export default function LeadDetail() {
     }
     setSession(JSON.parse(sessionData));
     loadLead(JSON.parse(sessionData));
-    
-    // Get back URL from session storage
-    const savedBackUrl = sessionStorage.getItem('leadDetailBackUrl');
-    if (savedBackUrl) {
-      setBackUrl(savedBackUrl);
-    }
   }, []);
 
   const loadLead = async (sessionData) => {
@@ -141,21 +133,6 @@ export default function LeadDetail() {
     );
   };
 
-  const handleBack = () => {
-    if (backUrl) {
-      // Restore saved state
-      const savedState = sessionStorage.getItem('leadDetailBackState');
-      if (savedState) {
-        sessionStorage.setItem('repPortalState', savedState);
-      }
-      sessionStorage.removeItem('leadDetailBackUrl');
-      sessionStorage.removeItem('leadDetailBackState');
-      navigate(backUrl);
-    } else {
-      navigate(createPageUrl('RepPortal'));
-    }
-  };
-
   const getCurrentStageIndex = () => {
     const index = stages.findIndex(s => s.status === lead?.Status);
     return index >= 0 ? index : 0;
@@ -182,22 +159,16 @@ export default function LeadDetail() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm" onClick={handleBack}>
+          <div className="flex items-center gap-4">
+            <Link to={createPageUrl('RepPortal')}>
+              <Button variant="outline" size="sm">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">{lead.Name}</h1>
-                <p className="text-sm text-slate-600">{lead.Company}</p>
-              </div>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">{lead.Name}</h1>
+              <p className="text-sm text-slate-600">{lead.Company}</p>
             </div>
-            <ChangeOwnerButton
-              record={lead}
-              recordType="Lead"
-              session={session}
-              onOwnerChanged={() => loadLead(session)}
-            />
           </div>
         </div>
       </div>

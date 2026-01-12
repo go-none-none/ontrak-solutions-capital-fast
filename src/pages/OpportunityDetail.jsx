@@ -7,16 +7,15 @@ import { ArrowLeft, Loader2, ChevronDown, CheckCircle2, XCircle } from 'lucide-r
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import DialpadCard from '../components/rep/DialpadCard.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
+
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
-import ChangeOwnerButton from '../components/rep/ChangeOwnerButton.jsx';
 
 export default function OpportunityDetail() {
-  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [opportunity, setOpportunity] = useState(null);
   const [contactRoles, setContactRoles] = useState([]);
@@ -27,7 +26,6 @@ export default function OpportunityDetail() {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [showDeclinedReasons, setShowDeclinedReasons] = useState(false);
   const [selectedDeclinedReason, setSelectedDeclinedReason] = useState('');
-  const [backUrl, setBackUrl] = useState(null);
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
@@ -37,12 +35,6 @@ export default function OpportunityDetail() {
     }
     setSession(JSON.parse(sessionData));
     loadOpportunity(JSON.parse(sessionData));
-    
-    // Get back URL from session storage
-    const savedBackUrl = sessionStorage.getItem('opportunityDetailBackUrl');
-    if (savedBackUrl) {
-      setBackUrl(savedBackUrl);
-    }
   }, []);
 
   const loadOpportunity = async (sessionData) => {
@@ -166,21 +158,6 @@ export default function OpportunityDetail() {
     );
   };
 
-  const handleBack = () => {
-    if (backUrl) {
-      // Restore saved state
-      const savedState = sessionStorage.getItem('opportunityDetailBackState');
-      if (savedState) {
-        sessionStorage.setItem('repPortalState', savedState);
-      }
-      sessionStorage.removeItem('opportunityDetailBackUrl');
-      sessionStorage.removeItem('opportunityDetailBackState');
-      navigate(backUrl);
-    } else {
-      navigate(createPageUrl('RepPortal'));
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -232,25 +209,19 @@ export default function OpportunityDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm" onClick={handleBack}>
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
+              <Link to={createPageUrl('RepPortal')}>
+                <Button variant="outline" size="sm">
+                  <ArrowLeft className="w-4 h-4" />
+                </Button>
+              </Link>
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">{opportunity.Name}</h1>
                 <p className="text-sm text-slate-600">{opportunity.Account?.Name}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <ChangeOwnerButton
-                record={opportunity}
-                recordType="Opportunity"
-                session={session}
-                onOwnerChanged={() => loadOpportunity(session)}
-              />
-              <Badge className={stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}>
-                {opportunity.StageName}
-              </Badge>
-            </div>
+            <Badge className={stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}>
+              {opportunity.StageName}
+            </Badge>
           </div>
         </div>
       </div>
