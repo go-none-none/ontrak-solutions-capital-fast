@@ -174,12 +174,21 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
     const dateRangeStart = dates[0]?.toISOString().split('T')[0];
     const dateRangeEnd = dates[dates.length - 1]?.toISOString().split('T')[0];
 
+    // Calculate average daily balance
+    const balances = allTransactions.filter(t => t.balance > 0).map(t => t.balance);
+    const avgDailyBalance = balances.length > 0 
+      ? balances.reduce((sum, b) => sum + b, 0) / balances.length 
+      : 0;
+
     // Count NSFs
     const nsfCount = allTransactions.filter(t => 
       t.description_clean.toLowerCase().includes('nsf') ||
       t.description_clean.toLowerCase().includes('returned') ||
       t.description_clean.toLowerCase().includes('insufficient')
     ).length;
+
+    // Count negative days
+    const negativeDays = allTransactions.filter(t => t.balance < 0).length;
 
     // Update analysis
     await base44.asServiceRole.entities.FinancialAnalysis.update(analysisId, {
@@ -192,7 +201,9 @@ Be thorough - extract EVERY transaction line. Handle multiple formats. If a colu
       total_deposits: totalDeposits,
       total_withdrawals: totalWithdrawals,
       net_cash_flow: netCashFlow,
-      nsf_count: nsfCount
+      avg_daily_balance: avgDailyBalance,
+      nsf_count: nsfCount,
+      negative_days_count: negativeDays
     });
 
     return Response.json({

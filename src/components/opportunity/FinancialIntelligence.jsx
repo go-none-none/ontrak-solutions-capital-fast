@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, FileText, TrendingUp, TrendingDown, DollarSign, AlertTriangle, CheckCircle, Activity } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import RecurringPatternsTable from './RecurringPatternsTable';
+import TransactionTable from './TransactionTable';
 
 export default function FinancialIntelligence({ opportunityId, session }) {
   const [analysis, setAnalysis] = useState(null);
@@ -14,6 +15,8 @@ export default function FinancialIntelligence({ opportunityId, session }) {
   const [loading, setLoading] = useState(true);
   const [parsing, setParsing] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [activeTab, setActiveTab] = useState('patterns');
+  const [transactionFilter, setTransactionFilter] = useState(null);
 
   useEffect(() => {
     loadAnalysis();
@@ -69,6 +72,21 @@ export default function FinancialIntelligence({ opportunityId, session }) {
     } finally {
       setAnalyzing(false);
     }
+  };
+
+  const handleCardClick = (filterType) => {
+    setActiveTab('transactions');
+    // Apply filter based on card clicked
+    // This will be handled by passing filter to TransactionTable
+  };
+
+  const calculateAvgDailyBalance = () => {
+    if (transactions.length === 0) return 0;
+    
+    const balances = transactions.filter(t => t.balance > 0).map(t => t.balance);
+    if (balances.length === 0) return 0;
+    
+    return balances.reduce((sum, b) => sum + b, 0) / balances.length;
   };
 
   const formatCurrency = (amount) => {
@@ -169,9 +187,12 @@ export default function FinancialIntelligence({ opportunityId, session }) {
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-4">
+      {/* Summary Cards - Clickable */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card 
+          className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => handleCardClick('deposits')}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-600 mb-1">Total Deposits</p>
@@ -181,7 +202,10 @@ export default function FinancialIntelligence({ opportunityId, session }) {
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card 
+          className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => handleCardClick('withdrawals')}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-600 mb-1">Total Withdrawals</p>
@@ -191,7 +215,10 @@ export default function FinancialIntelligence({ opportunityId, session }) {
           </div>
         </Card>
 
-        <Card className="p-4">
+        <Card 
+          className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => handleCardClick('cashflow')}
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-600 mb-1">Net Cash Flow</p>
@@ -200,6 +227,16 @@ export default function FinancialIntelligence({ opportunityId, session }) {
               </p>
             </div>
             <DollarSign className="w-8 h-8 text-[#08708E]" />
+          </div>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-slate-600 mb-1">Avg Daily Balance</p>
+              <p className="text-2xl font-bold text-[#08708E]">{formatCurrency(calculateAvgDailyBalance())}</p>
+            </div>
+            <DollarSign className="w-8 h-8 text-slate-400" />
           </div>
         </Card>
       </div>
@@ -231,7 +268,7 @@ export default function FinancialIntelligence({ opportunityId, session }) {
       </div>
 
       {/* Tabs for Transactions and Patterns */}
-      <Tabs defaultValue="patterns" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="patterns">Recurring Patterns ({patterns.length})</TabsTrigger>
           <TabsTrigger value="transactions">All Transactions ({transactions.length})</TabsTrigger>
@@ -245,55 +282,13 @@ export default function FinancialIntelligence({ opportunityId, session }) {
         </TabsContent>
 
         <TabsContent value="transactions">
-          <Card className="p-4">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 px-2 font-medium text-slate-600">Date</th>
-                    <th className="text-left py-2 px-2 font-medium text-slate-600">Description</th>
-                    <th className="text-left py-2 px-2 font-medium text-slate-600">Category</th>
-                    <th className="text-right py-2 px-2 font-medium text-slate-600">Debit</th>
-                    <th className="text-right py-2 px-2 font-medium text-slate-600">Credit</th>
-                    <th className="text-right py-2 px-2 font-medium text-slate-600">Balance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {transactions.map((tx, idx) => (
-                    <tr key={idx} className={`border-b border-slate-100 hover:bg-slate-50 ${
-                      tx.is_mca ? 'bg-red-50' : ''
-                    }`}>
-                      <td className="py-2 px-2">{new Date(tx.transaction_date).toLocaleDateString()}</td>
-                      <td className="py-2 px-2">
-                        {tx.description}
-                        {tx.is_anomaly && (
-                          <Badge variant="outline" className="ml-2 text-xs bg-yellow-50 text-yellow-800">
-                            Anomaly
-                          </Badge>
-                        )}
-                      </td>
-                      <td className="py-2 px-2">
-                        {tx.is_recurring && (
-                          <Badge variant="outline" className="text-xs">
-                            {tx.category?.replace('_', ' ')}
-                          </Badge>
-                        )}
-                      </td>
-                      <td className="py-2 px-2 text-right text-red-600">
-                        {tx.debit > 0 ? formatCurrency(tx.debit) : ''}
-                      </td>
-                      <td className="py-2 px-2 text-right text-green-600">
-                        {tx.credit > 0 ? formatCurrency(tx.credit) : ''}
-                      </td>
-                      <td className="py-2 px-2 text-right font-medium">
-                        {tx.balance > 0 ? formatCurrency(tx.balance) : ''}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
+          <TransactionTable 
+            transactions={transactions}
+            onViewPDF={(filename, page) => {
+              console.log('View PDF:', filename, page);
+              // TODO: Implement PDF viewer
+            }}
+          />
         </TabsContent>
       </Tabs>
     </div>
