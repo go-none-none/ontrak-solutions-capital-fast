@@ -11,7 +11,10 @@ Deno.serve(async (req) => {
 
     // Query all leads with priority ordering - using standard fields only
     const query = `SELECT Id, Name, Company, Phone, MobilePhone, Email, Status, LeadSource, CreatedDate, LastModifiedDate, Industry, Website, Description, Street, City, State, PostalCode, Country, Title, Rating, OwnerId, Owner.Name, Owner.Email, Owner.Phone FROM Lead WHERE OwnerId = '${userId}' AND IsConverted = false ORDER BY LastModifiedDate DESC`;
-    
+
+    console.log('getRepLeads - Looking for leads with OwnerId:', userId);
+    console.log('getRepLeads - Query:', query);
+
     let response = await fetch(
       `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
       {
@@ -24,11 +27,13 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('Salesforce error for userId:', userId, 'Error:', error);
+      console.error('getRepLeads - Salesforce error for userId:', userId, 'Error:', error);
       return Response.json({ error: 'Failed to fetch leads', details: error }, { status: 500 });
     }
 
     let data = await response.json();
+    console.log('getRepLeads - Initial response record count:', data.records?.length || 0);
+    console.log('getRepLeads - Has more records?', !!data.nextRecordsUrl);
     let allLeads = data.records || [];
     
     // Handle pagination to get all records
