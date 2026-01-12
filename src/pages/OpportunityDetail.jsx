@@ -12,7 +12,6 @@ import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
-import BankStatementAnalyzer from '../components/rep/BankStatementAnalyzer.jsx';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -406,18 +405,12 @@ export default function OpportunityDetail() {
             <Tabs defaultValue="details" className="space-y-6">
               <TabsList className="bg-white p-1 rounded-lg shadow-sm">
                 <TabsTrigger value="details">Details</TabsTrigger>
-                <TabsTrigger value="fintel">FinTel</TabsTrigger>
                 <TabsTrigger value="submissions">Submissions</TabsTrigger>
                 <TabsTrigger value="offers">Offers</TabsTrigger>
                 <TabsTrigger value="statements">Statements</TabsTrigger>
                 <TabsTrigger value="debt">Debt</TabsTrigger>
                 <TabsTrigger value="commissions">Commissions</TabsTrigger>
               </TabsList>
-
-              {/* FinTel Tab */}
-              <TabsContent value="fintel" className="space-y-4">
-                <BankStatementAnalyzer recordId={opportunity.Id} session={session} />
-              </TabsContent>
 
               {/* Details Tab */}
               <TabsContent value="details" className="space-y-4">
