@@ -90,12 +90,21 @@ export default function BankStatementAnalyzer({ recordId, session }) {
     try {
       for (const file of filesToParse) {
         const doc = file.ContentDocument;
-        // Use the latest published version for download
         const versionId = doc.LatestPublishedVersionId || file.ContentDocumentId;
-        const downloadUrl = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${versionId}`;
+        const salesforceUrl = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${versionId}`;
         
+        // Download from Salesforce and upload to Base44
+        const uploadResponse = await base44.functions.invoke('downloadAndUploadPDF', {
+          fileUrl: salesforceUrl
+        });
+        
+        if (!uploadResponse.data.success) {
+          throw new Error('Failed to upload PDF to Base44');
+        }
+
+        // Parse using the Base44 URL
         await base44.functions.invoke('parseBankStatement', {
-          fileUrl: downloadUrl,
+          fileUrl: uploadResponse.data.file_url,
           opportunityId: recordId
         });
       }
