@@ -31,6 +31,62 @@ export default function MiniDialer({ session }) {
   const [selectedDisposition, setSelectedDisposition] = useState('');
   const [callNotes, setCallNotes] = useState('');
   const [showDisposition, setShowDisposition] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [connecting, setConnecting] = useState(false);
+
+  // Check Dialpad connection
+  const checkConnection = async () => {
+    try {
+      const response = await base44.functions.invoke('dialpadOAuth', {
+        action: 'checkConnection'
+      });
+      setIsConnected(response.data.connected || false);
+    } catch (error) {
+      console.error('Check connection error:', error);
+      setIsConnected(false);
+    }
+  };
+
+  // Connect to Dialpad
+  const handleConnect = async () => {
+    setConnecting(true);
+    try {
+      const response = await base44.functions.invoke('dialpadOAuth', {
+        action: 'getAuthUrl'
+      });
+      
+      if (response.data.authUrl) {
+        const authWindow = window.open(response.data.authUrl, 'dialpad-auth', 'width=600,height=700');
+        
+        // Poll for connection
+        const checkInterval = setInterval(async () => {
+          try {
+            const connResponse = await base44.functions.invoke('dialpadOAuth', {
+              action: 'checkConnection'
+            });
+            
+            if (connResponse.data.connected) {
+              clearInterval(checkInterval);
+              setIsConnected(true);
+              setConnecting(false);
+              if (authWindow) authWindow.close();
+            }
+          } catch (error) {
+            console.error('Poll error:', error);
+          }
+        }, 2000);
+
+        // Stop polling after 2 minutes
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          setConnecting(false);
+        }, 120000);
+      }
+    } catch (error) {
+      console.error('Connect error:', error);
+      setConnecting(false);
+    }
+  };
 
   // Format phone number as user types
   const formatPhoneNumber = (value) => {
@@ -223,16 +279,20 @@ export default function MiniDialer({ session }) {
   };
 
   useEffect(() => {
-    if (activeTab === 'history') {
-      loadCallHistory();
-    }
-  }, [activeTab]);
+    checkConnection();
+  }, []);
 
   useEffect(() => {
-    if (activeTab === 'sms' && phoneNumber) {
+    if (isConnected && activeTab === 'history') {
+      loadCallHistory();
+    }
+  }, [activeTab, isConnected]);
+
+  useEffect(() => {
+    if (isConnected && activeTab === 'sms' && phoneNumber) {
       loadSMSHistory(phoneNumber);
     }
-  }, [activeTab, phoneNumber]);
+  }, [activeTab, phoneNumber, isConnected]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -328,8 +388,29 @@ export default function MiniDialer({ session }) {
 
             {/* Content */}
             <div className="p-4">
-              {/* Dialer Tab */}
-              {activeTab === 'dialer' && (
+              {!isConnected ? (
+                <div className="text-center py-8">
+                  <Phone className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                  <h3 className="font-semibold text-slate-900 mb-2">Connect Dialpad</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    Connect your Dialpad account to make calls and send SMS
+                  </p>
+                  <Button
+                    onClick={handleConnect}
+                    disabled={connecting}
+                    className="bg-[#08708E] hover:bg-[#065a72]"
+                  >
+                    {connecting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        Connecting...
+                      </>
+                    ) : (
+                      'Connect Dialpad'
+                    )}
+                  </Button>
+                </div>
+              ) : activeTab === 'dialer' && (
                 <div className="space-y-4">
                   {showDisposition ? (
                     <div className="space-y-3">
@@ -458,7 +539,7 @@ export default function MiniDialer({ session }) {
               )}
 
               {/* SMS Tab */}
-              {activeTab === 'sms' && (
+              {isConnected && activeTab === 'sms' && (
                 <div className="space-y-4">
                   <Input
                     type="tel"
@@ -510,7 +591,7 @@ export default function MiniDialer({ session }) {
               )}
 
               {/* History Tab */}
-              {activeTab === 'history' && (
+              {isConnected && activeTab === 'history' && (
                 <div className="space-y-2 max-h-96 overflow-y-auto">
                   {callHistory.length === 0 ? (
                     <p className="text-center text-slate-500 py-8">No call history</p>
@@ -536,7 +617,7 @@ export default function MiniDialer({ session }) {
                     ))
                   )}
                 </div>
-              )}
+              ))}
             </div>
           </div>
         )}

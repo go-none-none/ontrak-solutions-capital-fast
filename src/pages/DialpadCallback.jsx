@@ -3,8 +3,8 @@ import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function DialpadCallback() {
-  const [status, setStatus] = useState('processing');
-  const [error, setError] = useState('');
+  const [status, setStatus] = useState('processing'); // processing, success, error
+  const [message, setMessage] = useState('Connecting to Dialpad...');
 
   useEffect(() => {
     handleCallback();
@@ -14,60 +14,80 @@ export default function DialpadCallback() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
-      const state = urlParams.get('state');
+      const error = urlParams.get('error');
 
-      if (!code) {
+      if (error) {
         setStatus('error');
-        setError('No authorization code received');
+        setMessage(`Authorization failed: ${error}`);
         return;
       }
 
-      await base44.functions.invoke('dialpadOAuthNew', {
+      if (!code) {
+        setStatus('error');
+        setMessage('No authorization code received');
+        return;
+      }
+
+      // Exchange code for token
+      const response = await base44.functions.invoke('dialpadOAuth', {
         action: 'exchangeCode',
         code: code
       });
 
-      setStatus('success');
-      
-      setTimeout(() => {
-        window.close();
-      }, 2000);
+      if (response.data.success) {
+        setStatus('success');
+        setMessage('Successfully connected to Dialpad!');
+        
+        // Close window after 2 seconds
+        setTimeout(() => {
+          window.close();
+        }, 2000);
+      } else {
+        setStatus('error');
+        setMessage('Failed to connect to Dialpad');
+      }
     } catch (error) {
       console.error('Callback error:', error);
       setStatus('error');
-      setError(error.message || 'Failed to connect');
+      setMessage(`Error: ${error.message}`);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50">
-      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl shadow-xl p-12 max-w-md w-full text-center">
         {status === 'processing' && (
           <>
-            <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">Connecting Dialpad...</h2>
-            <p className="text-slate-600">Please wait</p>
+            <Loader2 className="w-16 h-16 text-[#08708E] animate-spin mx-auto mb-6" />
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">Connecting...</h1>
+            <p className="text-slate-600">{message}</p>
           </>
         )}
-        
+
         {status === 'success' && (
           <>
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-6 h-6 text-green-600" />
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-12 h-12 text-green-600" />
             </div>
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">Connected!</h2>
-            <p className="text-slate-600">Dialpad connected successfully. This window will close automatically.</p>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">Success!</h1>
+            <p className="text-slate-600">{message}</p>
+            <p className="text-sm text-slate-500 mt-4">This window will close automatically...</p>
           </>
         )}
-        
+
         {status === 'error' && (
           <>
-            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <XCircle className="w-6 h-6 text-red-600" />
+            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <XCircle className="w-12 h-12 text-red-600" />
             </div>
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">Connection Failed</h2>
-            <p className="text-slate-600 mb-2">{error || 'Unable to connect Dialpad.'}</p>
-            <p className="text-sm text-slate-500">You can close this window and try again.</p>
+            <h1 className="text-2xl font-bold text-slate-900 mb-2">Error</h1>
+            <p className="text-slate-600">{message}</p>
+            <button
+              onClick={() => window.close()}
+              className="mt-6 px-6 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors"
+            >
+              Close Window
+            </button>
           </>
         )}
       </div>
