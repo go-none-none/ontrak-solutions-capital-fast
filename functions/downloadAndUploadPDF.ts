@@ -14,15 +14,16 @@ Deno.serve(async (req) => {
     // Download the PDF from Salesforce
     const pdfResponse = await fetch(fileUrl);
     if (!pdfResponse.ok) {
-      return Response.json({ error: 'Failed to download PDF from Salesforce' }, { status: 400 });
+      return Response.json({ error: `Failed to download PDF: ${pdfResponse.status}` }, { status: 400 });
     }
 
     const pdfBuffer = await pdfResponse.arrayBuffer();
-    const fileName = fileUrl.split('/').pop() || 'document.pdf';
+    console.log(`Downloaded ${pdfBuffer.byteLength} bytes`);
 
-    // Write to temp file and read back as Deno.FsFile for proper upload
-    const tempPath = `/tmp/${fileName}`;
+    // Write to temp file with timestamp
+    const tempPath = `/tmp/statement_${Date.now()}.pdf`;
     await Deno.writeFile(tempPath, new Uint8Array(pdfBuffer));
+    console.log(`Wrote to temp file: ${tempPath}`);
     
     const file = await Deno.open(tempPath);
     
