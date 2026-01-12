@@ -7,9 +7,6 @@ import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 
-// IMPORTANT: Replace this with your actual Dialpad Client ID provided by Dialpad team
-const DIALPAD_CLIENT_ID = 'YOUR_DIALPAD_CLIENT_ID';
-
 export default function MiniDialer({ session }) {
   const navigate = useNavigate();
   const iframeRef = useRef(null);
@@ -19,6 +16,7 @@ export default function MiniDialer({ session }) {
   const [dialpadUserId, setDialpadUserId] = useState(null);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeError, setIframeError] = useState(false);
+  const [dialpadClientId, setDialpadClientId] = useState(null);
   
   // Record matching
   const [matchedRecord, setMatchedRecord] = useState(null);
@@ -28,6 +26,23 @@ export default function MiniDialer({ session }) {
   
   // Manual dial
   const [manualNumber, setManualNumber] = useState('');
+
+  // Fetch Dialpad Client ID on mount
+  useEffect(() => {
+    const fetchClientId = async () => {
+      try {
+        const response = await base44.functions.invoke('getDialpadClientId');
+        if (response.data && response.data.clientId) {
+          setDialpadClientId(response.data.clientId);
+        } else {
+          console.error("Dialpad Client ID not found in backend response");
+        }
+      } catch (error) {
+        console.error("Failed to fetch Dialpad Client ID", error);
+      }
+    };
+    fetchClientId();
+  }, []);
 
   // Listen for messages from Dialpad iframe
   useEffect(() => {
@@ -195,9 +210,6 @@ export default function MiniDialer({ session }) {
     setShowMatchSelection(false);
   };
 
-  // Check if client ID is configured
-  const isConfigured = DIALPAD_CLIENT_ID && DIALPAD_CLIENT_ID !== 'YOUR_DIALPAD_CLIENT_ID';
-
   return (
     <>
       {/* Floating Phone Button */}
@@ -265,12 +277,12 @@ export default function MiniDialer({ session }) {
           {!isMinimized && (
             <div className="relative">
               {/* Not Configured Warning */}
-              {!isConfigured && (
+              {!dialpadClientId && (
                 <div className="p-6 text-center">
                   <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-3" />
                   <h3 className="font-semibold text-slate-900 mb-2">Dialpad Not Configured</h3>
                   <p className="text-sm text-slate-600 mb-4">
-                    Please update the <code className="bg-slate-100 px-1 rounded">DIALPAD_CLIENT_ID</code> in the MiniDialer component with your Dialpad Client ID.
+                    Missing Dialpad Client ID.
                   </p>
                   <p className="text-xs text-slate-500">
                     Contact Dialpad support to get your CTI Client ID.
@@ -279,7 +291,7 @@ export default function MiniDialer({ session }) {
               )}
 
               {/* Configured State */}
-              {isConfigured && (
+              {dialpadClientId && (
                 <>
                   {/* Matched Record Banner */}
                   <AnimatePresence>
@@ -399,7 +411,7 @@ export default function MiniDialer({ session }) {
 
                     <iframe
                       ref={iframeRef}
-                      src={`https://dialpad.com/apps/${DIALPAD_CLIENT_ID}`}
+                      src={`https://dialpad.com/apps/${dialpadClientId}`}
                       title="Dialpad CTI"
                       allow="microphone; speaker-selection; autoplay; camera; display-capture; hid"
                       sandbox="allow-popups allow-scripts allow-same-origin allow-forms"
