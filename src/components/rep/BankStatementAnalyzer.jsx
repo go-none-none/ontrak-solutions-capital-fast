@@ -36,6 +36,7 @@ export default function BankStatementAnalyzer({ recordId, session }) {
       setPdfFiles(pdfs);
     } catch (error) {
       console.error('Load files error:', error);
+      setPdfFiles([]);
     }
   };
 
@@ -88,7 +89,11 @@ export default function BankStatementAnalyzer({ recordId, session }) {
 
     try {
       for (const file of filesToParse) {
-        const downloadUrl = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`;
+        const doc = file.ContentDocument;
+        // Use the latest published version for download
+        const versionId = doc.LatestPublishedVersionId || file.ContentDocumentId;
+        const downloadUrl = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${versionId}`;
+        
         await base44.functions.invoke('parseBankStatement', {
           fileUrl: downloadUrl,
           opportunityId: recordId
