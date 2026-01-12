@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, FileText, TrendingUp, TrendingDown, DollarSign, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, FileText, TrendingUp, TrendingDown, DollarSign, AlertTriangle, CheckCircle, Activity } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import RecurringPatternsTable from './RecurringPatternsTable';
 
 export default function FinancialIntelligence({ opportunityId, session }) {
   const [analysis, setAnalysis] = useState(null);
   const [transactions, setTransactions] = useState([]);
+  const [patterns, setPatterns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [parsing, setParsing] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
 
   useEffect(() => {
     loadAnalysis();
@@ -17,13 +21,15 @@ export default function FinancialIntelligence({ opportunityId, session }) {
 
   const loadAnalysis = async () => {
     try {
-      const [analysisData, transactionData] = await Promise.all([
+      const [analysisData, transactionData, patternsData] = await Promise.all([
         base44.entities.FinancialAnalysis.filter({ opportunity_id: opportunityId }),
-        base44.entities.BankTransaction.filter({ opportunity_id: opportunityId })
+        base44.entities.BankTransaction.filter({ opportunity_id: opportunityId }),
+        base44.entities.RecurringPattern.filter({ opportunity_id: opportunityId })
       ]);
 
       setAnalysis(analysisData[0] || null);
       setTransactions(transactionData || []);
+      setPatterns(patternsData || []);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
@@ -46,6 +52,22 @@ export default function FinancialIntelligence({ opportunityId, session }) {
       alert('Failed to parse statements');
     } finally {
       setParsing(false);
+    }
+  };
+
+  const handleAnalyzePatterns = async () => {
+    setAnalyzing(true);
+    try {
+      await base44.functions.invoke('detectRecurringPatterns', {
+        opportunityId
+      });
+      
+      await loadAnalysis();
+    } catch (error) {
+      console.error('Analysis error:', error);
+      alert('Failed to analyze patterns');
+    } finally {
+      setAnalyzing(false);
     }
   };
 
@@ -123,11 +145,11 @@ export default function FinancialIntelligence({ opportunityId, session }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-semibold text-slate-900">Financial Intelligence</h3>
           <p className="text-sm text-slate-600">
-            {analysis.total_transactions} transactions from {analysis.pdf_count} statements
+            {analysis.total_transactions} transactions • {patterns.length} patterns • {analysis.pdf_count} statements
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -136,6 +158,10 @@ export default function FinancialIntelligence({ opportunityId, session }) {
               Review Required
             </Badge>
           )}
+          <Button onClick={handleAnalyzePatterns} disabled={analyzing} variant="outline" size="sm">
+            {analyzing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Activity className="w-4 h-4 mr-2" />}
+            Detect Patterns
+          </Button>
           <Button onClick={handleParse} disabled={parsing} variant="outline" size="sm">
             {parsing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
             Re-parse
@@ -179,70 +205,97 @@ export default function FinancialIntelligence({ opportunityId, session }) {
       </div>
 
       {/* Additional Metrics */}
-      <Card className="p-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-          <div>
-            <p className="text-slate-600 mb-1">NSF Count</p>
-            <p className="text-lg font-semibold text-slate-900">{analysis.nsf_count || 0}</p>
-          </div>
-          <div>
-            <p className="text-slate-600 mb-1">Negative Days</p>
-            <p className="text-lg font-semibold text-slate-900">{analysis.negative_days_count || 0}</p>
-          </div>
-          <div>
-            <p className="text-slate-600 mb-1">Date Range</p>
-            <p className="text-lg font-semibold text-slate-900">
-              {analysis.date_range_start ? new Date(analysis.date_range_start).toLocaleDateString() : 'N/A'}
-            </p>
-          </div>
-          <div>
-            <p className="text-slate-600 mb-1">Statements</p>
-            <p className="text-lg font-semibold text-slate-900">{analysis.pdf_count}</p>
-          </div>
-        </div>
-      </Card>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <Card className="p-4">
+          <p className="text-xs text-slate-600 mb-1">MCA Payments</p>
+          <p className="text-xl font-bold text-red-600">{formatCurrency(analysis.total_mca_payments || 0)}</p>
+        </Card>
+        <Card className="p-4">
+          <p className="text-xs text-slate-600 mb-1">NSF Count</p>
+          <p className="text-xl font-bold text-orange-600">{analysis.nsf_count || 0}</p>
+        </Card>
+        <Card className="p-4">
+          <p className="text-xs text-slate-600 mb-1">Negative Days</p>
+          <p className="text-xl font-bold text-slate-900">{analysis.negative_days_count || 0}</p>
+        </Card>
+        <Card className="p-4">
+          <p className="text-xs text-slate-600 mb-1">Patterns</p>
+          <p className="text-xl font-bold text-[#08708E]">{patterns.length}</p>
+        </Card>
+        <Card className="p-4">
+          <p className="text-xs text-slate-600 mb-1">Date Range</p>
+          <p className="text-sm font-semibold text-slate-900">
+            {analysis.date_range_start ? new Date(analysis.date_range_start).toLocaleDateString() : 'N/A'}
+          </p>
+        </Card>
+      </div>
 
-      {/* Transaction Table Preview */}
-      <Card className="p-4">
-        <h4 className="font-semibold text-slate-900 mb-4">Recent Transactions</h4>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-slate-200">
-                <th className="text-left py-2 px-2 font-medium text-slate-600">Date</th>
-                <th className="text-left py-2 px-2 font-medium text-slate-600">Description</th>
-                <th className="text-right py-2 px-2 font-medium text-slate-600">Debit</th>
-                <th className="text-right py-2 px-2 font-medium text-slate-600">Credit</th>
-                <th className="text-right py-2 px-2 font-medium text-slate-600">Balance</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transactions.slice(0, 10).map((tx, idx) => (
-                <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50">
-                  <td className="py-2 px-2">{new Date(tx.transaction_date).toLocaleDateString()}</td>
-                  <td className="py-2 px-2">{tx.description}</td>
-                  <td className="py-2 px-2 text-right text-red-600">
-                    {tx.debit > 0 ? formatCurrency(tx.debit) : ''}
-                  </td>
-                  <td className="py-2 px-2 text-right text-green-600">
-                    {tx.credit > 0 ? formatCurrency(tx.credit) : ''}
-                  </td>
-                  <td className="py-2 px-2 text-right font-medium">
-                    {tx.balance > 0 ? formatCurrency(tx.balance) : ''}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {transactions.length > 10 && (
-          <div className="mt-4 text-center">
-            <Button variant="outline" size="sm">
-              View All {transactions.length} Transactions
-            </Button>
-          </div>
-        )}
-      </Card>
+      {/* Tabs for Transactions and Patterns */}
+      <Tabs defaultValue="patterns" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="patterns">Recurring Patterns ({patterns.length})</TabsTrigger>
+          <TabsTrigger value="transactions">All Transactions ({transactions.length})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="patterns">
+          <RecurringPatternsTable 
+            patterns={patterns} 
+            transactions={transactions}
+          />
+        </TabsContent>
+
+        <TabsContent value="transactions">
+          <Card className="p-4">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200">
+                    <th className="text-left py-2 px-2 font-medium text-slate-600">Date</th>
+                    <th className="text-left py-2 px-2 font-medium text-slate-600">Description</th>
+                    <th className="text-left py-2 px-2 font-medium text-slate-600">Category</th>
+                    <th className="text-right py-2 px-2 font-medium text-slate-600">Debit</th>
+                    <th className="text-right py-2 px-2 font-medium text-slate-600">Credit</th>
+                    <th className="text-right py-2 px-2 font-medium text-slate-600">Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.map((tx, idx) => (
+                    <tr key={idx} className={`border-b border-slate-100 hover:bg-slate-50 ${
+                      tx.is_mca ? 'bg-red-50' : ''
+                    }`}>
+                      <td className="py-2 px-2">{new Date(tx.transaction_date).toLocaleDateString()}</td>
+                      <td className="py-2 px-2">
+                        {tx.description}
+                        {tx.is_anomaly && (
+                          <Badge variant="outline" className="ml-2 text-xs bg-yellow-50 text-yellow-800">
+                            Anomaly
+                          </Badge>
+                        )}
+                      </td>
+                      <td className="py-2 px-2">
+                        {tx.is_recurring && (
+                          <Badge variant="outline" className="text-xs">
+                            {tx.category?.replace('_', ' ')}
+                          </Badge>
+                        )}
+                      </td>
+                      <td className="py-2 px-2 text-right text-red-600">
+                        {tx.debit > 0 ? formatCurrency(tx.debit) : ''}
+                      </td>
+                      <td className="py-2 px-2 text-right text-green-600">
+                        {tx.credit > 0 ? formatCurrency(tx.credit) : ''}
+                      </td>
+                      <td className="py-2 px-2 text-right font-medium">
+                        {tx.balance > 0 ? formatCurrency(tx.balance) : ''}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
