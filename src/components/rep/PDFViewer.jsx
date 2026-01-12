@@ -78,25 +78,23 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-6xl h-[90vh] p-0 gap-0">
-        <DialogHeader className="px-6 py-4 border-b">
-          <div className="flex items-center justify-between">
-            <DialogTitle>{file.ContentDocument.Title}</DialogTitle>
-            <div className="flex gap-2">
-              {pdfData && (
-                <Button variant="outline" size="sm" onClick={handleDownload}>
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
-              )}
-              <Button variant="ghost" size="icon" onClick={handleClose}>
-                <X className="w-4 h-4" />
+      <DialogContent className="max-w-6xl h-[90vh] p-0 gap-0 flex flex-col">
+        <div className="flex items-center justify-between px-6 py-3 border-b flex-shrink-0">
+          <DialogTitle className="text-base font-semibold">{file.ContentDocument.Title}</DialogTitle>
+          <div className="flex gap-2">
+            {pdfData && (
+              <Button variant="outline" size="sm" onClick={handleDownload}>
+                <Download className="w-4 h-4 mr-2" />
+                Download
               </Button>
-            </div>
+            )}
+            <Button variant="ghost" size="icon" onClick={handleClose}>
+              <X className="w-4 h-4" />
+            </Button>
           </div>
-        </DialogHeader>
+        </div>
         
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden min-h-0">
           {loading && (
             <div className="flex flex-col items-center justify-center h-full">
               <Loader2 className="w-12 h-12 text-[#08708E] animate-spin mb-4" />
