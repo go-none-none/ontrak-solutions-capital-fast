@@ -23,6 +23,7 @@ export default function LeadDetail() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [users, setUsers] = useState([]);
   const [changingOwner, setChangingOwner] = useState(false);
+  const [showOwnerChange, setShowOwnerChange] = useState(false);
   const [openSections, setOpenSections] = useState({
     contact: true,
     owner1: false,
@@ -137,12 +138,7 @@ export default function LeadDetail() {
     if (newOwnerId === lead.OwnerId) return;
 
     const newOwner = users.find(u => u.Id === newOwnerId);
-    const currentOwner = lead.Owner?.Name || 'Unknown';
     
-    if (!confirm(`Change owner from ${currentOwner} to ${newOwner?.Name || 'Unknown'}?`)) {
-      return;
-    }
-
     setChangingOwner(true);
     try {
       await base44.functions.invoke('updateRecordOwner', {
@@ -158,6 +154,7 @@ export default function LeadDetail() {
         OwnerId: newOwnerId,
         Owner: { Id: newOwnerId, Name: newOwner?.Name || 'Unknown' }
       });
+      setShowOwnerChange(false);
     } catch (error) {
       console.error('Change owner error:', error);
       alert('Failed to change owner');
@@ -590,24 +587,48 @@ export default function LeadDetail() {
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs mb-1">Lead Owner</p>
-                  <Select
-                    value={lead.OwnerId}
-                    onValueChange={handleOwnerChange}
-                    disabled={changingOwner}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue>
-                        {changingOwner ? 'Changing...' : lead.Owner?.Name || 'Select Owner'}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {users.map(user => (
-                        <SelectItem key={user.Id} value={user.Id}>
-                          {user.Name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {!showOwnerChange ? (
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-slate-900">{lead.Owner?.Name || 'Unknown'}</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowOwnerChange(true)}
+                        className="text-xs"
+                      >
+                        Change
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Select
+                        value={lead.OwnerId}
+                        onValueChange={handleOwnerChange}
+                        disabled={changingOwner}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue>
+                            {changingOwner ? 'Changing...' : 'Select new owner'}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {users.map(user => (
+                            <SelectItem key={user.Id} value={user.Id}>
+                              {user.Name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowOwnerChange(false)}
+                        className="w-full text-xs"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs">Status</p>
