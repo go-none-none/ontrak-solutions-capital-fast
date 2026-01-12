@@ -218,10 +218,11 @@ export default function MiniDialer({ session }) {
               </p>
             </div>
           )}
-      </motion.div>
+          </motion.div>
+          )}
 
-      {/* Multiple Matches Modal */}
-      <AnimatePresence>
+          {/* Multiple Matches Modal */}
+          <AnimatePresence>
         {showMatchSelection && multipleMatches.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
