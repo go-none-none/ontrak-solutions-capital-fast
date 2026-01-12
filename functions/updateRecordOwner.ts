@@ -1,3 +1,5 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+
 Deno.serve(async (req) => {
   try {
     const { recordId, objectType, ownerId, token, instanceUrl } = await req.json();
@@ -21,7 +23,7 @@ Deno.serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Update owner error:', errorText);
-      return Response.json({ error: 'Failed to update owner', details: errorText }, { status: response.status });
+      return Response.json({ error: 'Failed to update owner' }, { status: response.status });
     }
 
     return Response.json({ success: true });
