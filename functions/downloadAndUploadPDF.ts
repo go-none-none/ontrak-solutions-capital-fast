@@ -18,20 +18,22 @@ Deno.serve(async (req) => {
     }
 
     const pdfBuffer = await pdfResponse.arrayBuffer();
-    
-    // Convert to base64
-    const uint8Array = new Uint8Array(pdfBuffer);
-    let binaryString = '';
-    for (let i = 0; i < uint8Array.length; i++) {
-      binaryString += String.fromCharCode(uint8Array[i]);
-    }
-    const base64String = btoa(binaryString);
+    const fileName = fileUrl.split('/').pop() || 'document.pdf';
 
+    // Write to temp file and read back as Deno.FsFile for proper upload
+    const tempPath = `/tmp/${fileName}`;
+    await Deno.writeFile(tempPath, new Uint8Array(pdfBuffer));
+    
+    const file = await Deno.open(tempPath);
+    
     // Upload to Base44 public storage (for parsing)
     console.log(`Uploading PDF to Base44 storage (${pdfBuffer.byteLength} bytes)`);
     const uploadResult = await base44.integrations.Core.UploadFile({
-      file: base64String
+      file: file
     });
+
+    file.close();
+    await Deno.remove(tempPath);
 
     console.log(`PDF uploaded to Base44: ${uploadResult.file_url}`);
 
