@@ -134,49 +134,77 @@ export default function DocumentsDrawer({ isOpen, onClose, opportunityId, sessio
               <p className="text-slate-500">No documents found</p>
             </div>
           ) : (
-            <div className="space-y-2">
-              {documents.map(doc => (
-                <div
-                  key={doc.Id}
-                  className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-[#08708E] transition-colors"
-                >
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <FileText className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                    <div className="min-w-0">
-                      <p className="font-medium text-slate-900 truncate">{doc.Title}</p>
-                      <p className="text-xs text-slate-500">{doc.FileSize ? `${(doc.FileSize / 1024).toFixed(2)} KB` : 'PDF'}</p>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                {documents.map(doc => (
+                  <div
+                    key={doc.Id}
+                    className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-[#08708E] transition-colors"
+                  >
+                    <button
+                      onClick={() => toggleSelection(doc.Id)}
+                      className="flex items-center gap-3 flex-1 min-w-0 text-left"
+                    >
+                      {selectedDocs.has(doc.Id) ? (
+                        <CheckCircle2 className="w-5 h-5 text-[#08708E] flex-shrink-0" />
+                      ) : (
+                        <Circle className="w-5 h-5 text-slate-400 flex-shrink-0" />
+                      )}
+                      <div className="min-w-0">
+                        <p className="font-medium text-slate-900 truncate">{doc.Title}</p>
+                        <p className="text-xs text-slate-500">{doc.FileSize ? `${(doc.FileSize / 1024).toFixed(2)} KB` : 'PDF'}</p>
+                      </div>
+                    </button>
+                    <div className="flex gap-2 ml-3 flex-shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDownload(doc.Id, doc.Title)}
+                        disabled={downloading === doc.Id}
+                        className="h-9 w-9"
+                      >
+                        {downloading === doc.Id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Download className="w-4 h-4 text-slate-600 hover:text-[#08708E]" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(doc.Id)}
+                        disabled={deleting === doc.Id}
+                        className="h-9 w-9"
+                      >
+                        {deleting === doc.Id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4 text-slate-600 hover:text-red-600" />
+                        )}
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex gap-2 ml-3 flex-shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDownload(doc.Id, doc.Title)}
-                      disabled={downloading === doc.Id}
-                      className="h-9 w-9"
-                    >
-                      {downloading === doc.Id ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Download className="w-4 h-4 text-slate-600 hover:text-[#08708E]" />
-                      )}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(doc.Id)}
-                      disabled={deleting === doc.Id}
-                      className="h-9 w-9"
-                    >
-                      {deleting === doc.Id ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="w-4 h-4 text-slate-600 hover:text-red-600" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              {documents.length > 0 && (
+                <Button
+                  onClick={handleDownloadSelected}
+                  disabled={selectedDocs.size === 0 || downloadingSelected}
+                  className="w-full bg-[#08708E] hover:bg-[#065a72]"
+                >
+                  {downloadingSelected ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Downloading...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Selected ({selectedDocs.size})
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           )}
         </div>
