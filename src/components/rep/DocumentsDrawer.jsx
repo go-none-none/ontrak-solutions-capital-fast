@@ -219,7 +219,7 @@ export default function DocumentsDrawer({ isOpen, onClose, opportunityId, sessio
                   ) : (
                     <>
                       <Download className="w-4 h-4 mr-2" />
-                      Download Selected ({selectedDocs.size})
+                      Save to App ({selectedDocs.size})
                     </>
                   )}
                 </Button>
