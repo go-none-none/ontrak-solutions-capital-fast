@@ -148,7 +148,7 @@ export default function RepPortal() {
       setLoading(true);
     }
     try {
-      const [leadsRes, oppsRes, tasksRes, dispositionOptionsRes] = await Promise.all([
+      const [leadsRes, oppsRes, tasksRes] = await Promise.all([
         base44.functions.invoke('getRepLeads', {
           userId: sessionData.userId,
           token: sessionData.token,
@@ -163,20 +163,26 @@ export default function RepPortal() {
           userId: sessionData.userId,
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
-        }),
-        base44.functions.invoke('getSalesforcePicklistValues', {
-          objectType: 'Lead',
-          fieldName: 'Call_Disposition__c',
-          token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
         })
       ]);
 
       setLeads(leadsRes.data.leads || []);
       setOpportunities(oppsRes.data.opportunities || []);
       setTasks(tasksRes.data);
-      setDispositionOptions(dispositionOptionsRes.data.values || []);
       setLoadingTasks(false);
+
+      // Load disposition options separately so it doesn't break the main data load
+      try {
+        const dispositionRes = await base44.functions.invoke('getSalesforcePicklistValues', {
+          objectType: 'Lead',
+          fieldName: 'Call_Disposition__c',
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        });
+        setDispositionOptions(dispositionRes.data.values || []);
+      } catch (err) {
+        console.error('Load disposition error:', err);
+      }
     } catch (error) {
       console.error('Load error:', error);
       setLoadingTasks(false);
