@@ -342,6 +342,10 @@ export default function RepPortal() {
               <p className="text-xs sm:text-sm text-slate-600 truncate">Welcome back, {session.name}</p>
             </div>
             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+              <Button onClick={() => setShowCreateTask(true)} className="flex-1 sm:flex-initial bg-purple-600 hover:bg-purple-700 min-h-[44px]">
+                <Plus className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Create Task</span>
+              </Button>
               {isAdmin && (
                 <Link to={createPageUrl('AdminPipeline')} className="flex-1 sm:flex-initial">
                   <Button variant="outline" className="w-full sm:w-auto min-h-[44px]">
