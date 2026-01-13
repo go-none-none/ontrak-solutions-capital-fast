@@ -421,7 +421,7 @@ export default function RepPortal() {
         </div>
 
         {/* Pipeline */}
-        {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
+        {activeTab !== 'tasks' && (
           <PipelineView 
             leads={leads} 
             opportunities={opportunities} 
