@@ -978,25 +978,24 @@ export default function AdminPipeline() {
           )}
           </div>
           </div>
-          </div>
 
           {/* Create Task Modal */}
           <CreateTaskModal
-        isOpen={showCreateTask}
-        onClose={() => setShowCreateTask(false)}
-        session={session}
-        repsData={repsData}
-        onSuccess={() => loadAllRepsData(session, true)}
-      />
+          isOpen={showCreateTask}
+          onClose={() => setShowCreateTask(false)}
+          session={session}
+          repsData={repsData}
+          onSuccess={() => loadAllRepsData(session, true)}
+          />
 
-      {/* Task Details Modal */}
-      <TaskDetailsModal
-        task={selectedTask}
-        isOpen={!!selectedTask}
-        onClose={() => setSelectedTask(null)}
-        session={session}
-        onUpdate={() => loadAllRepsData(session, true)}
-      />
-      </div>
-      );
+          {/* Task Details Modal */}
+          <TaskDetailsModal
+          task={selectedTask}
+          isOpen={!!selectedTask}
+          onClose={() => setSelectedTask(null)}
+          session={session}
+          onUpdate={() => loadAllRepsData(session, true)}
+          />
+          </div>
+          );
       }
