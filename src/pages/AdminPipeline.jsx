@@ -976,9 +976,11 @@ export default function AdminPipeline() {
           </div>
           </div>
           )}
+          </div>
+          </div>
 
           {/* Create Task Modal */}
-      <CreateTaskModal
+          <CreateTaskModal
         isOpen={showCreateTask}
         onClose={() => setShowCreateTask(false)}
         session={session}
@@ -995,6 +997,5 @@ export default function AdminPipeline() {
         onUpdate={() => loadAllRepsData(session, true)}
       />
       </div>
-    </div>
-  );
-}
+      );
+      }
