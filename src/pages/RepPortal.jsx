@@ -35,6 +35,23 @@ export default function RepPortal() {
   const [updatingDisposition, setUpdatingDisposition] = useState(null);
   const itemsPerPage = 100;
 
+  // Disposition color mapping
+  const dispositionColorMap = {
+    'Contacted': 'bg-green-500 text-white',
+    'No Contact': 'bg-blue-500 text-white',
+    'Do Not Call': 'bg-red-500 text-white',
+    'Wrong Number': 'bg-red-400 text-white',
+    'Left Message': 'bg-amber-500 text-white',
+    'Not Interested': 'bg-pink-500 text-white',
+    'Call Back': 'bg-indigo-500 text-white',
+    'Connected': 'bg-emerald-500 text-white',
+    'Voicemail': 'bg-violet-500 text-white'
+  };
+
+  const getDispositionColor = (disposition) => {
+    return dispositionColorMap[disposition] || 'bg-gray-400 text-white';
+  };
+
   useEffect(() => {
     checkSession();
     
@@ -826,8 +843,8 @@ export default function RepPortal() {
                               <div className="flex items-center gap-3">
                                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                                   lead.Call_Disposition__c 
-                                    ? 'bg-green-100 text-green-800' 
-                                    : 'bg-gray-100 text-gray-600'
+                                    ? getDispositionColor(lead.Call_Disposition__c)
+                                    : 'bg-gray-300 text-gray-700'
                                 }`}>
                                   {lead.Call_Disposition__c || 'Not set'}
                                 </span>
