@@ -467,7 +467,7 @@ export default function RepPortal() {
             <div className="mb-4 sm:mb-6">
               <div className="flex justify-between items-center mb-4 sm:mb-6">
                 <div className="flex flex-wrap gap-2 flex-1">
-                <Button
+                  <Button
                   variant={taskFilter === 'all' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => { setTaskFilter('all'); setCurrentPage(1); }}
