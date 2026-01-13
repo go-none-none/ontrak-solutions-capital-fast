@@ -818,9 +818,9 @@ export default function OpportunityDetail() {
           </div>
         </div>
         </div>
-        </div>
 
         {/* Dialpad CTI */}
         <DialpadCTI clientId="a2bFGaaCr3j7UW9Sty8ETv5sz" />
+        </div>
         );
         }
