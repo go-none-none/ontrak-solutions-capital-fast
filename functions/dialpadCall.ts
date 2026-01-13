@@ -1,5 +1,3 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
-
 Deno.serve(async (req) => {
   try {
     const { phone_number } = await req.json();
@@ -13,6 +11,10 @@ Deno.serve(async (req) => {
 
     const apiKey = Deno.env.get('DIALPAD_API_KEY');
     
+    if (!apiKey) {
+      return Response.json({ error: 'DIALPAD_API_KEY not configured' }, { status: 500 });
+    }
+    
     // Initiate call via Dialpad API
     const response = await fetch('https://dialpad.com/api/v2/calls', {
       method: 'POST',
@@ -21,9 +23,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        to_number: cleanNumber,
-        // Optionally specify which office/user to call from
-        // from_number: 'your_dialpad_number'
+        to_number: cleanNumber
       })
     });
 
