@@ -20,13 +20,13 @@ import LeadDetail from './pages/LeadDetail';
 import MissingDocs from './pages/MissingDocs';
 import OpportunityDetail from './pages/OpportunityDetail';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import RepPortal from './pages/RepPortal';
 import Reviews from './pages/Reviews';
 import Status from './pages/Status';
 import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
-import RepPortal from './pages/RepPortal';
 import __Layout from './Layout.jsx';
 
 
@@ -53,13 +53,13 @@ export const PAGES = {
     "MissingDocs": MissingDocs,
     "OpportunityDetail": OpportunityDetail,
     "PrivacyPolicy": PrivacyPolicy,
+    "RepPortal": RepPortal,
     "Reviews": Reviews,
     "Status": Status,
     "TermsOfService": TermsOfService,
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
-    "RepPortal": RepPortal,
 }
 
 export const pagesConfig = {
