@@ -757,17 +757,20 @@ export default function RepPortal() {
                 >
                   Not Set ({leads.filter(l => !l.Call_Disposition__c).length})
                 </Button>
-                {dispositionOptions.map(option => (
-                  <Button
-                    key={option}
-                    variant={dispositionFilter === option ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => { setDispositionFilter(option); setCurrentPage(1); }}
-                    className={dispositionFilter === option ? 'bg-blue-600' : ''}
-                  >
-                    {option} ({leads.filter(l => l.Call_Disposition__c === option).length})
-                  </Button>
-                ))}
+                {dispositionOptions.map(option => {
+                  const colorClass = getDispositionColor(option);
+                  const isSelected = dispositionFilter === option;
+                  return (
+                    <Button
+                      key={option}
+                      size="sm"
+                      onClick={() => { setDispositionFilter(option); setCurrentPage(1); }}
+                      className={`${colorClass} ${isSelected ? 'ring-2 ring-offset-1 ring-slate-900' : ''}`}
+                    >
+                      {option} ({leads.filter(l => l.Call_Disposition__c === option).length})
+                    </Button>
+                  );
+                })}
               </div>
             </div>
 
