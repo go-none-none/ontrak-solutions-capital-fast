@@ -817,25 +817,30 @@ export default function RepPortal() {
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              {updatingDisposition === lead.Id ? (
-                                <span className="text-sm text-slate-500">Updating...</span>
-                              ) : (
-                                <Select
-                                  value={lead.Call_Disposition__c || ''}
-                                  onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
-                                >
-                                  <SelectTrigger className="w-48">
-                                    <SelectValue placeholder="Not set" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {dispositionOptions.map(option => (
-                                      <SelectItem key={option} value={option}>
-                                        {option}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              )}
+                              <div className="space-y-1">
+                                <p className="text-sm font-medium text-slate-900">
+                                  {lead.Call_Disposition__c || <span className="text-slate-400">Not set</span>}
+                                </p>
+                                {updatingDisposition === lead.Id ? (
+                                  <span className="text-xs text-slate-500">Updating...</span>
+                                ) : (
+                                  <Select
+                                    value={lead.Call_Disposition__c || ''}
+                                    onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
+                                  >
+                                    <SelectTrigger className="w-48 h-8 text-xs">
+                                      <SelectValue placeholder="Change disposition" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {dispositionOptions.map(option => (
+                                        <SelectItem key={option} value={option}>
+                                          {option}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                )}
+                              </div>
                             </td>
                           </tr>
                         ))}
