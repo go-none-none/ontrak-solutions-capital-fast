@@ -3,6 +3,15 @@ import { useLocation } from 'react-router-dom';
 import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
 
+// Suppress Base44 auth errors for Salesforce-authenticated app
+const originalError = console.error;
+console.error = function(...args) {
+  if (args[0]?.includes?.('entities/User/me') || (args[0]?.message?.includes?.('401'))) {
+    return;
+  }
+  originalError.apply(console, args);
+};
+
 export default function Layout({ children, currentPageName }) {
   const { pathname } = useLocation();
   const isRepPortal = currentPageName === 'RepPortal' || currentPageName === 'LeadDetail' || currentPageName === 'OpportunityDetail' || currentPageName === 'AdminPipeline';
