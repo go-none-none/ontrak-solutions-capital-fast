@@ -32,7 +32,33 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
   }, [isOpen]);
 
   const searchRelatedRecords = async (term) => {
-    if (!term || term.length < 2 || !session) return;
+    if (!term || term.length < 2) {
+      setRelatedRecords([]);
+      return;
+    }
+
+    // If repsData is provided (from AdminPipeline), search within it
+    if (repsData && repsData.length > 0) {
+      const records = [];
+      repsData.forEach(rep => {
+        rep.leads?.forEach(lead => {
+          if (lead.Name?.toLowerCase().includes(term.toLowerCase()) || 
+              lead.Company?.toLowerCase().includes(term.toLowerCase())) {
+            records.push({ id: lead.Id, name: lead.Name, type: 'Lead' });
+          }
+        });
+        rep.opportunities?.forEach(opp => {
+          if (opp.Name?.toLowerCase().includes(term.toLowerCase())) {
+            records.push({ id: opp.Id, name: opp.Name, type: 'Opportunity' });
+          }
+        });
+      });
+      setRelatedRecords(records);
+      return;
+    }
+
+    // Otherwise, search Salesforce directly (for RepPortal usage)
+    if (!session) return;
     try {
       const leadsQuery = `SELECT Id, Name FROM Lead WHERE Name LIKE '%${term}%' OR Company LIKE '%${term}%' LIMIT 10`;
       const oppsQuery = `SELECT Id, Name FROM Opportunity WHERE Name LIKE '%${term}%' LIMIT 10`;
