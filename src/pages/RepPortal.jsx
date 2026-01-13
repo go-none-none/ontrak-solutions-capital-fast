@@ -16,6 +16,7 @@ import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
 
 export default function RepPortal() {
+  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [leads, setLeads] = useState([]);
@@ -853,7 +854,9 @@ export default function RepPortal() {
                                     <SelectContent>
                                       {dispositionOptions.map(option => (
                                         <SelectItem key={option} value={option}>
-                                          {option}
+                                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getDispositionColor(option)}`}>
+                                            {option}
+                                          </span>
                                         </SelectItem>
                                       ))}
                                     </SelectContent>
