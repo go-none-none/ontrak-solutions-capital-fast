@@ -51,6 +51,16 @@ export default function OpportunityDetail() {
     }
   }, [opportunity?.Id]);
 
+  useEffect(() => {
+    const handleDocumentsUpdated = (e) => {
+      if (e.detail.opportunityId === opportunity?.Id) {
+        loadSavedDocuments();
+      }
+    };
+    window.addEventListener('documentsUpdated', handleDocumentsUpdated);
+    return () => window.removeEventListener('documentsUpdated', handleDocumentsUpdated);
+  }, [opportunity?.Id]);
+
   const loadOpportunity = async (sessionData) => {
     setLoading(true);
     try {
