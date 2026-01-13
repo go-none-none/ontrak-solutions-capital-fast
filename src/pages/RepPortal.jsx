@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -22,7 +22,7 @@ export default function RepPortal() {
   const [opportunities, setOpportunities] = useState([]);
   const [tasks, setTasks] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('leads'); // 'leads', 'opportunities', or 'tasks'
+  const [activeTab, setActiveTab] = useState('leads'); // 'leads', 'opportunities', 'tasks', or 'dispositions'
   const [stageFilter, setStageFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
@@ -30,6 +30,9 @@ export default function RepPortal() {
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [taskFilter, setTaskFilter] = useState('all');
   const [selectedTask, setSelectedTask] = useState(null);
+  const [dispositionFilter, setDispositionFilter] = useState('all');
+  const [dispositionOptions, setDispositionOptions] = useState([]);
+  const [updatingDisposition, setUpdatingDisposition] = useState(null);
   const itemsPerPage = 100;
 
   useEffect(() => {
@@ -145,7 +148,7 @@ export default function RepPortal() {
       setLoading(true);
     }
     try {
-      const [leadsRes, oppsRes, tasksRes] = await Promise.all([
+      const [leadsRes, oppsRes, tasksRes, dispositionOptionsRes] = await Promise.all([
         base44.functions.invoke('getRepLeads', {
           userId: sessionData.userId,
           token: sessionData.token,
@@ -160,12 +163,19 @@ export default function RepPortal() {
           userId: sessionData.userId,
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforcePicklistValues', {
+          objectType: 'Lead',
+          fieldName: 'Call_Disposition__c',
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
         })
       ]);
 
       setLeads(leadsRes.data.leads || []);
       setOpportunities(oppsRes.data.opportunities || []);
       setTasks(tasksRes.data);
+      setDispositionOptions(dispositionOptionsRes.data.values || []);
       setLoadingTasks(false);
     } catch (error) {
       console.error('Load error:', error);
@@ -182,6 +192,28 @@ export default function RepPortal() {
   const handleRefresh = () => {
     if (session) {
       loadData(session, true);
+    }
+  };
+
+  const handleDispositionUpdate = async (leadId, newDisposition) => {
+    setUpdatingDisposition(leadId);
+    try {
+      await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Lead',
+        recordId: leadId,
+        data: { Call_Disposition__c: newDisposition },
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      setLeads(leads.map(lead => 
+        lead.Id === leadId ? { ...lead, Call_Disposition__c: newDisposition } : lead
+      ));
+    } catch (error) {
+      console.error('Update error:', error);
+      alert('Failed to update call disposition');
+    } finally {
+      setUpdatingDisposition(null);
     }
   };
 
@@ -349,6 +381,27 @@ export default function RepPortal() {
             onClick={() => { setActiveTab('tasks'); setTaskFilter('all'); setCurrentPage(1); }}
             isActive={activeTab === 'tasks'}
           />
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            onClick={() => { setActiveTab('dispositions'); setDispositionFilter('all'); setCurrentPage(1); }}
+            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
+              activeTab === 'dispositions' ? 'ring-2 ring-[#08708E] shadow-md' : 'hover:shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between h-full">
+              <div>
+                <p className="text-xs sm:text-sm text-slate-600 mb-1">Call Dispositions</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{leads.filter(l => l.Call_Disposition__c).length}</p>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1">of {leads.length} leads</p>
+              </div>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+                <Phone className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              </div>
+            </div>
+          </motion.div>
         </div>
 
         {/* Pipeline */}
@@ -656,6 +709,176 @@ export default function RepPortal() {
                   </>
                 );
               })()}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'dispositions' && (
+          <div>
+            <div className="mb-4 sm:mb-6">
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={dispositionFilter === 'all' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setDispositionFilter('all'); setCurrentPage(1); }}
+                  className={dispositionFilter === 'all' ? 'bg-orange-600' : ''}
+                >
+                  All ({leads.length})
+                </Button>
+                <Button
+                  variant={dispositionFilter === 'set' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setDispositionFilter('set'); setCurrentPage(1); }}
+                  className={dispositionFilter === 'set' ? 'bg-green-600' : ''}
+                >
+                  Set ({leads.filter(l => l.Call_Disposition__c).length})
+                </Button>
+                <Button
+                  variant={dispositionFilter === 'unset' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setDispositionFilter('unset'); setCurrentPage(1); }}
+                  className={dispositionFilter === 'unset' ? 'bg-red-600' : ''}
+                >
+                  Not Set ({leads.filter(l => !l.Call_Disposition__c).length})
+                </Button>
+                {dispositionOptions.map(option => (
+                  <Button
+                    key={option}
+                    variant={dispositionFilter === option ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => { setDispositionFilter(option); setCurrentPage(1); }}
+                    className={dispositionFilter === option ? 'bg-blue-600' : ''}
+                  >
+                    {option} ({leads.filter(l => l.Call_Disposition__c === option).length})
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-slate-50 border-b border-slate-200">
+                  <tr>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-slate-700">Lead Name</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-slate-700">Company</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-slate-700">Phone</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-slate-700">Status</th>
+                    <th className="text-left px-4 py-3 text-sm font-semibold text-slate-700">Call Disposition</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    let filteredLeads = leads;
+                    if (dispositionFilter === 'set') {
+                      filteredLeads = leads.filter(l => l.Call_Disposition__c);
+                    } else if (dispositionFilter === 'unset') {
+                      filteredLeads = leads.filter(l => !l.Call_Disposition__c);
+                    } else if (dispositionFilter !== 'all') {
+                      filteredLeads = leads.filter(l => l.Call_Disposition__c === dispositionFilter);
+                    }
+
+                    if (searchTerm) {
+                      const term = searchTerm.toLowerCase();
+                      filteredLeads = filteredLeads.filter(lead =>
+                        lead.Name?.toLowerCase().includes(term) ||
+                        lead.Company?.toLowerCase().includes(term) ||
+                        lead.Phone?.toLowerCase().includes(term)
+                      );
+                    }
+
+                    const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
+                    const startIdx = (currentPage - 1) * itemsPerPage;
+                    const endIdx = startIdx + itemsPerPage;
+                    const paginatedLeads = filteredLeads.slice(startIdx, endIdx);
+
+                    return (
+                      <>
+                        {paginatedLeads.map(lead => (
+                          <tr key={lead.Id} className="border-b border-slate-100 hover:bg-slate-50">
+                            <td className="px-4 py-3">
+                              <button
+                                onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)}
+                                className="font-medium text-[#08708E] hover:underline text-left"
+                              >
+                                {lead.Name}
+                              </button>
+                            </td>
+                            <td className="px-4 py-3 text-sm text-slate-600">{lead.Company}</td>
+                            <td className="px-4 py-3 text-sm text-slate-600">
+                              {lead.Phone && (
+                                <a href={`tel:${lead.Phone}`} className="text-[#08708E] hover:underline">
+                                  {lead.Phone}
+                                </a>
+                              )}
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700">
+                                {lead.Status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <Select
+                                value={lead.Call_Disposition__c || ''}
+                                onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
+                                disabled={updatingDisposition === lead.Id}
+                              >
+                                <SelectTrigger className="w-48">
+                                  <SelectValue placeholder="Select disposition">
+                                    {updatingDisposition === lead.Id ? 'Updating...' : (lead.Call_Disposition__c || 'Not set')}
+                                  </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {dispositionOptions.map(option => (
+                                    <SelectItem key={option} value={option}>
+                                      {option}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </td>
+                          </tr>
+                        ))}
+                        {filteredLeads.length === 0 && (
+                          <tr>
+                            <td colSpan={5} className="px-4 py-12 text-center text-slate-500">
+                              No leads found
+                            </td>
+                          </tr>
+                        )}
+                        {totalPages > 1 && (
+                          <tr>
+                            <td colSpan={5} className="px-4 py-4">
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm text-slate-600">
+                                  Showing {startIdx + 1}-{Math.min(endIdx, filteredLeads.length)} of {filteredLeads.length}
+                                </p>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                    disabled={currentPage === 1}
+                                  >
+                                    Previous
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={currentPage === totalPages}
+                                  >
+                                    Next
+                                  </Button>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    );
+                  })()}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
