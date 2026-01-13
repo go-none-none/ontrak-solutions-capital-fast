@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X, Plus } from 'lucide-react';
+import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
@@ -14,7 +14,6 @@ import TaskCard from '../components/rep/TaskCard';
 import TaskItem from '../components/rep/TaskItem';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
-import CreateTaskModal from '../components/admin/CreateTaskModal';
 
 export default function RepPortal() {
   const [session, setSession] = useState(null);
@@ -34,7 +33,6 @@ export default function RepPortal() {
   const [dispositionFilter, setDispositionFilter] = useState('all');
   const [dispositionOptions, setDispositionOptions] = useState([]);
   const [updatingDisposition, setUpdatingDisposition] = useState(null);
-  const [showCreateTask, setShowCreateTask] = useState(false);
   const itemsPerPage = 100;
   const navigate = useNavigate();
 
@@ -316,13 +314,6 @@ export default function RepPortal() {
     { label: 'Total Pipeline', value: `$${opportunities.reduce((sum, o) => sum + (o.Amount || 0), 0).toLocaleString()}`, icon: TrendingUp, color: 'from-purple-500 to-purple-600' }
   ];
 
-  const repsData = [{
-    userId: session.userId,
-    name: session.name,
-    leads,
-    opportunities
-  }];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header */}
@@ -457,8 +448,7 @@ export default function RepPortal() {
 
           {activeTab === 'tasks' && (
             <div className="mb-4 sm:mb-6">
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center justify-between mb-4">
-                <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   variant={taskFilter === 'all' ? 'default' : 'outline'}
                   size="sm"
@@ -491,16 +481,11 @@ export default function RepPortal() {
                 >
                   This Week ({tasks?.categorized?.dueThisWeek?.length || 0})
                 </Button>
-                </div>
-                <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700 min-h-[44px] w-full sm:w-auto">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Task
-                </Button>
-                </div>
-                </div>
-                )}
+              </div>
+            </div>
+          )}
 
-                {activeTab === 'leads' && (
+          {activeTab === 'leads' && (
             <div>
               {stageFilter && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
@@ -926,15 +911,7 @@ export default function RepPortal() {
           </div>
         )}
         </div>
-
-        {/* Create Task Modal */}
-        <CreateTaskModal
-          isOpen={showCreateTask}
-          onClose={() => setShowCreateTask(false)}
-          session={session}
-          repsData={repsData}
-          onSuccess={() => loadData(session, true)}
-        />
+      </div>
 
       {/* Task Details Modal */}
       <TaskDetailsModal
@@ -943,8 +920,7 @@ export default function RepPortal() {
         onClose={() => setSelectedTask(null)}
         session={session}
         onUpdate={() => loadData(session, true)}
-      />
-      </div>
-      </div>
-      );
-      }
+        />
+        </div>
+        );
+        }
