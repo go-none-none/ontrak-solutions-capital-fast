@@ -1,4 +1,5 @@
 import About from './pages/About';
+import AdminPipeline from './pages/AdminPipeline';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Contact from './pages/Contact';
@@ -25,13 +26,13 @@ import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
-import AdminPipeline from './pages/AdminPipeline';
 import RepPortal from './pages/RepPortal';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "About": About,
+    "AdminPipeline": AdminPipeline,
     "Blog": Blog,
     "BlogPost": BlogPost,
     "Contact": Contact,
@@ -58,7 +59,6 @@ export const PAGES = {
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
-    "AdminPipeline": AdminPipeline,
     "RepPortal": RepPortal,
 }
 

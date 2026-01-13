@@ -823,24 +823,33 @@ export default function RepPortal() {
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <Select
-                                value={lead.Call_Disposition__c || ''}
-                                onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
-                                disabled={updatingDisposition === lead.Id}
-                              >
-                                <SelectTrigger className="w-48">
-                                  <SelectValue placeholder="Select disposition">
-                                    {updatingDisposition === lead.Id ? 'Updating...' : (lead.Call_Disposition__c || 'Not set')}
-                                  </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {dispositionOptions.map(option => (
-                                    <SelectItem key={option} value={option}>
-                                      {option}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                              <div className="flex items-center gap-3">
+                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                  lead.Call_Disposition__c 
+                                    ? 'bg-green-100 text-green-800' 
+                                    : 'bg-gray-100 text-gray-600'
+                                }`}>
+                                  {lead.Call_Disposition__c || 'Not set'}
+                                </span>
+                                <Select
+                                  value={lead.Call_Disposition__c || ''}
+                                  onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
+                                  disabled={updatingDisposition === lead.Id}
+                                >
+                                  <SelectTrigger className="w-32">
+                                    <SelectValue placeholder="Change">
+                                      {updatingDisposition === lead.Id ? 'Updating...' : 'Change'}
+                                    </SelectValue>
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {dispositionOptions.map(option => (
+                                      <SelectItem key={option} value={option}>
+                                        {option}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
                             </td>
                           </tr>
                         ))}
