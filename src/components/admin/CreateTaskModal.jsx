@@ -9,10 +9,9 @@ import { base44 } from '@/api/base44Client';
 
 export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, repsData }) {
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [loadingRecords, setLoadingRecords] = useState(false);
   const [formData, setFormData] = useState({
-    assignedTo: '',
+    assignedTo: session?.userId || '',
     subject: '',
     dueDate: '',
     priority: 'Normal',
