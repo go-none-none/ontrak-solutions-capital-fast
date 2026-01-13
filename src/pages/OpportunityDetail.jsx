@@ -12,7 +12,6 @@ import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
-import DialpadCTI from '../components/rep/DialpadCTI';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -731,20 +730,14 @@ export default function OpportunityDetail() {
                         </a>
                       )}
                       {role.Contact?.Phone && (
-                        <button 
-                          onClick={() => window.dialpadInitiateCall && window.dialpadInitiateCall(role.Contact.Phone)}
-                          className="text-sm text-[#08708E] hover:underline block font-medium text-left"
-                        >
+                        <a href={`tel:${role.Contact.Phone}`} className="text-sm text-[#08708E] hover:underline block">
                           {role.Contact.Phone}
-                        </button>
+                        </a>
                       )}
                       {role.Contact?.MobilePhone && (
-                        <button 
-                          onClick={() => window.dialpadInitiateCall && window.dialpadInitiateCall(role.Contact.MobilePhone)}
-                          className="text-sm text-[#08708E] hover:underline block font-medium text-left"
-                        >
+                        <a href={`tel:${role.Contact.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block">
                           Mobile: {role.Contact.MobilePhone}
-                        </button>
+                        </a>
                       )}
                     </div>
                   ))}
@@ -816,11 +809,8 @@ export default function OpportunityDetail() {
               </div>
             </div>
           </div>
-        </div>
-        </div>
-
-        {/* Dialpad CTI */}
-        <DialpadCTI clientId="a2bFGaaCr3j7UW9Sty8ETv5sz" />
-        </div>
-        );
-        }
+          </div>
+          </div>
+          </div>
+          );
+          }
