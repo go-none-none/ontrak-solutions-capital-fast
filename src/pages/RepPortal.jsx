@@ -316,6 +316,13 @@ export default function RepPortal() {
     { label: 'Total Pipeline', value: `$${opportunities.reduce((sum, o) => sum + (o.Amount || 0), 0).toLocaleString()}`, icon: TrendingUp, color: 'from-purple-500 to-purple-600' }
   ];
 
+  const repsData = [{
+    userId: session.userId,
+    name: session.name,
+    leads,
+    opportunities
+  }];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header */}
