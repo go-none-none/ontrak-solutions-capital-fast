@@ -937,7 +937,12 @@ export default function RepPortal() {
         isOpen={showCreateTask}
         onClose={() => setShowCreateTask(false)}
         session={session}
-        repsData={[]}
+        repsData={[{
+          userId: session?.userId,
+          name: session?.name,
+          leads,
+          opportunities
+        }]}
         onSuccess={() => loadData(session, true)}
       />
 
