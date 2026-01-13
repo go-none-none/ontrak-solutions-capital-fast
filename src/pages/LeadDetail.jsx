@@ -10,6 +10,7 @@ import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
+import DialpadCTI from '../components/rep/DialpadCTI';
 
 export default function LeadDetail() {
   const navigate = useNavigate();
@@ -644,7 +645,10 @@ export default function LeadDetail() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
+        </div>
+        </div>
+
+        {/* Dialpad CTI */}
+        <DialpadCTI clientId="a2bFGaaCr3j7UW9Sty8ETv5sz" />
+        );
+        }

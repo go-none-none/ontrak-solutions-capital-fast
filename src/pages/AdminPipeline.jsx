@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import CreateTaskModal from '../components/admin/CreateTaskModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
+import DialpadCTI from '../components/rep/DialpadCTI';
 
 export default function AdminPipeline() {
   const navigate = useNavigate();
