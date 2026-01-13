@@ -12,6 +12,7 @@ import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
+import DocumentsDrawer from '../components/rep/DocumentsDrawer.jsx';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
