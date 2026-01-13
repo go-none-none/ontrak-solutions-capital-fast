@@ -79,13 +79,32 @@ export default function DocumentsDrawer({ isOpen, onClose, opportunityId, sessio
     setDownloadingSelected(true);
     try {
       const selectedDocsList = documents.filter(d => selectedDocs.has(d.Id));
+      let uploadedCount = 0;
+
       for (const doc of selectedDocsList) {
-        await handleDownload(doc.Id, doc.Title);
-        await new Promise(resolve => setTimeout(resolve, 500)); // Small delay between downloads
+        try {
+          const response = await base44.functions.invoke('getSalesforceFileContent', {
+            fileId: doc.Id,
+            token: session.token,
+            instanceUrl: session.instanceUrl
+          });
+
+          const blob = new Blob([response.data.content], { type: 'application/pdf' });
+          const file = new File([blob], doc.Title, { type: 'application/pdf' });
+
+          await base44.integrations.Core.UploadFile({ file });
+          uploadedCount++;
+          await new Promise(resolve => setTimeout(resolve, 300));
+        } catch (error) {
+          console.error(`Failed to upload ${doc.Title}:`, error);
+        }
       }
+
+      alert(`Successfully saved ${uploadedCount} document(s) to your app`);
       setSelectedDocs(new Set());
     } catch (error) {
-      console.error('Download error:', error);
+      console.error('Upload error:', error);
+      alert('Failed to save documents');
     } finally {
       setDownloadingSelected(false);
     }
