@@ -112,6 +112,8 @@ export default function DocumentsDrawer({ isOpen, onClose, opportunityId, sessio
 
       alert(`Successfully saved ${uploadedCount} document(s) to your app`);
       setSelectedDocs(new Set());
+      // Reload opportunity documents by triggering a refresh in parent
+      window.dispatchEvent(new CustomEvent('documentsUpdated', { detail: { opportunityId } }));
       onClose();
     } catch (error) {
       console.error('Upload error:', error);
