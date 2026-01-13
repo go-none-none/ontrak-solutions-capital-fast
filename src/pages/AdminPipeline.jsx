@@ -989,11 +989,11 @@ export default function AdminPipeline() {
 
           {/* Task Details Modal */}
           <TaskDetailsModal
-          task={selectedTask}
-          isOpen={!!selectedTask}
-          onClose={() => setSelectedTask(null)}
-          session={session}
-          onUpdate={() => loadAllRepsData(session, true)}
+            task={selectedTask}
+            isOpen={!!selectedTask}
+            onClose={() => setSelectedTask(null)}
+            session={session}
+            onUpdate={() => loadAllRepsData(session, true)}
           />
           </div>
           </div>
