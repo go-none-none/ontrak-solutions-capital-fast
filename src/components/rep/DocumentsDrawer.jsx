@@ -34,6 +34,16 @@ export default function DocumentsDrawer({ isOpen, onClose, opportunityId, sessio
     }
   };
 
+  const toggleSelection = (docId) => {
+    const newSelected = new Set(selectedDocs);
+    if (newSelected.has(docId)) {
+      newSelected.delete(docId);
+    } else {
+      newSelected.add(docId);
+    }
+    setSelectedDocs(newSelected);
+  };
+
   const handleDownload = async (fileId, fileName) => {
     setDownloading(fileId);
     try {
@@ -57,6 +67,27 @@ export default function DocumentsDrawer({ isOpen, onClose, opportunityId, sessio
       alert('Failed to download file');
     } finally {
       setDownloading(null);
+    }
+  };
+
+  const handleDownloadSelected = async () => {
+    if (selectedDocs.size === 0) {
+      alert('Please select at least one document');
+      return;
+    }
+
+    setDownloadingSelected(true);
+    try {
+      const selectedDocsList = documents.filter(d => selectedDocs.has(d.Id));
+      for (const doc of selectedDocsList) {
+        await handleDownload(doc.Id, doc.Title);
+        await new Promise(resolve => setTimeout(resolve, 500)); // Small delay between downloads
+      }
+      setSelectedDocs(new Set());
+    } catch (error) {
+      console.error('Download error:', error);
+    } finally {
+      setDownloadingSelected(false);
     }
   };
 
