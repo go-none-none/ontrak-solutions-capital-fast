@@ -29,6 +29,7 @@ export default function OpportunityDetail() {
   const [users, setUsers] = useState([]);
   const [changingOwner, setChangingOwner] = useState(false);
   const [showOwnerChange, setShowOwnerChange] = useState(false);
+  const [showDocuments, setShowDocuments] = useState(false);
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
