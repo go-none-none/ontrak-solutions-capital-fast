@@ -385,21 +385,25 @@ export default function AdminPipeline() {
               <p className="text-xs sm:text-sm text-slate-600 truncate">Manage team performance</p>
             </div>
             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              <Link to={createPageUrl('RepPortal')} className="flex-1 sm:flex-initial">
-                <Button variant="outline" className="w-full sm:w-auto min-h-[44px]">
-                  <Users className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Rep Portal</span>
-                </Button>
-              </Link>
-              <Button variant="outline" onClick={handleRefresh} disabled={refreshing} className="flex-1 sm:flex-initial min-h-[44px]">
-                <RefreshCw className={`w-4 h-4 sm:mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">Refresh</span>
-              </Button>
-              <Button variant="outline" onClick={handleLogout} className="flex-1 sm:flex-initial min-h-[44px]">
-                <LogOut className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Logout</span>
-              </Button>
-            </div>
+               <Button onClick={() => setShowCreateTask(true)} className="flex-1 sm:flex-initial bg-purple-600 hover:bg-purple-700 min-h-[44px]">
+                 <Plus className="w-4 h-4 sm:mr-2" />
+                 <span className="hidden sm:inline">Create Task</span>
+               </Button>
+               <Link to={createPageUrl('RepPortal')} className="flex-1 sm:flex-initial">
+                 <Button variant="outline" className="w-full sm:w-auto min-h-[44px]">
+                   <Users className="w-4 h-4 sm:mr-2" />
+                   <span className="hidden sm:inline">Rep Portal</span>
+                 </Button>
+               </Link>
+               <Button variant="outline" onClick={handleRefresh} disabled={refreshing} className="flex-1 sm:flex-initial min-h-[44px]">
+                 <RefreshCw className={`w-4 h-4 sm:mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+                 <span className="hidden sm:inline">Refresh</span>
+               </Button>
+               <Button variant="outline" onClick={handleLogout} className="flex-1 sm:flex-initial min-h-[44px]">
+                 <LogOut className="w-4 h-4 sm:mr-2" />
+                 <span className="hidden sm:inline">Logout</span>
+               </Button>
+             </div>
           </div>
         </div>
       </div>
