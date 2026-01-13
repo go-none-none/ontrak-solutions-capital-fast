@@ -673,7 +673,7 @@ export default function RepPortal() {
       />
 
       {/* Dialpad CTI */}
-      <DialpadCTI clientId={process.env.REACT_APP_DIALPAD_CLIENT_ID || 'YOUR_CLIENT_ID'} />
+      <DialpadCTI clientId="a2bFGaaCr3j7UW9Sty8ETv5sz" />
     </div>
   );
 }
