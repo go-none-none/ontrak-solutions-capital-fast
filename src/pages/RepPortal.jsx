@@ -483,9 +483,13 @@ export default function RepPortal() {
                 >
                   This Week ({tasks?.categorized?.dueThisWeek?.length || 0})
                 </Button>
-              </div>
-            </div>
-          )}
+                </div>
+                <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700 min-h-[44px] w-full sm:w-auto">
+                <Plus className="w-4 h-4 mr-2" />
+                Create Task
+                </Button>
+                </div>
+                )}
 
           {activeTab === 'leads' && (
             <div>
