@@ -41,7 +41,7 @@ export default function DialpadCTI({ clientId }) {
           api: 'opencti_dialpad',
           version: '1.0',
           method: 'enable_current_tab'
-        }, 'https://dialpad.com');
+        }, '*');
       }, 2000);
     }
   }, []);
@@ -51,15 +51,17 @@ export default function DialpadCTI({ clientId }) {
     window.dialpadInitiateCall = (phoneNumber) => {
       if (iframeRef.current) {
         console.log('Initiating call to:', phoneNumber);
+        // Clean phone number - remove spaces, dashes, parentheses
+        const cleanNumber = phoneNumber.replace(/[\s\-\(\)]/g, '');
+        
         iframeRef.current.contentWindow.postMessage({
           api: 'opencti_dialpad',
           version: '1.0',
           method: 'initiate_call',
           payload: {
-            enable_current_tab: true,
-            phone_number: phoneNumber
+            phone_number: cleanNumber
           }
-        }, 'https://dialpad.com');
+        }, '*');
         setIsMinimized(false); // Expand when initiating call
       }
     };
