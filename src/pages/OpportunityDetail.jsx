@@ -823,6 +823,14 @@ export default function OpportunityDetail() {
           </div>
           </div>
           </div>
+
+      {/* Documents Drawer */}
+      <DocumentsDrawer
+        isOpen={showDocuments}
+        onClose={() => setShowDocuments(false)}
+        opportunityId={opportunity?.Id}
+        session={session}
+      />
           </div>
           );
           }
