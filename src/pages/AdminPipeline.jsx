@@ -822,13 +822,17 @@ export default function AdminPipeline() {
                                             {lead.Phone && (
                                               <>
                                                 <span>•</span>
-                                                <a 
-                                                  href={`tel:${lead.Phone}`} 
-                                                  onClick={(e) => e.stopPropagation()}
+                                                <button
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (window.dialpadInitiateCall) {
+                                                      window.dialpadInitiateCall(lead.Phone);
+                                                    }
+                                                  }}
                                                   className="text-[#08708E] hover:underline font-medium"
                                                 >
                                                   {lead.Phone}
-                                                </a>
+                                                </button>
                                               </>
                                             )}
                                             <span>•</span>

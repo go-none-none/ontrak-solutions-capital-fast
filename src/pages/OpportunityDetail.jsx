@@ -730,14 +730,20 @@ export default function OpportunityDetail() {
                         </a>
                       )}
                       {role.Contact?.Phone && (
-                        <a href={`tel:${role.Contact.Phone}`} className="text-sm text-[#08708E] hover:underline block font-medium">
+                        <button 
+                          onClick={() => window.dialpadInitiateCall && window.dialpadInitiateCall(role.Contact.Phone)}
+                          className="text-sm text-[#08708E] hover:underline block font-medium text-left"
+                        >
                           {role.Contact.Phone}
-                        </a>
+                        </button>
                       )}
                       {role.Contact?.MobilePhone && (
-                        <a href={`tel:${role.Contact.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block font-medium">
+                        <button 
+                          onClick={() => window.dialpadInitiateCall && window.dialpadInitiateCall(role.Contact.MobilePhone)}
+                          className="text-sm text-[#08708E] hover:underline block font-medium text-left"
+                        >
                           Mobile: {role.Contact.MobilePhone}
-                        </a>
+                        </button>
                       )}
                     </div>
                   ))}

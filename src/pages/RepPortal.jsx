@@ -14,6 +14,7 @@ import TaskCard from '../components/rep/TaskCard';
 import TaskItem from '../components/rep/TaskItem';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
+import DialpadCTI from '../components/rep/DialpadCTI';
 
 export default function RepPortal() {
   const [session, setSession] = useState(null);

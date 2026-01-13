@@ -566,14 +566,20 @@ export default function LeadDetail() {
                   </a>
                 )}
                 {lead.Phone && (
-                  <a href={`tel:${lead.Phone}`} className="text-sm text-[#08708E] hover:underline block font-medium">
+                  <button 
+                    onClick={() => window.dialpadInitiateCall && window.dialpadInitiateCall(lead.Phone)}
+                    className="text-sm text-[#08708E] hover:underline block font-medium text-left"
+                  >
                     {lead.Phone}
-                  </a>
+                  </button>
                 )}
                 {lead.MobilePhone && (
-                  <a href={`tel:${lead.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block font-medium">
+                  <button 
+                    onClick={() => window.dialpadInitiateCall && window.dialpadInitiateCall(lead.MobilePhone)}
+                    className="text-sm text-[#08708E] hover:underline block font-medium text-left"
+                  >
                     Mobile: {lead.MobilePhone}
-                  </a>
+                  </button>
                 )}
               </div>
             </div>
