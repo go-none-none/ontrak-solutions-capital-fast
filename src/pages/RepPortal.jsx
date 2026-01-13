@@ -411,7 +411,7 @@ export default function RepPortal() {
         </div>
 
         {/* Pipeline */}
-        {activeTab !== 'tasks' && (
+        {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
           <PipelineView 
             leads={leads} 
             opportunities={opportunities} 
@@ -422,7 +422,7 @@ export default function RepPortal() {
 
         {/* Search & Content */}
         <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 sm:mt-6">
-          {activeTab !== 'tasks' && (
+          {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
             <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />

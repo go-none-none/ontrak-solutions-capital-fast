@@ -1,4 +1,5 @@
 import About from './pages/About';
+import AdminPipeline from './pages/AdminPipeline';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Contact from './pages/Contact';
@@ -19,19 +20,19 @@ import LeadDetail from './pages/LeadDetail';
 import MissingDocs from './pages/MissingDocs';
 import OpportunityDetail from './pages/OpportunityDetail';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import RepPortal from './pages/RepPortal';
 import Reviews from './pages/Reviews';
 import Status from './pages/Status';
 import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
-import AdminPipeline from './pages/AdminPipeline';
-import RepPortal from './pages/RepPortal';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "About": About,
+    "AdminPipeline": AdminPipeline,
     "Blog": Blog,
     "BlogPost": BlogPost,
     "Contact": Contact,
@@ -52,14 +53,13 @@ export const PAGES = {
     "MissingDocs": MissingDocs,
     "OpportunityDetail": OpportunityDetail,
     "PrivacyPolicy": PrivacyPolicy,
+    "RepPortal": RepPortal,
     "Reviews": Reviews,
     "Status": Status,
     "TermsOfService": TermsOfService,
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
-    "AdminPipeline": AdminPipeline,
-    "RepPortal": RepPortal,
 }
 
 export const pagesConfig = {
