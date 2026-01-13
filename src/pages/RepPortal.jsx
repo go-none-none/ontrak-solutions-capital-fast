@@ -230,7 +230,7 @@ export default function RepPortal() {
       'follow up': 'bg-yellow-100 text-yellow-800',
       'busy call back later': 'bg-orange-100 text-orange-800'
     };
-    return colorMap[disposition] || 'bg-slate-100 text-slate-700';
+    return colorMap[disposition] || 'bg-white text-slate-700 border border-slate-300';
   };
 
   const handleStageClick = (stageName) => {
