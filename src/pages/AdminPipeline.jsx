@@ -817,7 +817,23 @@ export default function AdminPipeline() {
                                       >
                                         <div>
                                           <p className="font-medium text-slate-900">{lead.Name}</p>
-                                          <p className="text-xs text-slate-500">{lead.Company} • {lead.Email}</p>
+                                          <div className="flex items-center gap-2 text-xs text-slate-500">
+                                            <span>{lead.Company}</span>
+                                            {lead.Phone && (
+                                              <>
+                                                <span>•</span>
+                                                <a 
+                                                  href={`tel:${lead.Phone}`} 
+                                                  onClick={(e) => e.stopPropagation()}
+                                                  className="text-[#08708E] hover:underline font-medium"
+                                                >
+                                                  {lead.Phone}
+                                                </a>
+                                              </>
+                                            )}
+                                            <span>•</span>
+                                            <span>{lead.Email}</span>
+                                          </div>
                                         </div>
                                         <span className="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-700">
                                           {lead.Status}
