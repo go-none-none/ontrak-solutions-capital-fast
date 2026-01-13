@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { Loader2, FileText, Download, Trash2, FolderOpen } from 'lucide-react';
+import { Loader2, FileText, Download, Trash2, FolderOpen, CheckCircle2, Circle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function DocumentsDrawer({ isOpen, onClose, opportunityId, session }) {
@@ -9,6 +9,8 @@ export default function DocumentsDrawer({ isOpen, onClose, opportunityId, sessio
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(null);
   const [deleting, setDeleting] = useState(null);
+  const [selectedDocs, setSelectedDocs] = useState(new Set());
+  const [downloadingSelected, setDownloadingSelected] = useState(false);
 
   useEffect(() => {
     if (isOpen && opportunityId) {
