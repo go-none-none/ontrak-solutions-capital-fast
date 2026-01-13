@@ -34,6 +34,7 @@ export default function RepPortal() {
   const [dispositionFilter, setDispositionFilter] = useState('all');
   const [dispositionOptions, setDispositionOptions] = useState([]);
   const [updatingDisposition, setUpdatingDisposition] = useState(null);
+  const [showCreateTask, setShowCreateTask] = useState(false);
   const itemsPerPage = 100;
   const navigate = useNavigate();
 
