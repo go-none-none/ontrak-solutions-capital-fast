@@ -54,7 +54,7 @@ export default function DialpadCTI({ clientId }) {
       try {
         // Use REST API to initiate call
         const { base44 } = await import('/src/api/base44Client.js');
-        const response = await base44.functions.invoke('dialpadCall', {
+        const response = await base44.functions.invoke('initiateDialpadCall', {
           phone_number: phoneNumber
         });
         
