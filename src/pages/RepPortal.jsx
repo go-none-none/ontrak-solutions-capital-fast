@@ -921,6 +921,14 @@ export default function RepPortal() {
         </div>
       </div>
 
+      {/* Create Task Modal */}
+      <CreateTaskModal
+        isOpen={showCreateTask}
+        onClose={() => setShowCreateTask(false)}
+        session={session}
+        onSuccess={() => loadData(session, true)}
+      />
+
       {/* Task Details Modal */}
       <TaskDetailsModal
         task={selectedTask}
@@ -928,7 +936,7 @@ export default function RepPortal() {
         onClose={() => setSelectedTask(null)}
         session={session}
         onUpdate={() => loadData(session, true)}
-        />
-        </div>
-        );
-        }
+      />
+      </div>
+      );
+      }
