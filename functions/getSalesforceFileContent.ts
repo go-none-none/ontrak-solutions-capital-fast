@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
     const mimeType = mimeTypes[fileExtension?.toLowerCase()] || 'application/octet-stream';
 
     return Response.json({ 
-      file: base64,
+      content: base64,
       mimeType: mimeType
     });
   } catch (error) {
