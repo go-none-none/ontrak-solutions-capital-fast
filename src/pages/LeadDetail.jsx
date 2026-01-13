@@ -647,9 +647,9 @@ export default function LeadDetail() {
             </div>
 
             {/* Call Dispositions */}
-            {callDispositions.length > 0 && (
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-900 mb-4">Recent Calls</h3>
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h3 className="font-semibold text-slate-900 mb-4">Recent Calls</h3>
+              {callDispositions.length > 0 ? (
                 <div className="space-y-3">
                   {callDispositions.slice(0, 5).map((call) => (
                     <div key={call.Id} className="border-l-4 border-[#08708E] pl-3 py-2">
@@ -670,8 +670,10 @@ export default function LeadDetail() {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <p className="text-sm text-slate-500">No call history</p>
+              )}
+            </div>
           </div>
         </div>
         </div>
