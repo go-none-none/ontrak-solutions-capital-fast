@@ -31,23 +31,34 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (formData.assignedTo && repsData) {
-      const rep = repsData.find(r => r.userId === formData.assignedTo);
-      if (rep) {
-        const records = [];
-        rep.leads?.forEach(lead => {
-          records.push({ id: lead.Id, name: lead.Name, type: 'Lead' });
-        });
-        rep.opportunities?.forEach(opp => {
-          records.push({ id: opp.Id, name: opp.Name, type: 'Opportunity' });
-        });
-        setRelatedRecords(records);
-      } else {
-        setRelatedRecords([]);
-      }
+  const searchRelatedRecords = async (term) => {
+    if (!term || term.length < 2 || !session) return;
+    try {
+      const leadsQuery = `SELECT Id, Name FROM Lead WHERE Name LIKE '%${term}%' OR Company LIKE '%${term}%' LIMIT 10`;
+      const oppsQuery = `SELECT Id, Name FROM Opportunity WHERE Name LIKE '%${term}%' LIMIT 10`;
+      
+      const [leadsRes, oppsRes] = await Promise.all([
+        fetch(`${session.instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(leadsQuery)}`, {
+          headers: { 'Authorization': `Bearer ${session.token}` }
+        }),
+        fetch(`${session.instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(oppsQuery)}`, {
+          headers: { 'Authorization': `Bearer ${session.token}` }
+        })
+      ]);
+
+      const leadsData = await leadsRes.json();
+      const oppsData = await oppsRes.json();
+
+      const records = [
+        ...(leadsData.records || []).map(r => ({ id: r.Id, name: r.Name, type: 'Lead' })),
+        ...(oppsData.records || []).map(r => ({ id: r.Id, name: r.Name, type: 'Opportunity' }))
+      ];
+
+      setRelatedRecords(records);
+    } catch (error) {
+      console.error('Search error:', error);
     }
-  }, [formData.assignedTo, repsData]);
+  };
 
   const loadUsers = async () => {
     setLoadingUsers(true);
