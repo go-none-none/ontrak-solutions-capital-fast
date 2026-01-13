@@ -791,8 +791,7 @@ export default function RepPortal() {
                   <tr>
                     <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Lead Name</th>
                     <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Company</th>
-                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Phone</th>
-                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Status</th>
+                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Phone & Status</th>
                     <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Call Disposition</th>
                   </tr>
                 </thead>
