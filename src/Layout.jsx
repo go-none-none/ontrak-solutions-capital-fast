@@ -9,7 +9,20 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-  }, [pathname]);
+    
+    // Suppress Base44 auth errors for Salesforce-authenticated pages
+    if (isRepPortal) {
+      const originalFetch = window.fetch;
+      window.fetch = function(...args) {
+        return originalFetch.apply(this, args).catch(err => {
+          if (args[0]?.includes('/entities/User/me')) {
+            return new Response('', { status: 200 });
+          }
+          throw err;
+        });
+      };
+    }
+  }, [pathname, isRepPortal]);
 
   useEffect(() => {
     const handleLinkClick = (e) => {
