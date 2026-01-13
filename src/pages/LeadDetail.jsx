@@ -566,12 +566,12 @@ export default function LeadDetail() {
                   </a>
                 )}
                 {lead.Phone && (
-                  <a href={`tel:${lead.Phone}`} className="text-sm text-[#08708E] hover:underline block">
+                  <a href={`tel:${lead.Phone}`} className="text-sm text-[#08708E] hover:underline block font-medium">
                     {lead.Phone}
                   </a>
                 )}
                 {lead.MobilePhone && (
-                  <a href={`tel:${lead.MobilePhone}`} className="text-sm text-slate-600 hover:underline block">
+                  <a href={`tel:${lead.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block font-medium">
                     Mobile: {lead.MobilePhone}
                   </a>
                 )}

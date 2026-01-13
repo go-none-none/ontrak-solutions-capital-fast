@@ -730,12 +730,12 @@ export default function OpportunityDetail() {
                         </a>
                       )}
                       {role.Contact?.Phone && (
-                        <a href={`tel:${role.Contact.Phone}`} className="text-sm text-[#08708E] hover:underline block">
+                        <a href={`tel:${role.Contact.Phone}`} className="text-sm text-[#08708E] hover:underline block font-medium">
                           {role.Contact.Phone}
                         </a>
                       )}
                       {role.Contact?.MobilePhone && (
-                        <a href={`tel:${role.Contact.MobilePhone}`} className="text-sm text-slate-600 hover:underline block">
+                        <a href={`tel:${role.Contact.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block font-medium">
                           Mobile: {role.Contact.MobilePhone}
                         </a>
                       )}

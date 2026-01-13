@@ -96,10 +96,14 @@ export default function LeadCard({ lead, session }) {
 
         <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 mb-3">
           {lead.Phone && (
-            <div className="flex items-center gap-1">
+            <a 
+              href={`tel:${lead.Phone}`} 
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-1 hover:text-[#08708E] transition-colors"
+            >
               <Phone className="w-4 h-4" />
               <span>{lead.Phone}</span>
-            </div>
+            </a>
           )}
           {lead.Email && (
             <div className="flex items-center gap-1">
