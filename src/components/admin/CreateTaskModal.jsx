@@ -24,42 +24,33 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
 
-  useEffect(() => {
-    if (isOpen && users.length === 0) {
-      loadUsers();
+  const searchRecords = async (query) => {
+    if (!query.trim() || query.length < 2) {
+      setRelatedRecords([]);
+      return;
     }
-  }, [isOpen]);
 
-  useEffect(() => {
-    if (formData.assignedTo && repsData) {
-      const rep = repsData.find(r => r.userId === formData.assignedTo);
-      if (rep) {
-        const records = [];
-        rep.leads?.forEach(lead => {
-          records.push({ id: lead.Id, name: lead.Name, type: 'Lead' });
-        });
-        rep.opportunities?.forEach(opp => {
-          records.push({ id: opp.Id, name: opp.Name, type: 'Opportunity' });
-        });
-        setRelatedRecords(records);
-      } else {
-        setRelatedRecords([]);
-      }
-    }
-  }, [formData.assignedTo, repsData]);
-
-  const loadUsers = async () => {
-    setLoadingUsers(true);
+    setLoadingRecords(true);
     try {
-      const response = await base44.functions.invoke('getSalesforceUsers', {
+      const response = await base44.functions.invoke('searchSalesforceRecords', {
+        query,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-      setUsers(response.data.users || []);
+      
+      const records = [];
+      response.data.leads?.forEach(lead => {
+        records.push({ id: lead.Id, name: lead.Name, type: 'Lead' });
+      });
+      response.data.opportunities?.forEach(opp => {
+        records.push({ id: opp.Id, name: opp.Name, type: 'Opportunity' });
+      });
+      setRelatedRecords(records);
     } catch (error) {
-      console.error('Error loading users:', error);
+      console.error('Error searching records:', error);
+      setRelatedRecords([]);
     } finally {
-      setLoadingUsers(false);
+      setLoadingRecords(false);
     }
   };
 
