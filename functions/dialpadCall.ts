@@ -10,8 +10,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Clean phone number - remove spaces, dashes, parentheses
-    const cleanNumber = phone_number.replace(/[\s\-\(\)]/g, '');
+    // Clean phone number - remove all non-digit characters except +
+    const cleanNumber = phone_number.replace(/[^\d+]/g, '');
 
     const apiKey = Deno.env.get('DIALPAD_API_KEY');
     
