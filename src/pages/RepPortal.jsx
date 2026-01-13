@@ -230,7 +230,7 @@ export default function RepPortal() {
       'follow up': 'bg-yellow-100 text-yellow-800',
       'busy call back later': 'bg-orange-100 text-orange-800'
     };
-    return colorMap[disposition] || 'bg-white text-slate-700 border border-slate-300';
+    return colorMap[disposition] || 'bg-slate-100 text-slate-700';
   };
 
   const handleStageClick = (stageName) => {
@@ -347,8 +347,8 @@ export default function RepPortal() {
       </div>
 
       {/* Stats */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -757,19 +757,17 @@ export default function RepPortal() {
                 >
                   Not Set ({leads.filter(l => !l.Call_Disposition__c).length})
                 </Button>
-                {dispositionOptions.map(option => {
-                  const colorClass = getDispositionColor(option);
-                  const isSelected = dispositionFilter === option;
-                  return (
-                    <button
-                      key={option}
-                      onClick={() => { setDispositionFilter(option); setCurrentPage(1); }}
-                      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${colorClass} ${isSelected ? 'ring-2 ring-offset-1 ring-slate-900' : ''}`}
-                    >
-                      {option} ({leads.filter(l => l.Call_Disposition__c === option).length})
-                    </button>
-                  );
-                })}
+                {dispositionOptions.map(option => (
+                  <Button
+                    key={option}
+                    variant={dispositionFilter === option ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => { setDispositionFilter(option); setCurrentPage(1); }}
+                    className={dispositionFilter === option ? 'bg-blue-600' : ''}
+                  >
+                    {option} ({leads.filter(l => l.Call_Disposition__c === option).length})
+                  </Button>
+                ))}
               </div>
             </div>
 
