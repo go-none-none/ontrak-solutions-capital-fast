@@ -628,6 +628,7 @@ export default function AdminPipeline() {
         </div>
 
         {/* Reps Pipeline Table or Task View */}
+        {activeView !== 'tasks' && (
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto -mx-4 sm:mx-0">
             <table className="w-full min-w-[1200px]">
