@@ -198,7 +198,7 @@ export default function RepPortal() {
   const handleDispositionUpdate = async (leadId, newDisposition) => {
     setUpdatingDisposition(leadId);
     try {
-      await base44.functions.invoke('updateSalesforceRecord', {
+      const response = await base44.functions.invoke('updateSalesforceRecord', {
         objectType: 'Lead',
         recordId: leadId,
         data: { Call_Disposition__c: newDisposition },
@@ -206,15 +206,30 @@ export default function RepPortal() {
         instanceUrl: session.instanceUrl
       });
       
-      setLeads(leads.map(lead => 
-        lead.Id === leadId ? { ...lead, Call_Disposition__c: newDisposition } : lead
-      ));
+      if (response.status === 200) {
+        setLeads(leads.map(lead => 
+          lead.Id === leadId ? { ...lead, Call_Disposition__c: newDisposition } : lead
+        ));
+      } else {
+        throw new Error('Update failed');
+      }
     } catch (error) {
       console.error('Update error:', error);
-      alert('Failed to update call disposition');
+      alert('Failed to update call disposition: ' + (error.message || 'Unknown error'));
     } finally {
       setUpdatingDisposition(null);
     }
+  };
+
+  const getDispositionColor = (disposition) => {
+    const colorMap = {
+      'Wrong number': 'bg-red-100 text-red-800',
+      'left voicemail': 'bg-blue-100 text-blue-800',
+      'Application link sent': 'bg-green-100 text-green-800',
+      'follow up': 'bg-yellow-100 text-yellow-800',
+      'busy call back later': 'bg-orange-100 text-orange-800'
+    };
+    return colorMap[disposition] || 'bg-slate-100 text-slate-700';
   };
 
   const handleStageClick = (stageName) => {
@@ -817,12 +832,16 @@ export default function RepPortal() {
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <div className="space-y-1">
-                                <p className="text-sm font-medium text-slate-900">
-                                  {lead.Call_Disposition__c || <span className="text-slate-400">Not set</span>}
-                                </p>
+                              <div className="space-y-2">
+                                {lead.Call_Disposition__c ? (
+                                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getDispositionColor(lead.Call_Disposition__c)}`}>
+                                    {lead.Call_Disposition__c}
+                                  </span>
+                                ) : (
+                                  <span className="text-xs text-slate-400">Not set</span>
+                                )}
                                 {updatingDisposition === lead.Id ? (
-                                  <span className="text-xs text-slate-500">Updating...</span>
+                                  <span className="text-xs text-slate-500 block">Updating...</span>
                                 ) : (
                                   <Select
                                     value={lead.Call_Disposition__c || ''}
