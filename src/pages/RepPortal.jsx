@@ -932,6 +932,7 @@ export default function RepPortal() {
           </div>
         )}
         </div>
+        </div>
 
         {/* Create Task Modal */}
       <CreateTaskModal
