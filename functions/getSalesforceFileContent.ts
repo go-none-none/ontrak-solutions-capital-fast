@@ -2,9 +2,10 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const { contentDocumentId, token, instanceUrl } = await req.json();
+    const { fileId, contentDocumentId, token, instanceUrl } = await req.json();
+    const docId = contentDocumentId || fileId;
 
-    if (!token || !instanceUrl || !contentDocumentId) {
+    if (!token || !instanceUrl || !docId) {
       return Response.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
