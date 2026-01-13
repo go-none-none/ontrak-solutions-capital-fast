@@ -10,7 +10,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import CreateTaskModal from '../components/admin/CreateTaskModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
-import DialpadCTI from '../components/rep/DialpadCTI';
 
 export default function AdminPipeline() {
   const navigate = useNavigate();
@@ -823,17 +822,9 @@ export default function AdminPipeline() {
                                             {lead.Phone && (
                                               <>
                                                 <span>•</span>
-                                                <button
-                                                  onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (window.dialpadInitiateCall) {
-                                                      window.dialpadInitiateCall(lead.Phone);
-                                                    }
-                                                  }}
-                                                  className="text-[#08708E] hover:underline font-medium"
-                                                >
+                                                <a href={`tel:${lead.Phone}`} className="text-[#08708E] hover:underline font-medium">
                                                   {lead.Phone}
-                                                </button>
+                                                </a>
                                               </>
                                             )}
                                             <span>•</span>
@@ -959,9 +950,6 @@ export default function AdminPipeline() {
         session={session}
         onUpdate={() => loadAllRepsData(session, true)}
       />
-
-      {/* Dialpad CTI */}
-      <DialpadCTI clientId="a2bFGaaCr3j7UW9Sty8ETv5sz" />
       </div>
     </div>
   );
