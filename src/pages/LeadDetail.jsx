@@ -25,6 +25,8 @@ export default function LeadDetail() {
   const [users, setUsers] = useState([]);
   const [changingOwner, setChangingOwner] = useState(false);
   const [showOwnerChange, setShowOwnerChange] = useState(false);
+  const [dispositionOptions, setDispositionOptions] = useState([]);
+  const [updatingDisposition, setUpdatingDisposition] = useState(false);
   const [openSections, setOpenSections] = useState({
     contact: true,
     owner1: false,
@@ -59,6 +61,7 @@ export default function LeadDetail() {
     setSession(session);
     loadLead(session);
     loadUsers(session);
+    loadDispositionOptions(session);
   }, []);
 
   const loadLead = async (sessionData) => {
@@ -113,6 +116,42 @@ export default function LeadDetail() {
       setUsers(response.data.users || []);
     } catch (error) {
       console.error('Load users error:', error);
+    }
+  };
+
+  const loadDispositionOptions = async (sessionData) => {
+    try {
+      const response = await base44.functions.invoke('getSalesforcePicklistValues', {
+        objectType: 'Lead',
+        fieldName: 'Call_Disposition__c',
+        token: sessionData.token,
+        instanceUrl: sessionData.instanceUrl
+      });
+      setDispositionOptions(response.data.values || []);
+    } catch (error) {
+      console.error('Load disposition options error:', error);
+    }
+  };
+
+  const handleDispositionChange = async (newDisposition) => {
+    if (newDisposition === lead.Call_Disposition__c) return;
+    
+    setUpdatingDisposition(true);
+    try {
+      await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Lead',
+        recordId: lead.Id,
+        data: { Call_Disposition__c: newDisposition },
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      setLead({ ...lead, Call_Disposition__c: newDisposition });
+    } catch (error) {
+      console.error('Disposition update error:', error);
+      alert('Failed to update call disposition');
+    } finally {
+      setUpdatingDisposition(false);
     }
   };
 
@@ -641,12 +680,27 @@ export default function LeadDetail() {
                   <p className="text-slate-500 text-xs">Status</p>
                   <p className="font-medium text-slate-900">{lead.Status}</p>
                 </div>
-                {lead.Call_Disposition__c && (
-                  <div>
-                    <p className="text-slate-500 text-xs">Call Disposition</p>
-                    <p className="font-medium text-slate-900">{lead.Call_Disposition__c}</p>
-                  </div>
-                )}
+                <div>
+                  <p className="text-slate-500 text-xs mb-1">Call Disposition</p>
+                  <Select
+                    value={lead.Call_Disposition__c || ''}
+                    onValueChange={handleDispositionChange}
+                    disabled={updatingDisposition}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select disposition">
+                        {updatingDisposition ? 'Updating...' : (lead.Call_Disposition__c || 'Select disposition')}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {dispositionOptions.map(option => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           </div>
