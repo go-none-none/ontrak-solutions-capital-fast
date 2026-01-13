@@ -465,48 +465,48 @@ export default function RepPortal() {
 
           {activeTab === 'tasks' && (
             <div className="mb-4 sm:mb-6">
-              <div className="flex justify-between items-center mb-4 sm:mb-6">
-                <div className="flex flex-wrap gap-2 flex-1">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
+                <div className="flex flex-wrap gap-2">
                   <Button
-                  variant={taskFilter === 'all' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => { setTaskFilter('all'); setCurrentPage(1); }}
-                  className={taskFilter === 'all' ? 'bg-purple-600' : ''}
-                >
-                  All ({tasks?.total || 0})
-                </Button>
-                <Button
-                  variant={taskFilter === 'overdue' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => { setTaskFilter('overdue'); setCurrentPage(1); }}
-                  className={taskFilter === 'overdue' ? 'bg-red-600' : ''}
-                >
-                  Overdue ({tasks?.categorized?.overdue?.length || 0})
-                </Button>
-                <Button
-                  variant={taskFilter === 'today' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => { setTaskFilter('today'); setCurrentPage(1); }}
-                  className={taskFilter === 'today' ? 'bg-orange-600' : ''}
-                >
-                  Due Today ({tasks?.categorized?.dueToday?.length || 0})
-                </Button>
-                <Button
-                  variant={taskFilter === 'week' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => { setTaskFilter('week'); setCurrentPage(1); }}
-                  className={taskFilter === 'week' ? 'bg-blue-600' : ''}
-                >
-                  This Week ({tasks?.categorized?.dueThisWeek?.length || 0})
+                    variant={taskFilter === 'all' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => { setTaskFilter('all'); setCurrentPage(1); }}
+                    className={taskFilter === 'all' ? 'bg-purple-600' : ''}
+                  >
+                    All ({tasks?.total || 0})
                   </Button>
-                  </div>
-                  <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700 min-h-[44px] flex-shrink-0">
+                  <Button
+                    variant={taskFilter === 'overdue' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => { setTaskFilter('overdue'); setCurrentPage(1); }}
+                    className={taskFilter === 'overdue' ? 'bg-red-600' : ''}
+                  >
+                    Overdue ({tasks?.categorized?.overdue?.length || 0})
+                  </Button>
+                  <Button
+                    variant={taskFilter === 'today' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => { setTaskFilter('today'); setCurrentPage(1); }}
+                    className={taskFilter === 'today' ? 'bg-orange-600' : ''}
+                  >
+                    Due Today ({tasks?.categorized?.dueToday?.length || 0})
+                  </Button>
+                  <Button
+                    variant={taskFilter === 'week' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => { setTaskFilter('week'); setCurrentPage(1); }}
+                    className={taskFilter === 'week' ? 'bg-blue-600' : ''}
+                  >
+                    This Week ({tasks?.categorized?.dueThisWeek?.length || 0})
+                  </Button>
+                </div>
+                <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700 min-h-[44px] w-full sm:w-auto">
                   <Plus className="w-4 h-4 mr-2" />
                   Create Task
-                  </Button>
-                  </div>
-                  </div>
-                  )}
+                </Button>
+              </div>
+            </div>
+          )}
 
           {activeTab === 'leads' && (
             <div>
