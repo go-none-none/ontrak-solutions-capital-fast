@@ -924,9 +924,60 @@ export default function AdminPipeline() {
             </tbody>
           </table>
           </div>
-        </div>
+          </div>
+          )}
 
-        {/* Create Task Modal */}
+          {activeView === 'tasks' && (
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-lg font-semibold text-slate-900">All Tasks</h2>
+            <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700">
+              <Plus className="w-4 h-4 mr-2" />
+              Create Task
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {allTasks.length === 0 ? (
+              <div className="text-center py-12">
+                <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                <p className="text-slate-600">No tasks found</p>
+              </div>
+            ) : (
+              allTasks.map(task => (
+                <button
+                  key={task.Id}
+                  onClick={() => setSelectedTask(task)}
+                  className="w-full bg-slate-50 hover:bg-slate-100 rounded-lg p-4 shadow-sm border border-slate-200 text-left transition-all"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <p className="font-medium text-slate-900">{task.Subject}</p>
+                      {task.Description && (
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">{task.Description}</p>
+                      )}
+                      {task.What?.Name && (
+                        <p className="text-xs text-purple-600 mt-1">Related: {task.What.Name}</p>
+                      )}
+                    </div>
+                    <div className="text-right ml-3">
+                      <span className="text-xs px-2 py-1 rounded-full bg-slate-200 text-slate-700 block mb-1">
+                        {task.Status}
+                      </span>
+                      {task.ActivityDate && (
+                        <span className="text-xs text-slate-500">
+                          {new Date(task.ActivityDate).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+          </div>
+          )}
+
+          {/* Create Task Modal */}
       <CreateTaskModal
         isOpen={showCreateTask}
         onClose={() => setShowCreateTask(false)}
