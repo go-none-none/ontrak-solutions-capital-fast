@@ -3,14 +3,19 @@ import { useLocation } from 'react-router-dom';
 import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
 
-// Suppress Base44 auth errors for Salesforce-authenticated app
-const originalError = console.error;
-console.error = function(...args) {
-  if (args[0]?.includes?.('entities/User/me') || (args[0]?.message?.includes?.('401'))) {
-    return;
-  }
-  originalError.apply(console, args);
-};
+// Suppress Base44 auth 401 error for Salesforce-only app
+if (typeof window !== 'undefined') {
+  const originalFetch = window.fetch;
+  window.fetch = function(...args) {
+    const promise = originalFetch.apply(this, args);
+    return promise.catch(err => {
+      if (args[0]?.includes?.('/entities/User/me')) {
+        return new Response('', { status: 200 });
+      }
+      throw err;
+    });
+  };
+}
 
 export default function Layout({ children, currentPageName }) {
   const { pathname } = useLocation();
