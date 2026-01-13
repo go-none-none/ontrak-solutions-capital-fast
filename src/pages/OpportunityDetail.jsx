@@ -747,6 +747,16 @@ export default function OpportunityDetail() {
               </div>
             )}
 
+            {/* Documents */}
+            <Button
+              onClick={() => setShowDocuments(true)}
+              variant="outline"
+              className="w-full justify-start gap-2 mb-6"
+            >
+              <FolderOpen className="w-4 h-4" />
+              Documents
+            </Button>
+
             {/* Quick Stats */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h3 className="font-semibold text-slate-900 mb-4">Key Info</h3>
