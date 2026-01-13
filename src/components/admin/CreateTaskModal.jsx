@@ -208,17 +208,11 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
+                  searchRelatedRecords(e.target.value);
                   setShowDropdown(true);
                 }}
                 onFocus={() => setShowDropdown(true)}
-                placeholder={
-                  !formData.assignedTo 
-                    ? "Select rep first" 
-                    : relatedRecords.length === 0 
-                      ? "No records available" 
-                      : "Search leads or opportunities..."
-                }
-                disabled={!formData.assignedTo || relatedRecords.length === 0}
+                placeholder="Search leads or opportunities..."
               />
               {showDropdown && relatedRecords.length > 0 && (
                 <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
