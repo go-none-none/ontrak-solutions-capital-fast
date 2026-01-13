@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X, Plus } from 'lucide-react';
+import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
@@ -14,7 +14,6 @@ import TaskCard from '../components/rep/TaskCard';
 import TaskItem from '../components/rep/TaskItem';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
-import CreateTaskModal from '../components/admin/CreateTaskModal';
 
 export default function RepPortal() {
   const navigate = useNavigate();
@@ -35,7 +34,6 @@ export default function RepPortal() {
   const [dispositionFilter, setDispositionFilter] = useState('all');
   const [dispositionOptions, setDispositionOptions] = useState([]);
   const [updatingDisposition, setUpdatingDisposition] = useState(null);
-  const [showCreateTask, setShowCreateTask] = useState(false);
   const itemsPerPage = 100;
 
   // Disposition color mapping
@@ -465,44 +463,38 @@ export default function RepPortal() {
 
           {activeTab === 'tasks' && (
             <div className="mb-4 sm:mb-6">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant={taskFilter === 'all' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => { setTaskFilter('all'); setCurrentPage(1); }}
-                    className={taskFilter === 'all' ? 'bg-purple-600' : ''}
-                  >
-                    All ({tasks?.total || 0})
-                  </Button>
-                  <Button
-                    variant={taskFilter === 'overdue' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => { setTaskFilter('overdue'); setCurrentPage(1); }}
-                    className={taskFilter === 'overdue' ? 'bg-red-600' : ''}
-                  >
-                    Overdue ({tasks?.categorized?.overdue?.length || 0})
-                  </Button>
-                  <Button
-                    variant={taskFilter === 'today' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => { setTaskFilter('today'); setCurrentPage(1); }}
-                    className={taskFilter === 'today' ? 'bg-orange-600' : ''}
-                  >
-                    Due Today ({tasks?.categorized?.dueToday?.length || 0})
-                  </Button>
-                  <Button
-                    variant={taskFilter === 'week' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => { setTaskFilter('week'); setCurrentPage(1); }}
-                    className={taskFilter === 'week' ? 'bg-blue-600' : ''}
-                  >
-                    This Week ({tasks?.categorized?.dueThisWeek?.length || 0})
-                  </Button>
-                </div>
-                <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700 min-h-[44px] w-full sm:w-auto">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Task
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={taskFilter === 'all' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setTaskFilter('all'); setCurrentPage(1); }}
+                  className={taskFilter === 'all' ? 'bg-purple-600' : ''}
+                >
+                  All ({tasks?.total || 0})
+                </Button>
+                <Button
+                  variant={taskFilter === 'overdue' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setTaskFilter('overdue'); setCurrentPage(1); }}
+                  className={taskFilter === 'overdue' ? 'bg-red-600' : ''}
+                >
+                  Overdue ({tasks?.categorized?.overdue?.length || 0})
+                </Button>
+                <Button
+                  variant={taskFilter === 'today' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setTaskFilter('today'); setCurrentPage(1); }}
+                  className={taskFilter === 'today' ? 'bg-orange-600' : ''}
+                >
+                  Due Today ({tasks?.categorized?.dueToday?.length || 0})
+                </Button>
+                <Button
+                  variant={taskFilter === 'week' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => { setTaskFilter('week'); setCurrentPage(1); }}
+                  className={taskFilter === 'week' ? 'bg-blue-600' : ''}
+                >
+                  This Week ({tasks?.categorized?.dueThisWeek?.length || 0})
                 </Button>
               </div>
             </div>
@@ -932,16 +924,7 @@ export default function RepPortal() {
           </div>
         )}
         </div>
-        </div>
-
-        {/* Create Task Modal */}
-      <CreateTaskModal
-        isOpen={showCreateTask}
-        onClose={() => setShowCreateTask(false)}
-        session={session}
-        repsData={[]}
-        onSuccess={() => loadData(session, true)}
-      />
+      </div>
 
       {/* Task Details Modal */}
       <TaskDetailsModal
@@ -950,7 +933,7 @@ export default function RepPortal() {
         onClose={() => setSelectedTask(null)}
         session={session}
         onUpdate={() => loadData(session, true)}
-      />
-      </div>
-      );
-      }
+        />
+        </div>
+        );
+        }
