@@ -27,6 +27,8 @@ export default function LeadDetail() {
   const [dispositionOptions, setDispositionOptions] = useState([]);
   const [updatingDisposition, setUpdatingDisposition] = useState(false);
   const [showDispositionChange, setShowDispositionChange] = useState(false);
+  const [showStatusChange, setShowStatusChange] = useState(false);
+  const [updatingQuickStatus, setUpdatingQuickStatus] = useState(false);
   const [openSections, setOpenSections] = useState({
     contact: true,
     owner1: false,
@@ -153,6 +155,29 @@ export default function LeadDetail() {
       alert('Failed to update call disposition');
     } finally {
       setUpdatingDisposition(false);
+    }
+  };
+
+  const handleQuickStatusChange = async (newStatus) => {
+    if (newStatus === lead.Status) return;
+    
+    setUpdatingQuickStatus(true);
+    try {
+      await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Lead',
+        recordId: lead.Id,
+        data: { Status: newStatus },
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      await loadLead(session);
+      setShowStatusChange(false);
+    } catch (error) {
+      console.error('Status update error:', error);
+      alert('Failed to update status');
+    } finally {
+      setUpdatingQuickStatus(false);
     }
   };
 
@@ -429,7 +454,6 @@ export default function LeadDetail() {
                     <EditableFieldWrapper label="Title" field="Title" value={lead.Title} />
                     <EditableFieldWrapper label="Lead Source" field="LeadSource" value={lead.LeadSource} />
                     <EditableFieldWrapper label="Industry" field="Industry" value={lead.Industry} />
-                    <EditableFieldWrapper label="Status" field="Status" value={lead.Status} />
                   </div>
                 </CollapsibleContent>
               </div>
@@ -672,8 +696,50 @@ export default function LeadDetail() {
                   )}
                 </div>
                 <div>
-                  <p className="text-slate-500 text-xs">Status</p>
-                  <p className="font-medium text-slate-900">{lead.Status}</p>
+                  <p className="text-slate-500 text-xs mb-1">Status</p>
+                  {!showStatusChange ? (
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-slate-900">{lead.Status}</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowStatusChange(true)}
+                        className="text-xs"
+                      >
+                        Change
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Select
+                        value={lead.Status}
+                        onValueChange={handleQuickStatusChange}
+                        disabled={updatingQuickStatus}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue>
+                            {updatingQuickStatus ? 'Updating...' : 'Select status'}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Open - Not Contacted">Open - Not Contacted</SelectItem>
+                          <SelectItem value="Working - Contacted">Working - Contacted</SelectItem>
+                          <SelectItem value="Working - Application Out">Working - Application Out</SelectItem>
+                          <SelectItem value="Application Missing Info">Application Missing Info</SelectItem>
+                          <SelectItem value="Converted">Converted</SelectItem>
+                          <SelectItem value="Closed - Not Converted">Closed - Not Converted</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowStatusChange(false)}
+                        className="w-full text-xs"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs mb-1">Call Disposition</p>
