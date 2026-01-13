@@ -108,13 +108,7 @@ export default function DialpadCTI({ clientId }) {
         )}
       </div>
 
-      {!isAuthenticated && !isMinimized && (
-        <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center rounded-lg">
-          <div className="bg-white p-4 rounded-lg shadow-lg text-center">
-            <p className="text-sm text-slate-700">Please log in to Dialpad</p>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
