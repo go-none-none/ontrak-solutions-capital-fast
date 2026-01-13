@@ -771,14 +771,40 @@ export default function OpportunityDetail() {
             )}
 
             {/* Documents */}
-            <Button
-              onClick={() => setShowDocuments(true)}
-              variant="outline"
-              className="w-full justify-start gap-2 mb-6"
-            >
-              <FolderOpen className="w-4 h-4" />
-              Documents
-            </Button>
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <Button
+                onClick={() => setShowDocuments(true)}
+                variant="outline"
+                className="w-full justify-start gap-2 mb-4"
+              >
+                <FolderOpen className="w-4 h-4" />
+                Import Documents
+              </Button>
+              {loadingSavedDocs ? (
+                <div className="flex items-center justify-center py-4">
+                  <Loader2 className="w-5 h-5 text-[#08708E] animate-spin" />
+                </div>
+              ) : savedDocuments.length > 0 ? (
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-slate-700 mb-3">Saved Documents</h4>
+                  {savedDocuments.map(doc => (
+                    <a
+                      key={doc.id}
+                      href={doc.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 p-2 rounded hover:bg-slate-100 transition-colors text-sm text-[#08708E] hover:underline truncate"
+                      title={doc.fileName}
+                    >
+                      <FileText className="w-4 h-4 flex-shrink-0" />
+                      <span className="truncate">{doc.fileName}</span>
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-500">No documents imported yet</p>
+              )}
+            </div>
 
             {/* Quick Stats */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
