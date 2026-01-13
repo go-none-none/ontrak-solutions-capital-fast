@@ -10,7 +10,6 @@ import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
-import DialpadCTI from '../components/rep/DialpadCTI';
 
 export default function LeadDetail() {
   const navigate = useNavigate();
@@ -27,6 +26,7 @@ export default function LeadDetail() {
   const [showOwnerChange, setShowOwnerChange] = useState(false);
   const [dispositionOptions, setDispositionOptions] = useState([]);
   const [updatingDisposition, setUpdatingDisposition] = useState(false);
+  const [showDispositionChange, setShowDispositionChange] = useState(false);
   const [openSections, setOpenSections] = useState({
     contact: true,
     owner1: false,
@@ -147,6 +147,7 @@ export default function LeadDetail() {
       });
       
       setLead({ ...lead, Call_Disposition__c: newDisposition });
+      setShowDispositionChange(false);
     } catch (error) {
       console.error('Disposition update error:', error);
       alert('Failed to update call disposition');
@@ -606,20 +607,14 @@ export default function LeadDetail() {
                   </a>
                 )}
                 {lead.Phone && (
-                  <button 
-                    onClick={() => window.dialpadInitiateCall && window.dialpadInitiateCall(lead.Phone)}
-                    className="text-sm text-[#08708E] hover:underline block font-medium text-left"
-                  >
+                  <a href={`tel:${lead.Phone}`} className="text-sm text-[#08708E] hover:underline block">
                     {lead.Phone}
-                  </button>
+                  </a>
                 )}
                 {lead.MobilePhone && (
-                  <button 
-                    onClick={() => window.dialpadInitiateCall && window.dialpadInitiateCall(lead.MobilePhone)}
-                    className="text-sm text-[#08708E] hover:underline block font-medium text-left"
-                  >
+                  <a href={`tel:${lead.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block">
                     Mobile: {lead.MobilePhone}
-                  </button>
+                  </a>
                 )}
               </div>
             </div>
@@ -682,33 +677,54 @@ export default function LeadDetail() {
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs mb-1">Call Disposition</p>
-                  <Select
-                    value={lead.Call_Disposition__c || ''}
-                    onValueChange={handleDispositionChange}
-                    disabled={updatingDisposition}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select disposition">
-                        {updatingDisposition ? 'Updating...' : (lead.Call_Disposition__c || 'Select disposition')}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {dispositionOptions.map(option => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {!showDispositionChange ? (
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium text-slate-900">{lead.Call_Disposition__c || 'Not set'}</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowDispositionChange(true)}
+                        className="text-xs"
+                      >
+                        Change
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Select
+                        value={lead.Call_Disposition__c || ''}
+                        onValueChange={handleDispositionChange}
+                        disabled={updatingDisposition}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue>
+                            {updatingDisposition ? 'Updating...' : 'Select disposition'}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {dispositionOptions.map(option => (
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowDispositionChange(false)}
+                        className="w-full text-xs"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        </div>
-
-        {/* Dialpad CTI */}
-        <DialpadCTI clientId="a2bFGaaCr3j7UW9Sty8ETv5sz" />
-        </div>
-        );
-        }
+          </div>
+          </div>
+          </div>
+          );
+          }
