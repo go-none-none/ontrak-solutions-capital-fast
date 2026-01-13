@@ -15,42 +15,60 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    const searchTerm = query.trim().replace(/'/g, "\\'");
-
-    // Search Leads - match by Name or Company
-    const leadsQuery = `SELECT Id, Name, Company, Email, Phone, Status FROM Lead WHERE (Name LIKE '%${searchTerm}%' OR Company LIKE '%${searchTerm}%') ORDER BY Name LIMIT 10`;
+    // Use SOSL (Salesforce Object Search Language) for better cross-object search
+    const searchQuery = query.trim();
     
-    // Search Opportunities - match by Name
-    const oppsQuery = `SELECT Id, Name, Amount, StageName, Account.Name FROM Opportunity WHERE Name LIKE '%${searchTerm}%' ORDER BY Name LIMIT 10`;
+    // SOSL query format: FIND 'search_term' IN ALL FIELDS RETURNING object_list
+    const soslQuery = `FIND "${searchQuery}" IN ALL FIELDS RETURNING Lead(Id, Name, Company, Email, Phone, Status LIMIT 10), Opportunity(Id, Name, Amount, StageName, Account.Name LIMIT 10)`;
 
-    const [leadsRes, oppsRes] = await Promise.all([
-      fetch(`${instanceUrl}/services/data/v60.0/query?q=${encodeURIComponent(leadsQuery)}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      }),
-      fetch(`${instanceUrl}/services/data/v60.0/query?q=${encodeURIComponent(oppsQuery)}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-    ]);
+    const response = await fetch(`${instanceUrl}/services/data/v60.0/search?q=${encodeURIComponent(soslQuery)}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
 
-    const leadsData = await leadsRes.json();
-    const oppsData = await oppsRes.json();
+    const data = await response.json();
 
-    if (!leadsRes.ok) {
-      console.error('Leads query error:', leadsData);
+    if (!response.ok) {
+      console.error('SOSL search error:', data);
+      return Response.json({
+        leads: [],
+        opportunities: [],
+        error: data.message || 'Search failed'
+      });
     }
-    if (!oppsRes.ok) {
-      console.error('Opportunities query error:', oppsData);
+
+    const leads = [];
+    const opportunities = [];
+
+    // Parse SOSL results
+    if (data.searchRecords) {
+      data.searchRecords.forEach(record => {
+        if (record.attributes.type === 'Lead') {
+          leads.push({
+            Id: record.Id,
+            Name: record.Name,
+            Company: record.Company,
+            Email: record.Email,
+            Phone: record.Phone,
+            Status: record.Status
+          });
+        } else if (record.attributes.type === 'Opportunity') {
+          opportunities.push({
+            Id: record.Id,
+            Name: record.Name,
+            Amount: record.Amount,
+            StageName: record.StageName,
+            AccountName: record.Account?.Name
+          });
+        }
+      });
     }
 
     return Response.json({
-      leads: leadsData.records || [],
-      opportunities: oppsData.records || []
+      leads,
+      opportunities
     });
   } catch (error) {
     console.error('Search error:', error);
