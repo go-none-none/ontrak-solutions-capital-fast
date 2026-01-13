@@ -928,12 +928,13 @@ export default function RepPortal() {
         </div>
 
         {/* Create Task Modal */}
-      <CreateTaskModal
-        isOpen={showCreateTask}
-        onClose={() => setShowCreateTask(false)}
-        session={session}
-        onSuccess={() => loadData(session, true)}
-      />
+        <CreateTaskModal
+          isOpen={showCreateTask}
+          onClose={() => setShowCreateTask(false)}
+          session={session}
+          repsData={repsData}
+          onSuccess={() => loadData(session, true)}
+        />
 
       {/* Task Details Modal */}
       <TaskDetailsModal
