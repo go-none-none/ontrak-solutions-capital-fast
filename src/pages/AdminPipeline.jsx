@@ -978,6 +978,7 @@ export default function AdminPipeline() {
           )}
           </div>
           </div>
+          </div>
 
           {/* Create Task Modal */}
           <CreateTaskModal
