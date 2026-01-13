@@ -1,9 +1,13 @@
 Deno.serve(async (req) => {
   try {
-    const { phone_number } = await req.json();
+    const body = await req.json();
+    const { phone_number } = body;
     
     if (!phone_number) {
-      return Response.json({ error: 'Phone number is required' }, { status: 400 });
+      return new Response(JSON.stringify({ error: 'Phone number is required' }), { 
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     // Clean phone number - remove spaces, dashes, parentheses
@@ -12,7 +16,10 @@ Deno.serve(async (req) => {
     const apiKey = Deno.env.get('DIALPAD_API_KEY');
     
     if (!apiKey) {
-      return Response.json({ error: 'DIALPAD_API_KEY not configured' }, { status: 500 });
+      return new Response(JSON.stringify({ error: 'DIALPAD_API_KEY not configured' }), { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
     
     // Initiate call via Dialpad API
@@ -29,23 +36,32 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.text();
-      return Response.json({ 
+      return new Response(JSON.stringify({ 
         error: 'Failed to initiate call',
         details: error 
-      }, { status: response.status });
+      }), { 
+        status: response.status,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     const data = await response.json();
     
-    return Response.json({ 
+    return new Response(JSON.stringify({ 
       success: true,
       call_id: data.call_id,
       status: data.status 
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
     });
 
   } catch (error) {
-    return Response.json({ 
+    return new Response(JSON.stringify({ 
       error: error.message 
-    }, { status: 500 });
+    }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 });
