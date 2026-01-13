@@ -92,7 +92,17 @@ export default function DocumentsDrawer({ isOpen, onClose, opportunityId, sessio
           const blob = new Blob([response.data.content], { type: 'application/pdf' });
           const file = new File([blob], doc.Title, { type: 'application/pdf' });
 
-          await base44.integrations.Core.UploadFile({ file });
+          const uploadResult = await base44.integrations.Core.UploadFile({ file });
+          
+          // Save to OpportunityDocument entity
+          await base44.entities.OpportunityDocument.create({
+            opportunityId,
+            fileName: doc.Title,
+            fileUrl: uploadResult.file_url,
+            salesforceFileId: doc.Id,
+            fileSize: doc.FileSize || 0
+          });
+
           uploadedCount++;
           await new Promise(resolve => setTimeout(resolve, 300));
         } catch (error) {
@@ -102,6 +112,7 @@ export default function DocumentsDrawer({ isOpen, onClose, opportunityId, sessio
 
       alert(`Successfully saved ${uploadedCount} document(s) to your app`);
       setSelectedDocs(new Set());
+      onClose();
     } catch (error) {
       console.error('Upload error:', error);
       alert('Failed to save documents');
