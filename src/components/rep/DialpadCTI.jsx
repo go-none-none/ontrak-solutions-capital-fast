@@ -48,21 +48,26 @@ export default function DialpadCTI({ clientId }) {
 
   // Make initiateCall function available globally
   useEffect(() => {
-    window.dialpadInitiateCall = (phoneNumber) => {
-      if (iframeRef.current) {
-        console.log('Initiating call to:', phoneNumber);
-        // Clean phone number - remove spaces, dashes, parentheses
-        const cleanNumber = phoneNumber.replace(/[\s\-\(\)]/g, '');
+    window.dialpadInitiateCall = async (phoneNumber) => {
+      console.log('Initiating call to:', phoneNumber);
+      
+      try {
+        // Use REST API to initiate call
+        const { base44 } = await import('/src/api/base44Client.js');
+        const response = await base44.functions.invoke('dialpadCall', {
+          phone_number: phoneNumber
+        });
         
-        iframeRef.current.contentWindow.postMessage({
-          api: 'opencti_dialpad',
-          version: '1.0',
-          method: 'initiate_call',
-          payload: {
-            phone_number: cleanNumber
-          }
-        }, '*');
-        setIsMinimized(false); // Expand when initiating call
+        if (response.data.success) {
+          console.log('Call initiated successfully:', response.data.call_id);
+          setIsMinimized(false); // Expand when initiating call
+        } else {
+          console.error('Call failed:', response.data);
+          alert('Failed to initiate call. Please try again.');
+        }
+      } catch (error) {
+        console.error('Call error:', error);
+        alert('Failed to initiate call: ' + error.message);
       }
     };
 
