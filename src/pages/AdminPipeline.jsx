@@ -977,7 +977,6 @@ export default function AdminPipeline() {
           </div>
           )}
           </div>
-          </div>
 
           {/* Create Task Modal */}
           <CreateTaskModal
@@ -997,5 +996,7 @@ export default function AdminPipeline() {
           onUpdate={() => loadAllRepsData(session, true)}
           />
           </div>
+          </div>
           );
+          }
       }
