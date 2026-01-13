@@ -450,7 +450,8 @@ export default function RepPortal() {
 
           {activeTab === 'tasks' && (
             <div className="mb-4 sm:mb-6">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center justify-between mb-4">
+                <div className="flex flex-wrap gap-2">
                 <Button
                   variant={taskFilter === 'all' ? 'default' : 'outline'}
                   size="sm"
