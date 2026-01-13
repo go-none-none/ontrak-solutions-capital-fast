@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X } from 'lucide-react';
+import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X, Plus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
