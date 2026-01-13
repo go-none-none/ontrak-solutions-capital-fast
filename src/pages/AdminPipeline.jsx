@@ -631,14 +631,6 @@ export default function AdminPipeline() {
           )}
         </div>
 
-        {/* Create Task Button */}
-        <div className="flex justify-end mb-4 sm:mb-6">
-          <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700 min-h-[44px] w-full sm:w-auto">
-            <Plus className="w-4 h-4 mr-2" />
-            Create Task
-          </Button>
-        </div>
-
         {/* Reps Pipeline Table */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto -mx-4 sm:mx-0">
