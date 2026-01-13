@@ -110,22 +110,11 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
               <label className="text-sm font-medium text-slate-700 mb-1 block">
                 Assign To <span className="text-red-500">*</span>
               </label>
-              <Select
-                value={formData.assignedTo}
-                onValueChange={(val) => setFormData({ ...formData, assignedTo: val, relatedToId: '', relatedToType: '' })}
-                disabled={loadingUsers}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={loadingUsers ? "Loading..." : "Select rep"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {users.map(user => (
-                    <SelectItem key={user.Id} value={user.Id}>
-                      {user.Name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                value={session?.name || ''}
+                disabled
+                className="bg-slate-50 text-slate-700"
+              />
             </div>
 
             <div>
