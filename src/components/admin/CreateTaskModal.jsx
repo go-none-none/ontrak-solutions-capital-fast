@@ -9,9 +9,10 @@ import { base44 } from '@/api/base44Client';
 
 export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, repsData }) {
   const [loading, setLoading] = useState(false);
-  const [loadingRecords, setLoadingRecords] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
   const [formData, setFormData] = useState({
-    assignedTo: session?.userId || '',
+    assignedTo: '',
     subject: '',
     dueDate: '',
     priority: 'Normal',
@@ -24,33 +25,42 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const searchRecords = async (query) => {
-    if (!query.trim() || query.length < 2) {
-      setRelatedRecords([]);
-      return;
+  useEffect(() => {
+    if (isOpen && users.length === 0) {
+      loadUsers();
     }
+  }, [isOpen]);
 
-    setLoadingRecords(true);
+  useEffect(() => {
+    if (formData.assignedTo && repsData) {
+      const rep = repsData.find(r => r.userId === formData.assignedTo);
+      if (rep) {
+        const records = [];
+        rep.leads?.forEach(lead => {
+          records.push({ id: lead.Id, name: lead.Name, type: 'Lead' });
+        });
+        rep.opportunities?.forEach(opp => {
+          records.push({ id: opp.Id, name: opp.Name, type: 'Opportunity' });
+        });
+        setRelatedRecords(records);
+      } else {
+        setRelatedRecords([]);
+      }
+    }
+  }, [formData.assignedTo, repsData]);
+
+  const loadUsers = async () => {
+    setLoadingUsers(true);
     try {
-      const response = await base44.functions.invoke('searchSalesforceRecords', {
-        query,
+      const response = await base44.functions.invoke('getSalesforceUsers', {
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-      
-      const records = [];
-      response.data.leads?.forEach(lead => {
-        records.push({ id: lead.Id, name: lead.Name, type: 'Lead' });
-      });
-      response.data.opportunities?.forEach(opp => {
-        records.push({ id: opp.Id, name: opp.Name, type: 'Opportunity' });
-      });
-      setRelatedRecords(records);
+      setUsers(response.data.users || []);
     } catch (error) {
-      console.error('Error searching records:', error);
-      setRelatedRecords([]);
+      console.error('Error loading users:', error);
     } finally {
-      setLoadingRecords(false);
+      setLoadingUsers(false);
     }
   };
 
@@ -110,11 +120,22 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
               <label className="text-sm font-medium text-slate-700 mb-1 block">
                 Assign To <span className="text-red-500">*</span>
               </label>
-              <Input
-                value={session?.name || ''}
-                disabled
-                className="bg-slate-50 text-slate-700"
-              />
+              <Select
+                value={formData.assignedTo}
+                onValueChange={(val) => setFormData({ ...formData, assignedTo: val, relatedToId: '', relatedToType: '' })}
+                disabled={loadingUsers}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={loadingUsers ? "Loading..." : "Select rep"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map(user => (
+                    <SelectItem key={user.Id} value={user.Id}>
+                      {user.Name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -170,71 +191,73 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
           </div>
 
           <div>
-           <label className="text-sm font-medium text-slate-700 mb-1 block">Related To</label>
-           <div className="relative">
-             <Input
-               value={searchTerm}
-               onChange={(e) => {
-                 const value = e.target.value;
-                 setSearchTerm(value);
-                 if (value.trim()) {
-                   searchRecords(value);
-                   setShowDropdown(true);
-                 } else {
-                   setRelatedRecords([]);
-                   setShowDropdown(false);
-                 }
-               }}
-               onFocus={() => searchTerm && setShowDropdown(true)}
-               placeholder="Search leads or opportunities..."
-               disabled={loading}
-             />
-             {loadingRecords && (
-               <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg p-3 text-center text-sm text-slate-500">
-                 Searching...
-               </div>
-             )}
-             {showDropdown && relatedRecords.length > 0 && !loadingRecords && (
-               <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                 {relatedRecords.map(record => (
-                   <button
-                     key={record.id}
-                     type="button"
-                     onClick={() => {
-                       setFormData({ 
-                         ...formData, 
-                         relatedToId: record.id,
-                         relatedToType: record.type
-                       });
-                       setSearchTerm(`${record.name} (${record.type})`);
-                       setShowDropdown(false);
-                     }}
-                     className="w-full text-left px-3 py-2 hover:bg-slate-100 transition-colors border-b border-slate-100 last:border-0"
-                   >
-                     <p className="font-medium text-slate-900">{record.name}</p>
-                     <p className="text-xs text-slate-500">{record.type}</p>
-                   </button>
-                 ))}
-               </div>
-             )}
-             {showDropdown && searchTerm && relatedRecords.length === 0 && !loadingRecords && (
-               <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg p-3 text-center text-sm text-slate-500">
-                 No records found
-               </div>
-             )}
-           </div>
-           {formData.relatedToId && (
-             <button
-               type="button"
-               onClick={() => {
-                 setFormData({ ...formData, relatedToId: '', relatedToType: '' });
-                 setSearchTerm('');
-               }}
-               className="text-xs text-slate-500 hover:text-slate-700 mt-1"
-             >
-               Clear selection
-             </button>
-           )}
+            <label className="text-sm font-medium text-slate-700 mb-1 block">Related To</label>
+            <div className="relative">
+              <Input
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setShowDropdown(true);
+                }}
+                onFocus={() => setShowDropdown(true)}
+                placeholder={
+                  !formData.assignedTo 
+                    ? "Select rep first" 
+                    : relatedRecords.length === 0 
+                      ? "No records available" 
+                      : "Search leads or opportunities..."
+                }
+                disabled={!formData.assignedTo || relatedRecords.length === 0}
+              />
+              {showDropdown && relatedRecords.length > 0 && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  {relatedRecords
+                    .filter(r => 
+                      r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      r.type.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map(record => (
+                      <button
+                        key={record.id}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ 
+                            ...formData, 
+                            relatedToId: record.id,
+                            relatedToType: record.type
+                          });
+                          setSearchTerm(`${record.name} (${record.type})`);
+                          setShowDropdown(false);
+                        }}
+                        className="w-full text-left px-3 py-2 hover:bg-slate-100 transition-colors border-b border-slate-100 last:border-0"
+                      >
+                        <p className="font-medium text-slate-900">{record.name}</p>
+                        <p className="text-xs text-slate-500">{record.type}</p>
+                      </button>
+                    ))}
+                  {relatedRecords.filter(r => 
+                    r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    r.type.toLowerCase().includes(searchTerm.toLowerCase())
+                  ).length === 0 && (
+                    <div className="px-3 py-4 text-center text-sm text-slate-500">
+                      No matches found
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            {formData.relatedToId && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData({ ...formData, relatedToId: '', relatedToType: '' });
+                  setSearchTerm('');
+                }}
+                className="text-xs text-slate-500 hover:text-slate-700 mt-1"
+              >
+                Clear selection
+              </button>
+            )}
           </div>
 
           <div>

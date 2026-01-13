@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X, Plus } from 'lucide-react';
+import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
@@ -14,7 +14,6 @@ import TaskCard from '../components/rep/TaskCard';
 import TaskItem from '../components/rep/TaskItem';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
-import CreateTaskModal from '../components/admin/CreateTaskModal';
 
 export default function RepPortal() {
   const [session, setSession] = useState(null);
@@ -34,7 +33,6 @@ export default function RepPortal() {
   const [dispositionFilter, setDispositionFilter] = useState('all');
   const [dispositionOptions, setDispositionOptions] = useState([]);
   const [updatingDisposition, setUpdatingDisposition] = useState(null);
-  const [showCreateTask, setShowCreateTask] = useState(false);
   const itemsPerPage = 100;
   const navigate = useNavigate();
 
@@ -449,7 +447,7 @@ export default function RepPortal() {
           )}
 
           {activeTab === 'tasks' && (
-            <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="mb-4 sm:mb-6">
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant={taskFilter === 'all' ? 'default' : 'outline'}
@@ -483,13 +481,9 @@ export default function RepPortal() {
                 >
                   This Week ({tasks?.categorized?.dueThisWeek?.length || 0})
                 </Button>
-                </div>
-                <Button onClick={() => setShowCreateTask(true)} className="bg-purple-600 hover:bg-purple-700 min-h-[44px] w-full sm:w-auto">
-                <Plus className="w-4 h-4 mr-2" />
-                Create Task
-                </Button>
-                </div>
-                )}
+              </div>
+            </div>
+          )}
 
           {activeTab === 'leads' && (
             <div>
@@ -918,18 +912,6 @@ export default function RepPortal() {
         )}
         </div>
       </div>
-
-      {/* Create Task Modal */}
-      <CreateTaskModal
-        isOpen={showCreateTask}
-        onClose={() => setShowCreateTask(false)}
-        session={session}
-        repsData={[{ userId: session?.userId, name: session?.name, email: session?.email }]}
-        onSuccess={() => {
-          setShowCreateTask(false);
-          loadData(session, true);
-        }}
-      />
 
       {/* Task Details Modal */}
       <TaskDetailsModal
