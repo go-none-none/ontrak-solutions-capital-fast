@@ -16,6 +16,7 @@ import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
 
 export default function RepPortal() {
+  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [leads, setLeads] = useState([]);
@@ -34,7 +35,6 @@ export default function RepPortal() {
   const [dispositionOptions, setDispositionOptions] = useState([]);
   const [updatingDisposition, setUpdatingDisposition] = useState(null);
   const itemsPerPage = 100;
-  const navigate = useNavigate();
 
   useEffect(() => {
     checkSession();
