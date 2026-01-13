@@ -761,14 +761,13 @@ export default function RepPortal() {
                   const colorClass = getDispositionColor(option);
                   const isSelected = dispositionFilter === option;
                   return (
-                    <Button
+                    <button
                       key={option}
-                      size="sm"
                       onClick={() => { setDispositionFilter(option); setCurrentPage(1); }}
-                      className={`${colorClass} ${isSelected ? 'ring-2 ring-offset-1 ring-slate-900' : ''}`}
+                      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${colorClass} ${isSelected ? 'ring-2 ring-offset-1 ring-slate-900' : ''}`}
                     >
                       {option} ({leads.filter(l => l.Call_Disposition__c === option).length})
-                    </Button>
+                    </button>
                   );
                 })}
               </div>
