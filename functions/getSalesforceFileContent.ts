@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
     }
 
     // Step 1: Get the latest ContentVersion ID
-    const versionQuery = `SELECT Id, FileExtension FROM ContentVersion WHERE ContentDocumentId = '${contentDocumentId}' AND IsLatest = true LIMIT 1`;
+    const versionQuery = `SELECT Id, FileExtension FROM ContentVersion WHERE ContentDocumentId = '${docId}' AND IsLatest = true LIMIT 1`;
     const versionResponse = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(versionQuery)}`,
       {
