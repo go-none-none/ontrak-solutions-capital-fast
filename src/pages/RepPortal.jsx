@@ -49,6 +49,13 @@ export default function RepPortal() {
   };
 
   const getDispositionColor = (disposition) => {
+    if (!disposition) return 'bg-gray-300 text-white';
+    
+    const lowerDisposition = disposition.toLowerCase();
+    if (lowerDisposition.includes('wrong number') || lowerDisposition.includes('do not call')) {
+      return 'bg-red-600 text-white';
+    }
+    
     return dispositionColorMap[disposition] || 'bg-gray-400 text-white';
   };
 
