@@ -959,6 +959,9 @@ export default function AdminPipeline() {
         session={session}
         onUpdate={() => loadAllRepsData(session, true)}
       />
+
+      {/* Dialpad CTI */}
+      <DialpadCTI clientId="a2bFGaaCr3j7UW9Sty8ETv5sz" />
       </div>
     </div>
   );
