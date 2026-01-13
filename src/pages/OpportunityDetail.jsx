@@ -196,6 +196,21 @@ export default function OpportunityDetail() {
     }
   };
 
+  const loadSavedDocuments = async () => {
+    if (!opportunity?.Id) return;
+    setLoadingSavedDocs(true);
+    try {
+      const docs = await base44.entities.OpportunityDocument.filter({
+        opportunityId: opportunity.Id
+      });
+      setSavedDocuments(docs || []);
+    } catch (error) {
+      console.error('Load saved documents error:', error);
+    } finally {
+      setLoadingSavedDocs(false);
+    }
+  };
+
   const EditableFieldWrapper = ({ label, field, value, disabled = false }) => {
     return (
       <EditableField
