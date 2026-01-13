@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import LeadCard from '../components/rep/LeadCard';
 import OpportunityCard from '../components/rep/OpportunityCard';
 import PipelineView from '../components/rep/PipelineView';
@@ -16,7 +16,6 @@ import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
 
 export default function RepPortal() {
-  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [leads, setLeads] = useState([]);
@@ -199,7 +198,7 @@ export default function RepPortal() {
   const handleDispositionUpdate = async (leadId, newDisposition) => {
     setUpdatingDisposition(leadId);
     try {
-      const response = await base44.functions.invoke('updateSalesforceRecord', {
+      await base44.functions.invoke('updateSalesforceRecord', {
         objectType: 'Lead',
         recordId: leadId,
         data: { Call_Disposition__c: newDisposition },
@@ -207,30 +206,15 @@ export default function RepPortal() {
         instanceUrl: session.instanceUrl
       });
       
-      if (response.status === 200) {
-        setLeads(leads.map(lead => 
-          lead.Id === leadId ? { ...lead, Call_Disposition__c: newDisposition } : lead
-        ));
-      } else {
-        throw new Error('Update failed');
-      }
+      setLeads(leads.map(lead => 
+        lead.Id === leadId ? { ...lead, Call_Disposition__c: newDisposition } : lead
+      ));
     } catch (error) {
       console.error('Update error:', error);
-      alert('Failed to update call disposition: ' + (error.message || 'Unknown error'));
+      alert('Failed to update call disposition');
     } finally {
       setUpdatingDisposition(null);
     }
-  };
-
-  const getDispositionColor = (disposition) => {
-    const colorMap = {
-      'Wrong number': 'bg-red-100 text-red-800',
-      'left voicemail': 'bg-blue-100 text-blue-800',
-      'Application link sent': 'bg-green-100 text-green-800',
-      'follow up': 'bg-yellow-100 text-yellow-800',
-      'busy call back later': 'bg-orange-100 text-orange-800'
-    };
-    return colorMap[disposition] || 'bg-slate-100 text-slate-700';
   };
 
   const handleStageClick = (stageName) => {
@@ -833,16 +817,12 @@ export default function RepPortal() {
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <div className="space-y-2">
-                                {lead.Call_Disposition__c ? (
-                                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getDispositionColor(lead.Call_Disposition__c)}`}>
-                                    {lead.Call_Disposition__c}
-                                  </span>
-                                ) : (
-                                  <span className="text-xs text-slate-400">Not set</span>
-                                )}
+                              <div className="space-y-1">
+                                <p className="text-sm font-medium text-slate-900">
+                                  {lead.Call_Disposition__c || <span className="text-slate-400">Not set</span>}
+                                </p>
                                 {updatingDisposition === lead.Id ? (
-                                  <span className="text-xs text-slate-500 block">Updating...</span>
+                                  <span className="text-xs text-slate-500">Updating...</span>
                                 ) : (
                                   <Select
                                     value={lead.Call_Disposition__c || ''}
