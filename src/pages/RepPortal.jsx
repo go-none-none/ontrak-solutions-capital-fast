@@ -344,7 +344,7 @@ export default function RepPortal() {
             animate={{ opacity: 1, y: 0 }}
             onClick={() => { setActiveTab('leads'); setStageFilter(null); setCurrentPage(1); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
-              activeTab === 'leads' ? 'ring-2 ring-[#08708E] shadow-md' : 'hover:shadow-md'
+              activeTab === 'leads' ? 'ring-2 ring-rose-500 shadow-md' : 'hover:shadow-md'
             }`}
           >
             <div className="flex items-center justify-between h-full">
@@ -352,7 +352,7 @@ export default function RepPortal() {
                 <p className="text-xs sm:text-sm text-slate-600 mb-1">Active Leads</p>
                 <p className="text-2xl sm:text-3xl font-bold text-slate-900">{leads.length}</p>
               </div>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center flex-shrink-0">
                 <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
@@ -364,7 +364,7 @@ export default function RepPortal() {
             transition={{ delay: 0.1 }}
             onClick={() => { setActiveTab('opportunities'); setStageFilter(null); setCurrentPage(1); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
-              activeTab === 'opportunities' ? 'ring-2 ring-[#08708E] shadow-md' : 'hover:shadow-md'
+              activeTab === 'opportunities' ? 'ring-2 ring-orange-500 shadow-md' : 'hover:shadow-md'
             }`}
           >
             <div className="flex items-center justify-between h-full">
@@ -375,7 +375,7 @@ export default function RepPortal() {
                   ${opportunities.reduce((sum, o) => sum + (o.Amount || 0), 0).toLocaleString()}
                 </p>
               </div>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
                 <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
@@ -394,7 +394,7 @@ export default function RepPortal() {
             transition={{ delay: 0.15 }}
             onClick={() => { setActiveTab('dispositions'); setDispositionFilter('all'); setCurrentPage(1); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
-              activeTab === 'dispositions' ? 'ring-2 ring-[#08708E] shadow-md' : 'hover:shadow-md'
+              activeTab === 'dispositions' ? 'ring-2 ring-sky-500 shadow-md' : 'hover:shadow-md'
             }`}
           >
             <div className="flex items-center justify-between h-full">
@@ -403,7 +403,7 @@ export default function RepPortal() {
                 <p className="text-2xl sm:text-3xl font-bold text-slate-900">{leads.filter(l => l.Call_Disposition__c).length}</p>
                 <p className="text-xs sm:text-sm text-slate-500 mt-1">of {leads.length} leads</p>
               </div>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center flex-shrink-0">
                 <Phone className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
               </div>
             </div>
