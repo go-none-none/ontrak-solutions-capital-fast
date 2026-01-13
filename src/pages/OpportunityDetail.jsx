@@ -45,6 +45,12 @@ export default function OpportunityDetail() {
     loadUsers(session);
   }, []);
 
+  useEffect(() => {
+    if (opportunity?.Id) {
+      loadSavedDocuments();
+    }
+  }, [opportunity?.Id]);
+
   const loadOpportunity = async (sessionData) => {
     setLoading(true);
     try {
