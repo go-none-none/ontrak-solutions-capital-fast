@@ -1,8 +1,22 @@
 import React, { useEffect } from 'react';
-import { Phone, X } from 'lucide-react';
+import { Phone, X, Zap } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 export default function DialpadDialer({ isOpen, onClose, onInitiateCall }) {
+  const openPowerDialer = () => {
+    const dialerIframe = document.getElementById("dialpad-mini-dialer");
+    if (dialerIframe) {
+      dialerIframe.contentWindow.postMessage(
+        {
+          api: "opencti_dialpad",
+          version: "1.0",
+          method: "open_power_dialer",
+          payload: {}
+        },
+        "https://dialpad.com"
+      );
+    }
+  };
   useEffect(() => {
     // Listen for messages from Dialpad iframe
     const handleMessage = (event) => {
@@ -70,14 +84,26 @@ export default function DialpadDialer({ isOpen, onClose, onInitiateCall }) {
           <Phone className="w-5 h-5 text-white" />
           <span className="font-semibold text-white">Dialpad</span>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onClose}
-          className="text-white hover:bg-white/20 h-8 w-8 p-0"
-        >
-          <X className="w-4 h-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={openPowerDialer}
+            className="text-white hover:bg-white/20 h-8 px-2"
+            title="Open Power Dialer"
+          >
+            <Zap className="w-4 h-4 mr-1" />
+            <span className="text-xs">Power Dialer</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="text-white hover:bg-white/20 h-8 w-8 p-0"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Dialpad iframe */}
