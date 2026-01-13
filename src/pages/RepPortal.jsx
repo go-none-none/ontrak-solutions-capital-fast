@@ -817,24 +817,25 @@ export default function RepPortal() {
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <Select
-                                value={lead.Call_Disposition__c || ''}
-                                onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
-                                disabled={updatingDisposition === lead.Id}
-                              >
-                                <SelectTrigger className="w-48">
-                                  <SelectValue placeholder="Select disposition">
-                                    {updatingDisposition === lead.Id ? 'Updating...' : (lead.Call_Disposition__c || 'Not set')}
-                                  </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {dispositionOptions.map(option => (
-                                    <SelectItem key={option} value={option}>
-                                      {option}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                              {updatingDisposition === lead.Id ? (
+                                <span className="text-sm text-slate-500">Updating...</span>
+                              ) : (
+                                <Select
+                                  value={lead.Call_Disposition__c || ''}
+                                  onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
+                                >
+                                  <SelectTrigger className="w-48">
+                                    <SelectValue placeholder="Not set" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {dispositionOptions.map(option => (
+                                      <SelectItem key={option} value={option}>
+                                        {option}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              )}
                             </td>
                           </tr>
                         ))}
