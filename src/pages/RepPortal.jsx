@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Phone, Users, TrendingUp, Search, LogOut, Loader2, RefreshCw, Shield, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import LeadCard from '../components/rep/LeadCard';
 import OpportunityCard from '../components/rep/OpportunityCard';
 import PipelineView from '../components/rep/PipelineView';
@@ -16,7 +16,6 @@ import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
 
 export default function RepPortal() {
-  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [leads, setLeads] = useState([]);
@@ -412,7 +411,7 @@ export default function RepPortal() {
         </div>
 
         {/* Pipeline */}
-        {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
+        {activeTab !== 'tasks' && (
           <PipelineView 
             leads={leads} 
             opportunities={opportunities} 
@@ -423,7 +422,7 @@ export default function RepPortal() {
 
         {/* Search & Content */}
         <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 sm:mt-6">
-          {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
+          {activeTab !== 'tasks' && (
             <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
