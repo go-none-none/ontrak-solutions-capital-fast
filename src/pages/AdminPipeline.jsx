@@ -3,14 +3,13 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare, Search, ArrowUpDown, ArrowUp, ArrowDown, FileText, Phone } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, Target, Loader2, LogOut, RefreshCw, ChevronDown, ChevronRight, LayoutDashboard, X, Plus, CheckSquare, Search, ArrowUpDown, ArrowUp, ArrowDown, FileText } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import CreateTaskModal from '../components/admin/CreateTaskModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
-import DialpadDialer from '../components/rep/DialpadDialer';
 
 export default function AdminPipeline() {
   const navigate = useNavigate();
@@ -29,7 +28,6 @@ export default function AdminPipeline() {
   const [tableSort, setTableSort] = useState({ column: null, direction: 'asc' }); // {column, direction}
   const [universalSearch, setUniversalSearch] = useState('');
   const [searchResults, setSearchResults] = useState({ leads: [], opportunities: [], tasks: [] });
-  const [dialpadOpen, setDialpadOpen] = useState(false);
 
   useEffect(() => {
     checkSession();
@@ -396,14 +394,6 @@ export default function AdminPipeline() {
               <Button variant="outline" onClick={handleRefresh} disabled={refreshing} className="flex-1 sm:flex-initial min-h-[44px]">
                 <RefreshCw className={`w-4 h-4 sm:mr-2 ${refreshing ? 'animate-spin' : ''}`} />
                 <span className="hidden sm:inline">Refresh</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setDialpadOpen(!dialpadOpen)} 
-                className={`flex-1 sm:flex-initial min-h-[44px] ${dialpadOpen ? 'bg-[#08708E] text-white hover:bg-[#065a72]' : ''}`}
-              >
-                <Phone className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Dialer</span>
               </Button>
               <Button variant="outline" onClick={handleLogout} className="flex-1 sm:flex-initial min-h-[44px]">
                 <LogOut className="w-4 h-4 sm:mr-2" />
@@ -947,13 +937,6 @@ export default function AdminPipeline() {
         onClose={() => setSelectedTask(null)}
         session={session}
         onUpdate={() => loadAllRepsData(session, true)}
-      />
-
-      {/* Dialpad Dialer */}
-      <DialpadDialer
-        isOpen={dialpadOpen}
-        onClose={() => setDialpadOpen(false)}
-        onInitiateCall={true}
       />
       </div>
     </div>

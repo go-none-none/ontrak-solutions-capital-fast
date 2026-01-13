@@ -14,7 +14,6 @@ import TaskCard from '../components/rep/TaskCard';
 import TaskItem from '../components/rep/TaskItem';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
-import DialpadDialer from '../components/rep/DialpadDialer';
 
 export default function RepPortal() {
   const [session, setSession] = useState(null);
@@ -31,7 +30,6 @@ export default function RepPortal() {
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [taskFilter, setTaskFilter] = useState('all');
   const [selectedTask, setSelectedTask] = useState(null);
-  const [dialpadOpen, setDialpadOpen] = useState(false);
   const itemsPerPage = 100;
 
   useEffect(() => {
@@ -290,14 +288,6 @@ export default function RepPortal() {
               <Button variant="outline" onClick={handleRefresh} disabled={refreshing} className="flex-1 sm:flex-initial min-h-[44px]">
                 <RefreshCw className={`w-4 h-4 sm:mr-2 ${refreshing ? 'animate-spin' : ''}`} />
                 <span className="hidden sm:inline">Refresh</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setDialpadOpen(!dialpadOpen)} 
-                className={`flex-1 sm:flex-initial min-h-[44px] ${dialpadOpen ? 'bg-[#08708E] text-white hover:bg-[#065a72]' : ''}`}
-              >
-                <Phone className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Dialer</span>
               </Button>
               <Button variant="outline" onClick={handleLogout} className="flex-1 sm:flex-initial min-h-[44px]">
                 <LogOut className="w-4 h-4 sm:mr-2" />
@@ -679,13 +669,6 @@ export default function RepPortal() {
         onClose={() => setSelectedTask(null)}
         session={session}
         onUpdate={() => loadData(session, true)}
-      />
-
-      {/* Dialpad Dialer */}
-      <DialpadDialer
-        isOpen={dialpadOpen}
-        onClose={() => setDialpadOpen(false)}
-        onInitiateCall={true}
       />
     </div>
   );
