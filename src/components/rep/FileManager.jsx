@@ -119,8 +119,15 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
     for (const fileId of selectedFiles) {
       const file = files.find(f => f.ContentDocumentId === fileId);
       if (file) {
-        window.open(`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${fileId}`, '_blank');
-        await new Promise(resolve => setTimeout(resolve, 300));
+        const doc = file.ContentDocument;
+        const link = document.createElement('a');
+        link.href = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${fileId}`;
+        link.download = `${doc.Title}.${doc.FileExtension}`;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
   };
