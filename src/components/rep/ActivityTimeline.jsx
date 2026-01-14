@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, Mail, Calendar, FileText, MessageSquare, Plus, Loader2 } from 'lucide-react';
+import { Phone, Mail, Calendar, FileText, MessageSquare, Plus, Loader2, Download, ExternalLink } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function ActivityTimeline({ recordId, recordType, session, onActivityAdded }) {
@@ -98,6 +98,69 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
     });
   };
 
+  const formatFullDateTime = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  const downloadActivities = () => {
+    const csvContent = [
+      ['Type', 'Subject', 'Description', 'Date & Time', 'Status', 'Priority'].join(','),
+      ...activities.map(activity => [
+        activity.type || '',
+        `"${(activity.Subject || '').replace(/"/g, '""')}"`,
+        `"${(activity.Description || '').replace(/"/g, '""')}"`,
+        formatFullDateTime(activity.date),
+        activity.Status || '',
+        activity.Priority || ''
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `activities_${recordId}_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const renderTextWithLinks = (text) => {
+    if (!text) return null;
+    
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    
+    return parts.map((part, i) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#08708E] hover:underline inline-flex items-center gap-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {part}
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
@@ -108,10 +171,18 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
           <h2 className="text-lg font-semibold text-slate-900">Activity Timeline</h2>
           <span className="text-sm text-slate-500">({activities.length})</span>
         </button>
-        <Button size="sm" onClick={() => setShowAddTask(!showAddTask)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Task
-        </Button>
+        <div className="flex gap-2">
+          {activities.length > 0 && (
+            <Button size="sm" variant="outline" onClick={downloadActivities}>
+              <Download className="w-4 h-4 mr-2" />
+              Download
+            </Button>
+          )}
+          <Button size="sm" onClick={() => setShowAddTask(!showAddTask)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Task
+          </Button>
+        </div>
       </div>
 
       {showAddTask && (
@@ -190,16 +261,26 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <h4 className="font-medium text-slate-900">{activity.Subject}</h4>
-                      <span className="text-xs text-slate-500 whitespace-nowrap">{formatDate(activity.date)}</span>
+                      <span className="text-xs text-slate-500 whitespace-nowrap" title={formatFullDateTime(activity.date)}>
+                        {formatDate(activity.date)}
+                      </span>
                     </div>
                     {activity.Description && (
-                      <p className="text-sm text-slate-600 line-clamp-2">{activity.Description}</p>
+                      <p className="text-sm text-slate-600">{renderTextWithLinks(activity.Description)}</p>
                     )}
-                    {activity.Status && (
-                      <span className="inline-block mt-2 text-xs px-2 py-1 rounded bg-slate-100 text-slate-700">
-                        {activity.Status}
-                      </span>
-                    )}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {activity.Status && (
+                        <span className="inline-block text-xs px-2 py-1 rounded bg-slate-100 text-slate-700">
+                          {activity.Status}
+                        </span>
+                      )}
+                      {activity.Priority && (
+                        <span className="inline-block text-xs px-2 py-1 rounded bg-blue-100 text-blue-700">
+                          {activity.Priority}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">{formatFullDateTime(activity.date)}</p>
                   </div>
                 </motion.div>
               );
