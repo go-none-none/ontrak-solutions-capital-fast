@@ -11,7 +11,7 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddTask, setShowAddTask] = useState(false);
-  const [showTimeline, setShowTimeline] = useState(true);
+  const [showTimeline, setShowTimeline] = useState(false);
   const [newTask, setNewTask] = useState({ subject: '', description: '', status: 'Not Started', priority: 'Normal' });
   const [submitting, setSubmitting] = useState(false);
 
@@ -263,6 +263,11 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
                       <p className="text-sm text-slate-600 break-words overflow-hidden">{renderTextWithLinks(activity.Description)}</p>
                     )}
                     <div className="flex flex-wrap gap-2 mt-2">
+                      {activity.Outcome && (
+                        <span className="inline-block text-xs px-2 py-1 rounded bg-green-100 text-green-700">
+                          Outcome: {activity.Outcome}
+                        </span>
+                      )}
                       {activity.Status && (
                         <span className="inline-block text-xs px-2 py-1 rounded bg-slate-100 text-slate-700">
                           {activity.Status}
