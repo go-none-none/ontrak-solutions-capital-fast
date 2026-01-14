@@ -9,11 +9,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
     }
 
-    // Query all opportunities with standard fields only to avoid errors
-    const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, Account.BillingStreet, Account.BillingCity, Account.BillingState, Account.BillingPostalCode, Account.BillingCountry, Account.Phone, CreatedDate, LastModifiedDate, IsClosed, Owner.Name, Owner.Email, Owner.Phone, Type, LeadSource FROM Opportunity WHERE OwnerId = '${userId}' ORDER BY LastModifiedDate DESC`;
-    
-    console.log('getRepOpportunities - Query:', query);
-    console.log('getRepOpportunities - userId:', userId);
+    // Query all opportunities with all necessary fields
+    const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, Account.BillingStreet, Account.BillingCity, Account.BillingState, Account.BillingPostalCode, Account.BillingCountry, Account.Phone, CreatedDate, LastModifiedDate, IsClosed, Owner.Name, Owner.Email, Owner.Phone, Owner_2__r.Name, Owner_2__r.Email, Owner_2__r.Phone, Amount_Requested__c, Estimated_Monthly_Revenue__c, Months_In_Business__c, Use_of_Proceeds__c, Type, LeadSource FROM Opportunity WHERE OwnerId = '${userId}' ORDER BY LastModifiedDate DESC`;
     
     let response = await fetch(
       `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
@@ -26,9 +23,9 @@ Deno.serve(async (req) => {
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Salesforce error for userId:', userId, 'Status:', response.status, 'Error:', errorText);
-      return Response.json({ error: 'Failed to fetch opportunities', details: errorText }, { status: 500 });
+      const error = await response.json();
+      console.error('Salesforce error for userId:', userId, 'Error:', error);
+      return Response.json({ error: 'Failed to fetch opportunities', details: error }, { status: 500 });
     }
 
     let data = await response.json();
@@ -57,7 +54,6 @@ Deno.serve(async (req) => {
 
     return Response.json({ opportunities: allOpportunities });
   } catch (error) {
-    console.error('getRepOpportunities - Catch error:', error.message, error.stack);
-    return Response.json({ error: error.message, stack: error.stack }, { status: 500 });
+    return Response.json({ error: error.message }, { status: 500 });
   }
 });

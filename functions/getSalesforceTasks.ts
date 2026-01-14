@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    // Query for open tasks assigned to the user
+    // Query for ALL tasks (open + closed) assigned to the user
     const query = `
       SELECT Id, Subject, Description, Status, Priority, ActivityDate, 
              IsClosed, IsHighPriority, WhatId, What.Name, What.Type,
@@ -18,12 +18,9 @@ Deno.serve(async (req) => {
              CallDisposition
       FROM Task 
       WHERE OwnerId = '${userId}'
-      AND IsClosed = false
       ORDER BY ActivityDate ASC NULLS LAST, Priority DESC, CreatedDate DESC
       LIMIT 500
     `;
-    
-    console.log('getSalesforceTasks - Query:', query);
 
     const response = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
@@ -60,6 +57,10 @@ Deno.serve(async (req) => {
     };
 
     data.records.forEach(task => {
+      if (task.IsClosed) {
+        // Skip closed tasks from counts
+        return;
+      }
       if (!task.ActivityDate) {
         categorized.upcoming.push(task);
       } else if (task.ActivityDate < today) {
@@ -76,7 +77,7 @@ Deno.serve(async (req) => {
     return Response.json({
       tasks: data.records,
       categorized,
-      total: data.records.length
+      total: data.totalSize
     });
   } catch (error) {
     console.error('Error:', error);
