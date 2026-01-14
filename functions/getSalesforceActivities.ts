@@ -65,7 +65,12 @@ Deno.serve(async (req) => {
       if (!e.Subject) return;
       const key = `${e.Subject}_${e.MessageDate}`;
       if (!subjectDateMap.has(key)) {
-        activityMap.set(e.Id, { ...e, type: 'Email', date: e.MessageDate });
+        activityMap.set(e.Id, { 
+          ...e, 
+          type: 'Email', 
+          date: e.MessageDate,
+          Description: e.TextBody || e.HtmlBody?.replace(/<[^>]*>/g, ' ').substring(0, 500) || ''
+        });
         subjectDateMap.set(key, true);
       }
     });
