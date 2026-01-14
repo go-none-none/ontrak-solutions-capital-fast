@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    // Query for ALL tasks (open + closed) assigned to the user
+    // Query for ALL tasks (open + closed) assigned to the user, excluding automated call activities
     const query = `
       SELECT Id, Subject, Description, Status, Priority, ActivityDate, 
              IsClosed, IsHighPriority, WhatId, What.Name, What.Type,
@@ -18,6 +18,8 @@ Deno.serve(async (req) => {
              CallDisposition
       FROM Task 
       WHERE OwnerId = '${userId}'
+      AND TaskSubtype != 'Call'
+      AND Subject NOT LIKE '%Dialpad%'
       ORDER BY ActivityDate ASC NULLS LAST, Priority DESC, CreatedDate DESC
       LIMIT 500
     `;
