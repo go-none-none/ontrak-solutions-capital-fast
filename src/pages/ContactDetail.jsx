@@ -40,12 +40,14 @@ export default function ContactDetail() {
         base44.functions.invoke('getSalesforceContact', {
           contactId,
           token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
+          instanceUrl: sessionData.instanceUrl,
+          userId: sessionData.userId
         }),
         base44.functions.invoke('getContactRelatedOpportunities', {
           contactId,
           token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
+          instanceUrl: sessionData.instanceUrl,
+          userId: sessionData.userId
         })
       ]);
 
