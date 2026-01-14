@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     const allActivities = [
       ...tasks.map(t => ({ 
         ...t, 
-        type: 'Task',
+        type: (t.CallOutcome || t.CallDurationInSeconds || t.CallType) ? 'Call' : (t.TaskSubtype === 'Email' ? 'Email' : 'Task'),
         date: t.ActivityDate || t.CreatedDate
       })),
       ...events.map(e => ({ 
