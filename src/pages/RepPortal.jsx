@@ -211,20 +211,14 @@ export default function RepPortal() {
               setOpportunities(oppsRes.data.opportunities || []);
               setTasks(tasksRes.data);
 
-              // Load contacts separately with error handling - use direct fetch to bypass Base44 auth
+              // Load contacts separately with error handling
               try {
-                const appId = new URLSearchParams(window.location.search).get('app') || '6932157da76cc7fc545d1203';
-                const contactsRes = await fetch(`/api/apps/${appId}/functions/getRepContacts`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    userId: sessionData.userId,
-                    token: sessionData.token,
-                    instanceUrl: sessionData.instanceUrl
-                  })
+                const contactsRes = await base44.functions.invoke('getRepContacts', {
+                  userId: sessionData.userId,
+                  token: sessionData.token,
+                  instanceUrl: sessionData.instanceUrl
                 });
-                const contactsData = await contactsRes.json();
-                setContacts(contactsData.contacts || []);
+                setContacts(contactsRes.data.contacts || []);
               } catch (error) {
                 console.error('Contacts load error:', error);
                 setContacts([]);
