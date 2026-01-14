@@ -572,9 +572,9 @@ export default function LeadDetail() {
                     <div>
                       <p className="text-xs font-semibold text-slate-600 mb-2">Trade References</p>
                       <div className="grid sm:grid-cols-3 gap-4 text-sm">
-                        <EditableFieldWrapper label="Reference 1" field="Business_Trade_Reference_1__c" value={lead.Business_Trade_Reference_1__c} />
-                        <EditableFieldWrapper label="Reference 2" field="Business_Trade_Reference_2__c" value={lead.Business_Trade_Reference_2__c} />
-                        <EditableFieldWrapper label="Reference 3" field="Business_Trade_Reference_3__c" value={lead.Business_Trade_Reference_3__c} />
+                        <EditableFieldWrapper label="Reference 1" field="csbs__Business_Trade_Reference_1__c" value={lead.csbs__Business_Trade_Reference_1__c} />
+                        <EditableFieldWrapper label="Reference 2" field="csbs__Business_Trade_Reference_2__c" value={lead.csbs__Business_Trade_Reference_2__c} />
+                        <EditableFieldWrapper label="Reference 3" field="csbs__Business_Trade_Reference_3__c" value={lead.csbs__Business_Trade_Reference_3__c} />
                       </div>
                     </div>
                     <div>
