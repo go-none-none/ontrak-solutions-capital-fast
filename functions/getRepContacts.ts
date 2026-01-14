@@ -1,11 +1,12 @@
 Deno.serve(async (req) => {
   try {
     console.log('getRepContacts - Function called');
-    const { userId, token, instanceUrl } = await req.json();
+    const body = await req.json();
+    const { userId, token, instanceUrl } = body;
     console.log('getRepContacts - Received params. userId:', userId, 'token present:', !!token, 'instanceUrl:', instanceUrl);
 
     if (!userId || !token || !instanceUrl) {
-      return Response.json({ error: 'Missing credentials' }, { status: 401 });
+      return Response.json({ error: 'Missing required parameters: userId, token, instanceUrl' }, { status: 400 });
     }
 
     // Query to get all contacts from opportunities assigned to this user
@@ -14,7 +15,7 @@ Deno.serve(async (req) => {
     console.log('getRepContacts - Query:', query);
 
     let response = await fetch(
-      `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
+      `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -24,9 +25,9 @@ Deno.serve(async (req) => {
     );
 
     if (!response.ok) {
-      const error = await response.json();
-      console.error('getRepContacts - Salesforce error for userId:', userId, 'Error:', error);
-      return Response.json({ error: 'Failed to fetch contacts', details: error }, { status: 500 });
+      const errorText = await response.text();
+      console.error('getRepContacts - Salesforce error for userId:', userId, 'Error:', errorText);
+      return Response.json({ error: errorText }, { status: response.status });
     }
 
     let data = await response.json();

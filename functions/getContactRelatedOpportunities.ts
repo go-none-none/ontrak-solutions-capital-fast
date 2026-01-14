@@ -1,11 +1,12 @@
 Deno.serve(async (req) => {
   try {
     console.log('getContactRelatedOpportunities - Function called');
-    const { contactId, token, instanceUrl } = await req.json();
+    const body = await req.json();
+    const { contactId, token, instanceUrl } = body;
     console.log('getContactRelatedOpportunities - Received params. contactId:', contactId, 'token present:', !!token, 'instanceUrl:', instanceUrl);
 
     if (!contactId || !token || !instanceUrl) {
-      return Response.json({ error: 'Missing credentials' }, { status: 401 });
+      return Response.json({ error: 'Missing required parameters: contactId, token, instanceUrl' }, { status: 400 });
     }
 
     const query = `SELECT Id, Name, StageName, Amount, CloseDate, Account.Name FROM Opportunity WHERE Id IN (SELECT OpportunityId FROM OpportunityContactRole WHERE ContactId = '${contactId}') ORDER BY CreatedDate DESC`;
@@ -13,7 +14,7 @@ Deno.serve(async (req) => {
     console.log('getContactRelatedOpportunities - Query:', query);
 
     let response = await fetch(
-      `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(query)}`,
+      `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -23,9 +24,9 @@ Deno.serve(async (req) => {
     );
 
     if (!response.ok) {
-      const error = await response.json();
-      console.error('getContactRelatedOpportunities - Salesforce error for contactId:', contactId, 'Error:', error);
-      return Response.json({ error: 'Failed to fetch opportunities', details: error }, { status: 500 });
+      const errorText = await response.text();
+      console.error('getContactRelatedOpportunities - Salesforce error for contactId:', contactId, 'Error:', errorText);
+      return Response.json({ error: errorText }, { status: response.status });
     }
 
     let data = await response.json();
