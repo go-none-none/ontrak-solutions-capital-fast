@@ -64,7 +64,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
       className={`border rounded-xl p-5 bg-white transition-all cursor-pointer ${
         isDeclined 
           ? 'border-red-200 bg-red-50/50 hover:shadow-lg hover:border-red-400' 
-          : 'border-slate-200 hover:shadow-lg hover:border-[#08708E]'
+          : 'border-slate-200 hover:shadow-lg hover:border-orange-600'
       }`}
     >
         <div className="flex items-start justify-between mb-3">
@@ -93,7 +93,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
               {stages.map((stage, idx) => (
                 <div key={idx} className="flex flex-col items-center flex-1">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
-                    idx <= currentStage ? 'bg-[#08708E] text-white' : 'bg-slate-200 text-slate-500'
+                    idx <= currentStage ? 'bg-orange-600 text-white' : 'bg-slate-200 text-slate-500'
                   }`}>
                     {idx + 1}
                   </div>
@@ -104,7 +104,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
             <div className="flex gap-1">
               {stages.map((_, idx) => (
                 <div key={idx} className={`h-1.5 flex-1 rounded ${
-                  idx <= currentStage ? 'bg-[#08708E]' : 'bg-slate-200'
+                  idx <= currentStage ? 'bg-orange-600' : 'bg-slate-200'
                 }`} />
               ))}
             </div>
@@ -118,7 +118,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
         )}
 
         <div className="flex items-center gap-6 text-sm mb-3">
-          <div className="flex items-center gap-1 text-[#08708E] font-semibold">
+          <div className="flex items-center gap-1 text-orange-600 font-semibold">
             <DollarSign className="w-4 h-4" />
             <span>{formatCurrency(opportunity.Amount)}</span>
           </div>
