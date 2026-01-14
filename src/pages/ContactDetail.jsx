@@ -5,6 +5,7 @@ import { ArrowLeft, Loader2, Mail, Phone, MapPin, Percent, Building2 } from 'luc
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
+import RepPortalHeader from '../components/rep/RepPortalHeader';
 
 export default function ContactDetail() {
   const navigate = useNavigate();
@@ -57,6 +58,12 @@ export default function ContactDetail() {
     }
   };
 
+  const loadContact = () => {
+    if (session) {
+      loadData(session);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -75,17 +82,26 @@ export default function ContactDetail() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+      <RepPortalHeader
+        isAdmin={false}
+        refreshing={false}
+        onRefresh={loadContact}
+        onLogout={() => {
+          sessionStorage.removeItem('sfSession');
+          window.location.reload();
+        }}
+        userName={session?.name}
+        showCreateTask={false}
+        showBackButton={true}
+        onBackClick={() => navigate(-1)}
+      />
+
+      {/* Detail Header */}
+      <div className="bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">{contact.Name}</h1>
-              {contact.Title && <p className="text-sm text-slate-600">{contact.Title}</p>}
-            </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">{contact.Name}</h1>
+            {contact.Title && <p className="text-sm text-slate-600">{contact.Title}</p>}
           </div>
         </div>
       </div>
