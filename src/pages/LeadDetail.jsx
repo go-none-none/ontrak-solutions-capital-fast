@@ -526,10 +526,10 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableFieldWrapper label="Amount Requested" field="Amount_Requested__c" value={lead.Amount_Requested__c} />
-                    <EditableFieldWrapper label="Use of Proceeds" field="Use_of_Proceeds__c" value={lead.Use_of_Proceeds__c} />
-                    <EditableFieldWrapper label="Monthly Revenue" field="Estimated_Monthly_Revenue__c" value={lead.Estimated_Monthly_Revenue__c} />
-                    <EditableFieldWrapper label="Annual Revenue" field="Annual_Revenue__c" value={lead.Annual_Revenue__c} />
+                    <EditableFieldWrapper label="Amount Requested" field="csbs__Amount_Requested__c" value={lead.csbs__Amount_Requested__c} />
+                    <EditableFieldWrapper label="Use of Proceeds" field="csbs__Use_of_Proceeds__c" value={lead.csbs__Use_of_Proceeds__c} />
+                    <EditableFieldWrapper label="Monthly Revenue" field="csbs__Estimated_Monthly_Revenue__c" value={lead.csbs__Estimated_Monthly_Revenue__c} />
+                    <EditableFieldWrapper label="Annual Revenue" field="AnnualRevenue" value={lead.AnnualRevenue} />
                   </div>
                 </CollapsibleContent>
               </div>
@@ -648,7 +648,7 @@ export default function LeadDetail() {
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="text-slate-500 text-xs">Amount Requested</p>
-                  <p className="text-xl font-bold text-[#08708E]">${lead.Amount_Requested__c ? parseFloat(lead.Amount_Requested__c).toLocaleString() : '0'}</p>
+                  <p className="text-xl font-bold text-[#08708E]">${lead.csbs__Amount_Requested__c ? parseFloat(lead.csbs__Amount_Requested__c).toLocaleString() : '0'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs mb-1">Lead Owner</p>
