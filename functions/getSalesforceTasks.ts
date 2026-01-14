@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    // Query for ALL tasks (open + closed) assigned to the user, excluding automated call activities
+    // Query for ALL tasks (open + closed) assigned to the user
     const query = `
       SELECT Id, Subject, Description, Status, Priority, ActivityDate, 
              IsClosed, IsHighPriority, WhatId, What.Name, What.Type,
@@ -18,11 +18,11 @@ Deno.serve(async (req) => {
              CallDisposition
       FROM Task 
       WHERE OwnerId = '${userId}'
-      AND TaskSubtype != 'Call'
-      AND Subject NOT LIKE '%Dialpad%'
       ORDER BY ActivityDate ASC NULLS LAST, Priority DESC, CreatedDate DESC
       LIMIT 500
     `;
+    
+    console.log('getSalesforceTasks - Query:', query);
 
     const response = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
@@ -42,6 +42,13 @@ Deno.serve(async (req) => {
 
     const data = await response.json();
     
+    // Filter out automated call activities
+    const filteredTasks = data.records.filter(task => {
+      if (task.TaskSubtype === 'Call') return false;
+      if (task.Subject && task.Subject.includes('Dialpad')) return false;
+      return true;
+    });
+    
     // Categorize tasks
     const now = new Date();
     now.setHours(0, 0, 0, 0);
@@ -58,7 +65,7 @@ Deno.serve(async (req) => {
       upcoming: []
     };
 
-    data.records.forEach(task => {
+    filteredTasks.forEach(task => {
       if (task.IsClosed) {
         // Skip closed tasks from counts
         return;
@@ -77,9 +84,9 @@ Deno.serve(async (req) => {
     });
 
     return Response.json({
-      tasks: data.records,
+      tasks: filteredTasks,
       categorized,
-      total: data.totalSize
+      total: filteredTasks.length
     });
   } catch (error) {
     console.error('Error:', error);
