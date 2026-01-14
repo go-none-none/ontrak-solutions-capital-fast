@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
+import { ArrowLeft, Loader2, Mail, Phone, Briefcase } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 export default function OwnerContact() {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
-  const [contact, setContact] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,27 +19,27 @@ export default function OwnerContact() {
     }
     const parsedSession = JSON.parse(sessionData);
     setSession(parsedSession);
-    loadContact(parsedSession);
+    loadUser(parsedSession);
   }, []);
 
-  const loadContact = async (sessionData) => {
+  const loadUser = async (sessionData) => {
     setLoading(true);
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const contactId = urlParams.get('id');
+      const userId = urlParams.get('id');
 
-      if (!contactId) {
+      if (!userId) {
         setLoading(false);
         return;
       }
 
       const response = await base44.functions.invoke('getSalesforceContact', {
-        contactId,
+        userId,
         token: sessionData.token,
         instanceUrl: sessionData.instanceUrl
       });
 
-      setContact(response.data.contact);
+      setUser(response.data.user);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
@@ -55,10 +55,10 @@ export default function OwnerContact() {
     );
   }
 
-  if (!contact) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <p>Contact not found</p>
+        <p>User not found</p>
       </div>
     );
   }
@@ -73,8 +73,8 @@ export default function OwnerContact() {
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">{contact.Name}</h1>
-              {contact.Title && <p className="text-sm text-slate-600">{contact.Title}</p>}
+              <h1 className="text-2xl font-bold text-slate-900">{user.Name}</h1>
+              {user.Title && <p className="text-sm text-slate-600">{user.Title}</p>}
             </div>
           </div>
         </div>
@@ -85,204 +85,78 @@ export default function OwnerContact() {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main Column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Contact Information */}
+            {/* User Information */}
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Contact Information</h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">User Information</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-slate-500 text-xs mb-1">First Name</p>
-                  <p className="font-medium text-slate-900">{contact.FirstName || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-slate-500 text-xs mb-1">Last Name</p>
-                  <p className="font-medium text-slate-900">{contact.LastName || '-'}</p>
+                  <p className="text-slate-500 text-xs mb-1">Name</p>
+                  <p className="font-medium text-slate-900">{user.Name || '-'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs mb-1">Title</p>
-                  <p className="font-medium text-slate-900">{contact.Title || '-'}</p>
+                  <p className="font-medium text-slate-900">{user.Title || '-'}</p>
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs mb-1">Department</p>
-                  <p className="font-medium text-slate-900">{contact.Department || '-'}</p>
+                  <p className="font-medium text-slate-900">{user.Department || '-'}</p>
                 </div>
-                {contact.Email && (
+                <div>
+                  <p className="text-slate-500 text-xs mb-1">Status</p>
+                  <p className={`font-medium ${user.IsActive ? 'text-green-600' : 'text-red-600'}`}>
+                    {user.IsActive ? 'Active' : 'Inactive'}
+                  </p>
+                </div>
+                {user.Email && (
                   <div className="sm:col-span-2">
                     <p className="text-slate-500 text-xs mb-1">Email</p>
-                    <a href={`mailto:${contact.Email}`} className="text-[#08708E] hover:underline flex items-center gap-2">
+                    <a href={`mailto:${user.Email}`} className="text-[#08708E] hover:underline flex items-center gap-2">
                       <Mail className="w-4 h-4" />
-                      {contact.Email}
+                      {user.Email}
                     </a>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Phone Information */}
+            {/* Contact Information */}
+            {user.Phone && (
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                  <Phone className="w-5 h-5" />
+                  Contact
+                </h2>
+                <div className="text-sm">
+                  <p className="text-slate-500 text-xs mb-1">Phone</p>
+                  <a href={`tel:${user.Phone}`} className="font-medium text-[#08708E] hover:underline">
+                    {user.Phone}
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* Activity Information */}
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <Phone className="w-5 h-5" />
-                Phone Numbers
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Activity</h2>
               <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {contact.Phone && (
+                {user.LastLoginDate && (
                   <div>
-                    <p className="text-slate-500 text-xs mb-1">Phone</p>
-                    <a href={`tel:${contact.Phone}`} className="font-medium text-[#08708E] hover:underline">
-                      {contact.Phone}
-                    </a>
+                    <p className="text-slate-500 text-xs mb-1">Last Login</p>
+                    <p className="font-medium text-slate-900">{new Date(user.LastLoginDate).toLocaleString()}</p>
                   </div>
                 )}
-                {contact.MobilePhone && (
+                {user.CreatedDate && (
                   <div>
-                    <p className="text-slate-500 text-xs mb-1">Mobile</p>
-                    <a href={`tel:${contact.MobilePhone}`} className="font-medium text-[#08708E] hover:underline">
-                      {contact.MobilePhone}
-                    </a>
-                  </div>
-                )}
-                {contact.HomePhone && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Home</p>
-                    <a href={`tel:${contact.HomePhone}`} className="font-medium text-[#08708E] hover:underline">
-                      {contact.HomePhone}
-                    </a>
-                  </div>
-                )}
-                {contact.OtherPhone && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Other</p>
-                    <a href={`tel:${contact.OtherPhone}`} className="font-medium text-[#08708E] hover:underline">
-                      {contact.OtherPhone}
-                    </a>
-                  </div>
-                )}
-                {contact.Fax && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Fax</p>
-                    <p className="font-medium text-slate-900">{contact.Fax}</p>
+                    <p className="text-slate-500 text-xs mb-1">Created Date</p>
+                    <p className="font-medium text-slate-900">{new Date(user.CreatedDate).toLocaleDateString()}</p>
                   </div>
                 )}
               </div>
             </div>
-
-            {/* Mailing Address */}
-            {contact.MailingStreet && (
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
-                  Mailing Address
-                </h2>
-                <div className="text-sm text-slate-700 space-y-1">
-                  <p>{contact.MailingStreet}</p>
-                  <p>
-                    {[contact.MailingCity, contact.MailingState, contact.MailingPostalCode]
-                      .filter(Boolean)
-                      .join(', ')}
-                  </p>
-                  {contact.MailingCountry && <p>{contact.MailingCountry}</p>}
-                </div>
-              </div>
-            )}
-
-            {/* Other Address */}
-            {contact.OtherStreet && (
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
-                  Other Address
-                </h2>
-                <div className="text-sm text-slate-700 space-y-1">
-                  <p>{contact.OtherStreet}</p>
-                  <p>
-                    {[contact.OtherCity, contact.OtherState, contact.OtherPostalCode]
-                      .filter(Boolean)
-                      .join(', ')}
-                  </p>
-                  {contact.OtherCountry && <p>{contact.OtherCountry}</p>}
-                </div>
-              </div>
-            )}
-
-            {/* Home Address */}
-            {contact.csbs__Home_Address_Street__c && (
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
-                  Home Address
-                </h2>
-                <div className="text-sm text-slate-700 space-y-1">
-                  <p>{contact.csbs__Home_Address_Street__c}</p>
-                  <p>
-                    {[contact.csbs__Home_Address_City__c, contact.csbs__Home_Address_State__c, contact.csbs__Home_Address_Zip_Code__c]
-                      .filter(Boolean)
-                      .join(', ')}
-                  </p>
-                  {contact.csbs__Home_Address_Country__c && <p>{contact.csbs__Home_Address_Country__c}</p>}
-                </div>
-              </div>
-            )}
-
-            {/* Additional Information */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Additional Information</h2>
-              <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                {contact.Account?.Name && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Account</p>
-                    <p className="font-medium text-slate-900">{contact.Account.Name}</p>
-                  </div>
-                )}
-                {contact.LeadSource && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Lead Source</p>
-                    <p className="font-medium text-slate-900">{contact.LeadSource}</p>
-                  </div>
-                )}
-                {contact.Birthdate && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Birthdate</p>
-                    <p className="font-medium text-slate-900">{new Date(contact.Birthdate).toLocaleDateString()}</p>
-                  </div>
-                )}
-                {contact.csbs__Ownership__c && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Ownership %</p>
-                    <p className="font-medium text-slate-900">{contact.csbs__Ownership__c}%</p>
-                  </div>
-                )}
-                {contact.csbs__Credit_Score__c && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Credit Score</p>
-                    <p className="font-medium text-slate-900">{contact.csbs__Credit_Score__c}</p>
-                  </div>
-                )}
-                {contact.ReportsTo?.Name && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Reports To</p>
-                    <p className="font-medium text-slate-900">{contact.ReportsTo.Name}</p>
-                  </div>
-                )}
-                {contact.Owner?.Name && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Owner</p>
-                    <p className="font-medium text-slate-900">{contact.Owner.Name}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Description */}
-            {contact.Description && (
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-slate-900 mb-4">Notes</h2>
-                <p className="text-sm text-slate-700 whitespace-pre-wrap">{contact.Description}</p>
-              </div>
-            )}
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Quick Stats */}
+          <div>
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
                 <Briefcase className="w-5 h-5" />
@@ -291,50 +165,25 @@ export default function OwnerContact() {
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="text-slate-500 text-xs mb-1">Full Name</p>
-                  <p className="font-medium text-slate-900">{contact.Name}</p>
+                  <p className="font-medium text-slate-900">{user.Name}</p>
                 </div>
-                {contact.Title && (
+                {user.Title && (
                   <div>
                     <p className="text-slate-500 text-xs mb-1">Title</p>
-                    <p className="font-medium text-slate-900">{contact.Title}</p>
+                    <p className="font-medium text-slate-900">{user.Title}</p>
                   </div>
                 )}
-                {contact.Department && (
+                {user.Department && (
                   <div>
                     <p className="text-slate-500 text-xs mb-1">Department</p>
-                    <p className="font-medium text-slate-900">{contact.Department}</p>
+                    <p className="font-medium text-slate-900">{user.Department}</p>
                   </div>
                 )}
-                {contact.Account?.Name && (
-                  <div>
-                    <p className="text-slate-500 text-xs mb-1">Associated Account</p>
-                    <p className="font-medium text-slate-900">{contact.Account.Name}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Contact Preferences */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="font-semibold text-slate-900 mb-4">Contact Preferences</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Do Not Call</span>
-                  <span className={`font-medium ${contact.DoNotCall ? 'text-red-600' : 'text-green-600'}`}>
-                    {contact.DoNotCall ? 'Yes' : 'No'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Email Opt Out</span>
-                  <span className={`font-medium ${contact.HasOptedOutOfEmail ? 'text-red-600' : 'text-green-600'}`}>
-                    {contact.HasOptedOutOfEmail ? 'Yes' : 'No'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Fax Opt Out</span>
-                  <span className={`font-medium ${contact.HasOptedOutOfFax ? 'text-red-600' : 'text-green-600'}`}>
-                    {contact.HasOptedOutOfFax ? 'Yes' : 'No'}
-                  </span>
+                <div>
+                  <p className="text-slate-500 text-xs mb-1">Account Status</p>
+                  <p className={`font-medium ${user.IsActive ? 'text-green-600' : 'text-red-600'}`}>
+                    {user.IsActive ? 'Active' : 'Inactive'}
+                  </p>
                 </div>
               </div>
             </div>
