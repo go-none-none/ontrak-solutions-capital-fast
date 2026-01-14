@@ -61,9 +61,32 @@ export default function LeadDetail() {
     }
     const session = JSON.parse(sessionData);
     setSession(session);
-    loadLead(session);
-    loadUsers(session);
-    loadDispositionOptions(session);
+    
+    // Try to load from cache first
+    const urlParams = new URLSearchParams(window.location.search);
+    const leadId = urlParams.get('id');
+    const cachedLead = sessionStorage.getItem(`lead_${leadId}`);
+    const cachedUsers = sessionStorage.getItem('salesforce_users');
+    const cachedDispositions = sessionStorage.getItem('lead_dispositions');
+    
+    if (cachedLead) {
+      setLead(JSON.parse(cachedLead));
+      setLoading(false);
+    } else {
+      loadLead(session);
+    }
+    
+    if (cachedUsers) {
+      setUsers(JSON.parse(cachedUsers));
+    } else {
+      loadUsers(session);
+    }
+    
+    if (cachedDispositions) {
+      setDispositionOptions(JSON.parse(cachedDispositions));
+    } else {
+      loadDispositionOptions(session);
+    }
   }, []);
 
   const loadLead = async (sessionData) => {
@@ -79,7 +102,11 @@ export default function LeadDetail() {
         instanceUrl: sessionData.instanceUrl
       });
 
-      setLead(response.data.record);
+      const leadData = response.data.record;
+      setLead(leadData);
+      
+      // Cache the lead data
+      sessionStorage.setItem(`lead_${leadId}`, JSON.stringify(leadData));
     } catch (error) {
       console.error('Load error:', error);
     } finally {
@@ -115,7 +142,11 @@ export default function LeadDetail() {
         token: sessionData.token,
         instanceUrl: sessionData.instanceUrl
       });
-      setUsers(response.data.users || []);
+      const usersData = response.data.users || [];
+      setUsers(usersData);
+      
+      // Cache users
+      sessionStorage.setItem('salesforce_users', JSON.stringify(usersData));
     } catch (error) {
       console.error('Load users error:', error);
     }
@@ -129,7 +160,11 @@ export default function LeadDetail() {
         token: sessionData.token,
         instanceUrl: sessionData.instanceUrl
       });
-      setDispositionOptions(response.data.values || []);
+      const dispositionsData = response.data.values || [];
+      setDispositionOptions(dispositionsData);
+      
+      // Cache dispositions
+      sessionStorage.setItem('lead_dispositions', JSON.stringify(dispositionsData));
     } catch (error) {
       console.error('Load disposition options error:', error);
     }
