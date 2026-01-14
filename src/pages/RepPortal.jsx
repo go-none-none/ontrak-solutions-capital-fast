@@ -109,9 +109,11 @@ export default function RepPortal() {
 
   const handleOAuthCallback = async (code) => {
     try {
+      const currentUrl = window.location.origin + createPageUrl('RepPortal');
       const response = await base44.functions.invoke('salesforceAuth', {
         action: 'exchangeCode',
-        code
+        code,
+        redirectUri: currentUrl
       });
       
       const sessionData = {
@@ -134,8 +136,10 @@ export default function RepPortal() {
   const handleLogin = async () => {
     setLoading(true);
     try {
+      const currentUrl = window.location.origin + createPageUrl('RepPortal');
       const response = await base44.functions.invoke('salesforceAuth', {
-        action: 'getLoginUrl'
+        action: 'getLoginUrl',
+        redirectUri: currentUrl
       });
       window.location.href = response.data.loginUrl;
     } catch (error) {
