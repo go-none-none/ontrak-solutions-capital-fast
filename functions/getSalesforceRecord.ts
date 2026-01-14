@@ -16,6 +16,26 @@ Deno.serve(async (req) => {
     } else {
       query = `SELECT FIELDS(ALL), Owner.Name, Owner.Id, Account.Name FROM ${recordType} WHERE Id = '${recordId}' LIMIT 1`;
     }
+    
+    // Helper function to resolve user name from ID
+    const resolveUserName = async (userId) => {
+      if (!userId) return null;
+      try {
+        const userRes = await fetch(
+          `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(`SELECT Id, Name FROM User WHERE Id = '${userId}' LIMIT 1`)}`,
+          {
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+          }
+        );
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          return userData.records?.[0]?.Name || null;
+        }
+      } catch (e) {
+        console.error('Error resolving user:', e);
+      }
+      return null;
+    };
     const response = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
       {
