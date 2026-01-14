@@ -70,34 +70,7 @@ Deno.serve(async (req) => {
     events.forEach(e => console.log(`  Event: "${e.Subject}" (${e.StartDateTime})`));
     emails.forEach(e => console.log(`  Email: "${e.Subject}" (${e.MessageDate}`));
 
-    // Fetch Dialpad activities if API key exists
-    let dialpadCalls = [];
-    const dialpadApiKey = Deno.env.get('DIALPAD_API_KEY');
-    if (dialpadApiKey) {
-      try {
-        const dialpadRes = await fetch('https://api.dialpad.com/v1/calls', {
-          headers: { 'Authorization': `Bearer ${dialpadApiKey}` }
-        });
-        if (dialpadRes.ok) {
-          const dialpadData = await dialpadRes.json();
-          dialpadCalls = (dialpadData.items || []).map(call => ({
-            Id: call.id,
-            Subject: `Call - ${call.contact_name || call.remote_phone || 'Unknown'}`,
-            Description: `Duration: ${call.duration}s | Phone: ${call.remote_phone}`,
-            type: 'Call',
-            date: call.start_time,
-            CallDurationInSeconds: call.duration,
-            dialpadLink: `https://app.dialpad.com/#/calls/${call.id}`,
-            source: 'dialpad'
-          }));
-          console.log(`Dialpad calls found: ${dialpadCalls.length}`);
-        }
-      } catch (err) {
-        console.log('Dialpad fetch error:', err.message);
-      }
-    }
-
-    // Combine all activities without any filtering
+    // Combine all activities - Dialpad calls are already in Salesforce Task objects
     const allActivities = [
       ...tasks.map(t => ({ 
         ...t, 
@@ -117,8 +90,7 @@ Deno.serve(async (req) => {
         date: e.MessageDate,
         Description: e.TextBody || (e.HtmlBody?.replace(/<[^>]*>/g, ' ').substring(0, 500) || ''),
         source: 'salesforce'
-      })),
-      ...dialpadCalls
+      }))
     ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
     return Response.json({ activities: allActivities });
