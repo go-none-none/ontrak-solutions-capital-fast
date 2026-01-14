@@ -849,24 +849,20 @@ export default function RepPortal() {
                                 {lead.Name || '-'}
                               </button>
                             </td>
-                            <td className="px-4 py-4 text-sm text-slate-700">{lead.Company || '-'}</td>
                             <td className="px-4 py-4 text-sm whitespace-nowrap">
-                              <div className="flex items-center gap-2">
-                                {lead.Phone ? (
-                                  <a href={`tel:${lead.Phone}`} className="text-[#08708E] hover:underline font-medium">
-                                    {lead.Phone}
-                                  </a>
-                                ) : (
-                                  <span className="text-slate-400">-</span>
-                                )}
-                                <span className="text-xs text-slate-700 font-medium">
-                                  {lead.Status}
-                                </span>
-                              </div>
+                              {lead.Phone ? (
+                                <a href={`tel:${lead.Phone}`} className="text-[#08708E] hover:underline font-medium">
+                                  {lead.Phone}
+                                </a>
+                              ) : (
+                                <span className="text-slate-400">-</span>
+                              )}
                             </td>
+                            <td className="px-4 py-4 text-sm text-slate-700">{lead.Company || '-'}</td>
+                            <td className="px-4 py-4 text-xs text-slate-700 font-medium">{lead.Status}</td>
                             <td className="px-4 py-4">
-                              <div className="flex items-start justify-between gap-2">
-                                <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${
+                              <div className="flex items-center justify-between gap-2">
+                                <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${
                                   lead.Call_Disposition__c 
                                     ? getDispositionColor(lead.Call_Disposition__c)
                                     : 'bg-gray-300 text-gray-800'
@@ -878,7 +874,7 @@ export default function RepPortal() {
                                   onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
                                   disabled={updatingDisposition === lead.Id}
                                 >
-                                  <SelectTrigger className="w-24 h-8 text-xs">
+                                  <SelectTrigger className="w-20 h-8 text-xs">
                                     <SelectValue>
                                       {updatingDisposition === lead.Id ? 'Updating...' : 'Change'}
                                     </SelectValue>
