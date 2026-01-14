@@ -703,9 +703,18 @@ export default function OpportunityDetail() {
                 </div>
               </div>
             </div>
+
+            {/* Activity Timeline */}
+            <ActivityTimeline
+              key={refreshKey}
+              recordId={opportunity.Id}
+              recordType="Opportunity"
+              session={session}
+              onActivityAdded={() => setRefreshKey(prev => prev + 1)}
+            />
           </div>
-          </div>
-          </div>
-          </div>
-          );
-          }
+        </div>
+      </div>
+    </div>
+  );
+}
