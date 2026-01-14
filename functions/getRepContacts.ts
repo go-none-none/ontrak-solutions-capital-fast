@@ -2,9 +2,19 @@ Deno.serve(async (req) => {
   try {
     const { userId, token, instanceUrl } = await req.json();
 
+    console.log('getRepContacts - Received:', { userId, tokenType: typeof token, tokenLength: token?.length, tokenValue: token });
+    
     if (!userId || !token || !instanceUrl) {
+      console.log('getRepContacts - Missing params:', { userId: !!userId, token: !!token, instanceUrl: !!instanceUrl });
       return Response.json({ 
         error: 'Missing required parameters: userId, token, instanceUrl' 
+      }, { status: 400 });
+    }
+    
+    if (token === true || token === 'true') {
+      console.error('getRepContacts - Token is boolean/string "true":', token);
+      return Response.json({ 
+        error: 'Invalid token received - token cannot be boolean' 
       }, { status: 400 });
     }
 
