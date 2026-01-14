@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Home, Shield, RefreshCw, LogOut, Plus } from 'lucide-react';
+import { Home, Shield, RefreshCw, LogOut, Plus, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
