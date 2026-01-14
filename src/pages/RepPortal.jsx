@@ -105,38 +105,7 @@ export default function RepPortal() {
     }
   };
 
-  const handleOAuthCallback = async (code) => {
-    try {
-      const response = await base44.functions.invoke('salesforceAuth', {
-        action: 'exchangeCode',
-        code
-      });
-      
-      console.log('Auth response:', response.data);
-      
-      const sessionData = {
-            userId: response.data.userId,
-            email: response.data.email,
-            name: response.data.name,
-            instanceUrl: response.data.instanceUrl,
-            token: response.data.token,
-            isAdmin: response.data.isAdmin,
-            timestamp: Date.now()
-          };
-      
-      console.log('Session data to store:', sessionData);
 
-          sessionStorage.setItem('sfSession', JSON.stringify(sessionData));
-      setSession(sessionData);
-      setIsAdmin(response.data.isAdmin || false);
-      window.history.replaceState({}, '', createPageUrl('RepPortal'));
-      loadData(sessionData);
-    } catch (error) {
-      console.error('OAuth error:', error);
-      alert(`Failed to authenticate: ${error.response?.data?.error || error.message}`);
-      setLoading(false);
-    }
-  };
 
   const handleLogin = async () => {
     setLoading(true);
