@@ -1,27 +1,16 @@
 Deno.serve(async (req) => {
   try {
-    console.log('getRepContacts - Function called');
     const body = await req.json();
-    console.log('getRepContacts - Full body:', JSON.stringify(body));
-    console.log('getRepContacts - Body keys:', Object.keys(body));
-    
     const { userId, token, instanceUrl } = body;
-    console.log('getRepContacts - userId type:', typeof userId, 'value:', userId);
-    console.log('getRepContacts - token type:', typeof token, 'value:', token?.substring?.(0, 20));
-    console.log('getRepContacts - instanceUrl type:', typeof instanceUrl, 'value:', instanceUrl);
 
     if (!userId || !token || !instanceUrl) {
-      console.error('getRepContacts - Missing params!', { userId: !!userId, token: !!token, instanceUrl: !!instanceUrl });
       return Response.json({ 
-        error: 'Missing required parameters', 
-        received: { userId: !!userId, token: !!token, instanceUrl: !!instanceUrl }
+        error: 'Missing required parameters: userId, token, instanceUrl' 
       }, { status: 400 });
     }
 
     // Query to get all contacts from opportunities assigned to this user
-    const query = `SELECT Id, Name, FirstName, LastName, Email, Phone, MobilePhone, Title, Department, Account.Name, Description, MailingCity, MailingState, MailingCountry, CreatedDate, csbs__Credit_Score__c, csbs__Ownership__c, LeadSource, HomePhone, Fax, OtherPhone, DoNotCall, HasOptedOutOfEmail FROM Contact WHERE Id IN (SELECT ContactId FROM OpportunityContactRole WHERE Opportunity.OwnerId = '${userId}') ORDER BY Name ASC`;
-
-    console.log('getRepContacts - Query:', query);
+    const query = `SELECT Id, Name, FirstName, LastName, Email, Phone, MobilePhone, Title, Department, Account.Name, Description, MailingCity, MailingState, MailingCountry FROM Contact WHERE Id IN (SELECT ContactId FROM OpportunityContactRole WHERE Opportunity.OwnerId = '${userId}') ORDER BY Name ASC`;
 
     let response = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
@@ -35,13 +24,10 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('getRepContacts - Salesforce error for userId:', userId, 'Query:', query, 'Error:', errorText);
-      return Response.json({ error: errorText, query }, { status: response.status });
+      return Response.json({ error: errorText }, { status: response.status });
     }
 
     let data = await response.json();
-    console.log('getRepContacts - Initial response record count:', data.records?.length || 0);
-    console.log('getRepContacts - Full Salesforce response:', JSON.stringify(data));
     let allContacts = data.records || [];
     
     // Handle pagination to get all records
