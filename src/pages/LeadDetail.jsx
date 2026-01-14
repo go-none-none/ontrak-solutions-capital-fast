@@ -306,6 +306,8 @@ export default function LeadDetail() {
         }}
         userName={session?.name}
         showCreateTask={false}
+        showBackButton={true}
+        onBackClick={() => navigate(-1)}
       />
 
       {/* Detail Header */}
