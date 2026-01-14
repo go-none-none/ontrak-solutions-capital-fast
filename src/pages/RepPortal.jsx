@@ -900,7 +900,7 @@ export default function RepPortal() {
                         )}
                         {totalPages > 1 && (
                           <tr>
-                            <td colSpan={5} className="px-4 py-4">
+                            <td colSpan={6} className="px-4 py-4">
                               <div className="flex items-center justify-between">
                                 <p className="text-sm text-slate-600">
                                   Showing {startIdx + 1}-{Math.min(endIdx, filteredLeads.length)} of {filteredLeads.length}
