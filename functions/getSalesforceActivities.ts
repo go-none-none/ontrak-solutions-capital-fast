@@ -37,12 +37,25 @@ Deno.serve(async (req) => {
     const events = eventsRes.ok ? (await eventsRes.json()).records : [];
     const emails = emailsRes.ok ? (await emailsRes.json()).records : [];
 
-    // Combine and sort by date
-    const allActivities = [
-      ...tasks.map(t => ({ ...t, type: 'Task', date: t.CreatedDate })),
-      ...events.map(e => ({ ...e, type: 'Event', date: e.StartDateTime })),
-      ...emails.map(e => ({ ...e, type: 'Email', date: e.MessageDate }))
-    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+    // Combine and sort by date, removing duplicates by Id
+    const activityMap = new Map();
+    
+    tasks.forEach(t => {
+      const type = t.Subject?.toLowerCase().includes('call') || t.Subject?.toLowerCase().includes('phone') ? 'Call' : 'Task';
+      activityMap.set(t.Id, { ...t, type, date: t.CreatedDate });
+    });
+    
+    events.forEach(e => {
+      const type = e.Subject?.toLowerCase().includes('call') || e.Subject?.toLowerCase().includes('phone') ? 'Call' : 'Event';
+      activityMap.set(e.Id, { ...e, type, date: e.StartDateTime });
+    });
+    
+    emails.forEach(e => {
+      activityMap.set(e.Id, { ...e, type: 'Email', date: e.MessageDate });
+    });
+    
+    const allActivities = Array.from(activityMap.values())
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
 
     return Response.json({ activities: allActivities });
   } catch (error) {

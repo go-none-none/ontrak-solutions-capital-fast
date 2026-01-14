@@ -64,6 +64,7 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
 
   const getActivityIcon = (type) => {
     switch (type) {
+      case 'Call': return Phone;
       case 'Task': return FileText;
       case 'Event': return Calendar;
       case 'Email': return Mail;
@@ -73,6 +74,7 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
 
   const getActivityColor = (type) => {
     switch (type) {
+      case 'Call': return 'bg-orange-100 text-orange-600';
       case 'Task': return 'bg-blue-100 text-blue-600';
       case 'Event': return 'bg-purple-100 text-purple-600';
       case 'Email': return 'bg-green-100 text-green-600';
