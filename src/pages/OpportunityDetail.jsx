@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ArrowLeft, Loader2, ChevronDown, CheckCircle2, XCircle, FolderOpen, FileText } from 'lucide-react';
+import { ArrowLeft, Loader2, ChevronDown, CheckCircle2, XCircle } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -12,7 +12,6 @@ import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
-import DocumentsDrawer from '../components/rep/DocumentsDrawer.jsx';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -29,9 +28,6 @@ export default function OpportunityDetail() {
   const [users, setUsers] = useState([]);
   const [changingOwner, setChangingOwner] = useState(false);
   const [showOwnerChange, setShowOwnerChange] = useState(false);
-  const [showDocuments, setShowDocuments] = useState(false);
-  const [savedDocuments, setSavedDocuments] = useState([]);
-  const [loadingSavedDocs, setLoadingSavedDocs] = useState(false);
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
@@ -44,22 +40,6 @@ export default function OpportunityDetail() {
     loadOpportunity(session);
     loadUsers(session);
   }, []);
-
-  useEffect(() => {
-    if (opportunity?.Id) {
-      loadSavedDocuments();
-    }
-  }, [opportunity?.Id]);
-
-  useEffect(() => {
-    const handleDocumentsUpdated = (e) => {
-      if (e.detail.opportunityId === opportunity?.Id) {
-        loadSavedDocuments();
-      }
-    };
-    window.addEventListener('documentsUpdated', handleDocumentsUpdated);
-    return () => window.removeEventListener('documentsUpdated', handleDocumentsUpdated);
-  }, [opportunity?.Id]);
 
   const loadOpportunity = async (sessionData) => {
     setLoading(true);
@@ -203,21 +183,6 @@ export default function OpportunityDetail() {
       alert('Failed to change owner');
     } finally {
       setChangingOwner(false);
-    }
-  };
-
-  const loadSavedDocuments = async () => {
-    if (!opportunity?.Id) return;
-    setLoadingSavedDocs(true);
-    try {
-      const docs = await base44.entities.OpportunityDocument.filter({
-        opportunityId: opportunity.Id
-      });
-      setSavedDocuments(docs || []);
-    } catch (error) {
-      console.error('Load saved documents error:', error);
-    } finally {
-      setLoadingSavedDocs(false);
     }
   };
 
@@ -780,42 +745,6 @@ export default function OpportunityDetail() {
               </div>
             )}
 
-            {/* Documents */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <Button
-                onClick={() => setShowDocuments(true)}
-                variant="outline"
-                className="w-full justify-start gap-2 mb-4"
-              >
-                <FolderOpen className="w-4 h-4" />
-                Import Documents
-              </Button>
-              {loadingSavedDocs ? (
-                <div className="flex items-center justify-center py-4">
-                  <Loader2 className="w-5 h-5 text-[#08708E] animate-spin" />
-                </div>
-              ) : savedDocuments.length > 0 ? (
-                <div className="space-y-2">
-                  <h4 className="text-sm font-semibold text-slate-700 mb-3">Saved Documents</h4>
-                  {savedDocuments.map(doc => (
-                    <a
-                      key={doc.id}
-                      href={doc.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 p-2 rounded hover:bg-slate-100 transition-colors text-sm text-[#08708E] hover:underline truncate"
-                      title={doc.fileName}
-                    >
-                      <FileText className="w-4 h-4 flex-shrink-0" />
-                      <span className="truncate">{doc.fileName}</span>
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-xs text-slate-500">No documents imported yet</p>
-              )}
-            </div>
-
             {/* Quick Stats */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h3 className="font-semibold text-slate-900 mb-4">Key Info</h3>
@@ -882,14 +811,6 @@ export default function OpportunityDetail() {
           </div>
           </div>
           </div>
-
-      {/* Documents Drawer */}
-      <DocumentsDrawer
-        isOpen={showDocuments}
-        onClose={() => setShowDocuments(false)}
-        opportunityId={opportunity?.Id}
-        session={session}
-      />
           </div>
           );
           }

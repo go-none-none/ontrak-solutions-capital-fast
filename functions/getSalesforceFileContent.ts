@@ -2,15 +2,14 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const { fileId, contentDocumentId, token, instanceUrl } = await req.json();
-    const docId = contentDocumentId || fileId;
+    const { contentDocumentId, token, instanceUrl } = await req.json();
 
-    if (!token || !instanceUrl || !docId) {
+    if (!token || !instanceUrl || !contentDocumentId) {
       return Response.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
     // Step 1: Get the latest ContentVersion ID
-    const versionQuery = `SELECT Id, FileExtension FROM ContentVersion WHERE ContentDocumentId = '${docId}' AND IsLatest = true LIMIT 1`;
+    const versionQuery = `SELECT Id, FileExtension FROM ContentVersion WHERE ContentDocumentId = '${contentDocumentId}' AND IsLatest = true LIMIT 1`;
     const versionResponse = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(versionQuery)}`,
       {
@@ -72,7 +71,7 @@ Deno.serve(async (req) => {
     const mimeType = mimeTypes[fileExtension?.toLowerCase()] || 'application/octet-stream';
 
     return Response.json({ 
-      content: base64,
+      file: base64,
       mimeType: mimeType
     });
   } catch (error) {
