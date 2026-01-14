@@ -151,11 +151,11 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
             href={part}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#08708E] hover:underline inline-flex items-center gap-1"
+            className="text-[#08708E] hover:underline inline-flex items-center gap-1 break-all"
             onClick={(e) => e.stopPropagation()}
           >
             {part}
-            <ExternalLink className="w-3 h-3" />
+            <ExternalLink className="w-3 h-3 flex-shrink-0" />
           </a>
         );
       }
@@ -254,13 +254,13 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2 mb-1">
-                      <h4 className="font-medium text-slate-900">{activity.Subject}</h4>
+                      <h4 className="font-medium text-slate-900 break-words">{activity.Subject}</h4>
                       <span className="text-xs text-slate-500 whitespace-nowrap" title={formatFullDateTime(activity.date)}>
                         {formatDate(activity.date)}
                       </span>
                     </div>
                     {activity.Description && (
-                      <p className="text-sm text-slate-600">{renderTextWithLinks(activity.Description)}</p>
+                      <p className="text-sm text-slate-600 break-words overflow-hidden">{renderTextWithLinks(activity.Description)}</p>
                     )}
                     <div className="flex flex-wrap gap-2 mt-2">
                       {activity.Status && (
