@@ -312,8 +312,8 @@ export default function LeadDetail() {
       />
 
       {/* Detail Header */}
-      <div className="bg-white border-b border-slate-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="bg-white border-b border-slate-200 shadow-sm sticky top-[73px] z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-slate-900">{lead.Name}</h1>
