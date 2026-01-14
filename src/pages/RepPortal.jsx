@@ -753,6 +753,15 @@ export default function RepPortal() {
         {activeTab === 'dispositions' && (
           <div>
             <div className="mb-4 sm:mb-6">
+              <div className="relative flex-1 mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+                <Input
+                  placeholder="Search by lead name, company, or phone..."
+                  value={searchTerm}
+                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                  className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base mb-4"
+                />
+              </div>
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant={dispositionFilter === 'all' ? 'default' : 'outline'}
@@ -797,9 +806,10 @@ export default function RepPortal() {
                 <thead className="bg-slate-100 border-b-2 border-slate-300">
                   <tr>
                     <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Lead Name</th>
+                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Phone</th>
                     <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Company</th>
-                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Phone & Status</th>
-                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Call Disposition</th>
+                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Status</th>
+                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Disposition</th>
                   </tr>
                 </thead>
                 <tbody>
