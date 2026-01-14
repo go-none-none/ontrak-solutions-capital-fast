@@ -1,11 +1,19 @@
 Deno.serve(async (req) => {
   try {
-    const { userId, token, instanceUrl } = await req.json();
+    const body = await req.json();
+    const { userId, token, instanceUrl } = body;
 
-    console.log('getRepContacts - Received:', { userId, tokenType: typeof token, tokenLength: token?.length, hasToken: !!token, instanceUrl });
+    console.log('getRepContacts - Raw body:', JSON.stringify(body).substring(0, 200));
+    console.log('getRepContacts - Parsed:', { 
+      userId, 
+      tokenType: typeof token,
+      tokenExists: !!token,
+      tokenValue: token?.substring?.(0, 20),
+      instanceUrl
+    });
     
     if (!token || !instanceUrl) {
-      console.log('getRepContacts - Missing token or instanceUrl');
+      console.log('getRepContacts - Missing token or instanceUrl, returning empty');
       return Response.json({ contacts: [] }, { status: 200 });
     }
 
