@@ -2,11 +2,16 @@ Deno.serve(async (req) => {
   try {
     console.log('getRepContacts - Function called');
     const body = await req.json();
+    console.log('getRepContacts - Full body:', JSON.stringify(body));
     const { userId, token, instanceUrl } = body;
-    console.log('getRepContacts - Received params. userId:', userId, 'token present:', !!token, 'instanceUrl:', instanceUrl);
+    console.log('getRepContacts - Destructured. userId:', userId, 'token present:', !!token, 'instanceUrl:', instanceUrl);
 
     if (!userId || !token || !instanceUrl) {
-      return Response.json({ error: 'Missing required parameters: userId, token, instanceUrl' }, { status: 400 });
+      console.error('getRepContacts - Missing params. userId:', userId, 'token:', !!token, 'instanceUrl:', instanceUrl);
+      return Response.json({ 
+        error: 'Missing required parameters', 
+        received: { userId: !!userId, token: !!token, instanceUrl: !!instanceUrl }
+      }, { status: 400 });
     }
 
     // Query to get all contacts from opportunities assigned to this user
