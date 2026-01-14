@@ -66,6 +66,8 @@ Deno.serve(async (req) => {
       console.log('Auth Debug - Raw sub:', userInfo.sub);
       console.log('Auth Debug - Extracted userId:', userId);
       console.log('Auth Debug - User email:', userInfo.email);
+      console.log('Auth Debug - Access token type:', typeof tokenData.access_token);
+      console.log('Auth Debug - Access token length:', tokenData.access_token?.length);
       
       // Check if user is admin by querying their profile
       const profileResponse = await fetch(
