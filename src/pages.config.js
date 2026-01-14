@@ -28,6 +28,7 @@ import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
 import OwnerContact from './pages/OwnerContact';
+import ContactDetail from './pages/ContactDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -62,6 +63,7 @@ export const PAGES = {
     "UseCases": UseCases,
     "application": application,
     "OwnerContact": OwnerContact,
+    "ContactDetail": ContactDetail,
 }
 
 export const pagesConfig = {
