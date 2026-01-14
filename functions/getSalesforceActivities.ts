@@ -37,12 +37,21 @@ Deno.serve(async (req) => {
     const eventsData = eventsRes.ok ? (await eventsRes.json()) : { records: [] };
     const emailsData = emailsRes.ok ? (await emailsRes.json()) : { records: [] };
 
+    if (!tasksRes.ok) {
+      const errorText = await tasksRes.text();
+      console.error('Tasks query error:', tasksRes.status, errorText);
+    }
+    if (!eventsRes.ok) {
+      const errorText = await eventsRes.text();
+      console.error('Events query error:', eventsRes.status, errorText);
+    }
+
     const tasks = tasksData.records || [];
     const events = eventsData.records || [];
     const emails = emailsData.records || [];
 
-    console.log(`Activities found - Tasks: ${tasks.length}, Events: ${events.length}, Emails: ${emails.length}`);
-    console.log('Sample task:', tasks[0]);
+    console.log(`Activities for ${recordId} - Tasks: ${tasks.length}, Events: ${events.length}, Emails: ${emails.length}`);
+    tasks.forEach(t => console.log('Task:', t.Subject, 'CallOutcome:', t.CallOutcome, 'Type:', (t.CallOutcome || t.CallDurationInSeconds || t.CallType) ? 'Call' : 'Task'));
 
     // Combine all activities without any filtering
     const allActivities = [
