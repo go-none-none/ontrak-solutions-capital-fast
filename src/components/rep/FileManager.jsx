@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { FileText, Upload, Loader2, Download, Eye, X } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
+import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import PDFViewer from './PDFViewer';
 
@@ -10,6 +11,7 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [viewingFile, setViewingFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -97,12 +99,48 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
     setViewingFile(null);
   };
 
+  const toggleFileSelection = (fileId) => {
+    setSelectedFiles(prev => 
+      prev.includes(fileId) 
+        ? prev.filter(id => id !== fileId)
+        : [...prev, fileId]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedFiles.length === files.length) {
+      setSelectedFiles([]);
+    } else {
+      setSelectedFiles(files.map(f => f.ContentDocumentId));
+    }
+  };
+
+  const downloadSelectedFiles = async () => {
+    for (const fileId of selectedFiles) {
+      const file = files.find(f => f.ContentDocumentId === fileId);
+      if (file) {
+        window.open(`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${fileId}`, '_blank');
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+    }
+  };
+
   return (
     <>
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-slate-900">Files & Attachments</h2>
-        <div>
+        <div className="flex gap-2">
+          {selectedFiles.length > 0 && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={downloadSelectedFiles}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download ({selectedFiles.length})
+            </Button>
+          )}
           <input
             ref={fileInputRef}
             type="file"
@@ -126,6 +164,19 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
           </Button>
         </div>
       </div>
+
+      {files.length > 0 && (
+        <div className="flex items-center gap-2 mb-3 pb-3 border-b border-slate-200">
+          <Checkbox
+            checked={selectedFiles.length === files.length}
+            onCheckedChange={toggleSelectAll}
+            id="select-all"
+          />
+          <label htmlFor="select-all" className="text-sm text-slate-700 cursor-pointer">
+            Select All ({files.length})
+          </label>
+        </div>
+      )}
 
       {loading ? (
         <div className="text-center py-8">
@@ -151,6 +202,10 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                 className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 border border-slate-100"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <Checkbox
+                    checked={selectedFiles.includes(file.ContentDocumentId)}
+                    onCheckedChange={() => toggleFileSelection(file.ContentDocumentId)}
+                  />
                   <div className="w-10 h-10 rounded-lg bg-[#08708E]/10 flex items-center justify-center flex-shrink-0">
                     <Icon className="w-5 h-5 text-[#08708E]" />
                   </div>
