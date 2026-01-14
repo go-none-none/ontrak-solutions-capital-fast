@@ -59,39 +59,45 @@ export default function RepPortalHeader({
             {showCreateTask && (
               <Button 
                 onClick={onCreateTaskClick} 
-                className="flex-1 sm:flex-initial bg-purple-600 hover:bg-purple-700 min-h-[44px]"
+                size="icon"
+                className="h-10 w-10 bg-purple-600 hover:bg-purple-700"
+                title="Create Task"
               >
-                <Plus className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Create Task</span>
+                <Plus className="w-5 h-5" />
               </Button>
             )}
             
             {isAdmin && (
-              <Link to={createPageUrl('AdminPipeline')} className="flex-1 sm:flex-initial">
-                <Button variant="outline" className="w-full sm:w-auto min-h-[44px]">
-                  <Shield className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden sm:inline">Admin Pipeline</span>
-                </Button>
-              </Link>
+              <Button 
+                variant="outline" 
+                size="icon"
+                onClick={() => window.location.href = createPageUrl('AdminPipeline')}
+                className="h-10 w-10"
+                title="Admin Pipeline"
+              >
+                <Shield className="w-5 h-5" />
+              </Button>
             )}
             
             <Button 
               variant="outline" 
+              size="icon"
               onClick={onRefresh} 
               disabled={refreshing} 
-              className="flex-1 sm:flex-initial min-h-[44px]"
+              className="h-10 w-10"
+              title="Refresh"
             >
-              <RefreshCw className={`w-4 h-4 sm:mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
             </Button>
             
             <Button 
               variant="outline" 
+              size="icon"
               onClick={onLogout} 
-              className="flex-1 sm:flex-initial min-h-[44px]"
+              className="h-10 w-10"
+              title="Logout"
             >
-              <LogOut className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">Logout</span>
+              <LogOut className="w-5 h-5" />
             </Button>
           </div>
         </div>
