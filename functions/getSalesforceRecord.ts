@@ -17,22 +17,22 @@ Deno.serve(async (req) => {
       query = `SELECT FIELDS(ALL), Owner.Name, Owner.Id, Account.Name FROM ${recordType} WHERE Id = '${recordId}' LIMIT 1`;
     }
     
-    // Helper function to resolve user name from ID
-    const resolveUserName = async (userId) => {
-      if (!userId) return null;
+    // Helper function to resolve contact name from ID
+    const resolveContactName = async (contactId) => {
+      if (!contactId) return null;
       try {
-        const userRes = await fetch(
-          `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(`SELECT Id, Name FROM User WHERE Id = '${userId}' LIMIT 1`)}`,
+        const contactRes = await fetch(
+          `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(`SELECT Id, Name FROM Contact WHERE Id = '${contactId}' LIMIT 1`)}`,
           {
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
           }
         );
-        if (userRes.ok) {
-          const userData = await userRes.json();
-          return userData.records?.[0]?.Name || null;
+        if (contactRes.ok) {
+          const contactData = await contactRes.json();
+          return contactData.records?.[0]?.Name || null;
         }
       } catch (e) {
-        console.error('Error resolving user:', e);
+        console.error('Error resolving contact:', e);
       }
       return null;
     };
@@ -58,12 +58,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Record not found' }, { status: 404 });
     }
     
-    // Resolve Owner and Owner 2 custom fields to user names
+    // Resolve Owner and Owner 2 custom fields to contact names
     if (record.csbs__Owner__c) {
-      record.csbs__Owner_Name__c = await resolveUserName(record.csbs__Owner__c);
+      record.csbs__Owner_Name__c = await resolveContactName(record.csbs__Owner__c);
     }
     if (record.csbs__Owner_2__c) {
-      record.csbs__Owner_2_Name__c = await resolveUserName(record.csbs__Owner_2__c);
+      record.csbs__Owner_2_Name__c = await resolveContactName(record.csbs__Owner_2__c);
     }
     
     return Response.json({ record });
