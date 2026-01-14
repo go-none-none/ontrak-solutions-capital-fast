@@ -1,8 +1,6 @@
 Deno.serve(async (req) => {
   try {
     console.log('getRepContacts - Function called');
-    console.log('getRepContacts - Request body raw:', await req.text());
-    
     const body = await req.json();
     console.log('getRepContacts - Full body:', JSON.stringify(body));
     console.log('getRepContacts - Body keys:', Object.keys(body));
