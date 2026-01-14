@@ -11,9 +11,19 @@ export default function RepPortalHeader({
   onLogout,
   userName,
   showCreateTask = false,
-  onCreateTaskClick
+  onCreateTaskClick,
+  showBackButton = false,
+  onBackClick = null
 }) {
   const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      navigate(-1);
+    }
+  };
 
   return (
     <div className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
@@ -24,6 +34,19 @@ export default function RepPortalHeader({
             {userName && <p className="text-xs sm:text-sm text-slate-600 truncate">Welcome back, {userName}</p>}
           </div>
           <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            {showBackButton && (
+              <Button 
+                variant="outline" 
+                size="icon"
+                onClick={handleBack}
+                className="flex-1 sm:flex-initial min-h-[44px] sm:h-auto sm:w-auto"
+                title="Go Back"
+              >
+                <Home className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Back</span>
+              </Button>
+            )}
+            
             <Button 
               variant="outline" 
               size="icon"
