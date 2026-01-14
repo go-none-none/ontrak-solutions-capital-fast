@@ -11,8 +11,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
     }
 
-    // Query all opportunities with all necessary fields
-    const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, Account.BillingStreet, Account.BillingCity, Account.BillingState, Account.BillingPostalCode, Account.BillingCountry, Account.Phone, CreatedDate, LastModifiedDate, IsClosed, Owner.Name, Owner.Email, Owner.Phone, Owner_2__r.Name, Owner_2__r.Email, Owner_2__r.Phone, Amount_Requested__c, Estimated_Monthly_Revenue__c, Months_In_Business__c, Use_of_Proceeds__c, Type, LeadSource FROM Opportunity WHERE OwnerId = '${userId}' ORDER BY LastModifiedDate DESC`;
+    // Query all opportunities with standard fields only
+    const query = `SELECT Id, Name, StageName, Amount, CloseDate, Probability, AccountId, Account.Name, Account.BillingStreet, Account.BillingCity, Account.BillingState, Account.BillingPostalCode, Account.BillingCountry, Account.Phone, CreatedDate, LastModifiedDate, IsClosed, Owner.Name, Owner.Email, Owner.Phone, Type, LeadSource FROM Opportunity WHERE OwnerId = '${userId}' ORDER BY LastModifiedDate DESC`;
     
     console.log('getRepOpportunities - Query:', query);
     
