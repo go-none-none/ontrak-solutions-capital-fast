@@ -175,6 +175,7 @@ export default function RepPortal() {
       setLoading(true);
     }
     try {
+      console.log('Loading data for userId:', sessionData.userId);
       const [leadsRes, oppsRes, tasksRes] = await Promise.all([
         base44.functions.invoke('getRepLeads', {
           userId: sessionData.userId,
@@ -192,6 +193,10 @@ export default function RepPortal() {
           instanceUrl: sessionData.instanceUrl
         })
       ]);
+
+      console.log('Leads response:', leadsRes.data);
+      console.log('Opportunities response:', oppsRes.data);
+      console.log('Tasks response:', tasksRes.data);
 
       setLeads(leadsRes.data.leads || []);
       setOpportunities(oppsRes.data.opportunities || []);
