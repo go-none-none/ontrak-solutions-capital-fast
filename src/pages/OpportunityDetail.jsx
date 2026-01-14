@@ -475,8 +475,26 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Owner" field="csbs__Owner__c" value={opportunity.csbs__Owner__c} />
-                        <EditableFieldWrapper label="Owner 2" field="csbs__Owner_2__c" value={opportunity.csbs__Owner_2__c} />
+                        <div>
+                          <p className="text-slate-500 text-xs mb-1">Owner</p>
+                          {opportunity.csbs__Owner__c ? (
+                            <a href={`/users/${opportunity.csbs__Owner__c}`} className="font-medium text-[#08708E] hover:underline">
+                              {opportunity.csbs__Owner_Name__c || 'Loading...'}
+                            </a>
+                          ) : (
+                            <p className="font-medium text-slate-600">-</p>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-slate-500 text-xs mb-1">Owner 2</p>
+                          {opportunity.csbs__Owner_2__c ? (
+                            <a href={`/users/${opportunity.csbs__Owner_2__c}`} className="font-medium text-[#08708E] hover:underline">
+                              {opportunity.csbs__Owner_2_Name__c || 'Loading...'}
+                            </a>
+                          ) : (
+                            <p className="font-medium text-slate-600">-</p>
+                          )}
+                        </div>
                       </div>
                     </CollapsibleContent>
                   </div>
