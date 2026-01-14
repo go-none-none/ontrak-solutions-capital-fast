@@ -477,11 +477,29 @@ export default function OpportunityDetail() {
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
                         <div>
                           <p className="text-slate-500 text-xs mb-1">Owner</p>
-                          <p className="font-medium text-slate-900">{opportunity.csbs__Owner_Name__c || '-'}</p>
+                          {opportunity.csbs__Owner__c ? (
+                            <button
+                              onClick={() => navigate(createPageUrl('ContactDetail') + `?id=${opportunity.csbs__Owner__c}`)}
+                              className="text-[#08708E] hover:underline font-medium"
+                            >
+                              {opportunity.csbs__Owner_Name__c || 'Unknown'}
+                            </button>
+                          ) : (
+                            <p className="font-medium text-slate-900">{opportunity.csbs__Owner_Name__c || '-'}</p>
+                          )}
                         </div>
                         <div>
                           <p className="text-slate-500 text-xs mb-1">Owner 2</p>
-                          <p className="font-medium text-slate-900">{opportunity.csbs__Owner_2_Name__c || '-'}</p>
+                          {opportunity.csbs__Owner_2__c ? (
+                            <button
+                              onClick={() => navigate(createPageUrl('ContactDetail') + `?id=${opportunity.csbs__Owner_2__c}`)}
+                              className="text-[#08708E] hover:underline font-medium"
+                            >
+                              {opportunity.csbs__Owner_2_Name__c || 'Unknown'}
+                            </button>
+                          ) : (
+                            <p className="font-medium text-slate-900">{opportunity.csbs__Owner_2_Name__c || '-'}</p>
+                          )}
                         </div>
                       </div>
                     </CollapsibleContent>
