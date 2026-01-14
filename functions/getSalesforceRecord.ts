@@ -9,8 +9,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
-    // Use FIELDS(ALL) to get all fields, plus related objects
-    const query = `SELECT FIELDS(ALL), Owner.Name, Owner.Id, Account.Name FROM ${recordType} WHERE Id = '${recordId}' LIMIT 1`;
+    // Build query based on record type
+    let query;
+    if (recordType === 'Lead') {
+      query = `SELECT FIELDS(ALL), Owner.Name, Owner.Id FROM ${recordType} WHERE Id = '${recordId}' LIMIT 1`;
+    } else {
+      query = `SELECT FIELDS(ALL), Owner.Name, Owner.Id, Account.Name FROM ${recordType} WHERE Id = '${recordId}' LIMIT 1`;
+    }
     const response = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
       {
