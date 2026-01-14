@@ -313,15 +313,28 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
                     <Icon className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <h4 className="font-medium text-slate-900 break-words">{activity.Subject}</h4>
-                      <span className="text-xs text-slate-500 whitespace-nowrap" title={formatFullDateTime(activity.date)}>
-                        {formatDate(activity.date)}
-                      </span>
-                    </div>
-                    {activity.Description && (
-                      <p className="text-sm text-slate-600 break-words overflow-hidden">{renderTextWithLinks(activity.Description)}</p>
-                    )}
+                     <div className="flex items-start justify-between gap-2 mb-1">
+                       <div className="flex items-center gap-2 flex-1">
+                         <h4 className="font-medium text-slate-900 break-words">{activity.Subject}</h4>
+                         {activity.dialpadLink && (
+                           <a
+                             href={activity.dialpadLink}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                             className="text-[#08708E] hover:underline text-xs whitespace-nowrap flex-shrink-0"
+                             onClick={(e) => e.stopPropagation()}
+                           >
+                             View
+                           </a>
+                         )}
+                       </div>
+                       <span className="text-xs text-slate-500 whitespace-nowrap" title={formatFullDateTime(activity.date)}>
+                         {formatDate(activity.date)}
+                       </span>
+                     </div>
+                     {activity.Description && (
+                       <p className="text-sm text-slate-600 break-words overflow-hidden">{renderTextWithLinks(activity.Description)}</p>
+                     )}
                     <div className="flex flex-wrap gap-2 mt-2">
                       {activity.CallOutcome && (
                         <span className="inline-block text-xs px-2 py-1 rounded bg-purple-100 text-purple-700 font-semibold">
