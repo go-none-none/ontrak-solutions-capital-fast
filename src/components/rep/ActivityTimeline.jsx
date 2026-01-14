@@ -164,6 +164,16 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
     });
   };
 
+  const toggleActivityType = (type) => {
+    setSelectedTypes(prev => 
+      prev.includes(type) 
+        ? prev.filter(t => t !== type)
+        : [...prev, type]
+    );
+  };
+
+  const filteredActivities = activities.filter(a => selectedTypes.includes(a.type));
+
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
