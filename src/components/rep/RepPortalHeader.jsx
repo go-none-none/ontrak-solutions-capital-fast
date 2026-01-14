@@ -33,17 +33,16 @@ export default function RepPortalHeader({
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Rep Portal</h1>
             {userName && <p className="text-xs sm:text-sm text-slate-600 truncate">Welcome back, {userName}</p>}
           </div>
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             {showBackButton && (
               <Button 
                 variant="outline" 
                 size="icon"
                 onClick={handleBack}
-                className="flex-1 sm:flex-initial min-h-[44px] sm:h-auto sm:w-auto"
+                className="h-10 w-10"
                 title="Go Back"
               >
-                <Home className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Back</span>
+                <ArrowLeft className="w-5 h-5" />
               </Button>
             )}
             
@@ -51,11 +50,10 @@ export default function RepPortalHeader({
               variant="outline" 
               size="icon"
               onClick={() => navigate(createPageUrl('RepPortal'))}
-              className="flex-1 sm:flex-initial min-h-[44px] sm:h-auto sm:w-auto"
+              className="h-10 w-10"
               title="Go to Home"
             >
-              <Home className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">Home</span>
+              <Home className="w-5 h-5" />
             </Button>
             
             {showCreateTask && (
