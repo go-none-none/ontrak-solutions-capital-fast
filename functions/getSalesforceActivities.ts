@@ -13,13 +13,13 @@ Deno.serve(async (req) => {
     const relationField = recordType === 'Lead' ? 'WhoId' : 'WhatId';
 
     // Get Tasks (including all types)
-    const tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype, CallType, CallDurationInSeconds, CallDisposition FROM Task WHERE ${relationField} = '${recordId}' ORDER BY CreatedDate DESC LIMIT 200`;
+    const tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype, CallType, CallDurationInSeconds FROM Task WHERE ${relationField} = '${recordId}' ORDER BY CreatedDate DESC LIMIT 200`;
     
     // Get Events
-    const eventsQuery = `SELECT Id, Subject, StartDateTime, EndDateTime, Description, CreatedDate, LastModifiedDate, IsAllDayEvent, Location, EventSubtype FROM Event WHERE ${relationField} = '${recordId}' ORDER BY StartDateTime DESC LIMIT 200`;
+    const eventsQuery = `SELECT Id, Subject, StartDateTime, EndDateTime, Description, CreatedDate, LastModifiedDate, IsAllDayEvent, Location FROM Event WHERE ${relationField} = '${recordId}' ORDER BY StartDateTime DESC LIMIT 200`;
     
     // Get Email Messages (if available)
-    const emailsQuery = `SELECT Id, Subject, MessageDate, TextBody, HtmlBody, FromAddress, ToAddress, Status, Outcome FROM EmailMessage WHERE RelatedToId = '${recordId}' ORDER BY MessageDate DESC LIMIT 200`;
+    const emailsQuery = `SELECT Id, Subject, MessageDate, TextBody, HtmlBody, FromAddress, ToAddress, Status FROM EmailMessage WHERE RelatedToId = '${recordId}' ORDER BY MessageDate DESC LIMIT 200`;
 
     const [tasksRes, eventsRes, emailsRes] = await Promise.all([
       fetch(`${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(tasksQuery)}`, {
