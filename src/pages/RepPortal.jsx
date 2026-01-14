@@ -863,9 +863,9 @@ export default function RepPortal() {
                               </button>
                             </td>
                             <td className="px-4 py-4 text-sm whitespace-nowrap">
-                              {lead.Phone ? (
-                                <a href={`tel:${lead.Phone}`} className="text-[#08708E] hover:underline font-medium">
-                                  {lead.Phone}
+                              {lead.MobilePhone ? (
+                                <a href={`tel:${lead.MobilePhone}`} className="text-[#08708E] hover:underline font-medium">
+                                  {lead.MobilePhone}
                                 </a>
                               ) : (
                                 <span className="text-slate-400">-</span>
