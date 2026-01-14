@@ -35,12 +35,13 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('getRepContacts - Salesforce error for userId:', userId, 'Error:', errorText);
-      return Response.json({ error: errorText }, { status: response.status });
+      console.error('getRepContacts - Salesforce error for userId:', userId, 'Query:', query, 'Error:', errorText);
+      return Response.json({ error: errorText, query }, { status: response.status });
     }
 
     let data = await response.json();
     console.log('getRepContacts - Initial response record count:', data.records?.length || 0);
+    console.log('getRepContacts - Full Salesforce response:', JSON.stringify(data));
     let allContacts = data.records || [];
     
     // Handle pagination to get all records
