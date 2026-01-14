@@ -478,7 +478,7 @@ export default function OpportunityDetail() {
                         <div>
                           <p className="text-slate-500 text-xs mb-1">Owner</p>
                           {opportunity.csbs__Owner__c ? (
-                            <a href={`/users/${opportunity.csbs__Owner__c}`} className="font-medium text-[#08708E] hover:underline">
+                            <a href={createPageUrl('OwnerContact') + `?id=${opportunity.csbs__Owner__c}`} className="font-medium text-[#08708E] hover:underline">
                               {opportunity.csbs__Owner_Name__c || 'Loading...'}
                             </a>
                           ) : (
@@ -488,7 +488,7 @@ export default function OpportunityDetail() {
                         <div>
                           <p className="text-slate-500 text-xs mb-1">Owner 2</p>
                           {opportunity.csbs__Owner_2__c ? (
-                            <a href={`/users/${opportunity.csbs__Owner_2__c}`} className="font-medium text-[#08708E] hover:underline">
+                            <a href={createPageUrl('OwnerContact') + `?id=${opportunity.csbs__Owner_2__c}`} className="font-medium text-[#08708E] hover:underline">
                               {opportunity.csbs__Owner_2_Name__c || 'Loading...'}
                             </a>
                           ) : (
