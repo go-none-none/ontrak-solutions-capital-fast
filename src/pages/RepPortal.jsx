@@ -118,6 +118,8 @@ export default function RepPortal() {
         code
       });
       
+      console.log('Auth response:', response.data);
+      
       const sessionData = {
             userId: response.data.userId,
             email: response.data.email,
@@ -127,6 +129,8 @@ export default function RepPortal() {
             isAdmin: response.data.isAdmin,
             timestamp: Date.now()
           };
+      
+      console.log('Session data to store:', sessionData);
 
           sessionStorage.setItem('sfSession', JSON.stringify(sessionData));
       setSession(sessionData);
