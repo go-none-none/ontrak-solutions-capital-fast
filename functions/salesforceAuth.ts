@@ -90,14 +90,16 @@ Deno.serve(async (req) => {
                   profileName.toLowerCase().includes('admin');
       }
       
-      return Response.json({
+      const responseData = {
         userId: userId,
         email: userInfo.email,
         name: userInfo.name,
         instanceUrl: tokenData.instance_url,
         token: tokenData.access_token,
         isAdmin
-      });
+      };
+      console.log('Auth Debug - Sending response:', { userId, email: userInfo.email, instanceUrl: tokenData.instance_url, tokenLength: tokenData.access_token?.length });
+      return Response.json(responseData);
     }
     
     return Response.json({ error: 'Invalid action' }, { status: 400 });
