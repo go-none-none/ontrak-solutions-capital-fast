@@ -781,9 +781,18 @@ export default function LeadDetail() {
                 </div>
               </div>
             </div>
+
+            {/* Activity Timeline */}
+            <ActivityTimeline
+              key={refreshKey}
+              recordId={lead.Id}
+              recordType="Lead"
+              session={session}
+              onActivityAdded={() => setRefreshKey(prev => prev + 1)}
+            />
           </div>
-          </div>
-          </div>
-          </div>
-          );
-          }
+        </div>
+      </div>
+    </div>
+  );
+}
