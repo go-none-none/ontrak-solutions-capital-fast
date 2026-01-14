@@ -1,13 +1,19 @@
 Deno.serve(async (req) => {
   try {
     console.log('getRepContacts - Function called');
+    console.log('getRepContacts - Request body raw:', await req.text());
+    
     const body = await req.json();
     console.log('getRepContacts - Full body:', JSON.stringify(body));
+    console.log('getRepContacts - Body keys:', Object.keys(body));
+    
     const { userId, token, instanceUrl } = body;
-    console.log('getRepContacts - Destructured. userId:', userId, 'token present:', !!token, 'instanceUrl:', instanceUrl);
+    console.log('getRepContacts - userId type:', typeof userId, 'value:', userId);
+    console.log('getRepContacts - token type:', typeof token, 'value:', token?.substring?.(0, 20));
+    console.log('getRepContacts - instanceUrl type:', typeof instanceUrl, 'value:', instanceUrl);
 
     if (!userId || !token || !instanceUrl) {
-      console.error('getRepContacts - Missing params. userId:', userId, 'token:', !!token, 'instanceUrl:', instanceUrl);
+      console.error('getRepContacts - Missing params!', { userId: !!userId, token: !!token, instanceUrl: !!instanceUrl });
       return Response.json({ 
         error: 'Missing required parameters', 
         received: { userId: !!userId, token: !!token, instanceUrl: !!instanceUrl }
