@@ -12,6 +12,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
+import RepPortalHeader from '../components/rep/RepPortalHeader';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -249,15 +250,22 @@ export default function OpportunityDetail() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+      <RepPortalHeader
+        isAdmin={false}
+        refreshing={false}
+        onRefresh={() => loadOpportunity(session)}
+        onLogout={() => {
+          sessionStorage.removeItem('sfSession');
+          window.location.reload();
+        }}
+        userName={session?.name}
+        showCreateTask={false}
+      />
+
+      {/* Detail Header */}
+      <div className="bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between mb-4">
-                    <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
-                      <ArrowLeft className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <h1 className="text-2xl font-bold text-slate-900">{opportunity.Name}</h1>
                       <p className="text-sm text-slate-600">{opportunity.Account?.Name}</p>
