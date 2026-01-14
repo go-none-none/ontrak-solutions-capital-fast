@@ -893,7 +893,7 @@ export default function RepPortal() {
                         ))}
                         {filteredLeads.length === 0 && (
                           <tr>
-                            <td colSpan={5} className="px-4 py-12 text-center text-slate-500">
+                            <td colSpan={6} className="px-4 py-12 text-center text-slate-500">
                               No leads found
                             </td>
                           </tr>
