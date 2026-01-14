@@ -70,8 +70,10 @@ export default function AdminPipeline() {
   const handleLogin = async () => {
     setLoading(true);
     try {
+      const currentUrl = window.location.origin + createPageUrl('AdminPipeline');
       const response = await base44.functions.invoke('salesforceAuth', {
-        action: 'getLoginUrl'
+        action: 'getLoginUrl',
+        redirectUri: currentUrl
       });
       window.location.href = response.data.loginUrl;
     } catch (error) {
