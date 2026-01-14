@@ -119,11 +119,16 @@ export default function RepPortal() {
       });
       
       const sessionData = {
-        ...response.data,
-        timestamp: Date.now()
-      };
-      
-      sessionStorage.setItem('sfSession', JSON.stringify(sessionData));
+            userId: response.data.userId,
+            email: response.data.email,
+            name: response.data.name,
+            instanceUrl: response.data.instanceUrl,
+            token: response.data.token,
+            isAdmin: response.data.isAdmin,
+            timestamp: Date.now()
+          };
+
+          sessionStorage.setItem('sfSession', JSON.stringify(sessionData));
       setSession(sessionData);
       setIsAdmin(response.data.isAdmin || false);
       window.history.replaceState({}, '', createPageUrl('RepPortal'));
