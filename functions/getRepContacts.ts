@@ -9,8 +9,8 @@ Deno.serve(async (req) => {
       }, { status: 400 });
     }
 
-    // Query to get all contacts from opportunities assigned to this user
-    const query = `SELECT Id, Name, FirstName, LastName, Email, Phone, MobilePhone, Title, Department, Account.Name, Description, MailingCity, MailingState, MailingCountry FROM Contact WHERE Id IN (SELECT ContactId FROM OpportunityContactRole WHERE Opportunity.OwnerId = '${userId}') ORDER BY Name ASC`;
+    // Query to get all contacts from accounts assigned to this user
+    const query = `SELECT Id, Name, FirstName, LastName, Email, Phone, MobilePhone, Title, Department, Account.Name, Description, MailingCity, MailingState, MailingCountry FROM Contact WHERE Account.OwnerId = '${userId}' ORDER BY Name ASC`;
 
     let response = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
