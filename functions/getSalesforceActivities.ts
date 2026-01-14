@@ -33,9 +33,16 @@ Deno.serve(async (req) => {
       }).catch(() => ({ ok: false }))
     ]);
 
-    const tasks = tasksRes.ok ? (await tasksRes.json()).records : [];
-    const events = eventsRes.ok ? (await eventsRes.json()).records : [];
-    const emails = emailsRes.ok ? (await emailsRes.json()).records : [];
+    const tasksData = tasksRes.ok ? (await tasksRes.json()) : { records: [] };
+    const eventsData = eventsRes.ok ? (await eventsRes.json()) : { records: [] };
+    const emailsData = emailsRes.ok ? (await emailsRes.json()) : { records: [] };
+
+    const tasks = tasksData.records || [];
+    const events = eventsData.records || [];
+    const emails = emailsData.records || [];
+
+    console.log(`Activities found - Tasks: ${tasks.length}, Events: ${events.length}, Emails: ${emails.length}`);
+    console.log('Sample task:', tasks[0]);
 
     // Combine all activities without any filtering
     const allActivities = [
