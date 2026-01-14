@@ -424,21 +424,18 @@ export default function OpportunityDetail() {
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
                         <EditableFieldWrapper label="Opportunity Name" field="Name" value={opportunity.Name} />
+                        <div>
+                          <p className="text-slate-500 text-xs mb-1">Opportunity Owner</p>
+                          <p className="font-medium text-slate-900">{opportunity.Owner?.Name || 'Unknown'}</p>
+                        </div>
                         <EditableFieldWrapper label="Account Name" field="AccountId" value={opportunity.Account?.Name} />
-                        <EditableFieldWrapper label="Amount" field="Amount" value={formatCurrency(opportunity.Amount)} />
                         <EditableFieldWrapper label="Close Date" field="CloseDate" value={opportunity.CloseDate} />
-                        <EditableFieldWrapper label="Stage" field="StageName" value={opportunity.StageName} disabled={true} />
-                        <EditableFieldWrapper label="Stage Detail" field="Stage_Detail__c" value={opportunity.Stage_Detail__c} />
                         <EditableFieldWrapper label="Type" field="Type" value={opportunity.Type} />
                         <EditableFieldWrapper label="Lead Source" field="LeadSource" value={opportunity.LeadSource} />
+                        <EditableFieldWrapper label="Stage" field="StageName" value={opportunity.StageName} disabled={true} />
                         <EditableFieldWrapper label="ISO" field="ISO__c" value={opportunity.ISO__c} />
+                        <EditableFieldWrapper label="Stage Detail" field="Stage_Detail__c" value={opportunity.Stage_Detail__c} />
                         <EditableFieldWrapper label="Line of Credit" field="Line_of_Credit__c" value={opportunity.Line_of_Credit__c} />
-                        {opportunity.Description && (
-                          <div className="col-span-2">
-                            <p className="text-slate-500 text-xs mb-1">Description</p>
-                            <p className="font-medium text-slate-900">{opportunity.Description}</p>
-                          </div>
-                        )}
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -456,94 +453,139 @@ export default function OpportunityDetail() {
                         <EditableFieldWrapper label="Amount Requested" field="Amount_Requested__c" value={opportunity.Amount_Requested__c} />
                         <EditableFieldWrapper label="Months In Business" field="Months_In_Business__c" value={opportunity.Months_In_Business__c} />
                         <EditableFieldWrapper label="Use of Proceeds" field="Use_of_Proceeds__c" value={opportunity.Use_of_Proceeds__c} />
-                        <EditableFieldWrapper label="Estimated Monthly Revenue" field="Estimated_Monthly_Revenue__c" value={opportunity.Estimated_Monthly_Revenue__c} />
+                        <EditableFieldWrapper label="Estimated Monthly Revenue $" field="Estimated_Monthly_Revenue__c" value={opportunity.Estimated_Monthly_Revenue__c} />
+                        <EditableFieldWrapper label="Number of Terminals" field="Number_of_Terminals__c" value={opportunity.Number_of_Terminals__c} />
+                        <EditableFieldWrapper label="Open Balances $" field="Open_Balances__c" value={opportunity.Open_Balances__c} />
+                        <EditableFieldWrapper label="Current Credit Card Processor" field="Current_Credit_Card_Processor__c" value={opportunity.Current_Credit_Card_Processor__c} />
+                        <EditableFieldWrapper label="Open Bankruptcies" field="Open_Bankruptcies__c" value={opportunity.Open_Bankruptcies__c} />
+                        <EditableFieldWrapper label="# of Open Positions" field="Number_of_Open_Positions__c" value={opportunity.Number_of_Open_Positions__c} />
+                        <EditableFieldWrapper label="Judgements / Liens" field="Judgements_Liens__c" value={opportunity.Judgements_Liens__c} />
+                        <EditableFieldWrapper label="Estimated Monthly MCA Amount" field="Estimated_Monthly_MCA_Amount__c" value={opportunity.Estimated_Monthly_MCA_Amount__c} />
                       </div>
                     </CollapsibleContent>
                   </div>
                 </Collapsible>
 
-                {/* Owner Information */}
+                {/* Owners */}
                 <Collapsible defaultOpen={false}>
                   <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                     <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Owner Information</h2>
+                      <h2 className="text-lg font-semibold text-slate-900">Owners</h2>
                       <ChevronDown className="w-5 h-5 transition-transform" />
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Name" field="Name" value={opportunity.Name} />
-                        <EditableFieldWrapper label="Title" field="Title" value={opportunity.Title} />
-                        <EditableFieldWrapper label="Birthdate" field="csbs__Birthdate__c" value={opportunity.csbs__Birthdate__c} />
-                        <EditableFieldWrapper label="Social Security Number" field="csbs__Social_Security_Number_Unencrypted__c" value={opportunity.csbs__Social_Security_Number_Unencrypted__c} />
-                        <EditableFieldWrapper label="Ownership %" field="csbs__Ownership_Percentage__c" value={opportunity.csbs__Ownership_Percentage__c} />
-                        <EditableFieldWrapper label="Credit Score" field="csbs__CreditScore__c" value={opportunity.csbs__CreditScore__c} />
-                        <EditableFieldWrapper label="Application Federal Tax Id" field="csbs__Application_Federal_Tax_Id__c" value={opportunity.csbs__Application_Federal_Tax_Id__c} />
-                        <EditableFieldWrapper label="Application SSN" field="csbs__Application_SSN__c" value={opportunity.csbs__Application_SSN__c} />
-                        <EditableFieldWrapper label="Application Owner 2 SSN" field="csbs__Application_Owner_2_SSN__c" value={opportunity.csbs__Application_Owner_2_SSN__c} />
-                        <EditableFieldWrapper label="Mobile" field="MobilePhone" value={opportunity.MobilePhone} />
-                        <EditableFieldWrapper label="Email" field="Email" value={opportunity.Email} />
-                        <EditableFieldWrapper label="Home Address Street" field="csbs__Home_Address_Street__c" value={opportunity.csbs__Home_Address_Street__c} />
-                        <EditableFieldWrapper label="Home Address City" field="csbs__Home_Address_City__c" value={opportunity.csbs__Home_Address_City__c} />
-                        <EditableFieldWrapper label="Home Address State" field="csbs__Home_Address_State__c" value={opportunity.csbs__Home_Address_State__c} />
-                        <EditableFieldWrapper label="Home Address Zip Code" field="csbs__Home_Address_Zip_Code__c" value={opportunity.csbs__Home_Address_Zip_Code__c} />
-                        <EditableFieldWrapper label="Home Address Country" field="csbs__Home_Address_Country__c" value={opportunity.csbs__Home_Address_Country__c} />
+                        <EditableFieldWrapper label="Owner" field="Owner__c" value={opportunity.Owner__c} />
+                        <EditableFieldWrapper label="Owner 2" field="Owner_2__c" value={opportunity.Owner_2__c} />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+                
+                {/* Financial Information */}
+                <Collapsible defaultOpen={false}>
+                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                      <h2 className="text-lg font-semibold text-slate-900">Financial Information</h2>
+                      <ChevronDown className="w-5 h-5 transition-transform" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
+                        <EditableFieldWrapper label="Avg Gross Monthly Sales" field="Avg_Gross_Monthly_Sales__c" value={opportunity.Avg_Gross_Monthly_Sales__c} />
+                        <EditableFieldWrapper label="Avg Bank Deposits $" field="Avg_Bank_Deposits__c" value={opportunity.Avg_Bank_Deposits__c} />
+                        <EditableFieldWrapper label="Avg Bank Deposits #" field="Avg_Bank_Deposits_Count__c" value={opportunity.Avg_Bank_Deposits_Count__c} />
+                        <EditableFieldWrapper label="Avg Credit Card Volume" field="Avg_Credit_Card_Volume__c" value={opportunity.Avg_Credit_Card_Volume__c} />
+                        <EditableFieldWrapper label="Avg Daily Balance" field="Avg_Daily_Balance__c" value={opportunity.Avg_Daily_Balance__c} />
+                        <EditableFieldWrapper label="Avg Credit Card Batches" field="Avg_Credit_Card_Batches__c" value={opportunity.Avg_Credit_Card_Batches__c} />
+                        <EditableFieldWrapper label="Avg NSFs" field="Avg_NSFs__c" value={opportunity.Avg_NSFs__c} />
+                        <EditableFieldWrapper label="Avg Credit Card Transaction Amount" field="Avg_Credit_Card_Transaction_Amount__c" value={opportunity.Avg_Credit_Card_Transaction_Amount__c} />
+                        <EditableFieldWrapper label="Avg Negative Days" field="Avg_Negative_Days__c" value={opportunity.Avg_Negative_Days__c} />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+                
+                {/* Open Balances */}
+                <Collapsible defaultOpen={false}>
+                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                      <h2 className="text-lg font-semibold text-slate-900">Open Balances</h2>
+                      <ChevronDown className="w-5 h-5 transition-transform" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
+                        <EditableFieldWrapper label="Lender Name 1" field="Lender_Name_1__c" value={opportunity.Lender_Name_1__c} />
+                        <EditableFieldWrapper label="LFC" field="LFC__c" value={opportunity.LFC__c} />
+                        <EditableFieldWrapper label="Open Balance Amount 1" field="Open_Balance_Amount_1__c" value={opportunity.Open_Balance_Amount_1__c} />
+                        <EditableFieldWrapper label="Lender Name 2" field="Lender_Name_2__c" value={opportunity.Lender_Name_2__c} />
+                        <EditableFieldWrapper label="Open Balance Amount 2" field="Open_Balance_Amount_2__c" value={opportunity.Open_Balance_Amount_2__c} />
+                        <EditableFieldWrapper label="Lender Name 3" field="Lender_Name_3__c" value={opportunity.Lender_Name_3__c} />
+                        <EditableFieldWrapper label="Open Balance Amount 3" field="Open_Balance_Amount_3__c" value={opportunity.Open_Balance_Amount_3__c} />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+                
+                {/* Funded Terms */}
+                <Collapsible defaultOpen={false}>
+                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                      <h2 className="text-lg font-semibold text-slate-900">Funded Terms</h2>
+                      <ChevronDown className="w-5 h-5 transition-transform" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
+                        <EditableFieldWrapper label="Funded Date" field="Funded_Date__c" value={opportunity.Funded_Date__c} />
+                        <EditableFieldWrapper label="Selected Offer" field="Selected_Offer__c" value={opportunity.Selected_Offer__c} />
+                        <EditableFieldWrapper label="Lender" field="Lender__c" value={opportunity.Lender__c} />
+                        <EditableFieldWrapper label="Buy Rate" field="Buy_Rate__c" value={opportunity.Buy_Rate__c} />
+                        <EditableFieldWrapper label="Funded" field="Funded__c" value={opportunity.Funded__c} />
+                        <EditableFieldWrapper label="Factor Rate" field="Factor_Rate__c" value={opportunity.Factor_Rate__c} />
+                        <EditableFieldWrapper label="Payoff" field="Payoff__c" value={opportunity.Payoff__c} />
+                        <EditableFieldWrapper label="Product" field="Product__c" value={opportunity.Product__c} />
+                        <EditableFieldWrapper label="Net Funded" field="Net_Funded__c" value={opportunity.Net_Funded__c} />
+                        <EditableFieldWrapper label="Payment Amount" field="Payment_Amount__c" value={opportunity.Payment_Amount__c} />
+                        <EditableFieldWrapper label="Term" field="Term__c" value={opportunity.Term__c} />
+                        <EditableFieldWrapper label="Payment Frequency" field="Payment_Frequency__c" value={opportunity.Payment_Frequency__c} />
+                        <EditableFieldWrapper label="Payback" field="Payback__c" value={opportunity.Payback__c} />
+                        <EditableFieldWrapper label="Payment Method" field="Payment_Method__c" value={opportunity.Payment_Method__c} />
+                        <EditableFieldWrapper label="Holdback %" field="Holdback__c" value={opportunity.Holdback__c} />
+                        <EditableFieldWrapper label="Commission $" field="Commission__c" value={opportunity.Commission__c} />
+                        <EditableFieldWrapper label="Commission %" field="Commission_Percentage__c" value={opportunity.Commission_Percentage__c} />
+                        <EditableFieldWrapper label="Origination Fee $" field="Origination_Fee__c" value={opportunity.Origination_Fee__c} />
+                        <EditableFieldWrapper label="Origination Fee %" field="Origination_Fee_Percentage__c" value={opportunity.Origination_Fee_Percentage__c} />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+                
+                {/* Renewal Forecasting */}
+                <Collapsible defaultOpen={false}>
+                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                      <h2 className="text-lg font-semibold text-slate-900">Renewal Forecasting</h2>
+                      <ChevronDown className="w-5 h-5 transition-transform" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
+                        <EditableFieldWrapper label="Estimated Paid In %" field="Estimated_Paid_In_Percentage__c" value={opportunity.Estimated_Paid_In_Percentage__c} />
+                        <EditableFieldWrapper label="60% Paid In" field="X60_Paid_In__c" value={opportunity.X60_Paid_In__c} />
+                        <EditableFieldWrapper label="20% Paid In" field="X20_Paid_In__c" value={opportunity.X20_Paid_In__c} />
+                        <EditableFieldWrapper label="80% Paid In" field="X80_Paid_In__c" value={opportunity.X80_Paid_In__c} />
+                        <EditableFieldWrapper label="40% Paid In" field="X40_Paid_In__c" value={opportunity.X40_Paid_In__c} />
+                        <EditableFieldWrapper label="100% Paid In" field="X100_Paid_In__c" value={opportunity.X100_Paid_In__c} />
+                        <EditableFieldWrapper label="Renewal Status" field="Renewal_Status__c" value={opportunity.Renewal_Status__c} />
+                        <EditableFieldWrapper label="Previous Funding" field="Previous_Funding__c" value={opportunity.Previous_Funding__c} />
+                        <EditableFieldWrapper label="Renewal Status Notes" field="Renewal_Status_Notes__c" value={opportunity.Renewal_Status_Notes__c} />
+                        <EditableFieldWrapper label="Next Funding" field="Next_Funding__c" value={opportunity.Next_Funding__c} />
+                        <EditableFieldWrapper label="Originating Opportunity" field="Originating_Opportunity__c" value={opportunity.Originating_Opportunity__c} />
+                        <EditableFieldWrapper label="Current Renewal" field="Current_Renewal__c" value={opportunity.Current_Renewal__c} />
                       </div>
                     </CollapsibleContent>
                   </div>
                 </Collapsible>
 
-                {/* Owner 2 Information */}
-                <Collapsible defaultOpen={false}>
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Owner 2 Information</h2>
-                      <ChevronDown className="w-5 h-5 transition-transform" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Owner 2 First Name" field="csbs__Owner_2_First_Name__c" value={opportunity.csbs__Owner_2_First_Name__c} />
-                        <EditableFieldWrapper label="Owner 2 Last Name" field="csbs__Owner_2_Last_Name__c" value={opportunity.csbs__Owner_2_Last_Name__c} />
-                        <EditableFieldWrapper label="Owner 2 Title" field="csbs__Owner_2_Title__c" value={opportunity.csbs__Owner_2_Title__c} />
-                        <EditableFieldWrapper label="Owner 2 Birthday" field="csbs__Owner_2_Birthday__c" value={opportunity.csbs__Owner_2_Birthday__c} />
-                        <EditableFieldWrapper label="Owner 2 Social Security Number" field="csbs__Owner_2_Social_Security_Number__c" value={opportunity.csbs__Owner_2_Social_Security_Number__c} />
-                        <EditableFieldWrapper label="Owner 2 Ownership %" field="csbs__Owner_2_Ownership__c" value={opportunity.csbs__Owner_2_Ownership__c} />
-                        <EditableFieldWrapper label="Owner 2 Credit Score" field="csbs__Owner_2_CreditScore__c" value={opportunity.csbs__Owner_2_CreditScore__c} />
-                        <EditableFieldWrapper label="Owner 2 Mobile" field="csbs__Owner_2_Mobile__c" value={opportunity.csbs__Owner_2_Mobile__c} />
-                        <EditableFieldWrapper label="Owner 2 Email" field="csbs__Owner_2_Email__c" value={opportunity.csbs__Owner_2_Email__c} />
-                        <EditableFieldWrapper label="Owner 2 Home Address Street" field="csbs__Owner_2_Home_Address_Street__c" value={opportunity.csbs__Owner_2_Home_Address_Street__c} />
-                        <EditableFieldWrapper label="Owner 2 Home Address City" field="csbs__Owner_2_Home_Address_City__c" value={opportunity.csbs__Owner_2_Home_Address_City__c} />
-                        <EditableFieldWrapper label="Owner 2 Home Address State" field="csbs__Owner_2_Home_Address_State__c" value={opportunity.csbs__Owner_2_Home_Address_State__c} />
-                        <EditableFieldWrapper label="Owner 2 Home Address Zip Code" field="csbs__Owner_2_Home_Address_Zip_Code__c" value={opportunity.csbs__Owner_2_Home_Address_Zip_Code__c} />
-                        <EditableFieldWrapper label="Owner 2 Home Address Country" field="csbs__Owner_2_Home_Address_Country__c" value={opportunity.csbs__Owner_2_Home_Address_Country__c} />
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
 
-                {/* Business Information */}
-                <Collapsible defaultOpen={false}>
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Business Information</h2>
-                      <ChevronDown className="w-5 h-5 transition-transform" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Application Industry" field="csbs__Application_Industry__c" value={opportunity.csbs__Application_Industry__c} />
-                        <EditableFieldWrapper label="Industry" field="Industry" value={opportunity.Industry} />
-                        <EditableFieldWrapper label="Entity Type" field="csbs__Entity_Type__c" value={opportunity.csbs__Entity_Type__c} />
-                        <EditableFieldWrapper label="Federal Tax ID" field="csbs__Federal_Tax_ID_Unencrypted__c" value={opportunity.csbs__Federal_Tax_ID_Unencrypted__c} />
-                        <EditableFieldWrapper label="State of Incorporation" field="csbs__State_of_Incorporation__c" value={opportunity.csbs__State_of_Incorporation__c} />
-                        <EditableFieldWrapper label="Business Start Date" field="csbs__Business_Start_Date_Current_Ownership__c" value={opportunity.csbs__Business_Start_Date_Current_Ownership__c} />
-                        <EditableFieldWrapper label="Seasonal Business" field="csbs__Seasonal_Business__c" value={opportunity.csbs__Seasonal_Business__c} />
-                        <EditableFieldWrapper label="Seasonal Peak Months" field="csbs__Seasonal_Peak_Months__c" value={opportunity.csbs__Seasonal_Peak_Months__c} />
-                        <EditableFieldWrapper label="E-Commerce" field="csbs__E_Commerce__c" value={opportunity.csbs__E_Commerce__c} />
-                        <EditableFieldWrapper label="Franchise" field="csbs__Franchise__c" value={opportunity.csbs__Franchise__c} />
-                        <EditableFieldWrapper label="Home-Based Business" field="csbs__Home_Based_Business__c" value={opportunity.csbs__Home_Based_Business__c} />
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
 
                 {/* Activity & Files */}
                 <ActivityTimeline
@@ -561,146 +603,7 @@ export default function OpportunityDetail() {
                 />
               </TabsContent>
 
-              {/* Submissions Tab */}
-              <TabsContent value="submissions" className="space-y-4">
-                <Collapsible defaultOpen={true}>
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Submission Information</h2>
-                      <ChevronDown className="w-5 h-5 transition-transform" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Lender" field="Lender__c" value={opportunity.Lender__c} />
-                        <EditableFieldWrapper label="Product" field="Product__c" value={opportunity.Product__c} />
-                        <EditableFieldWrapper label="Selected Offer" field="Selected_Offer__c" value={opportunity.Selected_Offer__c} />
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
-              </TabsContent>
 
-              {/* Offers Tab */}
-              <TabsContent value="offers" className="space-y-4">
-                <Collapsible defaultOpen={true}>
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Offer Details</h2>
-                      <ChevronDown className="w-5 h-5 transition-transform" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Funded" field="Funded__c" value={opportunity.Funded__c} />
-                        <EditableFieldWrapper label="Net Funded" field="Net_Funded__c" value={opportunity.Net_Funded__c} />
-                        <EditableFieldWrapper label="Buy Rate" field="Buy_Rate__c" value={opportunity.Buy_Rate__c} />
-                        <EditableFieldWrapper label="Factor Rate" field="Factor_Rate__c" value={opportunity.Factor_Rate__c} />
-                        <EditableFieldWrapper label="Payback" field="Payback__c" value={opportunity.Payback__c} />
-                        <EditableFieldWrapper label="Payment Amount" field="Payment_Amount__c" value={opportunity.Payment_Amount__c} />
-                        <EditableFieldWrapper label="Term" field="Term__c" value={opportunity.Term__c} />
-                        <EditableFieldWrapper label="Payment Frequency" field="Payment_Frequency__c" value={opportunity.Payment_Frequency__c} />
-                        <EditableFieldWrapper label="Payment Method" field="Payment_Method__c" value={opportunity.Payment_Method__c} />
-                        <EditableFieldWrapper label="Holdback %" field="Holdback__c" value={opportunity.Holdback__c} />
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
-              </TabsContent>
-
-              {/* Statements Tab */}
-              <TabsContent value="statements" className="space-y-4">
-                <Collapsible defaultOpen={true}>
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Financial Statements</h2>
-                      <ChevronDown className="w-5 h-5 transition-transform" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Avg Gross Monthly Sales" field="Avg_Gross_Monthly_Sales__c" value={opportunity.Avg_Gross_Monthly_Sales__c} />
-                        <EditableFieldWrapper label="Avg Bank Deposits $" field="Avg_Bank_Deposits__c" value={opportunity.Avg_Bank_Deposits__c} />
-                        <EditableFieldWrapper label="Avg Bank Deposits #" field="Avg_Bank_Deposits_Count__c" value={opportunity.Avg_Bank_Deposits_Count__c} />
-                        <EditableFieldWrapper label="Avg Credit Card Volume" field="Avg_Credit_Card_Volume__c" value={opportunity.Avg_Credit_Card_Volume__c} />
-                        <EditableFieldWrapper label="Avg Daily Balance" field="Avg_Daily_Balance__c" value={opportunity.Avg_Daily_Balance__c} />
-                        <EditableFieldWrapper label="Avg Credit Card Batches" field="Avg_Credit_Card_Batches__c" value={opportunity.Avg_Credit_Card_Batches__c} />
-                        <EditableFieldWrapper label="Avg NSFs" field="Avg_NSFs__c" value={opportunity.Avg_NSFs__c} />
-                        <EditableFieldWrapper label="Avg Negative Days" field="Avg_Negative_Days__c" value={opportunity.Avg_Negative_Days__c} />
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
-              </TabsContent>
-
-              {/* Debt Tab */}
-              <TabsContent value="debt" className="space-y-4">
-                <Collapsible defaultOpen={true}>
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Existing Debt</h2>
-                      <ChevronDown className="w-5 h-5 transition-transform" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="p-4 pt-0">
-                        <div className="grid sm:grid-cols-3 gap-6 text-sm">
-                          <div className="space-y-3">
-                            <EditableFieldWrapper label="Lender Name 1" field="Lender_Name_1__c" value={opportunity.Lender_Name_1__c} />
-                            <EditableFieldWrapper label="Open Balance 1" field="Open_Balance_Amount_1__c" value={opportunity.Open_Balance_Amount_1__c} />
-                          </div>
-                          <div className="space-y-3">
-                            <EditableFieldWrapper label="Lender Name 2" field="Lender_Name_2__c" value={opportunity.Lender_Name_2__c} />
-                            <EditableFieldWrapper label="Open Balance 2" field="Open_Balance_Amount_2__c" value={opportunity.Open_Balance_Amount_2__c} />
-                          </div>
-                          <div className="space-y-3">
-                            <EditableFieldWrapper label="Lender Name 3" field="Lender_Name_3__c" value={opportunity.Lender_Name_3__c} />
-                            <EditableFieldWrapper label="Open Balance 3" field="Open_Balance_Amount_3__c" value={opportunity.Open_Balance_Amount_3__c} />
-                          </div>
-                        </div>
-                        <div className="mt-4 pt-4 border-t border-slate-200">
-                          <EditableFieldWrapper label="Payoff" field="Payoff__c" value={opportunity.Payoff__c} />
-                        </div>
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
-              </TabsContent>
-
-              {/* Commissions Tab */}
-              <TabsContent value="commissions" className="space-y-4">
-                <Collapsible defaultOpen={true}>
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Commission Details</h2>
-                      <ChevronDown className="w-5 h-5 transition-transform" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Commission $" field="Commission__c" value={opportunity.Commission__c} />
-                        <EditableFieldWrapper label="Commission %" field="Commission_Percentage__c" value={opportunity.Commission_Percentage__c} />
-                        <EditableFieldWrapper label="Origination Fee $" field="Origination_Fee__c" value={opportunity.Origination_Fee__c} />
-                        <EditableFieldWrapper label="Origination Fee %" field="Origination_Fee_Percentage__c" value={opportunity.Origination_Fee_Percentage__c} />
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
-
-                <Collapsible defaultOpen={false}>
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
-                      <h2 className="text-lg font-semibold text-slate-900">Renewal Tracking</h2>
-                      <ChevronDown className="w-5 h-5 transition-transform" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="20% Paid In" field="X20_Paid_In__c" value={opportunity.X20_Paid_In__c} />
-                        <EditableFieldWrapper label="40% Paid In" field="X40_Paid_In__c" value={opportunity.X40_Paid_In__c} />
-                        <EditableFieldWrapper label="60% Paid In" field="X60_Paid_In__c" value={opportunity.X60_Paid_In__c} />
-                        <EditableFieldWrapper label="80% Paid In" field="X80_Paid_In__c" value={opportunity.X80_Paid_In__c} />
-                        <EditableFieldWrapper label="100% Paid In" field="X100_Paid_In__c" value={opportunity.X100_Paid_In__c} />
-                        <EditableFieldWrapper label="Renewal Status" field="Renewal_Status__c" value={opportunity.Renewal_Status__c} />
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
-              </TabsContent>
             </Tabs>
           </div>
 
