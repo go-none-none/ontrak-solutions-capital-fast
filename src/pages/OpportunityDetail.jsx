@@ -333,7 +333,7 @@ export default function OpportunityDetail() {
                 const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
                 return (
                   <div key={idx} className={`h-2 flex-1 rounded transition-all ${
-                    idx <= currentStageIndex ? 'bg-[#08708E]' : 'bg-slate-200'
+                    idx <= currentStageIndex ? 'bg-orange-600' : 'bg-slate-200'
                   }`} />
                 );
               })}
@@ -490,20 +490,20 @@ export default function OpportunityDetail() {
                           {opportunity.csbs__Owner__c ? (
                             <button
                               onClick={() => navigate(createPageUrl('ContactDetail') + `?id=${opportunity.csbs__Owner__c}`)}
-                              className="text-[#08708E] hover:underline font-medium"
+                              className="text-orange-600 hover:underline font-medium"
                             >
                               {opportunity.csbs__Owner_Name__c || 'Unknown'}
                             </button>
-                          ) : (
+                            ) : (
                             <p className="font-medium text-slate-900">{opportunity.csbs__Owner_Name__c || '-'}</p>
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-slate-500 text-xs mb-1">Owner 2</p>
-                          {opportunity.csbs__Owner_2__c ? (
+                            )}
+                            </div>
+                            <div>
+                            <p className="text-slate-500 text-xs mb-1">Owner 2</p>
+                            {opportunity.csbs__Owner_2__c ? (
                             <button
                               onClick={() => navigate(createPageUrl('ContactDetail') + `?id=${opportunity.csbs__Owner_2__c}`)}
-                              className="text-[#08708E] hover:underline font-medium"
+                              className="text-orange-600 hover:underline font-medium"
                             >
                               {opportunity.csbs__Owner_2_Name__c || 'Unknown'}
                             </button>
