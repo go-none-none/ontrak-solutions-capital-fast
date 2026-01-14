@@ -37,27 +37,8 @@ export default function OpportunityDetail() {
     }
     const session = JSON.parse(sessionData);
     setSession(session);
-    
-    // Try to load from cache first
-    const urlParams = new URLSearchParams(window.location.search);
-    const oppId = urlParams.get('id');
-    const cachedOpp = sessionStorage.getItem(`opportunity_${oppId}`);
-    const cachedUsers = sessionStorage.getItem('salesforce_users');
-    
-    if (cachedOpp) {
-      const oppData = JSON.parse(cachedOpp);
-      setOpportunity(oppData.opportunity);
-      setContactRoles(oppData.contactRoles || []);
-      setLoading(false);
-    } else {
-      loadOpportunity(session);
-    }
-    
-    if (cachedUsers) {
-      setUsers(JSON.parse(cachedUsers));
-    } else {
-      loadUsers(session);
-    }
+    loadOpportunity(session);
+    loadUsers(session);
   }, []);
 
   const loadOpportunity = async (sessionData) => {
@@ -80,17 +61,8 @@ export default function OpportunityDetail() {
         })
       ]);
 
-      const oppData = oppResponse.data.record;
-      const rolesData = contactRolesResponse.data.contactRoles || [];
-      
-      setOpportunity(oppData);
-      setContactRoles(rolesData);
-      
-      // Cache the opportunity data
-      sessionStorage.setItem(`opportunity_${oppId}`, JSON.stringify({
-        opportunity: oppData,
-        contactRoles: rolesData
-      }));
+      setOpportunity(oppResponse.data.record);
+      setContactRoles(contactRolesResponse.data.contactRoles || []);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
@@ -161,11 +133,7 @@ export default function OpportunityDetail() {
         token: sessionData.token,
         instanceUrl: sessionData.instanceUrl
       });
-      const usersData = response.data.users || [];
-      setUsers(usersData);
-      
-      // Cache users
-      sessionStorage.setItem('salesforce_users', JSON.stringify(usersData));
+      setUsers(response.data.users || []);
     } catch (error) {
       console.error('Load users error:', error);
     }
