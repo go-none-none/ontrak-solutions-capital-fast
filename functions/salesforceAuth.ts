@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'getLoginUrl') {
-      const { redirectUri } = await req.json();
+      const redirectUri = 'https://ontrak.co/repportal';
       const state = crypto.randomUUID();
 
       return Response.json({
@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'exchangeCode') {
-      const { redirectUri } = await req.json();
+      const redirectUri = 'https://ontrak.co/repportal';
 
       const tokenResponse = await fetch('https://login.salesforce.com/services/oauth2/token', {
         method: 'POST',
