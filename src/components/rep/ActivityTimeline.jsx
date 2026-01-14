@@ -263,9 +263,19 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
                       <p className="text-sm text-slate-600 break-words overflow-hidden">{renderTextWithLinks(activity.Description)}</p>
                     )}
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {activity.Outcome && (
-                        <span className="inline-block text-xs px-2 py-1 rounded bg-green-100 text-green-700">
-                          Outcome: {activity.Outcome}
+                      {activity.CallOutcome && (
+                        <span className="inline-block text-xs px-2 py-1 rounded bg-purple-100 text-purple-700 font-semibold">
+                          Outcome: {activity.CallOutcome}
+                        </span>
+                      )}
+                      {activity.CallDurationInSeconds && (
+                        <span className="inline-block text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-700">
+                          Duration: {Math.floor(activity.CallDurationInSeconds / 60)}m {activity.CallDurationInSeconds % 60}s
+                        </span>
+                      )}
+                      {activity.CallType && (
+                        <span className="inline-block text-xs px-2 py-1 rounded bg-orange-100 text-orange-700">
+                          {activity.CallType}
                         </span>
                       )}
                       {activity.Status && (
