@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
-import ActivityTimeline from '../components/rep/ActivityTimeline.jsx';
+
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
@@ -728,14 +728,7 @@ export default function OpportunityDetail() {
               </div>
             </div>
 
-            {/* Activity Timeline */}
-            <ActivityTimeline
-              key={refreshKey}
-              recordId={opportunity.Id}
-              recordType="Opportunity"
-              session={session}
-              onActivityAdded={() => setRefreshKey(prev => prev + 1)}
-            />
+
           </div>
         </div>
       </div>
