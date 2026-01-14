@@ -210,7 +210,19 @@ export default function RepPortal() {
               setLeads(leadsRes.data.leads || []);
               setOpportunities(oppsRes.data.opportunities || []);
               setTasks(tasksRes.data);
-              setContacts([]); // Skip contacts for now
+
+              // Load contacts separately with error handling
+              try {
+                const contactsRes = await base44.functions.invoke('getRepContacts', {
+                  userId: sessionData.userId,
+                  token: sessionData.token,
+                  instanceUrl: sessionData.instanceUrl
+                });
+                setContacts(contactsRes.data.contacts || []);
+              } catch (error) {
+                console.error('Contacts load error:', error);
+                setContacts([]);
+              }
               setLoadingContacts(false);
       setLoadingTasks(false);
 
