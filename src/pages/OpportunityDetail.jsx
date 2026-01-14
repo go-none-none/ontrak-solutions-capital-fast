@@ -252,20 +252,20 @@ export default function OpportunityDetail() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
-                <ArrowLeft className="w-4 h-4" />
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">{opportunity.Name}</h1>
-                <p className="text-sm text-slate-600">{opportunity.Account?.Name}</p>
-              </div>
-            </div>
-            <Badge className={stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}>
-              {opportunity.StageName}
-            </Badge>
-          </div>
+          <div className="flex items-center justify-between mb-4">
+                    <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
+                      <ArrowLeft className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h1 className="text-2xl font-bold text-slate-900">{opportunity.Name}</h1>
+                      <p className="text-sm text-slate-600">{opportunity.Account?.Name}</p>
+                    </div>
+                    <Badge className={stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}>
+                      {opportunity.StageName}
+                    </Badge>
+                  </div>
         </div>
       </div>
 
