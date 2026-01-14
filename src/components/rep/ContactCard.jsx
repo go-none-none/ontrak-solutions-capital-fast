@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Badge } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Mail, Phone, Building2, MapPin, Percent } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
