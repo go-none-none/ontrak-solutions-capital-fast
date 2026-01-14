@@ -101,7 +101,13 @@ export default function RepPortal() {
       setIsAdmin(parsed.isAdmin || false);
       loadData(parsed);
     } else {
-      setLoading(false);
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      if (code) {
+        handleOAuthCallback(code);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
