@@ -1,7 +1,9 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+
 Deno.serve(async (req) => {
   try {
-    const body = await req.json();
-    const { userId, token, instanceUrl } = body;
+    const base44 = createClientFromRequest(req);
+    const { userId, token, instanceUrl } = await req.json();
 
     if (!userId || !token || !instanceUrl) {
       return Response.json({ 
