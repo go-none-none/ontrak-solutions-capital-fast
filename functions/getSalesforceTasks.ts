@@ -42,9 +42,10 @@ Deno.serve(async (req) => {
 
     const data = await response.json();
     
-    // Filter out automated call activities
+    // Filter out automated activities (calls, emails, dialpad)
     const filteredTasks = data.records.filter(task => {
       if (task.TaskSubtype === 'Call') return false;
+      if (task.TaskSubtype === 'Email') return false;
       if (task.Subject && task.Subject.includes('Dialpad')) return false;
       return true;
     });
