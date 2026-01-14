@@ -292,14 +292,14 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
           <div className="text-center py-8">
             <Loader2 className="w-8 h-8 text-[#08708E] animate-spin mx-auto" />
           </div>
-        ) : activities.length === 0 ? (
+        ) : filteredActivities.length === 0 ? (
           <div className="text-center py-8 text-slate-500">
             <MessageSquare className="w-12 h-12 mx-auto mb-2 text-slate-300" />
-            <p>No activities yet</p>
+            <p>No activities found for selected types</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {activities.map((activity, i) => {
+            {filteredActivities.map((activity, i) => {
               const Icon = getActivityIcon(activity.type);
               return (
                 <motion.div
