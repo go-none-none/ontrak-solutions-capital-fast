@@ -110,17 +110,43 @@ export default function RepPortal() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      // Use Salesforce app connector directly
-      const response = await base44.functions.invoke('getSalesforceUserViaConnector', {});
-      if (response.data?.sessionData) {
-        sessionStorage.setItem('sfSession', JSON.stringify(response.data.sessionData));
-        setSession(response.data.sessionData);
-        setIsAdmin(response.data.sessionData.isAdmin || false);
-        loadData(response.data.sessionData);
-      }
+      const response = await base44.functions.invoke('salesforceAuth', {
+        action: 'getLoginUrl'
+      });
+      window.location.href = response.data.loginUrl;
     } catch (error) {
       console.error('Login error:', error);
       alert('Failed to connect to Salesforce. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  const handleOAuthCallback = async (code) => {
+    try {
+      const response = await base44.functions.invoke('salesforceAuth', {
+        action: 'exchangeCode',
+        code
+      });
+
+      const sessionData = {
+        userId: response.data.userId,
+        email: response.data.email,
+        name: response.data.name,
+        instanceUrl: response.data.instanceUrl,
+        token: response.data.token,
+        isAdmin: response.data.isAdmin,
+        timestamp: Date.now()
+      };
+
+      console.log('Session stored:', { userId: sessionData.userId, email: sessionData.email, tokenType: typeof sessionData.token, tokenExists: !!sessionData.token });
+      sessionStorage.setItem('sfSession', JSON.stringify(sessionData));
+      setSession(sessionData);
+      setIsAdmin(response.data.isAdmin || false);
+      window.history.replaceState({}, '', createPageUrl('RepPortal'));
+      loadData(sessionData);
+    } catch (error) {
+      console.error('OAuth error:', error);
+      alert(`Failed to authenticate: ${error.response?.data?.error || error.message}`);
       setLoading(false);
     }
   };
