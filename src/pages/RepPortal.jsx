@@ -75,6 +75,17 @@ export default function RepPortal() {
       setCurrentPage(state.currentPage || 1);
       setTaskFilter(state.taskFilter || 'all');
     }
+
+    // Load cached data immediately for instant display
+    const cachedData = sessionStorage.getItem('repPortalData');
+    if (cachedData) {
+      const data = JSON.parse(cachedData);
+      setLeads(data.leads || []);
+      setOpportunities(data.opportunities || []);
+      setTasks(data.tasks || null);
+      setDispositionOptions(data.dispositionOptions || []);
+      setLoadingTasks(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -193,12 +204,17 @@ export default function RepPortal() {
         })
       ]);
 
-      setLeads(leadsRes.data.leads || []);
-      setOpportunities(oppsRes.data.opportunities || []);
-      setTasks(tasksRes.data);
+      const leadsData = leadsRes.data.leads || [];
+      const oppsData = oppsRes.data.opportunities || [];
+      const tasksData = tasksRes.data;
+
+      setLeads(leadsData);
+      setOpportunities(oppsData);
+      setTasks(tasksData);
       setLoadingTasks(false);
 
       // Load disposition options separately so it doesn't break the main data load
+      let dispositionData = [];
       try {
         const dispositionRes = await base44.functions.invoke('getSalesforcePicklistValues', {
           objectType: 'Lead',
@@ -206,10 +222,19 @@ export default function RepPortal() {
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
         });
-        setDispositionOptions(dispositionRes.data.values || []);
+        dispositionData = dispositionRes.data.values || [];
+        setDispositionOptions(dispositionData);
       } catch (err) {
         console.error('Load disposition error:', err);
       }
+
+      // Cache the data for instant loading on back navigation
+      sessionStorage.setItem('repPortalData', JSON.stringify({
+        leads: leadsData,
+        opportunities: oppsData,
+        tasks: tasksData,
+        dispositionOptions: dispositionData
+      }));
     } catch (error) {
       console.error('Load error:', error);
       setLoadingTasks(false);
