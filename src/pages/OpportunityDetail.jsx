@@ -477,23 +477,11 @@ export default function OpportunityDetail() {
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
                         <div>
                           <p className="text-slate-500 text-xs mb-1">Owner</p>
-                          {opportunity.csbs__Owner__c ? (
-                            <a href={createPageUrl('OwnerContact') + `?id=${opportunity.csbs__Owner__c}`} className="font-medium text-[#08708E] hover:underline">
-                              {opportunity.csbs__Owner_Name__c || 'Loading...'}
-                            </a>
-                          ) : (
-                            <p className="font-medium text-slate-600">-</p>
-                          )}
+                          <p className="font-medium text-slate-900">{opportunity.csbs__Owner_Name__c || '-'}</p>
                         </div>
                         <div>
                           <p className="text-slate-500 text-xs mb-1">Owner 2</p>
-                          {opportunity.csbs__Owner_2__c ? (
-                            <a href={createPageUrl('OwnerContact') + `?id=${opportunity.csbs__Owner_2__c}`} className="font-medium text-[#08708E] hover:underline">
-                              {opportunity.csbs__Owner_2_Name__c || 'Loading...'}
-                            </a>
-                          ) : (
-                            <p className="font-medium text-slate-600">-</p>
-                          )}
+                          <p className="font-medium text-slate-900">{opportunity.csbs__Owner_2_Name__c || '-'}</p>
                         </div>
                       </div>
                     </CollapsibleContent>
