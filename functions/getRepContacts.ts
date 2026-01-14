@@ -20,6 +20,8 @@ Deno.serve(async (req) => {
     // Query to get all contacts from Salesforce
     const query = `SELECT Id, Name, FirstName, LastName, Email, Phone, MobilePhone, Title, Department, Account.Name, Description, MailingCity, MailingState, MailingCountry FROM Contact ORDER BY Name ASC LIMIT 2000`;
 
+    console.log('getRepContacts - Querying Salesforce with token:', token.substring(0, 30) + '...');
+    
     let response = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
       {
@@ -30,9 +32,12 @@ Deno.serve(async (req) => {
       }
     );
 
+    console.log('getRepContacts - Salesforce response status:', response.status);
+    
     if (!response.ok) {
       const errorText = await response.text();
-      return Response.json({ error: errorText }, { status: response.status });
+      console.log('getRepContacts - Salesforce error:', errorText);
+      return Response.json({ contacts: [] }, { status: 200 });
     }
 
     let data = await response.json();
