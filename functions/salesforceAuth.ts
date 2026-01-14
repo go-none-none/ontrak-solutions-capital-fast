@@ -44,6 +44,12 @@ Deno.serve(async (req) => {
       }
       
       const tokenData = await tokenResponse.json();
+      console.log('Token exchange response:', { access_token: tokenData.access_token, instance_url: tokenData.instance_url });
+      
+      if (!tokenData.access_token) {
+        console.error('No access_token in response:', tokenData);
+        return Response.json({ error: 'No access token received from Salesforce' }, { status: 401 });
+      }
       
       const userInfoResponse = await fetch(`${tokenData.instance_url}/services/oauth2/userinfo`, {
         headers: { 'Authorization': `Bearer ${tokenData.access_token}` }
