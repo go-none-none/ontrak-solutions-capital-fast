@@ -106,7 +106,14 @@ export default function RepPortal() {
       const parsed = JSON.parse(sessionData);
       setSession(parsed);
       setIsAdmin(parsed.isAdmin || false);
-      loadData(parsed);
+
+      // Check if we have cached data - if yes, don't reload
+      const cachedData = sessionStorage.getItem('repPortalData');
+      if (!cachedData) {
+        loadData(parsed);
+      } else {
+        setLoading(false);
+      }
     } else {
       const urlParams = new URLSearchParams(window.location.search);
       const code = urlParams.get('code');
