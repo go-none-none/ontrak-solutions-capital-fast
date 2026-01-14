@@ -36,21 +36,30 @@ export default function ContactDetail() {
         return;
       }
 
+      const appId = '6932157da76cc7fc545d1203';
       const [contactRes, oppsRes] = await Promise.all([
-        base44.functions.invoke('getSalesforceContact', {
-          contactId,
-          token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
-        }),
-        base44.functions.invoke('getContactRelatedOpportunities', {
-          contactId,
-          token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
-        })
+        fetch(`/api/apps/${appId}/functions/getSalesforceContact`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contactId,
+            token: sessionData.token,
+            instanceUrl: sessionData.instanceUrl
+          })
+        }).then(r => r.json()),
+        fetch(`/api/apps/${appId}/functions/getContactRelatedOpportunities`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contactId,
+            token: sessionData.token,
+            instanceUrl: sessionData.instanceUrl
+          })
+        }).then(r => r.json())
       ]);
 
-      setContact(contactRes.data.contact);
-      setOpportunities(oppsRes.data.opportunities || []);
+      setContact(contactRes.contact);
+      setOpportunities(oppsRes.opportunities || []);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
