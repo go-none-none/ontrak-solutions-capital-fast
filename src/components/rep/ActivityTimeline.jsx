@@ -14,6 +14,7 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
   const [showTimeline, setShowTimeline] = useState(false);
   const [newTask, setNewTask] = useState({ subject: '', description: '', status: 'Not Started', priority: 'Normal' });
   const [submitting, setSubmitting] = useState(false);
+  const [selectedTypes, setSelectedTypes] = useState(['Call', 'Task', 'Event', 'Email']);
 
   useEffect(() => {
     loadActivities();
