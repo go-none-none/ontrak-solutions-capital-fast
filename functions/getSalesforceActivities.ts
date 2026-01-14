@@ -9,14 +9,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
-    // Determine the relationship field based on record type
-    const relationField = recordType === 'Lead' ? 'WhoId' : 'WhatId';
+    console.log(`Fetching activities for ${recordType} ${recordId}`);
 
-    // Get all Tasks - including calls and all outcomes
-    const tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype, CallOutcome, CallDurationInSeconds, CallType, ReminderDateTime, IsReminderSet, AccountId, OwnerId, Owner.Name FROM Task WHERE ${relationField} = '${recordId}' ORDER BY CreatedDate DESC`;
+    // Get all Tasks - handles both WhoId and WhatId relationships
+    const tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype, CallOutcome, CallDurationInSeconds, CallType, ReminderDateTime, IsReminderSet, AccountId, OwnerId, Owner.Name FROM Task WHERE WhoId = '${recordId}' OR WhatId = '${recordId}' ORDER BY ActivityDate DESC NULLS LAST`;
     
-    // Get all Events - including all types
-    const eventsQuery = `SELECT Id, Subject, StartDateTime, EndDateTime, Description, CreatedDate, LastModifiedDate, Location, IsAllDayEvent, DurationInMinutes, Type FROM Event WHERE ${relationField} = '${recordId}' ORDER BY StartDateTime DESC`;
+    // Get all Events - handles both WhoId and WhatId relationships
+    const eventsQuery = `SELECT Id, Subject, StartDateTime, EndDateTime, Description, CreatedDate, LastModifiedDate, Location, IsAllDayEvent, DurationInMinutes, Type FROM Event WHERE WhoId = '${recordId}' OR WhatId = '${recordId}' ORDER BY StartDateTime DESC NULLS LAST`;
     
     // Get all Email Messages
     const emailsQuery = `SELECT Id, Subject, MessageDate, TextBody, HtmlBody, FromAddress, ToAddress, CcAddress, BccAddress, Status FROM EmailMessage WHERE RelatedToId = '${recordId}' ORDER BY MessageDate DESC LIMIT 500`;
@@ -33,25 +32,43 @@ Deno.serve(async (req) => {
       }).catch(() => ({ ok: false }))
     ]);
 
-    const tasksData = tasksRes.ok ? (await tasksRes.json()) : { records: [] };
-    const eventsData = eventsRes.ok ? (await eventsRes.json()) : { records: [] };
-    const emailsData = emailsRes.ok ? (await emailsRes.json()) : { records: [] };
-
-    if (!tasksRes.ok) {
+    // Handle Task response
+    let tasksData = { records: [] };
+    if (tasksRes.ok) {
+      tasksData = await tasksRes.json();
+    } else {
       const errorText = await tasksRes.text();
       console.error('Tasks query error:', tasksRes.status, errorText);
     }
-    if (!eventsRes.ok) {
+
+    // Handle Event response
+    let eventsData = { records: [] };
+    if (eventsRes.ok) {
+      eventsData = await eventsRes.json();
+    } else {
       const errorText = await eventsRes.text();
       console.error('Events query error:', eventsRes.status, errorText);
+    }
+
+    // Handle Email response
+    let emailsData = { records: [] };
+    if (emailsRes.ok) {
+      emailsData = await emailsRes.json();
+    } else {
+      console.log('Emails unavailable - may not be configured');
     }
 
     const tasks = tasksData.records || [];
     const events = eventsData.records || [];
     const emails = emailsData.records || [];
 
-    console.log(`Activities for ${recordId} - Tasks: ${tasks.length}, Events: ${events.length}, Emails: ${emails.length}`);
-    tasks.forEach(t => console.log('Task:', t.Subject, 'CallOutcome:', t.CallOutcome, 'Type:', (t.CallOutcome || t.CallDurationInSeconds || t.CallType) ? 'Call' : 'Task'));
+    console.log(`Activities found - Tasks: ${tasks.length}, Events: ${events.length}, Emails: ${emails.length}`);
+    tasks.forEach(t => {
+      const type = (t.CallOutcome || t.CallDurationInSeconds || t.CallType) ? 'Call' : 'Task';
+      console.log(`  ${type}: "${t.Subject}" (${t.ActivityDate || t.CreatedDate})`);
+    });
+    events.forEach(e => console.log(`  Event: "${e.Subject}" (${e.StartDateTime})`));
+    emails.forEach(e => console.log(`  Email: "${e.Subject}" (${e.MessageDate}`));
 
     // Combine all activities without any filtering
     const allActivities = [
