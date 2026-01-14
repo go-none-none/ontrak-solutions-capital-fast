@@ -110,7 +110,7 @@ export default function OpportunityDetail() {
         recordId: opportunity.Id,
         data: { 
           StageName: 'Closed - Declined',
-          Stage_Detail__c: selectedDeclinedReason
+          csbs__Stage_Detail__c: selectedDeclinedReason
         },
         token: session.token,
         instanceUrl: session.instanceUrl
@@ -389,8 +389,8 @@ export default function OpportunityDetail() {
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
               <p className="text-lg font-semibold text-red-800">{opportunity.StageName}</p>
-              {opportunity.Stage_Detail__c && (
-                <p className="text-sm text-red-600 mt-1">Reason: {opportunity.Stage_Detail__c}</p>
+              {opportunity.csbs__Stage_Detail__c && (
+                <p className="text-sm text-red-600 mt-1">Reason: {opportunity.csbs__Stage_Detail__c}</p>
               )}
             </div>
           </div>
@@ -433,9 +433,9 @@ export default function OpportunityDetail() {
                         <EditableFieldWrapper label="Type" field="Type" value={opportunity.Type} />
                         <EditableFieldWrapper label="Lead Source" field="LeadSource" value={opportunity.LeadSource} />
                         <EditableFieldWrapper label="Stage" field="StageName" value={opportunity.StageName} disabled={true} />
-                        <EditableFieldWrapper label="ISO" field="ISO__c" value={opportunity.ISO__c} />
-                        <EditableFieldWrapper label="Stage Detail" field="Stage_Detail__c" value={opportunity.Stage_Detail__c} />
-                        <EditableFieldWrapper label="Line of Credit" field="Line_of_Credit__c" value={opportunity.Line_of_Credit__c} />
+                        <EditableFieldWrapper label="ISO" field="csbs__ISO__c" value={opportunity.csbs__ISO__c} />
+                        <EditableFieldWrapper label="Stage Detail" field="csbs__Stage_Detail__c" value={opportunity.csbs__Stage_Detail__c} />
+                        <EditableFieldWrapper label="Line of Credit" field="csbs__Line_of_Credit__c" value={opportunity.csbs__Line_of_Credit__c} />
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -450,17 +450,17 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Amount Requested" field="Amount_Requested__c" value={opportunity.Amount_Requested__c} />
-                        <EditableFieldWrapper label="Months In Business" field="Months_In_Business__c" value={opportunity.Months_In_Business__c} />
-                        <EditableFieldWrapper label="Use of Proceeds" field="Use_of_Proceeds__c" value={opportunity.Use_of_Proceeds__c} />
-                        <EditableFieldWrapper label="Estimated Monthly Revenue $" field="Estimated_Monthly_Revenue__c" value={opportunity.Estimated_Monthly_Revenue__c} />
-                        <EditableFieldWrapper label="Number of Terminals" field="Number_of_Terminals__c" value={opportunity.Number_of_Terminals__c} />
-                        <EditableFieldWrapper label="Open Balances $" field="Open_Balances__c" value={opportunity.Open_Balances__c} />
-                        <EditableFieldWrapper label="Current Credit Card Processor" field="Current_Credit_Card_Processor__c" value={opportunity.Current_Credit_Card_Processor__c} />
-                        <EditableFieldWrapper label="Open Bankruptcies" field="Open_Bankruptcies__c" value={opportunity.Open_Bankruptcies__c} />
-                        <EditableFieldWrapper label="# of Open Positions" field="Number_of_Open_Positions__c" value={opportunity.Number_of_Open_Positions__c} />
-                        <EditableFieldWrapper label="Judgements / Liens" field="Judgements_Liens__c" value={opportunity.Judgements_Liens__c} />
-                        <EditableFieldWrapper label="Estimated Monthly MCA Amount" field="Estimated_Monthly_MCA_Amount__c" value={opportunity.Estimated_Monthly_MCA_Amount__c} />
+                        <EditableFieldWrapper label="Amount Requested" field="csbs__Amount_Requested__c" value={opportunity.csbs__Amount_Requested__c} />
+                        <EditableFieldWrapper label="Months In Business" field="csbs__Months_In_Business__c" value={opportunity.csbs__Months_In_Business__c} />
+                        <EditableFieldWrapper label="Use of Proceeds" field="csbs__Use_of_Proceeds__c" value={opportunity.csbs__Use_of_Proceeds__c} />
+                        <EditableFieldWrapper label="Estimated Monthly Revenue $" field="csbs__Estimated_Monthly_Revenue__c" value={opportunity.csbs__Estimated_Monthly_Revenue__c} />
+                        <EditableFieldWrapper label="Number of Terminals" field="csbs__Number_of_Terminals__c" value={opportunity.csbs__Number_of_Terminals__c} />
+                        <EditableFieldWrapper label="Open Balances $" field="csbs__Open_Loan_Balances__c" value={opportunity.csbs__Open_Loan_Balances__c} />
+                        <EditableFieldWrapper label="Current Credit Card Processor" field="csbs__Current_Credit_Card_Processor__c" value={opportunity.csbs__Current_Credit_Card_Processor__c} />
+                        <EditableFieldWrapper label="Open Bankruptcies" field="csbs__Open_Bankruptcies__c" value={opportunity.csbs__Open_Bankruptcies__c} />
+                        <EditableFieldWrapper label="# of Open Positions" field="csbs__Number_of_Open_Positions__c" value={opportunity.csbs__Number_of_Open_Positions__c} />
+                        <EditableFieldWrapper label="Judgements / Liens" field="csbs__Judgements_Liens__c" value={opportunity.csbs__Judgements_Liens__c} />
+                        <EditableFieldWrapper label="Estimated Monthly MCA Amount" field="csbs__Estimated_Monthly_MCA_Amount__c" value={opportunity.csbs__Estimated_Monthly_MCA_Amount__c} />
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -475,8 +475,8 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Owner" field="Owner__c" value={opportunity.Owner__c} />
-                        <EditableFieldWrapper label="Owner 2" field="Owner_2__c" value={opportunity.Owner_2__c} />
+                        <EditableFieldWrapper label="Owner" field="csbs__Owner__c" value={opportunity.csbs__Owner__c} />
+                        <EditableFieldWrapper label="Owner 2" field="csbs__Owner_2__c" value={opportunity.csbs__Owner_2__c} />
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -491,15 +491,15 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Avg Gross Monthly Sales" field="Avg_Gross_Monthly_Sales__c" value={opportunity.Avg_Gross_Monthly_Sales__c} />
-                        <EditableFieldWrapper label="Avg Bank Deposits $" field="Avg_Bank_Deposits__c" value={opportunity.Avg_Bank_Deposits__c} />
-                        <EditableFieldWrapper label="Avg Bank Deposits #" field="Avg_Bank_Deposits_Count__c" value={opportunity.Avg_Bank_Deposits_Count__c} />
-                        <EditableFieldWrapper label="Avg Credit Card Volume" field="Avg_Credit_Card_Volume__c" value={opportunity.Avg_Credit_Card_Volume__c} />
-                        <EditableFieldWrapper label="Avg Daily Balance" field="Avg_Daily_Balance__c" value={opportunity.Avg_Daily_Balance__c} />
-                        <EditableFieldWrapper label="Avg Credit Card Batches" field="Avg_Credit_Card_Batches__c" value={opportunity.Avg_Credit_Card_Batches__c} />
-                        <EditableFieldWrapper label="Avg NSFs" field="Avg_NSFs__c" value={opportunity.Avg_NSFs__c} />
-                        <EditableFieldWrapper label="Avg Credit Card Transaction Amount" field="Avg_Credit_Card_Transaction_Amount__c" value={opportunity.Avg_Credit_Card_Transaction_Amount__c} />
-                        <EditableFieldWrapper label="Avg Negative Days" field="Avg_Negative_Days__c" value={opportunity.Avg_Negative_Days__c} />
+                        <EditableFieldWrapper label="Avg Gross Monthly Sales" field="csbs__Avg_Gross_Monthly_Sales__c" value={opportunity.csbs__Avg_Gross_Monthly_Sales__c} />
+                        <EditableFieldWrapper label="Avg Bank Deposits $" field="csbs__Avg_Bank_Deposits__c" value={opportunity.csbs__Avg_Bank_Deposits__c} />
+                        <EditableFieldWrapper label="Avg Bank Deposits #" field="csbs__Avg_Bank_Deposits_Number__c" value={opportunity.csbs__Avg_Bank_Deposits_Number__c} />
+                        <EditableFieldWrapper label="Avg Credit Card Volume" field="csbs__Avg_Credit_Card_Volume__c" value={opportunity.csbs__Avg_Credit_Card_Volume__c} />
+                        <EditableFieldWrapper label="Avg Daily Balance" field="csbs__Avg_Daily_Balance__c" value={opportunity.csbs__Avg_Daily_Balance__c} />
+                        <EditableFieldWrapper label="Avg Credit Card Batches" field="csbs__Avg_Credit_Card_Batches__c" value={opportunity.csbs__Avg_Credit_Card_Batches__c} />
+                        <EditableFieldWrapper label="Avg NSFs" field="csbs__Avg_NSFs__c" value={opportunity.csbs__Avg_NSFs__c} />
+                        <EditableFieldWrapper label="Avg Credit Card Transaction Amount" field="csbs__Avg_Credit_Card_Transaction_Amount__c" value={opportunity.csbs__Avg_Credit_Card_Transaction_Amount__c} />
+                        <EditableFieldWrapper label="Avg Negative Days" field="csbs__Avg_Negative_Days__c" value={opportunity.csbs__Avg_Negative_Days__c} />
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -515,7 +515,6 @@ export default function OpportunityDetail() {
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
                         <EditableFieldWrapper label="Lender Name 1" field="Lender_Name_1__c" value={opportunity.Lender_Name_1__c} />
-                        <EditableFieldWrapper label="LFC" field="LFC__c" value={opportunity.LFC__c} />
                         <EditableFieldWrapper label="Open Balance Amount 1" field="Open_Balance_Amount_1__c" value={opportunity.Open_Balance_Amount_1__c} />
                         <EditableFieldWrapper label="Lender Name 2" field="Lender_Name_2__c" value={opportunity.Lender_Name_2__c} />
                         <EditableFieldWrapper label="Open Balance Amount 2" field="Open_Balance_Amount_2__c" value={opportunity.Open_Balance_Amount_2__c} />
@@ -535,25 +534,25 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Funded Date" field="Funded_Date__c" value={opportunity.Funded_Date__c} />
-                        <EditableFieldWrapper label="Selected Offer" field="Selected_Offer__c" value={opportunity.Selected_Offer__c} />
-                        <EditableFieldWrapper label="Lender" field="Lender__c" value={opportunity.Lender__c} />
-                        <EditableFieldWrapper label="Buy Rate" field="Buy_Rate__c" value={opportunity.Buy_Rate__c} />
-                        <EditableFieldWrapper label="Funded" field="Funded__c" value={opportunity.Funded__c} />
-                        <EditableFieldWrapper label="Factor Rate" field="Factor_Rate__c" value={opportunity.Factor_Rate__c} />
-                        <EditableFieldWrapper label="Payoff" field="Payoff__c" value={opportunity.Payoff__c} />
-                        <EditableFieldWrapper label="Product" field="Product__c" value={opportunity.Product__c} />
-                        <EditableFieldWrapper label="Net Funded" field="Net_Funded__c" value={opportunity.Net_Funded__c} />
-                        <EditableFieldWrapper label="Payment Amount" field="Payment_Amount__c" value={opportunity.Payment_Amount__c} />
-                        <EditableFieldWrapper label="Term" field="Term__c" value={opportunity.Term__c} />
-                        <EditableFieldWrapper label="Payment Frequency" field="Payment_Frequency__c" value={opportunity.Payment_Frequency__c} />
-                        <EditableFieldWrapper label="Payback" field="Payback__c" value={opportunity.Payback__c} />
-                        <EditableFieldWrapper label="Payment Method" field="Payment_Method__c" value={opportunity.Payment_Method__c} />
-                        <EditableFieldWrapper label="Holdback %" field="Holdback__c" value={opportunity.Holdback__c} />
-                        <EditableFieldWrapper label="Commission $" field="Commission__c" value={opportunity.Commission__c} />
-                        <EditableFieldWrapper label="Commission %" field="Commission_Percentage__c" value={opportunity.Commission_Percentage__c} />
-                        <EditableFieldWrapper label="Origination Fee $" field="Origination_Fee__c" value={opportunity.Origination_Fee__c} />
-                        <EditableFieldWrapper label="Origination Fee %" field="Origination_Fee_Percentage__c" value={opportunity.Origination_Fee_Percentage__c} />
+                        <EditableFieldWrapper label="Funded Date" field="csbs__Funded_Date__c" value={opportunity.csbs__Funded_Date__c} />
+                        <EditableFieldWrapper label="Selected Offer" field="csbs__Selected_Offer__c" value={opportunity.csbs__Selected_Offer__c} />
+                        <EditableFieldWrapper label="Lender" field="csbs__Lender__c" value={opportunity.csbs__Lender__c} />
+                        <EditableFieldWrapper label="Buy Rate" field="csbs__Buy_Rate__c" value={opportunity.csbs__Buy_Rate__c} />
+                        <EditableFieldWrapper label="Funded" field="csbs__Funded__c" value={opportunity.csbs__Funded__c} />
+                        <EditableFieldWrapper label="Factor Rate" field="csbs__Factor_Rate__c" value={opportunity.csbs__Factor_Rate__c} />
+                        <EditableFieldWrapper label="Payoff" field="csbs__Payoff__c" value={opportunity.csbs__Payoff__c} />
+                        <EditableFieldWrapper label="Product" field="csbs__Product__c" value={opportunity.csbs__Product__c} />
+                        <EditableFieldWrapper label="Net Funded" field="csbs__Net_Funded__c" value={opportunity.csbs__Net_Funded__c} />
+                        <EditableFieldWrapper label="Payment Amount" field="csbs__Payment_Amount__c" value={opportunity.csbs__Payment_Amount__c} />
+                        <EditableFieldWrapper label="Term" field="csbs__Term__c" value={opportunity.csbs__Term__c} />
+                        <EditableFieldWrapper label="Payment Frequency" field="csbs__Payment_Frequency__c" value={opportunity.csbs__Payment_Frequency__c} />
+                        <EditableFieldWrapper label="Payback" field="csbs__Payback__c" value={opportunity.csbs__Payback__c} />
+                        <EditableFieldWrapper label="Payment Method" field="csbs__Payment_Method__c" value={opportunity.csbs__Payment_Method__c} />
+                        <EditableFieldWrapper label="Holdback %" field="csbs__Holdback_Percentage__c" value={opportunity.csbs__Holdback_Percentage__c} />
+                        <EditableFieldWrapper label="Commission $" field="csbs__Commission_Amount__c" value={opportunity.csbs__Commission_Amount__c} />
+                        <EditableFieldWrapper label="Commission %" field="csbs__Commission_Percentage__c" value={opportunity.csbs__Commission_Percentage__c} />
+                        <EditableFieldWrapper label="Origination Fee $" field="csbs__Origination_Fee_Amount__c" value={opportunity.csbs__Origination_Fee_Amount__c} />
+                        <EditableFieldWrapper label="Origination Fee %" field="csbs__Origination_Fee_Percentage__c" value={opportunity.csbs__Origination_Fee_Percentage__c} />
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -568,18 +567,18 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Estimated Paid In %" field="Estimated_Paid_In_Percentage__c" value={opportunity.Estimated_Paid_In_Percentage__c} />
-                        <EditableFieldWrapper label="60% Paid In" field="X60_Paid_In__c" value={opportunity.X60_Paid_In__c} />
-                        <EditableFieldWrapper label="20% Paid In" field="X20_Paid_In__c" value={opportunity.X20_Paid_In__c} />
-                        <EditableFieldWrapper label="80% Paid In" field="X80_Paid_In__c" value={opportunity.X80_Paid_In__c} />
-                        <EditableFieldWrapper label="40% Paid In" field="X40_Paid_In__c" value={opportunity.X40_Paid_In__c} />
-                        <EditableFieldWrapper label="100% Paid In" field="X100_Paid_In__c" value={opportunity.X100_Paid_In__c} />
-                        <EditableFieldWrapper label="Renewal Status" field="Renewal_Status__c" value={opportunity.Renewal_Status__c} />
-                        <EditableFieldWrapper label="Previous Funding" field="Previous_Funding__c" value={opportunity.Previous_Funding__c} />
-                        <EditableFieldWrapper label="Renewal Status Notes" field="Renewal_Status_Notes__c" value={opportunity.Renewal_Status_Notes__c} />
-                        <EditableFieldWrapper label="Next Funding" field="Next_Funding__c" value={opportunity.Next_Funding__c} />
-                        <EditableFieldWrapper label="Originating Opportunity" field="Originating_Opportunity__c" value={opportunity.Originating_Opportunity__c} />
-                        <EditableFieldWrapper label="Current Renewal" field="Current_Renewal__c" value={opportunity.Current_Renewal__c} />
+                        <EditableFieldWrapper label="Estimated Paid In %" field="csbs__Estimated_Paid_In_Percentage__c" value={opportunity.csbs__Estimated_Paid_In_Percentage__c} />
+                        <EditableFieldWrapper label="60% Paid In" field="csbs__Sixty_Percent_Paid_In__c" value={opportunity.csbs__Sixty_Percent_Paid_In__c} />
+                        <EditableFieldWrapper label="20% Paid In" field="csbs__Twenty_Percent_Paid_In__c" value={opportunity.csbs__Twenty_Percent_Paid_In__c} />
+                        <EditableFieldWrapper label="80% Paid In" field="csbs__Eighty_Percent_Paid_In__c" value={opportunity.csbs__Eighty_Percent_Paid_In__c} />
+                        <EditableFieldWrapper label="40% Paid In" field="csbs__Fourty_Percent_Paid_In__c" value={opportunity.csbs__Fourty_Percent_Paid_In__c} />
+                        <EditableFieldWrapper label="100% Paid In" field="csbs__One_Hundred_Percent_Paid_In__c" value={opportunity.csbs__One_Hundred_Percent_Paid_In__c} />
+                        <EditableFieldWrapper label="Renewal Status" field="csbs__Renewal_Status__c" value={opportunity.csbs__Renewal_Status__c} />
+                        <EditableFieldWrapper label="Previous Funding" field="csbs__Previous_Funding__c" value={opportunity.csbs__Previous_Funding__c} />
+                        <EditableFieldWrapper label="Renewal Status Notes" field="csbs__Renewal_Status_Notes__c" value={opportunity.csbs__Renewal_Status_Notes__c} />
+                        <EditableFieldWrapper label="Next Funding" field="csbs__Next_Funding__c" value={opportunity.csbs__Next_Funding__c} />
+                        <EditableFieldWrapper label="Originating Opportunity" field="csbs__Originating_Opportunity__c" value={opportunity.csbs__Originating_Opportunity__c} />
+                        <EditableFieldWrapper label="Current Renewal" field="csbs__Current_Renewal__c" value={opportunity.csbs__Current_Renewal__c} />
                       </div>
                     </CollapsibleContent>
                   </div>
