@@ -15,6 +15,7 @@ import TaskItem from '../components/rep/TaskItem';
 import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
 import CreateTaskModal from '../components/admin/CreateTaskModal';
+import ContactCard from '../components/rep/ContactCard';
 
 export default function RepPortal() {
   const navigate = useNavigate();
@@ -36,6 +37,8 @@ export default function RepPortal() {
   const [dispositionOptions, setDispositionOptions] = useState([]);
   const [updatingDisposition, setUpdatingDisposition] = useState(null);
   const [showCreateTask, setShowCreateTask] = useState(false);
+  const [contacts, setContacts] = useState([]);
+  const [loadingContacts, setLoadingContacts] = useState(true);
   const itemsPerPage = 100;
 
   // Disposition color mapping
@@ -175,7 +178,7 @@ export default function RepPortal() {
       setLoading(true);
     }
     try {
-      const [leadsRes, oppsRes, tasksRes] = await Promise.all([
+      const [leadsRes, oppsRes, tasksRes, contactsRes] = await Promise.all([
         base44.functions.invoke('getRepLeads', {
           userId: sessionData.userId,
           token: sessionData.token,
@@ -190,12 +193,19 @@ export default function RepPortal() {
           userId: sessionData.userId,
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getRepContacts', {
+          userId: sessionData.userId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
         })
       ]);
 
       setLeads(leadsRes.data.leads || []);
       setOpportunities(oppsRes.data.opportunities || []);
       setTasks(tasksRes.data);
+      setContacts(contactsRes.data.contacts || []);
+      setLoadingContacts(false);
       setLoadingTasks(false);
 
       // Load disposition options separately so it doesn't break the main data load
@@ -369,7 +379,7 @@ export default function RepPortal() {
 
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -423,6 +433,26 @@ export default function RepPortal() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
+            onClick={() => { setActiveTab('contacts'); setCurrentPage(1); }}
+            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
+              activeTab === 'contacts' ? 'ring-2 ring-indigo-500 shadow-md' : 'hover:shadow-md'
+            }`}
+          >
+            <div className="flex items-center justify-between h-full">
+              <div>
+                <p className="text-xs sm:text-sm text-slate-600 mb-1">Contacts</p>
+                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{contacts.length}</p>
+              </div>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
             onClick={() => { setActiveTab('dispositions'); setDispositionFilter('all'); setCurrentPage(1); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
               activeTab === 'dispositions' ? 'ring-2 ring-sky-500 shadow-md' : 'hover:shadow-md'
@@ -439,10 +469,10 @@ export default function RepPortal() {
               </div>
             </div>
           </motion.div>
-        </div>
+          </div>
 
         {/* Pipeline */}
-        {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
+        {activeTab !== 'tasks' && activeTab !== 'dispositions' && activeTab !== 'contacts' && (
           <PipelineView 
             leads={leads} 
             opportunities={opportunities} 
@@ -745,6 +775,79 @@ export default function RepPortal() {
                               );
                             })}
                           </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                          >
+                            Next
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'contacts' && (
+          <div>
+            <div className="mb-4 sm:mb-6">
+              <div className="relative flex-1 mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+                <Input
+                  placeholder="Search contacts by name, email, company..."
+                  value={searchTerm}
+                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                  className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(() => {
+                const filtered = contacts.filter(contact => {
+                  const term = searchTerm.toLowerCase();
+                  return contact.Name?.toLowerCase().includes(term) ||
+                    contact.Email?.toLowerCase().includes(term) ||
+                    contact.AccountName?.toLowerCase().includes(term) ||
+                    contact.MobilePhone?.toLowerCase().includes(term);
+                });
+
+                const totalPages = Math.ceil(filtered.length / itemsPerPage);
+                const startIdx = (currentPage - 1) * itemsPerPage;
+                const endIdx = startIdx + itemsPerPage;
+                const paginated = filtered.slice(startIdx, endIdx);
+
+                return (
+                  <>
+                    {filtered.length === 0 ? (
+                      <div className="col-span-full text-center py-12">
+                        <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <p className="text-slate-600">No contacts found</p>
+                      </div>
+                    ) : (
+                      paginated.map(contact => (
+                        <ContactCard key={contact.Id} contact={contact} />
+                      ))
+                    )}
+                    {totalPages > 1 && (
+                      <div className="col-span-full flex items-center justify-between mt-6 pt-6 border-t">
+                        <p className="text-sm text-slate-600">
+                          Showing {startIdx + 1}-{Math.min(endIdx, filtered.length)} of {filtered.length}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                          >
+                            Previous
+                          </Button>
                           <Button
                             variant="outline"
                             size="sm"
