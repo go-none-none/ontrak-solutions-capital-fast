@@ -453,7 +453,20 @@ export default function RepPortal() {
 
         {/* Search & Content */}
         <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 sm:mt-6">
-          {activeTab !== 'tasks' && (
+          {activeTab === 'leads' && (
+            <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+                <Input
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                  className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base"
+                />
+              </div>
+            </div>
+          )}
+          {activeTab === 'opportunities' && (
             <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
