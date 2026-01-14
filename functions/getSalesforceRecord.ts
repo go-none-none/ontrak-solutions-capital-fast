@@ -60,10 +60,10 @@ Deno.serve(async (req) => {
     
     // Resolve Owner and Owner 2 custom fields to user names
     if (record.csbs__Owner__c) {
-      record.csbs__Owner__c = await resolveUserName(record.csbs__Owner__c);
+      record.csbs__Owner_Name__c = await resolveUserName(record.csbs__Owner__c);
     }
     if (record.csbs__Owner_2__c) {
-      record.csbs__Owner_2__c = await resolveUserName(record.csbs__Owner_2__c);
+      record.csbs__Owner_2_Name__c = await resolveUserName(record.csbs__Owner_2__c);
     }
     
     return Response.json({ record });
