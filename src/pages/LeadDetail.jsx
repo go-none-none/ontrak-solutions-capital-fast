@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
+import RepPortalHeader from '../components/rep/RepPortalHeader';
 
 export default function LeadDetail() {
   const navigate = useNavigate();
