@@ -16,6 +16,7 @@ import RecordDetailsModal from '../components/rep/RecordDetailsModal';
 import TaskDetailsModal from '../components/admin/TaskDetailsModal';
 import CreateTaskModal from '../components/admin/CreateTaskModal';
 import ContactCard from '../components/rep/ContactCard';
+import RepPortalHeader from '../components/rep/RepPortalHeader';
 
 export default function RepPortal() {
   const navigate = useNavigate();
@@ -345,39 +346,15 @@ export default function RepPortal() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Rep Portal</h1>
-              <p className="text-xs sm:text-sm text-slate-600 truncate">Welcome back, {session.name}</p>
-            </div>
-            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              <Button onClick={() => setShowCreateTask(true)} className="flex-1 sm:flex-initial bg-purple-600 hover:bg-purple-700 min-h-[44px]">
-                <Plus className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Create Task</span>
-              </Button>
-              {isAdmin && (
-                <Link to={createPageUrl('AdminPipeline')} className="flex-1 sm:flex-initial">
-                  <Button variant="outline" className="w-full sm:w-auto min-h-[44px]">
-                    <Shield className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Admin Pipeline</span>
-                  </Button>
-                </Link>
-              )}
-              <Button variant="outline" onClick={handleRefresh} disabled={refreshing} className="flex-1 sm:flex-initial min-h-[44px]">
-                <RefreshCw className={`w-4 h-4 sm:mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">Refresh</span>
-              </Button>
-              <Button variant="outline" onClick={handleLogout} className="flex-1 sm:flex-initial min-h-[44px]">
-                <LogOut className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Logout</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <RepPortalHeader
+        isAdmin={isAdmin}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        onLogout={handleLogout}
+        userName={session.name}
+        showCreateTask={true}
+        onCreateTaskClick={() => setShowCreateTask(true)}
+      />
 
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
