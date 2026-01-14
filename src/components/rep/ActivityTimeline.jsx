@@ -173,18 +173,10 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
           <h2 className="text-lg font-semibold text-slate-900">Activity Timeline</h2>
           <span className="text-sm text-slate-500">({activities.length})</span>
         </button>
-        <div className="flex gap-2">
-          {activities.length > 0 && (
-            <Button size="sm" variant="outline" onClick={downloadActivities}>
-              <Download className="w-4 h-4 mr-2" />
-              Download
-            </Button>
-          )}
-          <Button size="sm" onClick={() => setShowAddTask(!showAddTask)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Task
-          </Button>
-        </div>
+        <Button size="sm" onClick={() => setShowAddTask(!showAddTask)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Add Task
+        </Button>
       </div>
 
       {showAddTask && (
