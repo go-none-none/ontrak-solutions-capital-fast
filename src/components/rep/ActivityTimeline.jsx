@@ -182,13 +182,62 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
           className="flex items-center gap-2 hover:text-[#08708E] transition-colors"
         >
           <h2 className="text-lg font-semibold text-slate-900">Activity Timeline</h2>
-          <span className="text-sm text-slate-500">({activities.length})</span>
+          <span className="text-sm text-slate-500">({filteredActivities.length})</span>
         </button>
         <Button size="sm" onClick={() => setShowAddTask(!showAddTask)}>
           <Plus className="w-4 h-4 mr-2" />
           Add Task
         </Button>
       </div>
+
+      {showTimeline && (
+        <div className="mb-4 flex flex-wrap gap-2 pb-4 border-b border-slate-200">
+          <button
+            onClick={() => toggleActivityType('Call')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all ${
+              selectedTypes.includes('Call')
+                ? 'bg-cyan-100 border-cyan-400 text-cyan-700'
+                : 'bg-slate-50 border-slate-200 text-slate-600'
+            }`}
+          >
+            <Phone className="w-5 h-5" />
+            <span className="text-sm font-medium">Call</span>
+          </button>
+          <button
+            onClick={() => toggleActivityType('Task')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all ${
+              selectedTypes.includes('Task')
+                ? 'bg-green-100 border-green-400 text-green-700'
+                : 'bg-slate-50 border-slate-200 text-slate-600'
+            }`}
+          >
+            <FileText className="w-5 h-5" />
+            <span className="text-sm font-medium">Task</span>
+          </button>
+          <button
+            onClick={() => toggleActivityType('Email')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all ${
+              selectedTypes.includes('Email')
+                ? 'bg-slate-100 border-slate-400 text-slate-700'
+                : 'bg-slate-50 border-slate-200 text-slate-600'
+            }`}
+          >
+            <Mail className="w-5 h-5" />
+            <span className="text-sm font-medium">Email</span>
+          </button>
+          <button
+            onClick={() => toggleActivityType('Event')}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all ${
+              selectedTypes.includes('Event')
+                ? 'bg-purple-100 border-purple-400 text-purple-700'
+                : 'bg-slate-50 border-slate-200 text-slate-600'
+            }`}
+          >
+            <Calendar className="w-5 h-5" />
+            <span className="text-sm font-medium">Event</span>
+          </button>
+        </div>
+      )}
 
       {showAddTask && (
         <motion.div
