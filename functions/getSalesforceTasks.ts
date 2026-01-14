@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    // Query for ALL tasks (open + closed) assigned to the user
+    // Query for open tasks assigned to the user
     const query = `
       SELECT Id, Subject, Description, Status, Priority, ActivityDate, 
              IsClosed, IsHighPriority, WhatId, What.Name, What.Type,
@@ -18,6 +18,7 @@ Deno.serve(async (req) => {
              CallDisposition
       FROM Task 
       WHERE OwnerId = '${userId}'
+      AND IsClosed = false
       ORDER BY ActivityDate ASC NULLS LAST, Priority DESC, CreatedDate DESC
       LIMIT 500
     `;
@@ -42,14 +43,6 @@ Deno.serve(async (req) => {
 
     const data = await response.json();
     
-    // Filter out automated activities (calls, emails, dialpad)
-    const filteredTasks = data.records.filter(task => {
-      if (task.TaskSubtype === 'Call') return false;
-      if (task.TaskSubtype === 'Email') return false;
-      if (task.Subject && task.Subject.includes('Dialpad')) return false;
-      return true;
-    });
-    
     // Categorize tasks
     const now = new Date();
     now.setHours(0, 0, 0, 0);
@@ -66,11 +59,7 @@ Deno.serve(async (req) => {
       upcoming: []
     };
 
-    filteredTasks.forEach(task => {
-      if (task.IsClosed) {
-        // Skip closed tasks from counts
-        return;
-      }
+    data.records.forEach(task => {
       if (!task.ActivityDate) {
         categorized.upcoming.push(task);
       } else if (task.ActivityDate < today) {
@@ -85,9 +74,9 @@ Deno.serve(async (req) => {
     });
 
     return Response.json({
-      tasks: filteredTasks,
+      tasks: data.records,
       categorized,
-      total: filteredTasks.length
+      total: data.records.length
     });
   } catch (error) {
     console.error('Error:', error);
