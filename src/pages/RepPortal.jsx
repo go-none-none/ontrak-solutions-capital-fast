@@ -147,10 +147,14 @@ export default function RepPortal() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('salesforceAuth', {
-        action: 'getLoginUrl'
-      });
-      window.location.href = response.data.loginUrl;
+      // Use Salesforce app connector directly
+      const response = await base44.functions.invoke('getSalesforceUserViaConnector', {});
+      if (response.data?.sessionData) {
+        sessionStorage.setItem('sfSession', JSON.stringify(response.data.sessionData));
+        setSession(response.data.sessionData);
+        setIsAdmin(response.data.sessionData.isAdmin || false);
+        loadData(response.data.sessionData);
+      }
     } catch (error) {
       console.error('Login error:', error);
       alert('Failed to connect to Salesforce. Please try again.');
