@@ -187,7 +187,7 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
 
       {loading ? (
         <div className="text-center py-8">
-          <Loader2 className="w-8 h-8 text-[#08708E] animate-spin mx-auto" />
+          <Loader2 className="w-8 h-8 text-orange-600 animate-spin mx-auto" />
         </div>
       ) : files.length === 0 ? (
         <div className="text-center py-8 text-slate-500">
@@ -214,7 +214,7 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                     onCheckedChange={() => toggleFileSelection(file.ContentDocumentId)}
                   />
                   <div className="w-10 h-10 rounded-lg bg-[#08708E]/10 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-5 h-5 text-[#08708E]" />
+                    <Icon className="w-5 h-5 text-orange-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-slate-900 truncate">{doc.Title}</p>

@@ -64,7 +64,7 @@ export default function EmailClientCard({ recipientEmail, recipientName, recordI
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
           <div className="flex items-center gap-2">
-            <Mail className="w-5 h-5 text-[#08708E]" />
+            <Mail className="w-5 h-5 text-orange-600" />
             <h2 className="text-lg font-semibold text-slate-900">Send Email</h2>
           </div>
           <ChevronDown className={`w-5 h-5 transition-transform ${open ? 'rotate-180' : ''}`} />
