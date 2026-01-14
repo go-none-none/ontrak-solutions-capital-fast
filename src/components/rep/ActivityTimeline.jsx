@@ -273,6 +273,16 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
                           {activity.Priority}
                         </span>
                       )}
+                      {activity.CallDisposition && (
+                        <span className="inline-block text-xs px-2 py-1 rounded bg-green-100 text-green-700">
+                          {activity.CallDisposition}
+                        </span>
+                      )}
+                      {activity.Outcome && (
+                        <span className={`inline-block text-xs px-2 py-1 rounded ${activity.Outcome.toLowerCase().includes('bounce') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                          {activity.Outcome}
+                        </span>
+                      )}
                     </div>
                     <p className="text-xs text-slate-400 mt-1">{formatFullDateTime(activity.date)}</p>
                   </div>
