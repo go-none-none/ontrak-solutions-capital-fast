@@ -11,7 +11,7 @@ export default function ActivityTimeline({ recordId, recordType, session, onActi
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddTask, setShowAddTask] = useState(false);
-  const [showTimeline, setShowTimeline] = useState(true);
+  const [showTimeline, setShowTimeline] = useState(false);
   const [newTask, setNewTask] = useState({ subject: '', description: '', status: 'Not Started', priority: 'Normal' });
   const [submitting, setSubmitting] = useState(false);
 
