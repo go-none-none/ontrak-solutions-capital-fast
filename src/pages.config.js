@@ -3,6 +3,7 @@ import AdminPipeline from './pages/AdminPipeline';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Contact from './pages/Contact';
+import ContactDetail from './pages/ContactDetail';
 import FAQ from './pages/FAQ';
 import Home from './pages/Home';
 import HowItWorks from './pages/HowItWorks';
@@ -19,6 +20,7 @@ import IndustryTransportation from './pages/IndustryTransportation';
 import LeadDetail from './pages/LeadDetail';
 import MissingDocs from './pages/MissingDocs';
 import OpportunityDetail from './pages/OpportunityDetail';
+import OwnerContact from './pages/OwnerContact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RepPortal from './pages/RepPortal';
 import Reviews from './pages/Reviews';
@@ -27,8 +29,6 @@ import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
-import OwnerContact from './pages/OwnerContact';
-import ContactDetail from './pages/ContactDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -38,6 +38,7 @@ export const PAGES = {
     "Blog": Blog,
     "BlogPost": BlogPost,
     "Contact": Contact,
+    "ContactDetail": ContactDetail,
     "FAQ": FAQ,
     "Home": Home,
     "HowItWorks": HowItWorks,
@@ -54,6 +55,7 @@ export const PAGES = {
     "LeadDetail": LeadDetail,
     "MissingDocs": MissingDocs,
     "OpportunityDetail": OpportunityDetail,
+    "OwnerContact": OwnerContact,
     "PrivacyPolicy": PrivacyPolicy,
     "RepPortal": RepPortal,
     "Reviews": Reviews,
@@ -62,8 +64,6 @@ export const PAGES = {
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
-    "OwnerContact": OwnerContact,
-    "ContactDetail": ContactDetail,
 }
 
 export const pagesConfig = {

@@ -178,28 +178,30 @@ export default function RepPortal() {
       setLoading(true);
     }
     try {
+      console.log('loadData - Session data:', { userId: sessionData.userId, token: !!sessionData.token, instanceUrl: sessionData.instanceUrl });
+
       const [leadsRes, oppsRes, tasksRes, contactsRes] = await Promise.all([
-        base44.functions.invoke('getRepLeads', {
-          userId: sessionData.userId,
-          token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
-        }),
-        base44.functions.invoke('getRepOpportunities', {
-          userId: sessionData.userId,
-          token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
-        }),
-        base44.functions.invoke('getSalesforceTasks', {
-          userId: sessionData.userId,
-          token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
-        }),
-        base44.functions.invoke('getRepContacts', {
-          userId: sessionData.userId,
-          token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
-        })
-      ]);
+                base44.functions.invoke('getRepLeads', {
+                  userId: sessionData.userId,
+                  token: sessionData.token,
+                  instanceUrl: sessionData.instanceUrl
+                }),
+                base44.functions.invoke('getRepOpportunities', {
+                  userId: sessionData.userId,
+                  token: sessionData.token,
+                  instanceUrl: sessionData.instanceUrl
+                }),
+                base44.functions.invoke('getSalesforceTasks', {
+                  userId: sessionData.userId,
+                  token: sessionData.token,
+                  instanceUrl: sessionData.instanceUrl
+                }),
+                base44.functions.invoke('getRepContacts', {
+                  userId: sessionData.userId,
+                  token: sessionData.token,
+                  instanceUrl: sessionData.instanceUrl
+                })
+              ]);
 
       setLeads(leadsRes.data.leads || []);
       setOpportunities(oppsRes.data.opportunities || []);
