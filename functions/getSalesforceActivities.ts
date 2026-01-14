@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
     const relationField = recordType === 'Lead' ? 'WhoId' : 'WhatId';
 
     // Get Tasks (exclude email tasks to avoid duplicates)
-    const tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype FROM Task WHERE ${relationField} = '${recordId}' AND (TaskSubtype != 'Email' OR TaskSubtype = NULL) ORDER BY CreatedDate DESC`;
+    const tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype, CallOutcome FROM Task WHERE ${relationField} = '${recordId}' AND (TaskSubtype != 'Email' OR TaskSubtype = NULL) ORDER BY CreatedDate DESC`;
     
     // Get Events
     const eventsQuery = `SELECT Id, Subject, StartDateTime, EndDateTime, Description, CreatedDate, LastModifiedDate FROM Event WHERE ${relationField} = '${recordId}' ORDER BY StartDateTime DESC`;
