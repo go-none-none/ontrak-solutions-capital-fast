@@ -207,7 +207,7 @@ export default function OpportunityDetail() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-[#08708E] animate-spin" />
+        <Loader2 className="w-12 h-12 text-orange-600 animate-spin" />
       </div>
     );
   }
@@ -311,7 +311,7 @@ export default function OpportunityDetail() {
                       isFunded
                         ? 'bg-green-600 text-white shadow-lg'
                         : isActive
-                        ? 'bg-[#08708E] text-white shadow-lg' 
+                        ? 'bg-orange-600 text-white shadow-lg' 
                         : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
                     }`}>
                       {isFunded ? (
@@ -654,17 +654,17 @@ export default function OpportunityDetail() {
                       <p className="font-medium text-slate-900">{role.Contact?.Name}</p>
                       {role.Role && <p className="text-xs text-slate-500 mb-2">{role.Role}</p>}
                       {role.Contact?.Email && (
-                        <a href={`mailto:${role.Contact.Email}`} className="text-sm text-[#08708E] hover:underline block">
+                        <a href={`mailto:${role.Contact.Email}`} className="text-sm text-orange-600 hover:underline block">
                           {role.Contact.Email}
                         </a>
                       )}
                       {role.Contact?.Phone && (
-                        <a href={`tel:${role.Contact.Phone}`} className="text-sm text-[#08708E] hover:underline block">
+                        <a href={`tel:${role.Contact.Phone}`} className="text-sm text-orange-600 hover:underline block">
                           {role.Contact.Phone}
                         </a>
                       )}
                       {role.Contact?.MobilePhone && (
-                        <a href={`tel:${role.Contact.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block">
+                        <a href={`tel:${role.Contact.MobilePhone}`} className="text-sm text-orange-600 hover:underline block">
                           Mobile: {role.Contact.MobilePhone}
                         </a>
                       )}
@@ -680,7 +680,7 @@ export default function OpportunityDetail() {
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="text-slate-500 text-xs mb-1">Amount</p>
-                  <p className="text-2xl font-bold text-[#08708E]">{formatCurrency(opportunity.Amount)}</p>
+                  <p className="text-2xl font-bold text-orange-600">{formatCurrency(opportunity.Amount)}</p>
                 </div>
                 <div>
                   <p className="text-slate-500 text-xs mb-1">Close Date</p>
