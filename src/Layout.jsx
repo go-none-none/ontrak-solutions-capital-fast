@@ -19,7 +19,7 @@ if (typeof window !== 'undefined') {
 
 export default function Layout({ children, currentPageName }) {
   const { pathname } = useLocation();
-  const isRepPortal = currentPageName === 'RepPortal' || currentPageName === 'LeadDetail' || currentPageName === 'OpportunityDetail' || currentPageName === 'AdminPipeline';
+  const isRepPortal = currentPageName === 'RepPortal' || currentPageName === 'LeadDetail' || currentPageName === 'OpportunityDetail' || currentPageName === 'AdminPipeline' || currentPageName === 'ContactDetail';
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
