@@ -54,9 +54,21 @@ Deno.serve(async (req) => {
 
     const emailQuery = `SELECT ${emailFields} FROM EmailMessage WHERE RelatedToId = '${recordId}' ORDER BY MessageDate DESC`;
 
+    console.log('=== QUERY DEBUG ===');
+    console.log('Record ID:', recordId);
+    console.log('Record Type:', recordType);
     console.log('Task Query:', taskQuery);
     console.log('Event Query:', eventQuery);
     console.log('Email Query:', emailQuery);
+    console.log('==================');
+
+    // First, test if we can get ANY tasks at all
+    const testQuery = `SELECT COUNT() FROM Task`;
+    const testResponse = await fetch(`${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(testQuery)}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const testData = await testResponse.json();
+    console.log('Total tasks in org:', testData.totalSize);
 
     // Execute all queries in parallel
     const [tasksResponse, eventsResponse, emailsResponse] = await Promise.all([
