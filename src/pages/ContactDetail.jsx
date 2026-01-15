@@ -31,7 +31,16 @@ export default function ContactDetail() {
       const urlParams = new URLSearchParams(window.location.search);
       const contactId = urlParams.get('id');
 
+      console.log('ContactDetail loadData:', { contactId, hasToken: !!sessionData?.token, hasInstanceUrl: !!sessionData?.instanceUrl });
+
       if (!contactId) {
+        console.log('No contactId in URL');
+        setLoading(false);
+        return;
+      }
+
+      if (!sessionData?.token || !sessionData?.instanceUrl) {
+        console.error('Missing session data:', sessionData);
         setLoading(false);
         return;
       }
@@ -49,10 +58,12 @@ export default function ContactDetail() {
         })
       ]);
 
+      console.log('Contact loaded:', contactRes.data);
       setContact(contactRes.data.contact);
       setOpportunities(oppsRes.data.opportunities || []);
     } catch (error) {
       console.error('Load error:', error);
+      console.error('Error details:', error.response?.data);
     } finally {
       setLoading(false);
     }
