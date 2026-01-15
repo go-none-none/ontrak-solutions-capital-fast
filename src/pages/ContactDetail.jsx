@@ -36,7 +36,7 @@ export default function ContactDetail() {
     const contactId = urlParams.get('id');
     if (contactId && notifications.length > 0) {
       notifications.forEach(notif => {
-        if (notif.link && notif.link.includes(contactId)) {
+        if ((notif.recordId === contactId && notif.recordType === 'Contact') || (notif.link && notif.link.includes(contactId))) {
           removeNotification(notif.id);
         }
       });
