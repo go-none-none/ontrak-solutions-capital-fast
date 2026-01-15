@@ -9,51 +9,54 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
-    // Determine which field to query based on record type
-    const whoField = recordType === 'Lead' || recordType === 'Contact' ? 'WhoId' : null;
-    const whatField = recordType === 'Account' || recordType === 'Opportunity' ? 'WhatId' : null;
-
-    // Build comprehensive Task query
-    const taskFields = [
-      'Id', 'Subject', 'Status', 'Priority', 'ActivityDate', 'CreatedDate', 
-      'CompletedDateTime', 'Description', 'Owner.Name', 'WhoId', 'WhatId',
-      'Who.Name', 'What.Name', 'CallDurationInSeconds', 'CallType', 
-      'CallDisposition', 'TaskSubtype', 'Type'
-    ].join(',');
-
+    // Build WHERE clause based on record type
+    // Contacts can be in both WhoId and WhatId, others are specific
     let taskWhere = '';
-    if (whoField) {
+    let eventWhere = '';
+    
+    if (recordType === 'Lead') {
       taskWhere = `WHERE WhoId = '${recordId}'`;
-    } else if (whatField) {
+      eventWhere = `WHERE WhoId = '${recordId}'`;
+    } else if (recordType === 'Contact') {
+      // Contacts can appear in either WhoId OR WhatId
+      taskWhere = `WHERE (WhoId = '${recordId}' OR WhatId = '${recordId}')`;
+      eventWhere = `WHERE (WhoId = '${recordId}' OR WhatId = '${recordId}')`;
+    } else if (recordType === 'Opportunity' || recordType === 'Account') {
       taskWhere = `WHERE WhatId = '${recordId}'`;
+      eventWhere = `WHERE WhatId = '${recordId}'`;
     }
 
-    const taskQuery = `SELECT ${taskFields} FROM Task ${taskWhere} ORDER BY CreatedDate DESC LIMIT 500`;
+    // Build comprehensive Task query (includes calls, SMS)
+    const taskFields = [
+      'Id', 'Subject', 'Status', 'Priority', 'ActivityDate', 'CreatedDate', 
+      'CompletedDateTime', 'Description', 'Owner.Name', 'OwnerId', 'WhoId', 'WhatId',
+      'Who.Name', 'What.Name', 'CallDurationInSeconds', 'CallType', 
+      'CallDisposition', 'TaskSubtype', 'Type', 'LastModifiedDate'
+    ].join(',');
+
+    const taskQuery = `SELECT ${taskFields} FROM Task ${taskWhere} ORDER BY CreatedDate DESC`;
 
     // Build Event query
     const eventFields = [
       'Id', 'Subject', 'StartDateTime', 'EndDateTime', 'Description',
-      'Location', 'IsAllDayEvent', 'Owner.Name', 'WhoId', 'WhatId',
-      'Who.Name', 'What.Name', 'CreatedDate', 'ActivityDate', 'Type'
+      'Location', 'IsAllDayEvent', 'Owner.Name', 'OwnerId', 'WhoId', 'WhatId',
+      'Who.Name', 'What.Name', 'CreatedDate', 'ActivityDate', 'Type', 'LastModifiedDate'
     ].join(',');
 
-    let eventWhere = '';
-    if (whoField) {
-      eventWhere = `WHERE WhoId = '${recordId}'`;
-    } else if (whatField) {
-      eventWhere = `WHERE WhatId = '${recordId}'`;
-    }
+    const eventQuery = `SELECT ${eventFields} FROM Event ${eventWhere} ORDER BY StartDateTime DESC`;
 
-    const eventQuery = `SELECT ${eventFields} FROM Event ${eventWhere} ORDER BY StartDateTime DESC LIMIT 500`;
-
-    // Build EmailMessage query (for cases where emails are logged)
+    // Build EmailMessage query
     const emailFields = [
       'Id', 'Subject', 'TextBody', 'HtmlBody', 'FromAddress', 'ToAddress',
       'CcAddress', 'BccAddress', 'MessageDate', 'Status', 'Incoming',
-      'CreatedDate', 'RelatedToId'
+      'CreatedDate', 'RelatedToId', 'LastModifiedDate'
     ].join(',');
 
-    const emailQuery = `SELECT ${emailFields} FROM EmailMessage WHERE RelatedToId = '${recordId}' ORDER BY MessageDate DESC LIMIT 500`;
+    const emailQuery = `SELECT ${emailFields} FROM EmailMessage WHERE RelatedToId = '${recordId}' ORDER BY MessageDate DESC`;
+
+    console.log('Task Query:', taskQuery);
+    console.log('Event Query:', eventQuery);
+    console.log('Email Query:', emailQuery);
 
     // Execute all queries in parallel
     const [tasksResponse, eventsResponse, emailsResponse] = await Promise.all([
@@ -68,25 +71,45 @@ Deno.serve(async (req) => {
       })
     ]);
 
-    const tasks = tasksResponse.ok ? (await tasksResponse.json()).records || [] : [];
-    const events = eventsResponse.ok ? (await eventsResponse.json()).records || [] : [];
-    const emails = emailsResponse.ok ? (await emailsResponse.json()).records || [] : [];
+    const tasksData = tasksResponse.ok ? await tasksResponse.json() : { records: [] };
+    const eventsData = eventsResponse.ok ? await eventsResponse.json() : { records: [] };
+    const emailsData = emailsResponse.ok ? await emailsResponse.json() : { records: [] };
+
+    const tasks = tasksData.records || [];
+    const events = eventsData.records || [];
+    const emails = emailsData.records || [];
+
+    console.log('Tasks found:', tasks.length);
+    console.log('Events found:', events.length);
+    console.log('Emails found:', emails.length);
+
+    // Log any errors
+    if (!tasksResponse.ok) console.error('Task query error:', await tasksResponse.text());
+    if (!eventsResponse.ok) console.error('Event query error:', await eventsResponse.text());
+    if (!emailsResponse.ok) console.error('Email query error:', await emailsResponse.text());
 
     // Categorize and normalize activities
     const activities = [];
 
     // Process Tasks
     tasks.forEach(task => {
-      const isCall = task.TaskSubtype === 'Call' || task.CallType || task.CallDurationInSeconds;
-      const isSMS = task.Subject?.toLowerCase().includes('sms') || task.Type === 'SMS';
+      // Determine if it's a call or SMS
+      const isCall = task.TaskSubtype === 'Call' || 
+                     task.CallType || 
+                     task.CallDurationInSeconds || 
+                     task.Subject?.toLowerCase().includes('call');
+      
+      const isSMS = task.Subject?.toLowerCase().includes('sms') || 
+                    task.Type === 'SMS' ||
+                    task.TaskSubtype === 'SMS';
       
       activities.push({
         id: task.Id,
         type: isCall ? 'call' : isSMS ? 'sms' : 'task',
-        subject: task.Subject,
+        subject: task.Subject || 'Task',
         status: task.Status,
         priority: task.Priority,
-        date: task.ActivityDate || task.CreatedDate,
+        date: task.ActivityDate || task.CompletedDateTime || task.CreatedDate,
         completedDate: task.CompletedDateTime,
         createdDate: task.CreatedDate,
         description: task.Description,
@@ -146,12 +169,16 @@ Deno.serve(async (req) => {
     // Sort all activities by date (most recent first)
     activities.sort((a, b) => new Date(b.date) - new Date(a.date));
 
+    console.log('Total activities processed:', activities.length);
+
     return Response.json({ 
       activities,
       counts: {
         tasks: tasks.length,
         events: events.length,
         emails: emails.length,
+        calls: activities.filter(a => a.type === 'call').length,
+        sms: activities.filter(a => a.type === 'sms').length,
         total: activities.length
       }
     });
