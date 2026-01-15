@@ -6,7 +6,7 @@ import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
-import TwilioSMS from '../components/rep/TwilioSMS.jsx';
+import CommunicationCard from '../components/rep/CommunicationCard.jsx';
 import ActivityPanel from '../components/rep/ActivityPanel';
 
 export default function ContactDetail() {
@@ -279,8 +279,10 @@ export default function ContactDetail() {
 
           {/* Sidebar */}
            <div className="space-y-6">
-            {/* Twilio SMS */}
-            <TwilioSMS
+            {/* Communication Card - Email & SMS */}
+            <CommunicationCard
+              recipientEmail={contact.Email}
+              recipientName={contact.Name}
               phoneNumber={contact.MobilePhone || contact.Phone}
               recordId={contact.Id}
               recordType="Contact"
