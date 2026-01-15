@@ -50,12 +50,23 @@ export default function NotificationBell() {
 
   return (
     <div className="relative">
-      <button
+      <motion.button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors"
         title="Notifications"
+        animate={shouldRing ? {
+          rotate: [0, -10, 10, -10, 10, 0],
+          transition: { duration: 0.5, ease: "easeInOut" }
+        } : {}}
       >
-        <Bell className="w-5 h-5 text-slate-700" />
+        <motion.div
+          animate={shouldRing ? {
+            scale: [1, 1.2, 1],
+            transition: { duration: 0.5, ease: "easeInOut" }
+          } : {}}
+        >
+          <Bell className="w-5 h-5 text-slate-700" />
+        </motion.div>
         {unreadCount > 0 && (
           <span className="absolute top-1 right-1 w-5 h-5 bg-red-600 text-white text-xs rounded-full flex items-center justify-center font-bold">
             {unreadCount > 99 ? '99+' : unreadCount}
