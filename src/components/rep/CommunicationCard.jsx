@@ -60,16 +60,14 @@ export default function CommunicationCard({
 
       setVisibleSmsSids(allSmsSids);
 
-      // Check for new inbound messages and add notifications only once
+      // Check for new inbound messages received after last poll
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
-      console.log('Inbound messages found:', inboundMessages.length, inboundMessages);
-      console.log('Already notified SIDs:', Array.from(notifiedSids.current));
+      const now = new Date();
 
       inboundMessages.forEach(msg => {
-        console.log('Checking message:', msg.sid, 'Already notified?', notifiedSids.current.has(msg.sid));
-        if (!notifiedSids.current.has(msg.sid)) {
-          console.log('Adding notification for SMS:', msg.sid);
-          notifiedSids.current.add(msg.sid);
+        const msgDate = new Date(msg.date);
+        // Only notify if message is after last poll AND not already notified
+        if (msgDate > lastPollTime.current && !isSmsSidNotified(msg.sid)) {
           addNotification({
             title: `New SMS from ${recipientName}`,
             message: msg.body,
@@ -82,6 +80,8 @@ export default function CommunicationCard({
           });
         }
       });
+
+      lastPollTime.current = now;
     } catch (error) {
       console.error('Failed to load SMS history:', error);
     }
