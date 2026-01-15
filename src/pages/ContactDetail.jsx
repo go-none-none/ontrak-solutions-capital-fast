@@ -6,7 +6,6 @@ import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
-import ActivityPanel from '../components/rep/ActivityPanel';
 
 export default function ContactDetail() {
   const navigate = useNavigate();
@@ -278,12 +277,6 @@ export default function ContactDetail() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <ActivityPanel
-              recordId={contact.Id}
-              recordType="Contact"
-              session={session}
-            />
-
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="font-semibold text-slate-900 mb-4">Overview</h3>
               <div className="space-y-3 text-sm">

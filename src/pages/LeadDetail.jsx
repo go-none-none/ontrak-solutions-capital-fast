@@ -11,7 +11,6 @@ import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
-import ActivityPanel from '../components/rep/ActivityPanel';
 
 export default function LeadDetail() {
   const navigate = useNavigate();
@@ -612,13 +611,6 @@ export default function LeadDetail() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Activity Panel */}
-            <ActivityPanel
-              recordId={lead.Id}
-              recordType="Lead"
-              session={session}
-            />
-
             {/* Email Client */}
             <EmailClientCard
               recipientEmail={lead.Email}
