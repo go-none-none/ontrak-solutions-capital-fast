@@ -96,57 +96,20 @@ export default function ActivityPanel({ recordId, recordType, session }) {
 
   const renderHTML = (html) => {
     if (!html) return null;
-    return <div dangerouslySetInnerHTML={{ __html: html }} className="prose prose-sm max-w-none break-words" />;
+    return <div dangerouslySetInnerHTML={{ __html: html }} className="prose prose-sm max-w-none" />;
   };
 
   const renderLinksAsClickable = (text) => {
     if (!text) return text;
-    
-    // Pattern to match links with names like "Name: URL" or "Text (URL)"
-    const namedLinkPattern = /([^:\s]+):\s*(https?:\/\/[^\s]+)|([^(]+)\s*\((https?:\/\/[^\s)]+)\)/g;
-    const urlOnlyPattern = /(https?:\/\/[^\s]+)/g;
-    
-    // First check for named links
-    if (namedLinkPattern.test(text)) {
-      const parts = [];
-      let lastIndex = 0;
-      text.replace(namedLinkPattern, (match, name1, url1, name2, url2, offset) => {
-        // Add text before match
-        if (offset > lastIndex) {
-          parts.push(text.substring(lastIndex, offset));
-        }
-        
-        const name = name1 || name2;
-        const url = url1 || url2;
-        
-        parts.push(
-          <a key={offset} href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1 break-all">
-            {name.trim()}
-            <ExternalLink className="w-3 h-3 flex-shrink-0" />
-          </a>
-        );
-        
-        lastIndex = offset + match.length;
-        return match;
-      });
-      
-      // Add remaining text
-      if (lastIndex < text.length) {
-        parts.push(text.substring(lastIndex));
-      }
-      
-      return parts;
-    }
-    
-    // Fallback to plain URL matching
-    const parts = text.split(urlOnlyPattern);
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
     return parts.map((part, i) => {
-      if (part.match(urlOnlyPattern)) {
+      if (part.match(urlRegex)) {
         const displayText = part.length > 50 ? part.substring(0, 50) + '...' : part;
         return (
-          <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1 break-all">
+          <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
             {displayText}
-            <ExternalLink className="w-3 h-3 flex-shrink-0" />
+            <ExternalLink className="w-3 h-3" />
           </a>
         );
       }
@@ -172,7 +135,7 @@ export default function ActivityPanel({ recordId, recordType, session }) {
       </CollapsibleTrigger>
 
       <CollapsibleContent>
-        <div className="max-h-[600px] overflow-y-auto overflow-x-hidden">
+        <div className="max-h-[600px] overflow-y-auto">
           {activities.length === 0 ? (
             <div className="p-8 text-center text-slate-500">
               No activities found
@@ -275,10 +238,10 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                         )}
 
                         {expandedActivities[activity.id] && (activity.description || activity.body) && (
-                          <div className="mt-2 p-3 bg-slate-50 rounded-lg text-xs text-slate-700 overflow-x-hidden break-words">
+                          <div className="mt-2 p-3 bg-slate-50 rounded-lg text-xs text-slate-700 overflow-auto">
                             {activity.type === 'email' && activity.body 
                               ? renderHTML(activity.body)
-                              : <div className="whitespace-pre-wrap break-words">{renderLinksAsClickable(activity.description || activity.body)}</div>
+                              : <div className="whitespace-pre-wrap">{renderLinksAsClickable(activity.description || activity.body)}</div>
                             }
                           </div>
                         )}
