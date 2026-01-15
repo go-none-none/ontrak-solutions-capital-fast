@@ -56,6 +56,8 @@ export default function LeadDetail() {
     { label: 'Converted', status: 'Converted' }
   ];
 
+  const { removeNotification, notifications } = useContext(NotificationContext);
+
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
     if (!sessionData) {
@@ -67,6 +69,19 @@ export default function LeadDetail() {
     loadLead(session);
     loadUsers(session);
     loadDispositionOptions(session);
+  }, []);
+
+  // Clear notifications for this record on load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const leadId = urlParams.get('id');
+    if (leadId) {
+      notifications.forEach(notif => {
+        if (notif.link && notif.link.includes(leadId)) {
+          removeNotification(notif.id);
+        }
+      });
+    }
   }, []);
 
   const loadLead = async (sessionData) => {
