@@ -72,6 +72,8 @@ export default function CommunicationCard({
             title: `New SMS from ${recipientName}`,
             message: msg.body,
             smsSid: msg.sid,
+            recordId,
+            recordType,
             link: recordType === 'Opportunity' 
               ? createPageUrl('OpportunityDetail') + `?id=${recordId}`
               : recordType === 'Lead'
