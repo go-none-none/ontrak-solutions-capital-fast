@@ -6,8 +6,18 @@ export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
   const [notifiedSmsSids, setNotifiedSmsSids] = useState([]);
 
-  // Load notified SMS SIDs from localStorage on mount
+  // Load notifications and SMS SIDs from localStorage on mount
   useEffect(() => {
+    const storedNotifs = localStorage.getItem('notifications');
+    if (storedNotifs) {
+      try {
+        const parsed = JSON.parse(storedNotifs);
+        setNotifications(parsed);
+      } catch (e) {
+        setNotifications([]);
+      }
+    }
+
     const stored = localStorage.getItem('notifiedSmsSids');
     if (stored) {
       try {
@@ -17,6 +27,11 @@ export function NotificationProvider({ children }) {
       }
     }
   }, []);
+
+  // Persist notifications to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+  }, [notifications]);
 
   const addNotification = useCallback((notification) => {
     const id = Date.now();
