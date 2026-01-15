@@ -17,24 +17,28 @@ export default function FileUploadSection({ recordId, session }) {
   }, [recordId, session]);
 
   const loadFiles = async () => {
-    if (!session) return;
+    if (!session) {
+      console.log('No session provided');
+      return;
+    }
     
-    console.log('Loading files with:', { recordId, hasToken: !!session.token, hasInstance: !!session.instanceUrl });
+    const payload = {
+      recordId,
+      token: session.token,
+      instanceUrl: session.instanceUrl
+    };
+    console.log('Loading files with payload:', JSON.stringify(payload));
     setLoading(true);
     try {
       const response = await fetch('/api/functions/getSalesforceFiles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recordId,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
+        body: JSON.stringify(payload)
       });
       
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Load files failed:', errorData);
+        console.error('Load files failed with status', response.status, ':', JSON.stringify(errorData));
         throw new Error(errorData.error || 'Failed to load files');
       }
       
