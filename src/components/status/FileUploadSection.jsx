@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { FileText, Upload, Loader2, Download, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function FileUploadSection({ recordId, session }) {
+export default function FileUploadSection({ recordId, showActions = true }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -165,31 +165,33 @@ export default function FileUploadSection({ recordId, session }) {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-1 flex-shrink-0">
-                  <a
-                    href={`https://na1.salesforce.com/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`}
-                    download
-                    title="Download file"
-                  >
-                    <Button variant="ghost" size="sm">
-                      <Download className="w-4 h-4" />
+                {showActions && (
+                  <div className="flex gap-1 flex-shrink-0">
+                    <a
+                      href={`https://na1.salesforce.com/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`}
+                      download
+                      title="Download file"
+                    >
+                      <Button variant="ghost" size="sm">
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </a>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleDeleteFile(file.ContentDocumentId, doc.Title)}
+                      disabled={deleting === file.ContentDocumentId}
+                      title="Delete file"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      {deleting === file.ContentDocumentId ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
                     </Button>
-                  </a>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => handleDeleteFile(file.ContentDocumentId, doc.Title)}
-                    disabled={deleting === file.ContentDocumentId}
-                    title="Delete file"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    {deleting === file.ContentDocumentId ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="w-4 h-4" />
-                    )}
-                  </Button>
-                </div>
+                  </div>
+                )}
               </motion.div>
             );
           })}

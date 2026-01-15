@@ -412,7 +412,7 @@ export default function Status() {
           {/* File Upload Section - Show for all Opportunities OR Leads with Missing Info status */}
           {(data.recordType === 'Opportunity' || 
             (data.recordType === 'Lead' && data.status?.toLowerCase() === 'application missing info')) && (
-            <FileUploadSection recordId={recordId} />
+            <FileUploadSection recordId={recordId} showActions={false} />
           )}
 
 
