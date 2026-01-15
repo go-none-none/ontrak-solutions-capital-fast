@@ -124,6 +124,7 @@ export default function CommunicationCard({
       case 'sent':
         return <Check className="w-3 h-3 text-blue-600" title="Sent" />;
       case 'failed':
+      case 'undelivered':
         return <AlertCircle className="w-3 h-3 text-red-600" title="Failed" />;
       case 'queued':
         return <Loader2 className="w-3 h-3 text-yellow-600 animate-spin" title="Sending" />;
