@@ -19,6 +19,7 @@ export default function FileUploadSection({ recordId, session }) {
   const loadFiles = async () => {
     if (!session) return;
     
+    console.log('Loading files with:', { recordId, hasToken: !!session.token, hasInstance: !!session.instanceUrl });
     setLoading(true);
     try {
       const response = await fetch('/api/functions/getSalesforceFiles', {
@@ -30,6 +31,13 @@ export default function FileUploadSection({ recordId, session }) {
           instanceUrl: session.instanceUrl
         })
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Load files failed:', errorData);
+        throw new Error(errorData.error || 'Failed to load files');
+      }
+      
       const data = await response.json();
       setFiles(data.files || []);
     } catch (error) {
@@ -43,6 +51,7 @@ export default function FileUploadSection({ recordId, session }) {
     const file = event.target.files?.[0];
     if (!file || !session) return;
 
+    console.log('Uploading file with:', { fileName: file.name, recordId, hasToken: !!session.token, hasInstance: !!session.instanceUrl });
     setUploading(true);
     try {
       const reader = new FileReader();
@@ -67,7 +76,9 @@ export default function FileUploadSection({ recordId, session }) {
       });
 
       if (!response.ok) {
-        throw new Error('Upload failed');
+        const errorData = await response.json();
+        console.error('Upload failed:', errorData);
+        throw new Error(errorData.error || 'Upload failed');
       }
       
       await loadFiles();
