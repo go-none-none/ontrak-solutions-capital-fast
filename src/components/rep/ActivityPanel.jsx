@@ -96,25 +96,67 @@ export default function ActivityPanel({ recordId, recordType, session }) {
 
   const renderHTML = (html) => {
     if (!html) return null;
-    return <div dangerouslySetInnerHTML={{ __html: html }} className="prose prose-sm max-w-none" />;
+    return (
+      <div 
+        dangerouslySetInnerHTML={{ __html: html }} 
+        className="prose prose-sm max-w-none overflow-x-auto [&_img]:max-w-full [&_table]:max-w-full [&_*]:break-words" 
+        style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
+      />
+    );
   };
 
   const renderLinksAsClickable = (text) => {
     if (!text) return text;
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = text.split(urlRegex);
-    return parts.map((part, i) => {
-      if (part.match(urlRegex)) {
-        const displayText = part.length > 50 ? part.substring(0, 50) + '...' : part;
-        return (
-          <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
+    
+    // Match URLs with optional surrounding text like "name: url" or "name (url)"
+    const urlWithContextRegex = /([^:\s]+):\s*(https?:\/\/[^\s]+)|([^(]+)\s*\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s]+)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = urlWithContextRegex.exec(text)) !== null) {
+      // Add text before the match
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      
+      if (match[1] && match[2]) {
+        // Pattern: "name: url"
+        parts.push(
+          <a key={match.index} href={match[2]} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
+            {match[1]}
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        );
+      } else if (match[3] && match[4]) {
+        // Pattern: "name (url)"
+        parts.push(
+          <a key={match.index} href={match[4]} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
+            {match[3].trim()}
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        );
+      } else if (match[5]) {
+        // Just URL
+        const url = match[5];
+        const displayText = url.length > 40 ? url.substring(0, 40) + '...' : url;
+        parts.push(
+          <a key={match.index} href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1 break-all">
             {displayText}
             <ExternalLink className="w-3 h-3" />
           </a>
         );
       }
-      return part;
-    });
+      
+      lastIndex = urlWithContextRegex.lastIndex;
+    }
+    
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : text;
   };
 
   if (loading) {
@@ -238,10 +280,10 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                         )}
 
                         {expandedActivities[activity.id] && (activity.description || activity.body) && (
-                          <div className="mt-2 p-3 bg-slate-50 rounded-lg text-xs text-slate-700 overflow-auto">
+                          <div className="mt-2 p-3 bg-slate-50 rounded-lg text-xs text-slate-700 overflow-x-auto max-w-full" style={{ wordWrap: 'break-word' }}>
                             {activity.type === 'email' && activity.body 
                               ? renderHTML(activity.body)
-                              : <div className="whitespace-pre-wrap">{renderLinksAsClickable(activity.description || activity.body)}</div>
+                              : <div className="whitespace-pre-wrap break-words">{renderLinksAsClickable(activity.description || activity.body)}</div>
                             }
                           </div>
                         )}
