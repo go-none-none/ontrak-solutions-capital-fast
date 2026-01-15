@@ -4,38 +4,18 @@ import { Button } from "@/components/ui/button";
 import { FileText, Upload, Loader2, Download, Eye, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function FileUploadSection({ recordId }) {
+export default function FileUploadSection({ recordId, session }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(null);
-  const [session, setSession] = useState(null);
   const fileInputRef = useRef(null);
-
-  useEffect(() => {
-    initializeSession();
-  }, []);
 
   useEffect(() => {
     if (session) {
       loadFiles();
     }
   }, [recordId, session]);
-
-  const initializeSession = async () => {
-    try {
-      // Get session token for this opportunity
-      const response = await base44.functions.invoke('getSalesforceStatus', { recordId });
-      if (response.data && !response.data.error) {
-        setSession({
-          token: response.data.token,
-          instanceUrl: response.data.instanceUrl
-        });
-      }
-    } catch (error) {
-      console.error('Session init error:', error);
-    }
-  };
 
   const loadFiles = async () => {
     if (!session) return;
