@@ -12,7 +12,12 @@ export function NotificationProvider({ children }) {
     if (storedNotifs) {
       try {
         const parsed = JSON.parse(storedNotifs);
-        setNotifications(parsed);
+        // Convert timestamp strings back to Date objects
+        const restored = parsed.map(notif => ({
+          ...notif,
+          timestamp: new Date(notif.timestamp)
+        }));
+        setNotifications(restored);
       } catch (e) {
         setNotifications([]);
       }
