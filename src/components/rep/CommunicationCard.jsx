@@ -24,8 +24,8 @@ export default function CommunicationCard({
         const [smsHistory, setSmsHistory] = useState([]);
         const [loadingHistory, setLoadingHistory] = useState(false);
         const [visibleSmsSids, setVisibleSmsSids] = useState(new Set());
-        const { addNotification, removeNotification, notifications } = useContext(NotificationContext);
-        const notifiedSids = useRef(new Set());
+        const { addNotification, removeNotification, notifications, isSmsSidNotified } = useContext(NotificationContext);
+        const lastPollTime = useRef(new Date());
 
   useEffect(() => {
     if (phoneNumber) {
