@@ -38,7 +38,9 @@ export default function ContactDetail() {
 
       const [contactRes, oppsRes] = await Promise.all([
         base44.functions.invoke('getSalesforceContact', {
-          contactId
+          contactId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
         }),
         base44.functions.invoke('getContactRelatedOpportunities', {
           contactId,

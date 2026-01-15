@@ -1,23 +1,15 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
-
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req);
     const body = await req.json();
-    const { contactId } = body;
+    const { contactId, token, instanceUrl } = body;
 
     if (!contactId) {
       return Response.json({ error: 'Missing contactId' }, { status: 400 });
     }
 
-    // Get Salesforce token from connector
-    const token = await base44.asServiceRole.connectors.getAccessToken('salesforce');
-    if (!token) {
-      return Response.json({ error: 'Salesforce not authorized' }, { status: 401 });
+    if (!token || !instanceUrl) {
+      return Response.json({ error: 'Missing authentication' }, { status: 401 });
     }
-
-    // Get instance URL from Salesforce - use standard instance
-    const instanceUrl = 'https://ontrakcap.lightning.force.com';
 
     const query = `SELECT Id, Name, FirstName, LastName, Title, Department, Email, Phone, MobilePhone, HomePhone, OtherPhone, Fax, MailingStreet, MailingCity, MailingState, MailingPostalCode, MailingCountry, Account.Name, Description, LeadSource, csbs__Ownership__c, csbs__Credit_Score__c FROM Contact WHERE Id = '${contactId}' LIMIT 1`;
 
