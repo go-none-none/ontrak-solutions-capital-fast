@@ -57,12 +57,14 @@ export default function Layout({ children, currentPageName }) {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {!isRepPortal && <Navigation />}
-      <main className="flex-1">
-        {children}
-      </main>
-      {!isRepPortal && <Footer />}
-    </div>
+    <NotificationProvider>
+      <div className="min-h-screen flex flex-col">
+        {!isRepPortal && <Navigation />}
+        <main className="flex-1">
+          {children}
+        </main>
+        {!isRepPortal && <Footer />}
+      </div>
+    </NotificationProvider>
   );
 }
