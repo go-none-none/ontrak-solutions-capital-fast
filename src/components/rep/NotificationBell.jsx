@@ -1,5 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Bell, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { NotificationContext } from '../context/NotificationContext';
 import { Button } from '@/components/ui/button';
 
