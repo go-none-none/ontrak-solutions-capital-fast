@@ -86,8 +86,9 @@ export default function Status() {
 
     const status = data ? (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase() : '';
     const showApplicationForm = status === 'working - contacted' || status === 'working - application out';
+    const isMissingInfo = status === 'application missing info';
     
-    if (showApplicationForm && data) {
+    if (showApplicationForm && data && !isMissingInfo) {
       const urlParams = new URLSearchParams(window.location.search);
       const repId = urlParams.get('repId') || data.ownerAlias;
       const recordId = urlParams.get('rid') || data.id;
