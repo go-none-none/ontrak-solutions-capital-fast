@@ -19,16 +19,25 @@ export default function ActivityPanel({ recordId, recordType, session }) {
   const loadActivities = async () => {
     setLoading(true);
     try {
+      console.log('Loading activities for:', { recordId, recordType });
+      console.log('Session:', { hasToken: !!session?.token, hasInstance: !!session?.instanceUrl });
+      
       const response = await base44.functions.invoke('getSalesforceActivities', {
         recordId,
         recordType,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
+      
+      console.log('Activities response:', response);
+      console.log('Activities count:', response.data?.activities?.length);
+      console.log('Counts:', response.data?.counts);
+      
       setActivities(response.data.activities || []);
       setCounts(response.data.counts || { tasks: 0, events: 0, emails: 0, total: 0 });
     } catch (error) {
       console.error('Error loading activities:', error);
+      console.error('Error details:', error.response?.data);
     } finally {
       setLoading(false);
     }
