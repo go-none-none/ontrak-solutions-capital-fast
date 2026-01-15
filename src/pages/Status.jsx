@@ -34,6 +34,9 @@ export default function Status() {
 
         const response = await base44.functions.invoke('getSalesforceStatus', { recordId });
         
+        console.log('getSalesforceStatus response:', JSON.stringify(response.data));
+        console.log('Token in response:', { hasToken: !!response.data.token, tokenLength: response.data.token?.length });
+        
         if (response.data.error) {
           setError(response.data.error);
         } else {
