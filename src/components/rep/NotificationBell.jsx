@@ -68,11 +68,17 @@ export default function NotificationBell() {
           <Bell className="w-5 h-5 text-slate-700" />
         </motion.div>
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 w-5 h-5 bg-red-600 text-white text-xs rounded-full flex items-center justify-center font-bold">
+          <motion.span 
+            className="absolute top-1 right-1 w-5 h-5 bg-red-600 text-white text-xs rounded-full flex items-center justify-center font-bold"
+            animate={shouldRing ? {
+              scale: [1, 1.3, 1],
+              transition: { duration: 0.5, ease: "easeInOut" }
+            } : {}}
+          >
             {unreadCount > 99 ? '99+' : unreadCount}
-          </span>
+          </motion.span>
         )}
-      </button>
+      </motion.button>
 
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-xl border border-slate-200 z-50 max-h-96 overflow-y-auto">
