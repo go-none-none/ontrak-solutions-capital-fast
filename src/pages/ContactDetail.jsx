@@ -278,13 +278,6 @@ export default function ContactDetail() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Activity Timeline */}
-            <ActivityPanel
-              recordId={contact.Id}
-              recordType="Contact"
-              session={session}
-            />
-
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="font-semibold text-slate-900 mb-4">Overview</h3>
               <div className="space-y-3 text-sm">
@@ -318,6 +311,13 @@ export default function ContactDetail() {
                 )}
               </div>
             </div>
+
+            {/* Activity Timeline */}
+            <ActivityPanel
+              recordId={contact.Id}
+              recordType="Contact"
+              session={session}
+            />
           </div>
         </div>
       </div>
