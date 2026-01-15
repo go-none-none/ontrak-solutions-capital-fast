@@ -10,21 +10,21 @@ import { NotificationContext } from '../context/NotificationContext';
 import { createPageUrl } from '@/utils';
 
 export default function CommunicationCard({ 
-  recipientEmail, 
-  recipientName, 
-  phoneNumber,
-  recordId, 
-  recordType, 
-  session,
-  smsColor = 'bg-blue-600'
-}) {
-  const [emailData, setEmailData] = useState({ subject: '', message: '' });
-  const [smsMessage, setSmsMessage] = useState('');
-  const [sending, setSending] = useState(false);
-  const [smsHistory, setSmsHistory] = useState([]);
-  const [loadingHistory, setLoadingHistory] = useState(false);
-  const [notifiedSmsSids, setNotifiedSmsSids] = useState(new Set());
-  const { addNotification } = useContext(NotificationContext);
+        recipientEmail, 
+        recipientName, 
+        phoneNumber,
+        recordId, 
+        recordType, 
+        session,
+        smsColor = 'bg-blue-600'
+      }) {
+        const [emailData, setEmailData] = useState({ subject: '', message: '' });
+        const [smsMessage, setSmsMessage] = useState('');
+        const [sending, setSending] = useState(false);
+        const [smsHistory, setSmsHistory] = useState([]);
+        const [loadingHistory, setLoadingHistory] = useState(false);
+        const [visibleSmsSids, setVisibleSmsSids] = useState(new Set());
+        const { addNotification, removeNotification, notifications } = useContext(NotificationContext);
 
   useEffect(() => {
     if (phoneNumber) {
@@ -34,6 +34,15 @@ export default function CommunicationCard({
       return () => clearInterval(interval);
     }
   }, [phoneNumber]);
+
+  // Clear notifications for SMS that are now visible
+  useEffect(() => {
+    notifications.forEach(notif => {
+      if (visibleSmsSids.has(notif.smsSid)) {
+        removeNotification(notif.id);
+      }
+    });
+  }, [visibleSmsSids, notifications, removeNotification]);
 
   const loadSmsHistory = async () => {
     setLoadingHistory(true);
@@ -48,20 +57,25 @@ export default function CommunicationCard({
       const messages = response.data.messages || [];
       setSmsHistory(messages);
 
+      // Track all visible SMS SIDs so notifications can be cleared
+      const allSmsSids = new Set(messages.map(m => m.sid));
+      setVisibleSmsSids(allSmsSids);
+
       // Check for new inbound messages and avoid duplicates
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
       inboundMessages.forEach(msg => {
-        if (!notifiedSmsSids.has(msg.sid)) {
+        const existingNotif = notifications.find(n => n.smsSid === msg.sid);
+        if (!existingNotif) {
           addNotification({
             title: `New SMS from ${recipientName}`,
             message: msg.body,
+            smsSid: msg.sid,
             link: recordType === 'Opportunity' 
               ? createPageUrl('OpportunityDetail') + `?id=${recordId}`
               : recordType === 'Lead'
               ? createPageUrl('LeadDetail') + `?id=${recordId}`
               : createPageUrl('ContactDetail') + `?id=${recordId}`
           });
-          setNotifiedSmsSids(prev => new Set([...prev, msg.sid]));
         }
       });
     } catch (error) {
