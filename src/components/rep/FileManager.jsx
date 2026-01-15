@@ -40,13 +40,23 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
 
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('recordId', recordId);
-      formData.append('token', session.token);
-      formData.append('instanceUrl', session.instanceUrl);
+      // Convert file to base64
+      const reader = new FileReader();
+      const base64Promise = new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      
+      const base64Data = await base64Promise;
 
-      await base44.functions.invoke('uploadSalesforceFile', formData);
+      await base44.functions.invoke('uploadSalesforceFile', {
+        fileName: file.name,
+        fileData: base64Data,
+        recordId: recordId,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
       
       await loadFiles();
       if (onFileUploaded) onFileUploaded();

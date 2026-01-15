@@ -3,19 +3,15 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const formData = await req.formData();
+    const body = await req.json();
     
-    const file = formData.get('file');
-    const recordId = formData.get('recordId');
-    const token = formData.get('token');
-    const instanceUrl = formData.get('instanceUrl');
+    const { fileName, fileData, recordId, token, instanceUrl } = body;
 
-    if (!token || !instanceUrl || !recordId || !file) {
+    if (!token || !instanceUrl || !recordId || !fileName || !fileData) {
       return Response.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
-    const fileBuffer = await file.arrayBuffer();
-    const base64Data = btoa(String.fromCharCode(...new Uint8Array(fileBuffer)));
+    const base64Data = fileData;
 
     // Create ContentVersion
     const cvResponse = await fetch(
@@ -27,8 +23,8 @@ Deno.serve(async (req) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          Title: file.name,
-          PathOnClient: file.name,
+          Title: fileName,
+          PathOnClient: fileName,
           VersionData: base64Data
         })
       }
