@@ -40,16 +40,25 @@ Deno.serve(async (req) => {
 
     const data = await response.json();
     
+    // Get Twilio phone number
+    const twilioPhoneNumber = Deno.env.get('TWILIO_PHONE_NUMBER');
+    
     // Filter and format messages for this phone number
     const messages = (data.messages || [])
       .filter(msg => msg.to === formattedPhone || msg.from === formattedPhone)
       .sort((a, b) => new Date(a.date_sent) - new Date(b.date_sent))
-      .map(msg => ({
-        body: msg.body,
-        direction: msg.direction,
-        date: msg.date_sent,
-        status: msg.status
-      }));
+      .map(msg => {
+        // Determine direction: outbound if FROM Twilio number, inbound if TO Twilio number
+        const isOutbound = msg.from === twilioPhoneNumber;
+        return {
+          body: msg.body,
+          direction: isOutbound ? 'outbound' : 'inbound',
+          date: msg.date_sent,
+          status: msg.status,
+          from: msg.from,
+          to: msg.to
+        };
+      });
 
     return Response.json({ messages });
   } catch (error) {
