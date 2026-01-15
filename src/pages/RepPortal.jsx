@@ -84,6 +84,50 @@ export default function RepPortal() {
     }
   }, []);
 
+  // Poll for new SMS notifications globally
+  useEffect(() => {
+    if (!session || !opportunities.length) return;
+    
+    const pollSms = async () => {
+      try {
+        // Check first opportunity's contact for SMS
+        for (const opp of opportunities.slice(0, 3)) {
+          try {
+            const response = await base44.functions.invoke('getTwilioSmsHistory', {
+              phoneNumber: opp.Account?.Phone?.replace(/\D/g, ''),
+              recordId: opp.Id,
+              recordType: 'Opportunity',
+              token: session.token,
+              instanceUrl: session.instanceUrl
+            });
+            
+            const messages = response.data.messages || [];
+            const inboundMessages = messages.filter(m => m.direction === 'inbound');
+            
+            inboundMessages.forEach(msg => {
+              if (!notifiedSids.current.has(msg.sid)) {
+                notifiedSids.current.add(msg.sid);
+                addNotification({
+                  title: `New SMS from ${opp.Account?.Name}`,
+                  message: msg.body,
+                  smsSid: msg.sid,
+                  link: createPageUrl('OpportunityDetail') + `?id=${opp.Id}`
+                });
+              }
+            });
+          } catch (err) {
+            // Silent fail for individual opportunities
+          }
+        }
+      } catch (error) {
+        // Silent fail
+      }
+    };
+
+    const interval = setInterval(pollSms, 15000); // Poll every 15 seconds
+    return () => clearInterval(interval);
+  }, [session, opportunities, addNotification]);
+
   useEffect(() => {
     // Save state to sessionStorage whenever it changes
     const state = {
