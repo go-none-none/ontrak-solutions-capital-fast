@@ -12,6 +12,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
+import TwilioSMS from '../components/rep/TwilioSMS.jsx';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
 import ActivityPanel from '../components/rep/ActivityPanel';
 
@@ -635,7 +636,15 @@ export default function OpportunityDetail() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+           <div className="space-y-6">
+            {/* Twilio SMS */}
+            <TwilioSMS
+              phoneNumber={contactRoles[0]?.Contact?.MobilePhone || contactRoles[0]?.Contact?.Phone}
+              recordId={opportunity.Id}
+              recordType="Opportunity"
+              session={session}
+            />
+
             {/* Email Client */}
             <EmailClientCard
               recipientEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
