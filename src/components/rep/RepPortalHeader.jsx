@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Home, Shield, RefreshCw, LogOut, Plus, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import NotificationBell from './NotificationBell';
 
 export default function RepPortalHeader({ 
   isAdmin, 
