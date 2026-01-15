@@ -34,9 +34,6 @@ export default function Status() {
 
         const response = await base44.functions.invoke('getSalesforceStatus', { recordId });
         
-        console.log('getSalesforceStatus response:', JSON.stringify(response.data));
-        console.log('Token in response:', { hasToken: !!response.data.token, tokenLength: response.data.token?.length });
-        
         if (response.data.error) {
           setError(response.data.error);
         } else {
@@ -415,10 +412,7 @@ export default function Status() {
           {/* File Upload Section - Show for all Opportunities OR Leads with Missing Info status */}
           {(data.recordType === 'Opportunity' || 
             (data.recordType === 'Lead' && data.status?.toLowerCase() === 'application missing info')) && (
-            <FileUploadSection 
-              recordId={recordId} 
-              session={{ token: data.token, instanceUrl: data.instanceUrl }} 
-            />
+            <FileUploadSection recordId={recordId} />
           )}
 
 
