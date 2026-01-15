@@ -13,6 +13,7 @@ import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
+import ActivityPanel from '../components/rep/ActivityPanel';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -635,6 +636,13 @@ export default function OpportunityDetail() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Activity Timeline */}
+            <ActivityPanel
+              recordId={opportunity.Id}
+              recordType="Opportunity"
+              session={session}
+            />
+
             {/* Email Client */}
             <EmailClientCard
               recipientEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
