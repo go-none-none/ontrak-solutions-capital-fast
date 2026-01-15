@@ -117,6 +117,21 @@ export default function CommunicationCard({
     });
   };
 
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'delivered':
+        return <CheckCheck className="w-3 h-3 text-green-600" title="Delivered" />;
+      case 'sent':
+        return <Check className="w-3 h-3 text-blue-600" title="Sent" />;
+      case 'failed':
+        return <AlertCircle className="w-3 h-3 text-red-600" title="Failed" />;
+      case 'queued':
+        return <Loader2 className="w-3 h-3 text-yellow-600 animate-spin" title="Sending" />;
+      default:
+        return null;
+    }
+  };
+
   const hasEmail = !!recipientEmail;
   const hasPhone = !!phoneNumber;
 
