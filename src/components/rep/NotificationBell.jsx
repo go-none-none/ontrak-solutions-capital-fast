@@ -134,7 +134,10 @@ export default function NotificationBell() {
                 <a
                   key={notif.id}
                   href={notif.link}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    removeNotification(notif.id);
+                    setIsOpen(false);
+                  }}
                   className="block p-3 rounded-lg hover:bg-slate-100 transition-colors border-l-4 border-orange-600 bg-orange-50"
                 >
                   <div className="flex items-start justify-between">
