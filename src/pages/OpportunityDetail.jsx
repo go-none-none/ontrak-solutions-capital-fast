@@ -636,13 +636,6 @@ export default function OpportunityDetail() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Activity Timeline */}
-            <ActivityPanel
-              recordId={opportunity.Id}
-              recordType="Opportunity"
-              session={session}
-            />
-
             {/* Email Client */}
             <EmailClientCard
               recipientEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
@@ -681,6 +674,13 @@ export default function OpportunityDetail() {
                 </div>
               </div>
             )}
+
+            {/* Activity Timeline */}
+            <ActivityPanel
+              recordId={opportunity.Id}
+              recordType="Opportunity"
+              session={session}
+            />
 
             {/* Quick Stats */}
             <div className="bg-white rounded-xl p-6 shadow-sm">

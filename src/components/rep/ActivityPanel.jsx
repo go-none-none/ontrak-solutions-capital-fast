@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Loader2, Phone, Mail, Calendar, CheckSquare, MessageSquare, ChevronDown, Clock, User, MapPin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Loader2, Phone, Mail, Calendar, CheckSquare, MessageSquare, ChevronDown, Clock, User, MapPin, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
@@ -9,8 +8,8 @@ export default function ActivityPanel({ recordId, recordType, session }) {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [counts, setCounts] = useState({ tasks: 0, events: 0, emails: 0, total: 0 });
-  const [filter, setFilter] = useState('all');
   const [expandedActivities, setExpandedActivities] = useState({});
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     loadActivities();
@@ -95,10 +94,28 @@ export default function ActivityPanel({ recordId, recordType, session }) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const filteredActivities = activities.filter(activity => {
-    if (filter === 'all') return true;
-    return activity.type === filter;
-  });
+  const renderHTML = (html) => {
+    if (!html) return null;
+    return <div dangerouslySetInnerHTML={{ __html: html }} className="prose prose-sm max-w-none" />;
+  };
+
+  const renderLinksAsClickable = (text) => {
+    if (!text) return text;
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, i) => {
+      if (part.match(urlRegex)) {
+        const displayText = part.length > 50 ? part.substring(0, 50) + '...' : part;
+        return (
+          <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
+            {displayText}
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        );
+      }
+      return part;
+    });
+  };
 
   if (loading) {
     return (
@@ -111,77 +128,21 @@ export default function ActivityPanel({ recordId, recordType, session }) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-      <div className="p-4 border-b border-slate-200">
-        <h3 className="font-semibold text-slate-900 mb-3">Activity Timeline</h3>
-        
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant={filter === 'all' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('all')}
-            className={filter === 'all' ? 'bg-slate-800' : ''}
-          >
-            All ({counts.total})
-          </Button>
-          <Button
-            variant={filter === 'task' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('task')}
-            className={filter === 'task' ? 'bg-orange-600' : ''}
-          >
-            <CheckSquare className="w-3 h-3 mr-1" />
-            Tasks
-          </Button>
-          <Button
-            variant={filter === 'call' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('call')}
-            className={filter === 'call' ? 'bg-blue-600' : ''}
-          >
-            <Phone className="w-3 h-3 mr-1" />
-            Calls
-          </Button>
-          <Button
-            variant={filter === 'event' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('event')}
-            className={filter === 'event' ? 'bg-green-600' : ''}
-          >
-            <Calendar className="w-3 h-3 mr-1" />
-            Events
-          </Button>
-          <Button
-            variant={filter === 'email' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('email')}
-            className={filter === 'email' ? 'bg-purple-600' : ''}
-          >
-            <Mail className="w-3 h-3 mr-1" />
-            Emails
-          </Button>
-          <Button
-            variant={filter === 'sms' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter('sms')}
-            className={filter === 'sms' ? 'bg-pink-600' : ''}
-          >
-            <MessageSquare className="w-3 h-3 mr-1" />
-            SMS
-          </Button>
-        </div>
-      </div>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50 border-b border-slate-200">
+        <h3 className="font-semibold text-slate-900">Activity Timeline ({counts.total})</h3>
+        <ChevronDown className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </CollapsibleTrigger>
 
-      {/* Activities List */}
-      <div className="max-h-[600px] overflow-y-auto">
-        {filteredActivities.length === 0 ? (
-          <div className="p-8 text-center text-slate-500">
-            No activities found
-          </div>
-        ) : (
-          <div className="divide-y divide-slate-100">
-            {filteredActivities.map(activity => (
+      <CollapsibleContent>
+        <div className="max-h-[600px] overflow-y-auto">
+          {activities.length === 0 ? (
+            <div className="p-8 text-center text-slate-500">
+              No activities found
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-100">
+              {activities.map(activity => (
               <div key={activity.id} className="p-4 hover:bg-slate-50 transition-colors">
                 <div className="flex items-start gap-3">
                   <div className={`p-2 rounded-lg ${getActivityColor(activity.type)}`}>
@@ -277,8 +238,11 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                         )}
 
                         {expandedActivities[activity.id] && (activity.description || activity.body) && (
-                          <div className="mt-2 p-3 bg-slate-50 rounded-lg text-xs text-slate-700">
-                            {activity.description || activity.body}
+                          <div className="mt-2 p-3 bg-slate-50 rounded-lg text-xs text-slate-700 overflow-auto">
+                            {activity.type === 'email' && activity.body 
+                              ? renderHTML(activity.body)
+                              : <div className="whitespace-pre-wrap">{renderLinksAsClickable(activity.description || activity.body)}</div>
+                            }
                           </div>
                         )}
                       </div>
@@ -287,9 +251,10 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                 </div>
               </div>
             ))}
-          </div>
-        )}
-      </div>
-    </div>
+            </div>
+          )}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
