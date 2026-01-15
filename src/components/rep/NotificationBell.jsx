@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Bell, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { NotificationContext } from '../context/NotificationContext';
@@ -8,6 +8,7 @@ export default function NotificationBell() {
   const { notifications, removeNotification, clearAllNotifications } = useContext(NotificationContext);
   const [isOpen, setIsOpen] = useState(false);
   const [shouldRing, setShouldRing] = useState(false);
+  const notificationRef = useRef(null);
   const unreadCount = notifications.length;
   
   console.log('NotificationBell - notifications:', unreadCount, notifications);
