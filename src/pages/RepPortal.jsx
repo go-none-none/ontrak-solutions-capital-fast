@@ -187,7 +187,12 @@ export default function RepPortal() {
       setLoading(true);
     }
     try {
-      console.log('loadData - Session data:', { userId: sessionData.userId, token: !!sessionData.token, instanceUrl: sessionData.instanceUrl });
+      console.log('loadData - Session data:', { 
+        userId: sessionData.userId, 
+        hasToken: !!sessionData.token, 
+        tokenLength: sessionData.token?.length,
+        instanceUrl: sessionData.instanceUrl 
+      });
 
       const [leadsRes, oppsRes, tasksRes] = await Promise.all([
                         base44.functions.invoke('getRepLeads', {
