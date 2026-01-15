@@ -1,0 +1,278 @@
+import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Mail, MessageSquare, Loader2, Send, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
+
+export default function CommunicationCard({ 
+  recipientEmail, 
+  recipientName, 
+  phoneNumber,
+  recordId, 
+  recordType, 
+  session 
+}) {
+  const [emailData, setEmailData] = useState({ subject: '', message: '' });
+  const [smsMessage, setSmsMessage] = useState('');
+  const [sending, setSending] = useState(false);
+  const [smsHistory, setSmsHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  useEffect(() => {
+    if (phoneNumber) {
+      loadSmsHistory();
+    }
+  }, [phoneNumber]);
+
+  const loadSmsHistory = async () => {
+    setLoadingHistory(true);
+    try {
+      const response = await base44.functions.invoke('getTwilioSmsHistory', {
+        phoneNumber: phoneNumber.replace(/\D/g, ''),
+        recordId,
+        recordType,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      setSmsHistory(response.data.messages || []);
+    } catch (error) {
+      console.error('Failed to load SMS history:', error);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    if (!emailData.subject.trim() || !emailData.message.trim()) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    setSending(true);
+    try {
+      const response = await base44.functions.invoke('sendSalesforceEmail', {
+        recipientEmail,
+        recipientName,
+        subject: emailData.subject,
+        message: emailData.message,
+        recordId,
+        recordType,
+        senderName: session.name,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+
+      if (response.data?.success) {
+        toast.success('Email sent successfully!');
+        setEmailData({ subject: '', message: '' });
+      } else {
+        toast.error(response.data?.error || 'Failed to send email');
+      }
+    } catch (error) {
+      console.error('Send email error:', error);
+      toast.error(error.message || 'Failed to send email');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleSendSMS = async () => {
+    if (!smsMessage.trim()) {
+      toast.error('Please enter a message');
+      return;
+    }
+
+    setSending(true);
+    try {
+      await base44.functions.invoke('sendTwilioSMS', {
+        phoneNumber: phoneNumber.replace(/\D/g, ''),
+        message: smsMessage.trim(),
+        recordId,
+        recordType,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+
+      toast.success('SMS sent successfully');
+      setSmsMessage('');
+      await loadSmsHistory();
+    } catch (error) {
+      console.error('SMS error:', error);
+      toast.error(error.message || 'Failed to send SMS');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const hasEmail = !!recipientEmail;
+  const hasPhone = !!phoneNumber;
+
+  if (!hasEmail && !hasPhone) {
+    return null;
+  }
+
+  return (
+    <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <Tabs defaultValue={hasEmail ? "email" : "sms"} className="w-full">
+        <TabsList className="w-full flex rounded-none bg-slate-100 p-0 h-auto">
+          {hasEmail && (
+            <TabsTrigger 
+              value="email" 
+              className="flex-1 rounded-none data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-orange-600"
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Email
+            </TabsTrigger>
+          )}
+          {hasPhone && (
+            <TabsTrigger 
+              value="sms" 
+              className="flex-1 rounded-none data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              SMS
+            </TabsTrigger>
+          )}
+        </TabsList>
+
+        {hasEmail && (
+          <TabsContent value="email" className="p-4 space-y-4">
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">To:</label>
+              <Input value={`${recipientName} <${recipientEmail}>`} disabled className="bg-slate-50" />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Subject:</label>
+              <Input
+                placeholder="Email subject"
+                value={emailData.subject}
+                onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Message:</label>
+              <Textarea
+                placeholder="Type your message here..."
+                value={emailData.message}
+                onChange={(e) => setEmailData({ ...emailData, message: e.target.value })}
+                rows={6}
+                className="resize-none"
+              />
+            </div>
+            <Button 
+              onClick={handleSendEmail} 
+              disabled={sending} 
+              className="w-full bg-orange-600 hover:bg-orange-700"
+            >
+              {sending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Send Email
+                </>
+              )}
+            </Button>
+          </TabsContent>
+        )}
+
+        {hasPhone && (
+          <TabsContent value="sms" className="p-4 space-y-4">
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">To:</label>
+              <Input value={phoneNumber} disabled className="bg-slate-50" />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Message:</label>
+              <Textarea
+                placeholder="Type your message..."
+                value={smsMessage}
+                onChange={(e) => setSmsMessage(e.target.value)}
+                rows={4}
+                className="resize-none"
+              />
+            </div>
+            <Button 
+              onClick={handleSendSMS} 
+              disabled={sending || !smsMessage.trim()} 
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              {sending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Send SMS
+                </>
+              )}
+            </Button>
+
+            {/* SMS History */}
+            <div className="mt-6 pt-4 border-t border-slate-200">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-slate-900">Conversation History</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={loadSmsHistory}
+                  disabled={loadingHistory}
+                  className="text-xs"
+                >
+                  {loadingHistory ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    'Refresh'
+                  )}
+                </Button>
+              </div>
+
+              {loadingHistory ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+                </div>
+              ) : smsHistory.length === 0 ? (
+                <p className="text-sm text-slate-500 text-center py-4">No messages yet</p>
+              ) : (
+                <div className="space-y-3 max-h-48 overflow-y-auto">
+                  {smsHistory.map((msg, idx) => (
+                    <div key={idx} className={`p-3 rounded-lg text-sm ${
+                      msg.direction === 'outbound' 
+                        ? 'bg-blue-50 border border-blue-200' 
+                        : 'bg-slate-50 border border-slate-200'
+                    }`}>
+                      <div className="flex items-start justify-between mb-1">
+                        <span className="font-medium text-slate-900">
+                          {msg.direction === 'outbound' ? 'You' : recipientName}
+                        </span>
+                        <span className="text-xs text-slate-500">{formatDate(msg.date)}</span>
+                      </div>
+                      <p className="text-slate-700">{msg.body}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </TabsContent>
+        )}
+      </Tabs>
+    </div>
+  );
+}
