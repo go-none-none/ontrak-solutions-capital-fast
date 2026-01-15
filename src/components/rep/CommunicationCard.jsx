@@ -23,10 +23,15 @@ export default function CommunicationCard({
   const [sending, setSending] = useState(false);
   const [smsHistory, setSmsHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [previousMessageCount, setPreviousMessageCount] = useState(0);
+  const { addNotification } = useContext(NotificationContext);
 
   useEffect(() => {
     if (phoneNumber) {
       loadSmsHistory();
+      // Set up polling for new SMS every 10 seconds
+      const interval = setInterval(loadSmsHistory, 10000);
+      return () => clearInterval(interval);
     }
   }, [phoneNumber]);
 
