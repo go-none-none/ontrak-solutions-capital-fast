@@ -84,19 +84,24 @@ export default function RepPortal() {
     }
   }, []);
 
-  // Poll for new SMS notifications globally
+  // Poll for new SMS notifications globally (from contacts with phone numbers)
   useEffect(() => {
-    if (!session || !opportunities.length) return;
+    if (!session || !contacts.length) return;
     
     const pollSms = async () => {
       try {
-        // Check first opportunity's contact for SMS
-        for (const opp of opportunities.slice(0, 3)) {
+        // Check contacts with phone numbers for SMS
+        const contactsWithPhone = contacts.filter(c => c.MobilePhone || c.Phone);
+        
+        for (const contact of contactsWithPhone.slice(0, 5)) {
           try {
+            const phone = (contact.MobilePhone || contact.Phone)?.replace(/\D/g, '');
+            if (!phone) continue;
+            
             const response = await base44.functions.invoke('getTwilioSmsHistory', {
-              phoneNumber: opp.Account?.Phone?.replace(/\D/g, ''),
-              recordId: opp.Id,
-              recordType: 'Opportunity',
+              phoneNumber: phone,
+              recordId: contact.Id,
+              recordType: 'Contact',
               token: session.token,
               instanceUrl: session.instanceUrl
             });
@@ -108,15 +113,15 @@ export default function RepPortal() {
               if (!notifiedSids.current.has(msg.sid)) {
                 notifiedSids.current.add(msg.sid);
                 addNotification({
-                  title: `New SMS from ${opp.Account?.Name}`,
+                  title: `New SMS from ${contact.Name}`,
                   message: msg.body,
                   smsSid: msg.sid,
-                  link: createPageUrl('OpportunityDetail') + `?id=${opp.Id}`
+                  link: createPageUrl('ContactDetail') + `?id=${contact.Id}`
                 });
               }
             });
           } catch (err) {
-            // Silent fail for individual opportunities
+            // Silent fail for individual contacts
           }
         }
       } catch (error) {
@@ -126,7 +131,7 @@ export default function RepPortal() {
 
     const interval = setInterval(pollSms, 15000); // Poll every 15 seconds
     return () => clearInterval(interval);
-  }, [session, opportunities, addNotification]);
+  }, [session, contacts, addNotification]);
 
   useEffect(() => {
     // Save state to sessionStorage whenever it changes
