@@ -94,28 +94,12 @@ export default function ActivityPanel({ recordId, recordType, session }) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const renderHTML = (html) => {
-    if (!html) return null;
-    
-    // Strip inline width styles and add mobile-friendly constraints
-    const mobileHtml = html
-      .replace(/width\s*:\s*[^;]+;?/gi, '')
-      .replace(/min-width\s*:\s*[^;]+;?/gi, '')
-      .replace(/max-width\s*:\s*[^;]+;?/gi, '');
-    
-    return (
-      <div 
-        dangerouslySetInnerHTML={{ __html: mobileHtml }} 
-        className="prose prose-sm max-w-full overflow-x-hidden [&_*]:max-w-full! [&_img]:max-w-full [&_img]:h-auto [&_img]:w-auto [&_table]:max-w-full [&_table]:w-full! [&_table]:text-xs [&_table]:table-auto [&_table]:block [&_table]:overflow-x-auto [&_*]:!box-border [&_div]:max-w-full [&_p]:max-w-full [&_td]:text-xs [&_th]:text-xs [&_td]:p-1 [&_th]:p-1" 
-        style={{ 
-          wordWrap: 'break-word', 
-          overflowWrap: 'break-word', 
-          fontSize: '0.75rem', 
-          maxWidth: '100%',
-          width: '100%'
-        }}
-      />
-    );
+  const stripHTML = (html) => {
+    if (!html) return '';
+    // Create a temporary div to parse HTML and extract text
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
   };
 
   const renderLinksAsClickable = (text) => {
@@ -294,10 +278,12 @@ export default function ActivityPanel({ recordId, recordType, session }) {
 
                         {expandedActivities[activity.id] && (activity.description || activity.body) && (
                           <div className="mt-2 p-3 bg-slate-50 rounded-lg text-xs text-slate-700 overflow-x-auto max-w-full" style={{ wordWrap: 'break-word' }}>
-                            {activity.type === 'email' && activity.body 
-                              ? renderHTML(activity.body)
-                              : <div className="whitespace-pre-wrap break-words">{renderLinksAsClickable(activity.description || activity.body)}</div>
-                            }
+                            <div className="whitespace-pre-wrap break-words">
+                              {activity.type === 'email' && activity.body 
+                                ? renderLinksAsClickable(stripHTML(activity.body))
+                                : renderLinksAsClickable(activity.description || activity.body)
+                              }
+                            </div>
                           </div>
                         )}
                       </div>
