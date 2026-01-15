@@ -13,7 +13,8 @@ export default function CommunicationCard({
   phoneNumber,
   recordId, 
   recordType, 
-  session 
+  session,
+  smsColor = 'bg-blue-600'
 }) {
   const [emailData, setEmailData] = useState({ subject: '', message: '' });
   const [smsMessage, setSmsMessage] = useState('');
@@ -125,7 +126,7 @@ export default function CommunicationCard({
 
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-      <Tabs defaultValue={hasEmail ? "email" : "sms"} className="w-full">
+      <Tabs defaultValue="sms" className="w-full">
         <TabsList className="w-full flex rounded-none bg-slate-100 p-0 h-auto">
           {hasEmail && (
             <TabsTrigger 
@@ -139,7 +140,7 @@ export default function CommunicationCard({
           {hasPhone && (
             <TabsTrigger 
               value="sms" 
-              className="flex-1 rounded-none data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              className={`flex-1 rounded-none data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:${smsColor.replace('bg-', 'border-')}`}
             >
               <MessageSquare className="w-4 h-4 mr-2" />
               SMS
@@ -210,7 +211,7 @@ export default function CommunicationCard({
             <Button 
               onClick={handleSendSMS} 
               disabled={sending || !smsMessage.trim()} 
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className={`w-full ${smsColor} hover:${smsColor.replace('600', '700')}`}
             >
               {sending ? (
                 <>
@@ -252,7 +253,9 @@ export default function CommunicationCard({
                 <p className="text-sm text-slate-500 text-center py-4">No messages yet</p>
               ) : (
                 <div className="space-y-3 max-h-48 overflow-y-auto">
-                  {smsHistory.map((msg, idx) => (
+                              {smsHistory.map((msg, idx) => {
+                                const senderName = msg.direction === 'outbound' ? 'You' : (msg.senderName || recipientName);
+                                return (
                     <div key={idx} className={`p-3 rounded-lg text-sm ${
                       msg.direction === 'outbound' 
                         ? 'bg-blue-50 border border-blue-200' 
