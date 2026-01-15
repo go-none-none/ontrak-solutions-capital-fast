@@ -37,6 +37,7 @@ export default function ActivityPanel({ recordId, recordType, session }) {
     switch (type) {
       case 'Call': return <Phone className="w-4 h-4" />;
       case 'Email': return <Mail className="w-4 h-4" />;
+      case 'SMS': return <MessageSquare className="w-4 h-4" />;
       case 'Event': return <Calendar className="w-4 h-4" />;
       default: return <CheckCircle2 className="w-4 h-4" />;
     }
@@ -46,6 +47,7 @@ export default function ActivityPanel({ recordId, recordType, session }) {
     if (status === 'Completed') return 'text-green-600 bg-green-50';
     if (type === 'Call') return 'text-blue-600 bg-blue-50';
     if (type === 'Email') return 'text-purple-600 bg-purple-50';
+    if (type === 'SMS') return 'text-pink-600 bg-pink-50';
     if (type === 'Event') return 'text-orange-600 bg-orange-50';
     return 'text-slate-600 bg-slate-50';
   };

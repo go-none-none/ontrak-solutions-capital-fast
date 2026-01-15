@@ -11,11 +11,22 @@ Deno.serve(async (req) => {
 
     console.log(`Fetching activities for ${recordType} ${recordId}`);
 
-    // Get all Tasks - handles both WhoId and WhatId relationships
-    const tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype, CallOutcome, CallDurationInSeconds, CallType, ReminderDateTime, IsReminderSet, AccountId, OwnerId, Owner.Name FROM Task WHERE (WhoId = '${recordId}' OR WhatId = '${recordId}') ORDER BY CreatedDate DESC NULLS LAST`;
+    // Build comprehensive Task query - gets all tasks related to this record
+    // Includes regular tasks, calls, SMS, and all Task subtypes (00T prefix)
+    let tasksQuery;
+    if (recordType === 'Account') {
+      tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype, CallOutcome, CallDurationInSeconds, CallType, ReminderDateTime, IsReminderSet, AccountId, WhoId, WhatId, OwnerId, Owner.Name FROM Task WHERE (AccountId = '${recordId}' OR WhoId = '${recordId}' OR WhatId = '${recordId}') ORDER BY CreatedDate DESC NULLS LAST`;
+    } else {
+      tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype, CallOutcome, CallDurationInSeconds, CallType, ReminderDateTime, IsReminderSet, AccountId, WhoId, WhatId, OwnerId, Owner.Name FROM Task WHERE (WhoId = '${recordId}' OR WhatId = '${recordId}') ORDER BY CreatedDate DESC NULLS LAST`;
+    }
     
     // Get all Events - handles both WhoId and WhatId relationships
-    const eventsQuery = `SELECT Id, Subject, StartDateTime, EndDateTime, Description, CreatedDate, LastModifiedDate, Location, IsAllDayEvent, DurationInMinutes, Type FROM Event WHERE WhoId = '${recordId}' OR WhatId = '${recordId}' ORDER BY StartDateTime DESC NULLS LAST`;
+    let eventsQuery;
+    if (recordType === 'Account') {
+      eventsQuery = `SELECT Id, Subject, StartDateTime, EndDateTime, Description, CreatedDate, LastModifiedDate, Location, IsAllDayEvent, DurationInMinutes, Type, WhoId, WhatId FROM Event WHERE (AccountId = '${recordId}' OR WhoId = '${recordId}' OR WhatId = '${recordId}') ORDER BY StartDateTime DESC NULLS LAST`;
+    } else {
+      eventsQuery = `SELECT Id, Subject, StartDateTime, EndDateTime, Description, CreatedDate, LastModifiedDate, Location, IsAllDayEvent, DurationInMinutes, Type, WhoId, WhatId FROM Event WHERE (WhoId = '${recordId}' OR WhatId = '${recordId}') ORDER BY StartDateTime DESC NULLS LAST`;
+    }
     
     // Get all Email Messages
     const emailsQuery = `SELECT Id, Subject, MessageDate, TextBody, HtmlBody, FromAddress, ToAddress, CcAddress, BccAddress, Status FROM EmailMessage WHERE RelatedToId = '${recordId}' ORDER BY MessageDate DESC LIMIT 500`;
@@ -64,20 +75,34 @@ Deno.serve(async (req) => {
 
     console.log(`Activities found - Tasks: ${tasks.length}, Events: ${events.length}, Emails: ${emails.length}`);
     tasks.forEach(t => {
-      const type = (t.CallOutcome || t.CallDurationInSeconds || t.CallType) ? 'Call' : 'Task';
-      console.log(`  ${type}: "${t.Subject}" (${t.ActivityDate || t.CreatedDate})`);
+      let type = 'Task';
+      if (t.CallOutcome || t.CallDurationInSeconds || t.CallType) type = 'Call';
+      else if (t.TaskSubtype === 'Email') type = 'Email';
+      else if (t.TaskSubtype && t.TaskSubtype.toLowerCase().includes('sms')) type = 'SMS';
+      console.log(`  ${type}: "${t.Subject}" (Subtype: ${t.TaskSubtype || 'none'}) (${t.ActivityDate || t.CreatedDate})`);
     });
     events.forEach(e => console.log(`  Event: "${e.Subject}" (${e.StartDateTime})`));
     emails.forEach(e => console.log(`  Email: "${e.Subject}" (${e.MessageDate}`));
 
-    // Combine all activities - Dialpad calls are already in Salesforce Task objects
+    // Combine all activities - includes Tasks (00T), Calls, SMS, Events
     const allActivities = [
-      ...tasks.map(t => ({ 
-        ...t, 
-        type: (t.CallOutcome || t.CallDurationInSeconds || t.CallType) ? 'Call' : (t.TaskSubtype === 'Email' ? 'Email' : 'Task'),
-        date: t.ActivityDate || t.CreatedDate,
-        source: 'salesforce'
-      })),
+      ...tasks.map(t => {
+        let type = 'Task';
+        if (t.CallOutcome || t.CallDurationInSeconds || t.CallType) {
+          type = 'Call';
+        } else if (t.TaskSubtype === 'Email') {
+          type = 'Email';
+        } else if (t.TaskSubtype && (t.TaskSubtype.toLowerCase().includes('sms') || t.TaskSubtype === 'Text')) {
+          type = 'SMS';
+        }
+        
+        return { 
+          ...t, 
+          type,
+          date: t.ActivityDate || t.CreatedDate,
+          source: 'salesforce'
+        };
+      }),
       ...events.map(e => ({ 
         ...e, 
         type: 'Event',
