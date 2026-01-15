@@ -8,7 +8,6 @@ import { format } from 'date-fns';
 export default function ActivityPanel({ recordId, recordType, session }) {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
   const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
@@ -67,18 +66,6 @@ export default function ActivityPanel({ recordId, recordType, session }) {
     return `${minutes}m ${secs}s`;
   };
 
-  const filteredActivities = filter === 'all' 
-    ? activities 
-    : activities.filter(a => a.type === filter);
-
-  const activityCounts = {
-    all: activities.length,
-    Task: activities.filter(a => a.type === 'Task').length,
-    Call: activities.filter(a => a.type === 'Call').length,
-    Email: activities.filter(a => a.type === 'Email').length,
-    Event: activities.filter(a => a.type === 'Event').length
-  };
-
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -93,37 +80,20 @@ export default function ActivityPanel({ recordId, recordType, session }) {
         
         <CollapsibleContent>
           <div className="border-t">
-            {/* Filter Tabs */}
-            <div className="flex gap-2 p-4 bg-slate-50 border-b overflow-x-auto">
-              {['all', 'Task', 'Call', 'Email', 'Event'].map(type => (
-                <button
-                  key={type}
-                  onClick={() => setFilter(type)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                    filter === type 
-                      ? 'bg-[#08708E] text-white' 
-                      : 'bg-white text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  {type === 'all' ? 'All' : type} ({activityCounts[type]})
-                </button>
-              ))}
-            </div>
-
             {/* Activities List */}
             <div className="p-4">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="w-8 h-8 text-[#08708E] animate-spin" />
                 </div>
-              ) : filteredActivities.length === 0 ? (
+              ) : activities.length === 0 ? (
                 <div className="text-center py-12">
                   <Clock className="w-12 h-12 text-slate-300 mx-auto mb-3" />
                   <p className="text-slate-500 text-sm">No activities found</p>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-[500px] overflow-y-auto">
-                  {filteredActivities.map((activity, idx) => (
+                  {activities.map((activity, idx) => (
                     <div key={idx} className="border-l-2 border-slate-200 pl-4 pb-3 relative">
                       <div className={`absolute -left-2.5 top-0 w-5 h-5 rounded-full flex items-center justify-center ${getActivityColor(activity.type, activity.Status)}`}>
                         {getActivityIcon(activity.type)}

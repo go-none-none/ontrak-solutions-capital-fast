@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     console.log(`Fetching activities for ${recordType} ${recordId}`);
 
     // Get all Tasks - handles both WhoId and WhatId relationships
-    const tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype, CallOutcome, CallDurationInSeconds, CallType, ReminderDateTime, IsReminderSet, AccountId, OwnerId, Owner.Name FROM Task WHERE WhoId = '${recordId}' OR WhatId = '${recordId}' ORDER BY ActivityDate DESC NULLS LAST`;
+    const tasksQuery = `SELECT Id, Subject, Status, Priority, ActivityDate, Description, CreatedDate, LastModifiedDate, TaskSubtype, CallOutcome, CallDurationInSeconds, CallType, ReminderDateTime, IsReminderSet, AccountId, OwnerId, Owner.Name FROM Task WHERE (WhoId = '${recordId}' OR WhatId = '${recordId}') ORDER BY CreatedDate DESC NULLS LAST`;
     
     // Get all Events - handles both WhoId and WhatId relationships
     const eventsQuery = `SELECT Id, Subject, StartDateTime, EndDateTime, Description, CreatedDate, LastModifiedDate, Location, IsAllDayEvent, DurationInMinutes, Type FROM Event WHERE WhoId = '${recordId}' OR WhatId = '${recordId}' ORDER BY StartDateTime DESC NULLS LAST`;
