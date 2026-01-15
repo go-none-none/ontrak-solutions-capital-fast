@@ -67,9 +67,12 @@ export default function CommunicationCard({
 
       // Check for new inbound messages and add notifications
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
+      console.log('Inbound SMS messages found:', inboundMessages.length);
       inboundMessages.forEach(msg => {
         const existingNotif = notifications.find(n => n.smsSid === msg.sid);
+        console.log(`SMS ${msg.sid}: existing notif?`, !!existingNotif);
         if (!existingNotif) {
+          console.log('Adding notification for SMS:', msg.sid);
           addNotification({
             title: `New SMS from ${recipientName}`,
             message: msg.body,
