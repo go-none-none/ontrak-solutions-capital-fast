@@ -21,6 +21,7 @@ import RepPortalHeader from '../components/rep/RepPortalHeader';
 
 export default function RepPortal() {
   const navigate = useNavigate();
+  const { addNotification } = useContext(NotificationContext);
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [leads, setLeads] = useState([]);
@@ -41,6 +42,7 @@ export default function RepPortal() {
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [loadingContacts, setLoadingContacts] = useState(true);
+  const notifiedSids = useRef(new Set());
   const itemsPerPage = 100;
 
   // Disposition color mapping
