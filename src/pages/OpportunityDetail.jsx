@@ -52,7 +52,7 @@ export default function OpportunityDetail() {
     const oppId = urlParams.get('id');
     if (oppId && notifications.length > 0) {
       notifications.forEach(notif => {
-        if (notif.link && notif.link.includes(oppId)) {
+        if ((notif.recordId === oppId && notif.recordType === 'Opportunity') || (notif.link && notif.link.includes(oppId))) {
           removeNotification(notif.id);
         }
       });
