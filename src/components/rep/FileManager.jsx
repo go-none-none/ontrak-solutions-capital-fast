@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square } from 'lucide-react';
+import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import PDFViewer from './PDFViewer';
 
@@ -12,6 +12,7 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
   const [uploading, setUploading] = useState(false);
   const [viewingFile, setViewingFile] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [deleting, setDeleting] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -142,6 +143,29 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
     }
   };
 
+  const handleDeleteFile = async (contentDocumentId, fileName) => {
+    if (!confirm(`Are you sure you want to delete "${fileName}"? This cannot be undone.`)) {
+      return;
+    }
+
+    setDeleting(contentDocumentId);
+    try {
+      await base44.functions.invoke('deleteSalesforceFile', {
+        contentDocumentId,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      await loadFiles();
+      if (onFileUploaded) onFileUploaded();
+    } catch (error) {
+      console.error('Delete error:', error);
+      alert('Failed to delete file');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
   return (
     <>
     <div className="bg-white rounded-2xl p-6 shadow-sm">
@@ -251,6 +275,20 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                       <Download className="w-4 h-4" />
                     </Button>
                   </a>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => handleDeleteFile(file.ContentDocumentId, doc.Title)}
+                    disabled={deleting === file.ContentDocumentId}
+                    title="Delete file"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    {deleting === file.ContentDocumentId ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                  </Button>
                 </div>
               </motion.div>
             );
