@@ -36,14 +36,7 @@ export default function CommunicationCard({
     }
   }, [phoneNumber]);
 
-  // Clear notifications for SMS that are now visible
-  useEffect(() => {
-    notifications.forEach(notif => {
-      if (visibleSmsSids.has(notif.smsSid)) {
-        removeNotification(notif.id);
-      }
-    });
-  }, [visibleSmsSids, notifications, removeNotification]);
+
 
   const loadSmsHistory = async () => {
     try {
