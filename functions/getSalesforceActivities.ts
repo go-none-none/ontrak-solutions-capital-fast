@@ -71,9 +71,35 @@ Deno.serve(async (req) => {
       })
     ]);
 
-    const tasksData = tasksResponse.ok ? await tasksResponse.json() : { records: [] };
-    const eventsData = eventsResponse.ok ? await eventsResponse.json() : { records: [] };
-    const emailsData = emailsResponse.ok ? await emailsResponse.json() : { records: [] };
+    // Parse responses with detailed error logging
+    let tasksData, eventsData, emailsData;
+    
+    if (tasksResponse.ok) {
+      tasksData = await tasksResponse.json();
+      console.log('Tasks response:', JSON.stringify(tasksData, null, 2));
+    } else {
+      const errorText = await tasksResponse.text();
+      console.error('Task query failed:', tasksResponse.status, errorText);
+      tasksData = { records: [] };
+    }
+
+    if (eventsResponse.ok) {
+      eventsData = await eventsResponse.json();
+      console.log('Events response:', JSON.stringify(eventsData, null, 2));
+    } else {
+      const errorText = await eventsResponse.text();
+      console.error('Event query failed:', eventsResponse.status, errorText);
+      eventsData = { records: [] };
+    }
+
+    if (emailsResponse.ok) {
+      emailsData = await emailsResponse.json();
+      console.log('Emails response:', JSON.stringify(emailsData, null, 2));
+    } else {
+      const errorText = await emailsResponse.text();
+      console.error('Email query failed:', emailsResponse.status, errorText);
+      emailsData = { records: [] };
+    }
 
     const tasks = tasksData.records || [];
     const events = eventsData.records || [];
@@ -82,11 +108,6 @@ Deno.serve(async (req) => {
     console.log('Tasks found:', tasks.length);
     console.log('Events found:', events.length);
     console.log('Emails found:', emails.length);
-
-    // Log any errors
-    if (!tasksResponse.ok) console.error('Task query error:', await tasksResponse.text());
-    if (!eventsResponse.ok) console.error('Event query error:', await eventsResponse.text());
-    if (!emailsResponse.ok) console.error('Email query error:', await emailsResponse.text());
 
     // Categorize and normalize activities
     const activities = [];
