@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import FileManager from '../components/rep/FileManager.jsx';
 import EditableField from '../components/rep/EditableField.jsx';
 import EmailClientCard from '../components/rep/EmailClientCard.jsx';
+import TwilioSMS from '../components/rep/TwilioSMS.jsx';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
 import ActivityPanel from '../components/rep/ActivityPanel';
 
@@ -598,7 +599,15 @@ export default function LeadDetail() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+           <div className="space-y-6">
+            {/* Twilio SMS */}
+            <TwilioSMS
+              phoneNumber={lead.MobilePhone || lead.Phone}
+              recordId={lead.Id}
+              recordType="Lead"
+              session={session}
+            />
+
             {/* Email Client */}
             <EmailClientCard
               recipientEmail={lead.Email}
