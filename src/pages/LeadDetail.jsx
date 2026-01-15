@@ -409,38 +409,25 @@ export default function LeadDetail() {
                       {bankStatementFields.map(({ label, field }) => (
                         <div key={field} className="flex items-center justify-between p-3 border-b border-slate-200 last:border-0">
                           <span className="text-sm font-medium text-slate-700">{label}</span>
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="checkbox"
-                              checked={lead[field] || false}
-                              onChange={async (e) => {
-                                try {
-                                  await base44.functions.invoke('updateSalesforceRecord', {
-                                    objectType: 'Lead',
-                                    recordId: lead.Id,
-                                    data: { [field]: e.target.checked },
-                                    token: session.token,
-                                    instanceUrl: session.instanceUrl
-                                  });
-                                  await loadLead(session);
-                                } catch (error) {
-                                  console.error('Update error:', error);
-                                }
-                              }}
-                              className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                            />
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => {
-                                setEditValues({ ...editValues, [field]: lead[field] || false });
-                                setEditing({ ...editing, [field]: true });
-                              }}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Edit className="w-4 h-4 text-slate-400" />
-                            </Button>
-                          </div>
+                          <input
+                            type="checkbox"
+                            checked={lead[field] || false}
+                            onChange={async (e) => {
+                              try {
+                                await base44.functions.invoke('updateSalesforceRecord', {
+                                  objectType: 'Lead',
+                                  recordId: lead.Id,
+                                  data: { [field]: e.target.checked },
+                                  token: session.token,
+                                  instanceUrl: session.instanceUrl
+                                });
+                                await loadLead(session);
+                              } catch (error) {
+                                console.error('Update error:', error);
+                              }
+                            }}
+                            className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+                          />
                         </div>
                       ))}
                     </div>
