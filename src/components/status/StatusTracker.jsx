@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Clock, XCircle, FileText, Search, BadgeCheck, FileSignature, PenTool, DollarSign, Upload } from 'lucide-react';
+import { CheckCircle, Clock, XCircle, FileText, Search, BadgeCheck, FileSignature, PenTool, DollarSign } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { createPageUrl } from '@/utils';
 
@@ -56,53 +56,7 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
     { label: 'Funded', step: 6, icon: DollarSign }
   ];
   
-  const isMissingInfo = currentStatus?.toLowerCase() === 'application missing info';
-  
-  useEffect(() => {
-    if (isMissingInfo && recordType === 'Lead') {
-      const container = document.getElementById('jotform-missing-docs');
-      if (container && !container.querySelector('iframe')) {
-        const params = [];
-        if (recordId) params.push(`id149=${encodeURIComponent(recordId)}`);
-        if (businessName) params.push(`cn=${encodeURIComponent(businessName)}`);
-        if (lastName) params.push(`ln=${encodeURIComponent(lastName)}`);
-        
-        let iframeSrc = 'https://form.jotform.com/253446533291155';
-        if (params.length > 0) {
-          iframeSrc += `?${params.join('&')}`;
-        }
-        
-        container.innerHTML = `
-          <iframe
-            id="JotFormIFrame-missing-docs"
-            title="Missing Documents Upload"
-            allowtransparency="true"
-            allow="geolocation; microphone; camera; fullscreen"
-            src="${iframeSrc}"
-            frameborder="0"
-            style="min-width:100%;max-width:100%;height:539px;border:none;"
-            scrolling="no"
-          >
-          </iframe>
-        `;
-        
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
-        script.onload = () => {
-          if (window.jotformEmbedHandler) {
-            window.jotformEmbedHandler("iframe[id='JotFormIFrame-missing-docs']", "https://form.jotform.com/");
-          }
-        };
-        document.body.appendChild(script);
-        
-        return () => {
-          if (script.parentNode) {
-            script.parentNode.removeChild(script);
-          }
-        };
-      }
-    }
-  }, [isMissingInfo, recordType, recordId, businessName, lastName]);
+
   
   return (
     <div className="space-y-6">
@@ -230,29 +184,7 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
         </motion.div>
       )}
 
-      {/* Missing Documents Form */}
-      {isMissingInfo && recordType === 'Lead' && (
-        <div className="bg-white border-2 border-slate-200 rounded-2xl p-6">
-          <div className="flex items-start gap-4 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center flex-shrink-0">
-              <Upload className="w-6 h-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-slate-900 mb-2">
-                Upload Missing Documents
-              </h3>
-              <p className="text-slate-600">
-                Please upload the required documents below to continue processing your application.
-              </p>
-            </div>
-          </div>
-          <div id="jotform-missing-docs" className="bg-slate-50 rounded-xl overflow-hidden">
-            <p style={{textAlign: 'center', padding: '40px', color: '#08708E'}}>
-              Loading upload form...
-            </p>
-          </div>
-        </div>
-      )}
+
 
 
     </div>
