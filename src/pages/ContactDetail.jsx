@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Loader2, Mail, Phone, MapPin, Percent, Building2 } from 'lucide-react';
@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
 import CommunicationCard from '../components/rep/CommunicationCard.jsx';
 import ActivityPanel from '../components/rep/ActivityPanel';
+import { NotificationContext } from '../components/context/NotificationContext';
 
 export default function ContactDetail() {
   const navigate = useNavigate();
