@@ -77,7 +77,7 @@ export default function LeadDetail() {
     const leadId = urlParams.get('id');
     if (leadId && notifications.length > 0) {
       notifications.forEach(notif => {
-        if (notif.link && notif.link.includes(leadId)) {
+        if ((notif.recordId === leadId && notif.recordType === 'Lead') || (notif.link && notif.link.includes(leadId))) {
           removeNotification(notif.id);
         }
       });
