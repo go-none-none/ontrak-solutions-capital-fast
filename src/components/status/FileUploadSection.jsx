@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { FileText, Upload, Loader2, Download, Eye, Trash2 } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
 
 export default function FileUploadSection({ recordId, session }) {
   const [files, setFiles] = useState([]);
@@ -22,12 +21,17 @@ export default function FileUploadSection({ recordId, session }) {
     
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('getSalesforceFiles', {
-        recordId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
+      const response = await fetch('/api/functions/getSalesforceFiles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recordId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
       });
-      setFiles(response.data.files || []);
+      const data = await response.json();
+      setFiles(data.files || []);
     } catch (error) {
       console.error('Load files error:', error);
     } finally {
@@ -50,13 +54,21 @@ export default function FileUploadSection({ recordId, session }) {
       
       const base64Data = await base64Promise;
 
-      await base44.functions.invoke('uploadSalesforceFile', {
-        fileName: file.name,
-        fileData: base64Data,
-        recordId: recordId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
+      const response = await fetch('/api/functions/uploadSalesforceFile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileData: base64Data,
+          recordId: recordId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
       });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
       
       await loadFiles();
       
@@ -78,11 +90,19 @@ export default function FileUploadSection({ recordId, session }) {
 
     setDeleting(contentDocumentId);
     try {
-      await base44.functions.invoke('deleteSalesforceFile', {
-        contentDocumentId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
+      const response = await fetch('/api/functions/deleteSalesforceFile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contentDocumentId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
       });
+
+      if (!response.ok) {
+        throw new Error('Delete failed');
+      }
       
       await loadFiles();
     } catch (error) {
