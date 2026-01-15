@@ -100,10 +100,14 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
     const doc = file.ContentDocument;
     const isPdf = doc.FileExtension?.toLowerCase() === 'pdf' || doc.Title?.toLowerCase().endsWith('.pdf');
     
+    console.log('View clicked:', { title: doc.Title, ext: doc.FileExtension, isPdf });
+    
     if (isPdf) {
+      console.log('Opening PDF viewer');
       setViewingFile(file);
     } else {
       // Download non-PDF files
+      console.log('Downloading non-PDF');
       window.open(`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`, '_blank');
     }
   };
