@@ -612,13 +612,6 @@ export default function LeadDetail() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Activity Timeline */}
-            <ActivityPanel
-              recordId={lead.Id}
-              recordType="Lead"
-              session={session}
-            />
-
             {/* Email Client */}
             <EmailClientCard
               recipientEmail={lead.Email}
@@ -653,6 +646,13 @@ export default function LeadDetail() {
                 )}
               </div>
             </div>
+
+            {/* Activity Timeline */}
+            <ActivityPanel
+              recordId={lead.Id}
+              recordType="Lead"
+              session={session}
+            />
 
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h3 className="font-semibold text-slate-900 mb-4">Quick Info</h3>
