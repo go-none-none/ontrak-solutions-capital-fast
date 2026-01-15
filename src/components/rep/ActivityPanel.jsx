@@ -96,11 +96,24 @@ export default function ActivityPanel({ recordId, recordType, session }) {
 
   const renderHTML = (html) => {
     if (!html) return null;
+    
+    // Strip inline width styles and add mobile-friendly constraints
+    const mobileHtml = html
+      .replace(/width\s*:\s*[^;]+;?/gi, '')
+      .replace(/min-width\s*:\s*[^;]+;?/gi, '')
+      .replace(/max-width\s*:\s*[^;]+;?/gi, '');
+    
     return (
       <div 
-        dangerouslySetInnerHTML={{ __html: html }} 
-        className="prose prose-sm max-w-none overflow-x-auto [&_img]:max-w-full [&_img]:h-auto [&_table]:max-w-full [&_table]:text-xs [&_table]:block [&_table]:overflow-x-auto [&_*]:break-words [&_*]:max-w-full [&_div]:max-w-full [&_p]:text-xs" 
-        style={{ wordWrap: 'break-word', overflowWrap: 'break-word', fontSize: '0.75rem', maxWidth: '100%' }}
+        dangerouslySetInnerHTML={{ __html: mobileHtml }} 
+        className="prose prose-sm max-w-full overflow-x-hidden [&_*]:max-w-full! [&_img]:max-w-full [&_img]:h-auto [&_img]:w-auto [&_table]:max-w-full [&_table]:w-full! [&_table]:text-xs [&_table]:table-auto [&_table]:block [&_table]:overflow-x-auto [&_*]:!box-border [&_div]:max-w-full [&_p]:max-w-full [&_td]:text-xs [&_th]:text-xs [&_td]:p-1 [&_th]:p-1" 
+        style={{ 
+          wordWrap: 'break-word', 
+          overflowWrap: 'break-word', 
+          fontSize: '0.75rem', 
+          maxWidth: '100%',
+          width: '100%'
+        }}
       />
     );
   };
