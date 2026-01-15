@@ -310,7 +310,7 @@ export default function CommunicationCard({
                 <p className="text-sm text-slate-500 text-center py-4">No messages yet</p>
               ) : (
                 <div className="space-y-3 max-h-48 overflow-y-auto">
-                  {smsHistory.map((msg, idx) => {
+                  {[...smsHistory].sort((a, b) => new Date(b.date) - new Date(a.date)).map((msg, idx) => {
                     const isOutbound = msg.direction === 'outbound';
                     const senderName = isOutbound ? 'You' : (msg.senderName || recipientName);
                     return (
