@@ -7,6 +7,8 @@ export default function NotificationBell() {
   const { notifications, removeNotification, clearAllNotifications } = useContext(NotificationContext);
   const [isOpen, setIsOpen] = useState(false);
   const unreadCount = notifications.length;
+  
+  console.log('NotificationBell - notifications:', unreadCount, notifications);
 
   const formatTime = (date) => {
     const now = new Date();
