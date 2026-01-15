@@ -254,18 +254,34 @@ export default function CommunicationCard({
               ) : (
                 <div className="space-y-3 max-h-48 overflow-y-auto">
                   {smsHistory.map((msg, idx) => {
-                    const senderName = msg.direction === 'outbound' ? 'You' : (msg.senderName || recipientName);
+                    const isOutbound = msg.direction === 'outbound';
+                    const senderName = isOutbound ? 'You' : (msg.senderName || recipientName);
                     return (
                       <div key={idx} className={`p-3 rounded-lg text-sm ${
-                        msg.direction === 'outbound' 
-                          ? 'bg-blue-50 border border-blue-200' 
-                          : 'bg-slate-50 border border-slate-200'
+                        isOutbound
+                          ? 'bg-blue-50 border border-blue-200 ml-6' 
+                          : 'bg-slate-50 border border-slate-200 mr-6'
                       }`}>
-                        <div className="flex items-start justify-between mb-1">
-                          <span className="font-medium text-slate-900">{senderName}</span>
+                        <div className="flex items-center gap-2 mb-2">
+                          {isOutbound ? (
+                            <>
+                              <ArrowUp className="w-3 h-3 text-blue-600 flex-shrink-0" />
+                              <span className="font-medium text-blue-900">Sent</span>
+                            </>
+                          ) : (
+                            <>
+                              <ArrowDown className="w-3 h-3 text-slate-600 flex-shrink-0" />
+                              <span className="font-medium text-slate-900">Received</span>
+                            </>
+                          )}
+                        </div>
+                        <div className="flex items-start justify-between">
+                          <span className={`text-xs font-medium ${isOutbound ? 'text-blue-600' : 'text-slate-600'}`}>
+                            {senderName}
+                          </span>
                           <span className="text-xs text-slate-500">{formatDate(msg.date)}</span>
                         </div>
-                        <p className="text-slate-700">{msg.body}</p>
+                        <p className="text-slate-700 mt-2">{msg.body}</p>
                       </div>
                     );
                   })}
