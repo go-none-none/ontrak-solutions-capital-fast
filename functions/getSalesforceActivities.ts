@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
       'Id', 'Subject', 'Status', 'Priority', 'ActivityDate', 'CreatedDate', 
       'CompletedDateTime', 'Description', 'Owner.Name', 'OwnerId', 'WhoId', 'WhatId',
       'Who.Name', 'What.Name', 'CallDurationInSeconds', 'CallType', 
-      'CallDisposition', 'TaskSubtype', 'Type', 'LastModifiedDate'
+      'CallDisposition', 'TaskSubtype', 'LastModifiedDate'
     ].join(',');
 
     const taskQuery = `SELECT ${taskFields} FROM Task ${taskWhere} ORDER BY CreatedDate DESC`;
@@ -133,7 +133,6 @@ Deno.serve(async (req) => {
                      task.Subject?.toLowerCase().includes('call');
       
       const isSMS = task.Subject?.toLowerCase().includes('sms') || 
-                    task.Type === 'SMS' ||
                     task.TaskSubtype === 'SMS';
       
       activities.push({
