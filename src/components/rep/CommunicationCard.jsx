@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, MessageSquare, Loader2, Send, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { Mail, MessageSquare, Loader2, Send } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
@@ -253,23 +253,22 @@ export default function CommunicationCard({
                 <p className="text-sm text-slate-500 text-center py-4">No messages yet</p>
               ) : (
                 <div className="space-y-3 max-h-48 overflow-y-auto">
-                              {smsHistory.map((msg, idx) => {
-                                const senderName = msg.direction === 'outbound' ? 'You' : (msg.senderName || recipientName);
-                                return (
-                    <div key={idx} className={`p-3 rounded-lg text-sm ${
-                      msg.direction === 'outbound' 
-                        ? 'bg-blue-50 border border-blue-200' 
-                        : 'bg-slate-50 border border-slate-200'
-                    }`}>
-                      <div className="flex items-start justify-between mb-1">
-                        <span className="font-medium text-slate-900">
-                          {msg.direction === 'outbound' ? 'You' : recipientName}
-                        </span>
-                        <span className="text-xs text-slate-500">{formatDate(msg.date)}</span>
+                  {smsHistory.map((msg, idx) => {
+                    const senderName = msg.direction === 'outbound' ? 'You' : (msg.senderName || recipientName);
+                    return (
+                      <div key={idx} className={`p-3 rounded-lg text-sm ${
+                        msg.direction === 'outbound' 
+                          ? 'bg-blue-50 border border-blue-200' 
+                          : 'bg-slate-50 border border-slate-200'
+                      }`}>
+                        <div className="flex items-start justify-between mb-1">
+                          <span className="font-medium text-slate-900">{senderName}</span>
+                          <span className="text-xs text-slate-500">{formatDate(msg.date)}</span>
+                        </div>
+                        <p className="text-slate-700">{msg.body}</p>
                       </div>
-                      <p className="text-slate-700">{msg.body}</p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
