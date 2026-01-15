@@ -99,8 +99,8 @@ export default function ActivityPanel({ recordId, recordType, session }) {
     return (
       <div 
         dangerouslySetInnerHTML={{ __html: html }} 
-        className="prose prose-sm max-w-none overflow-x-auto [&_img]:max-w-full [&_table]:max-w-full [&_*]:break-words" 
-        style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
+        className="prose prose-sm max-w-none overflow-x-auto [&_img]:max-w-full [&_img]:h-auto [&_table]:max-w-full [&_table]:text-xs [&_table]:block [&_table]:overflow-x-auto [&_*]:break-words [&_*]:max-w-full [&_div]:max-w-full [&_p]:text-xs" 
+        style={{ wordWrap: 'break-word', overflowWrap: 'break-word', fontSize: '0.75rem', maxWidth: '100%' }}
       />
     );
   };
