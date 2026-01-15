@@ -272,13 +272,7 @@ export default function ContactDetail() {
               </div>
             )}
 
-            {/* Description */}
-            {contact.Description && (
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-slate-900 mb-4">Notes</h2>
-                <p className="text-sm text-slate-700 whitespace-pre-wrap">{contact.Description}</p>
-              </div>
-            )}
+
           </div>
 
           {/* Sidebar */}

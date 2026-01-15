@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing authentication' }, { status: 401 });
     }
 
-    const query = `SELECT Id, Name, FirstName, LastName, Title, Department, Email, Phone, MobilePhone, HomePhone, OtherPhone, Fax, MailingStreet, MailingCity, MailingState, MailingPostalCode, MailingCountry, Account.Name, Description, LeadSource, csbs__Ownership__c, csbs__Credit_Score__c FROM Contact WHERE Id = '${contactId}' LIMIT 1`;
+    const query = `SELECT Id, Name, FirstName, LastName, Title, Department, Email, Phone, MobilePhone, HomePhone, OtherPhone, Fax, MailingStreet, MailingCity, MailingState, MailingPostalCode, MailingCountry, Account.Name, LeadSource, csbs__Ownership__c, csbs__Credit_Score__c FROM Contact WHERE Id = '${contactId}' LIMIT 1`;
 
     const response = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
