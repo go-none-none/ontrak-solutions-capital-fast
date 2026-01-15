@@ -340,14 +340,6 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                       >
                         <Edit2 className="w-4 h-4" />
                       </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleViewFile(file)}
-                        title="View file"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
                       <a
                         href={`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`}
                         download
@@ -357,6 +349,14 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                           <Download className="w-4 h-4" />
                         </Button>
                       </a>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleViewFile(file)}
+                        title="View file"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
                       <Button 
                         variant="ghost" 
                         size="sm"
