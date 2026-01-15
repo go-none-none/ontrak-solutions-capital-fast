@@ -45,7 +45,6 @@ export default function CommunicationCard({
   }, [visibleSmsSids, notifications, removeNotification]);
 
   const loadSmsHistory = async () => {
-    setLoadingHistory(true);
     try {
       const response = await base44.functions.invoke('getTwilioSmsHistory', {
         phoneNumber: phoneNumber.replace(/\D/g, ''),
@@ -55,13 +54,18 @@ export default function CommunicationCard({
         instanceUrl: session.instanceUrl
       });
       const messages = response.data.messages || [];
-      setSmsHistory(messages);
-
-      // Track all visible SMS SIDs so notifications can be cleared
       const allSmsSids = new Set(messages.map(m => m.sid));
+
+      // Only update state if there are new messages
+      setSmsHistory(prev => {
+        const prevSids = new Set(prev.map(m => m.sid));
+        const hasNewMessages = messages.some(m => !prevSids.has(m.sid));
+        return hasNewMessages ? messages : prev;
+      });
+
       setVisibleSmsSids(allSmsSids);
 
-      // Check for new inbound messages and avoid duplicates
+      // Check for new inbound messages and add notifications
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
       inboundMessages.forEach(msg => {
         const existingNotif = notifications.find(n => n.smsSid === msg.sid);
@@ -80,8 +84,6 @@ export default function CommunicationCard({
       });
     } catch (error) {
       console.error('Failed to load SMS history:', error);
-    } finally {
-      setLoadingHistory(false);
     }
   };
 
