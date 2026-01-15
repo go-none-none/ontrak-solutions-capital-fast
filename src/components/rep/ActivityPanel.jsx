@@ -94,12 +94,15 @@ export default function ActivityPanel({ recordId, recordType, session }) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const stripHTML = (html) => {
-    if (!html) return '';
-    // Create a temporary div to parse HTML and extract text
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
+  const renderHTML = (html) => {
+    if (!html) return null;
+    return (
+      <div 
+        dangerouslySetInnerHTML={{ __html: html }} 
+        className="prose prose-sm max-w-none overflow-x-auto [&_img]:max-w-full [&_table]:max-w-full [&_*]:break-words" 
+        style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
+      />
+    );
   };
 
   const renderLinksAsClickable = (text) => {
@@ -278,12 +281,10 @@ export default function ActivityPanel({ recordId, recordType, session }) {
 
                         {expandedActivities[activity.id] && (activity.description || activity.body) && (
                           <div className="mt-2 p-3 bg-slate-50 rounded-lg text-xs text-slate-700 overflow-x-auto max-w-full" style={{ wordWrap: 'break-word' }}>
-                            <div className="whitespace-pre-wrap break-words">
-                              {activity.type === 'email' && activity.body 
-                                ? renderLinksAsClickable(stripHTML(activity.body))
-                                : renderLinksAsClickable(activity.description || activity.body)
-                              }
-                            </div>
+                            {activity.type === 'email' && activity.body 
+                              ? renderHTML(activity.body)
+                              : <div className="whitespace-pre-wrap break-words">{renderLinksAsClickable(activity.description || activity.body)}</div>
+                            }
                           </div>
                         )}
                       </div>
