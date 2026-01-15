@@ -66,15 +66,11 @@ export default function CommunicationCard({
 
       setVisibleSmsSids(allSmsSids);
 
-      // Check for new inbound messages and add notifications
-      console.log('All messages from API:', messages);
+      // Check for new inbound messages and add notifications only once
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
-      console.log('Inbound SMS messages found:', inboundMessages.length);
       inboundMessages.forEach(msg => {
-        const existingNotif = notifications.find(n => n.smsSid === msg.sid);
-        console.log(`SMS ${msg.sid}: existing notif?`, !!existingNotif);
-        if (!existingNotif) {
-          console.log('Adding notification for SMS:', msg.sid);
+        if (!notifiedSids.current.has(msg.sid)) {
+          notifiedSids.current.add(msg.sid);
           addNotification({
             title: `New SMS from ${recipientName}`,
             message: msg.body,
