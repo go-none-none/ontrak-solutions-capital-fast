@@ -23,7 +23,7 @@ export default function CommunicationCard({
   const [sending, setSending] = useState(false);
   const [smsHistory, setSmsHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
-  const [previousMessageCount, setPreviousMessageCount] = useState(0);
+  const [notifiedSmsSids, setNotifiedSmsSids] = useState(new Set());
   const { addNotification } = useContext(NotificationContext);
 
   useEffect(() => {
@@ -48,11 +48,10 @@ export default function CommunicationCard({
       const messages = response.data.messages || [];
       setSmsHistory(messages);
 
-      // Check for new inbound messages
+      // Check for new inbound messages and avoid duplicates
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
-      if (inboundMessages.length > previousMessageCount) {
-        const newMessages = inboundMessages.slice(previousMessageCount);
-        newMessages.forEach(msg => {
+      inboundMessages.forEach(msg => {
+        if (!notifiedSmsSids.has(msg.sid)) {
           addNotification({
             title: `New SMS from ${recipientName}`,
             message: msg.body,
@@ -62,9 +61,9 @@ export default function CommunicationCard({
               ? createPageUrl('LeadDetail') + `?id=${recordId}`
               : createPageUrl('ContactDetail') + `?id=${recordId}`
           });
-        });
-        setPreviousMessageCount(inboundMessages.length);
-      }
+          setNotifiedSmsSids(prev => new Set([...prev, msg.sid]));
+        }
+      });
     } catch (error) {
       console.error('Failed to load SMS history:', error);
     } finally {
