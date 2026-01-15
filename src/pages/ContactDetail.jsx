@@ -17,6 +17,8 @@ export default function ContactDetail() {
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { removeNotification, notifications } = useContext(NotificationContext);
+
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
     if (!sessionData) {
@@ -26,6 +28,19 @@ export default function ContactDetail() {
     const parsedSession = JSON.parse(sessionData);
     setSession(parsedSession);
     loadData(parsedSession);
+  }, []);
+
+  // Clear notifications for this record on load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const contactId = urlParams.get('id');
+    if (contactId) {
+      notifications.forEach(notif => {
+        if (notif.link && notif.link.includes(contactId)) {
+          removeNotification(notif.id);
+        }
+      });
+    }
   }, []);
 
   const loadData = async (sessionData) => {
