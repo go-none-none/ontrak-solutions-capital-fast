@@ -213,14 +213,17 @@ export default function RepPortal() {
 
               // Load contacts separately with error handling
               try {
+                console.log('Loading contacts for userId:', sessionData.userId);
                 const contactsRes = await base44.functions.invoke('getRepContacts', {
                   userId: sessionData.userId,
                   token: sessionData.token,
                   instanceUrl: sessionData.instanceUrl
                 });
+                console.log('Contacts response:', contactsRes.data);
                 setContacts(contactsRes.data.contacts || []);
               } catch (error) {
                 console.error('Contacts load error:', error);
+                console.error('Error response:', error.response?.data);
                 setContacts([]);
               }
               setLoadingContacts(false);
