@@ -75,14 +75,14 @@ export default function LeadDetail() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const leadId = urlParams.get('id');
-    if (leadId) {
+    if (leadId && notifications.length > 0) {
       notifications.forEach(notif => {
         if (notif.link && notif.link.includes(leadId)) {
           removeNotification(notif.id);
         }
       });
     }
-  }, []);
+  }, [notifications, removeNotification]);
 
   const loadLead = async (sessionData) => {
     setLoading(true);
