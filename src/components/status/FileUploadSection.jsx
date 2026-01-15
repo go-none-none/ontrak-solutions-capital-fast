@@ -12,7 +12,10 @@ export default function FileUploadSection({ recordId, session }) {
 
   useEffect(() => {
     if (session) {
+      console.log('FileUploadSection mounted with session:', JSON.stringify(session));
       loadFiles();
+    } else {
+      console.log('FileUploadSection: no session provided');
     }
   }, [recordId, session]);
 
