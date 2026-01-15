@@ -5,12 +5,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square, Trash2, Edit2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import PDFViewer from './PDFViewer';
+import ImageViewer from './ImageViewer';
 
 export default function FileManager({ recordId, session, onFileUploaded }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [viewingFile, setViewingFile] = useState(null);
+  const [viewingImage, setViewingImage] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [deleting, setDeleting] = useState(null);
   const [renamingId, setRenamingId] = useState(null);
@@ -98,22 +100,26 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
 
   const handleViewFile = (file) => {
     const doc = file.ContentDocument;
-    const isPdf = doc.FileExtension?.toLowerCase() === 'pdf' || doc.Title?.toLowerCase().endsWith('.pdf');
-    
-    console.log('View clicked:', { title: doc.Title, ext: doc.FileExtension, isPdf });
+    const ext = doc.FileExtension?.toLowerCase();
+    const isPdf = ext === 'pdf' || doc.Title?.toLowerCase().endsWith('.pdf');
+    const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext);
     
     if (isPdf) {
-      console.log('Opening PDF viewer');
       setViewingFile(file);
+    } else if (isImage) {
+      setViewingImage(file);
     } else {
-      // Download non-PDF files
-      console.log('Downloading non-PDF');
+      // Download other files
       window.open(`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`, '_blank');
     }
   };
 
   const closeViewer = () => {
     setViewingFile(null);
+  };
+
+  const closeImageViewer = () => {
+    setViewingImage(null);
   };
 
   const toggleFileSelection = (fileId) => {
@@ -393,6 +399,12 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
         session={session}
         isOpen={!!viewingFile}
         onClose={closeViewer}
+      />
+      <ImageViewer 
+        file={viewingImage}
+        session={session}
+        isOpen={!!viewingImage}
+        onClose={closeImageViewer}
       />
     </div>
     </>
