@@ -282,6 +282,7 @@ export default function CommunicationCard({
                             <>
                               <ArrowUp className="w-3 h-3 text-blue-600 flex-shrink-0" />
                               <span className="font-medium text-blue-900">Sent</span>
+                              {msg.status && getStatusIcon(msg.status)}
                             </>
                           ) : (
                             <>
