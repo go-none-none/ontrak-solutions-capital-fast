@@ -98,7 +98,7 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
 
   const handleViewFile = (file) => {
     const doc = file.ContentDocument;
-    const isPdf = doc.FileExtension?.toLowerCase() === 'pdf';
+    const isPdf = doc.FileExtension?.toLowerCase() === 'pdf' || doc.Title?.toLowerCase().endsWith('.pdf');
     
     if (isPdf) {
       setViewingFile(file);
