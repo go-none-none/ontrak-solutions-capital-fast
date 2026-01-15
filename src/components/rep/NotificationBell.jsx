@@ -64,7 +64,7 @@ export default function NotificationBell() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={notificationRef}>
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors"
