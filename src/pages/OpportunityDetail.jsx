@@ -32,6 +32,8 @@ export default function OpportunityDetail() {
   const [changingOwner, setChangingOwner] = useState(false);
   const [showOwnerChange, setShowOwnerChange] = useState(false);
 
+  const { removeNotification, notifications } = useContext(NotificationContext);
+
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
     if (!sessionData) {
@@ -42,6 +44,19 @@ export default function OpportunityDetail() {
     setSession(session);
     loadOpportunity(session);
     loadUsers(session);
+  }, []);
+
+  // Clear notifications for this record on load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const oppId = urlParams.get('id');
+    if (oppId) {
+      notifications.forEach(notif => {
+        if (notif.link && notif.link.includes(oppId)) {
+          removeNotification(notif.id);
+        }
+      });
+    }
   }, []);
 
   const loadOpportunity = async (sessionData) => {
