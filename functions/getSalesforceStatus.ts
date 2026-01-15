@@ -71,7 +71,9 @@ Deno.serve(async (req) => {
                 email: lead.Email || '',
                 ownerName: ownerName,
                 ownerPhone: ownerPhone,
-                ownerAlias: ownerAlias
+                ownerAlias: ownerAlias,
+                token: accessToken,
+                instanceUrl: instanceUrl
             });
         }
 
@@ -176,6 +178,8 @@ Deno.serve(async (req) => {
                 ownerName: ownerName,
                 ownerPhone: ownerPhone,
                 ownerAlias: ownerAlias,
+                token: accessToken,
+                instanceUrl: instanceUrl,
                 // Include debug info
                 allFields: Object.keys(opp)
             });

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import StatusTracker from '../components/status/StatusTracker';
+import FileUploadSection from '../components/status/FileUploadSection';
 import { createPageUrl } from '@/utils';
 
 export default function Status() {
@@ -407,6 +408,9 @@ export default function Status() {
               </div>
             </motion.div>
           )}
+
+          {/* File Upload Section */}
+          <FileUploadSection recordId={recordId} />
 
 
 
