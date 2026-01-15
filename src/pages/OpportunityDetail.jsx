@@ -50,14 +50,14 @@ export default function OpportunityDetail() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const oppId = urlParams.get('id');
-    if (oppId) {
+    if (oppId && notifications.length > 0) {
       notifications.forEach(notif => {
         if (notif.link && notif.link.includes(oppId)) {
           removeNotification(notif.id);
         }
       });
     }
-  }, []);
+  }, [notifications, removeNotification]);
 
   const loadOpportunity = async (sessionData) => {
     setLoading(true);
