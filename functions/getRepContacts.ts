@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
     }
 
     // Query to get contacts owned by the user from Salesforce
-    const query = `SELECT Id, Name, FirstName, LastName, Email, Phone, MobilePhone, Title, Department, Account.Name, AccountName, MailingCity, MailingState, MailingCountry, csbs__Ownership__c, csbs__Credit_Score__c FROM Contact WHERE OwnerId = '${userId}' ORDER BY Name ASC LIMIT 2000`;
+    const query = `SELECT Id, Name, FirstName, LastName, Email, Phone, MobilePhone, Title, Department, Account.Name, MailingCity, MailingState, MailingCountry, csbs__Ownership__c, csbs__Credit_Score__c FROM Contact WHERE OwnerId = '${userId}' ORDER BY Name ASC LIMIT 2000`;
 
     console.log('getRepContacts - Querying Salesforce with token:', token.substring(0, 30) + '...');
     
