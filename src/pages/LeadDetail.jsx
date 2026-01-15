@@ -607,6 +607,7 @@ export default function LeadDetail() {
               recordId={lead.Id}
               recordType="Lead"
               session={session}
+              smsColor="bg-[#08708E]"
             />
 
             {/* Contact Information */}

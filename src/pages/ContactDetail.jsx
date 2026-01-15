@@ -287,6 +287,7 @@ export default function ContactDetail() {
               recordId={contact.Id}
               recordType="Contact"
               session={session}
+              smsColor="bg-[#08708E]"
             />
 
             <div className="bg-white rounded-xl shadow-sm p-6">

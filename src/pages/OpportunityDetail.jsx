@@ -644,6 +644,7 @@ export default function OpportunityDetail() {
               recordId={opportunity.Id}
               recordType="Opportunity"
               session={session}
+              smsColor="bg-orange-600"
             />
 
             {/* Contact Roles */}
