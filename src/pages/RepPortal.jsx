@@ -89,6 +89,8 @@ export default function RepPortal() {
     if (!session || !contacts.length) return;
     
     const pollSms = async () => {
+      const currentTime = new Date();
+      
       try {
         // Check contacts with phone numbers for SMS
         const contactsWithPhone = contacts.filter(c => c.MobilePhone || c.Phone);
@@ -107,18 +109,19 @@ export default function RepPortal() {
             });
             
             const messages = response.data.messages || [];
-            const inboundMessages = messages.filter(m => m.direction === 'inbound');
+            const inboundMessages = messages.filter(m => {
+              // Only notify on messages received after the last poll
+              const msgDate = new Date(m.date);
+              return m.direction === 'inbound' && msgDate > lastPollTime.current;
+            });
             
             inboundMessages.forEach(msg => {
-              if (!notifiedSids.current.has(msg.sid)) {
-                notifiedSids.current.add(msg.sid);
-                addNotification({
-                  title: `New SMS from ${contact.Name}`,
-                  message: msg.body,
-                  smsSid: msg.sid,
-                  link: createPageUrl('ContactDetail') + `?id=${contact.Id}`
-                });
-              }
+              addNotification({
+                title: `New SMS from ${contact.Name}`,
+                message: msg.body,
+                smsSid: msg.sid,
+                link: createPageUrl('ContactDetail') + `?id=${contact.Id}`
+              });
             });
           } catch (err) {
             // Silent fail for individual contacts
@@ -126,6 +129,8 @@ export default function RepPortal() {
         }
       } catch (error) {
         // Silent fail
+      } finally {
+        lastPollTime.current = currentTime;
       }
     };
 
