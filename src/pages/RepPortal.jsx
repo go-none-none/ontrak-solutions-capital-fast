@@ -220,6 +220,8 @@ export default function RepPortal() {
                   instanceUrl: sessionData.instanceUrl
                 });
                 console.log('Contacts response:', contactsRes.data);
+                console.log('Contacts count:', contactsRes.data.contacts?.length || 0);
+                console.log('First contact:', contactsRes.data.contacts?.[0]);
                 setContacts(contactsRes.data.contacts || []);
               } catch (error) {
                 console.error('Contacts load error:', error);

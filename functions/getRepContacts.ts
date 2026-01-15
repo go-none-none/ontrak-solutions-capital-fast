@@ -62,6 +62,7 @@ Deno.serve(async (req) => {
     }
     
     console.log('Fetched contacts count for userId', userId, ':', allContacts.length);
+    console.log('Sample contact:', allContacts[0]);
     
     return Response.json({ contacts: allContacts });
   } catch (error) {
