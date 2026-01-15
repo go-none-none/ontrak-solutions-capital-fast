@@ -66,6 +66,7 @@ export default function CommunicationCard({
       setVisibleSmsSids(allSmsSids);
 
       // Check for new inbound messages and add notifications
+      console.log('All messages from API:', messages);
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
       console.log('Inbound SMS messages found:', inboundMessages.length);
       inboundMessages.forEach(msg => {
