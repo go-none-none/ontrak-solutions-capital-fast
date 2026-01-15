@@ -37,6 +37,20 @@ export default function NotificationBell() {
     }
   }, [unreadCount]);
 
+  // Close notification box when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notificationRef.current && !notificationRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
+
   const formatTime = (date) => {
     const now = new Date();
     const diff = now - date;
