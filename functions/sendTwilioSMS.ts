@@ -17,7 +17,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Twilio credentials not configured' }, { status: 500 });
     }
 
-    // Send SMS via Twilio
+    // Send SMS via Twilio with status callback
+    const statusCallbackUrl = `${Deno.env.get('APP_URL') || 'https://api.base44.app'}/functions/twilioStatusCallback`;
+    
     const twilioResponse = await fetch(
       `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`,
       {
@@ -29,7 +31,8 @@ Deno.serve(async (req) => {
         body: new URLSearchParams({
           From: twilioPhoneNumber,
           To: `+1${phoneNumber.replace(/\D/g, '')}`,
-          Body: message
+          Body: message,
+          StatusCallback: statusCallbackUrl
         })
       }
     );
