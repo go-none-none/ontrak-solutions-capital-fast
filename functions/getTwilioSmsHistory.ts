@@ -48,15 +48,18 @@ Deno.serve(async (req) => {
       .filter(msg => msg.to === formattedPhone || msg.from === formattedPhone)
       .sort((a, b) => new Date(a.date_sent) - new Date(b.date_sent))
       .map(msg => {
-        // Determine direction: outbound if FROM Twilio number, inbound if TO Twilio number
+        // Determine direction:
+        // Outbound: FROM Twilio number TO customer
+        // Inbound: FROM customer TO Twilio number
         const isOutbound = msg.from === twilioPhoneNumber;
         return {
           body: msg.body,
           direction: isOutbound ? 'outbound' : 'inbound',
           date: msg.date_sent,
-          status: msg.status,
+          status: msg.status, // queued, failed, sent, delivered, undelivered, received
           from: msg.from,
-          to: msg.to
+          to: msg.to,
+          sid: msg.sid
         };
       });
 
