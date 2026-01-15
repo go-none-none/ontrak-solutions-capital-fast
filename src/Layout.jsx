@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
+import { NotificationProvider } from './components/context/NotificationContext';
 
 // Suppress Base44 auth 401 error for Salesforce-only app
 if (typeof window !== 'undefined') {
