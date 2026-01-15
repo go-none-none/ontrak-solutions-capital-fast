@@ -64,24 +64,29 @@ export default function CommunicationCard({
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
       const now = new Date();
 
+      // Don't create notifications if user is already viewing this record
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentRecordId = urlParams.get('id');
+      const isCurrentRecord = currentRecordId === recordId;
+
       inboundMessages.forEach(msg => {
-        const msgDate = new Date(msg.date);
-        // Only notify if message is after last poll AND not already notified
-        if (msgDate > lastPollTime.current && !isSmsSidNotified(msg.sid)) {
-          addNotification({
-            title: `New SMS from ${recipientName}`,
-            message: msg.body,
-            smsSid: msg.sid,
-            recordId,
-            recordType,
-            link: recordType === 'Opportunity' 
-              ? createPageUrl('OpportunityDetail') + `?id=${recordId}`
-              : recordType === 'Lead'
-              ? createPageUrl('LeadDetail') + `?id=${recordId}`
-              : createPageUrl('ContactDetail') + `?id=${recordId}`
-          });
-        }
-      });
+         const msgDate = new Date(msg.date);
+         // Only notify if message is after last poll AND not already notified AND not the current record
+         if (msgDate > lastPollTime.current && !isSmsSidNotified(msg.sid) && !isCurrentRecord) {
+           addNotification({
+             title: `New SMS from ${recipientName}`,
+             message: msg.body,
+             smsSid: msg.sid,
+             recordId,
+             recordType,
+             link: recordType === 'Opportunity' 
+               ? createPageUrl('OpportunityDetail') + `?id=${recordId}`
+               : recordType === 'Lead'
+               ? createPageUrl('LeadDetail') + `?id=${recordId}`
+               : createPageUrl('ContactDetail') + `?id=${recordId}`
+           });
+         }
+       });
 
       lastPollTime.current = now;
     } catch (error) {
