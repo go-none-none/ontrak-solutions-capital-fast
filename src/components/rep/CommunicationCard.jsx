@@ -55,6 +55,7 @@ export default function CommunicationCard({
         instanceUrl: session.instanceUrl
       });
       const messages = response.data.messages || [];
+      console.log('SMS messages fetched:', messages.length, messages);
       const allSmsSids = new Set(messages.map(m => m.sid));
 
       // Only update state if there are new messages
@@ -68,8 +69,13 @@ export default function CommunicationCard({
 
       // Check for new inbound messages and add notifications only once
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
+      console.log('Inbound messages found:', inboundMessages.length, inboundMessages);
+      console.log('Already notified SIDs:', Array.from(notifiedSids.current));
+
       inboundMessages.forEach(msg => {
+        console.log('Checking message:', msg.sid, 'Already notified?', notifiedSids.current.has(msg.sid));
         if (!notifiedSids.current.has(msg.sid)) {
+          console.log('Adding notification for SMS:', msg.sid);
           notifiedSids.current.add(msg.sid);
           addNotification({
             title: `New SMS from ${recipientName}`,
