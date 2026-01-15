@@ -45,7 +45,26 @@ export default function CommunicationCard({
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-      setSmsHistory(response.data.messages || []);
+      const messages = response.data.messages || [];
+      setSmsHistory(messages);
+
+      // Check for new inbound messages
+      const inboundMessages = messages.filter(m => m.direction === 'inbound');
+      if (inboundMessages.length > previousMessageCount) {
+        const newMessages = inboundMessages.slice(previousMessageCount);
+        newMessages.forEach(msg => {
+          addNotification({
+            title: `New SMS from ${recipientName}`,
+            message: msg.body,
+            link: recordType === 'Opportunity' 
+              ? createPageUrl('OpportunityDetail') + `?id=${recordId}`
+              : recordType === 'Lead'
+              ? createPageUrl('LeadDetail') + `?id=${recordId}`
+              : createPageUrl('ContactDetail') + `?id=${recordId}`
+          });
+        });
+        setPreviousMessageCount(inboundMessages.length);
+      }
     } catch (error) {
       console.error('Failed to load SMS history:', error);
     } finally {
