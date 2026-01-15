@@ -34,14 +34,14 @@ export default function ContactDetail() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const contactId = urlParams.get('id');
-    if (contactId) {
+    if (contactId && notifications.length > 0) {
       notifications.forEach(notif => {
         if (notif.link && notif.link.includes(contactId)) {
           removeNotification(notif.id);
         }
       });
     }
-  }, []);
+  }, [notifications, removeNotification]);
 
   const loadData = async (sessionData) => {
     setLoading(true);
