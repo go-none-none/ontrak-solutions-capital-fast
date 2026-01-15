@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square, Trash2 } from 'lucide-react';
+import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square, Trash2, Edit2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import PDFViewer from './PDFViewer';
 
@@ -13,6 +13,8 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
   const [viewingFile, setViewingFile] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [deleting, setDeleting] = useState(null);
+  const [renamingId, setRenamingId] = useState(null);
+  const [newTitle, setNewTitle] = useState('');
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -166,6 +168,35 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
     }
   };
 
+  const handleRenameFile = async (contentDocumentId, currentTitle) => {
+    setRenamingId(contentDocumentId);
+    setNewTitle(currentTitle);
+  };
+
+  const submitRename = async (contentDocumentId, currentTitle) => {
+    if (!newTitle.trim() || newTitle === currentTitle) {
+      setRenamingId(null);
+      setNewTitle('');
+      return;
+    }
+
+    try {
+      await base44.functions.invoke('renameSalesforceFile', {
+        contentDocumentId,
+        newTitle: newTitle.trim(),
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      await loadFiles();
+      setRenamingId(null);
+      setNewTitle('');
+    } catch (error) {
+      console.error('Rename error:', error);
+      alert('Failed to rename file');
+    }
+  };
+
   return (
     <>
     <div className="bg-white rounded-2xl p-6 shadow-sm">
@@ -251,44 +282,97 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                     <Icon className="w-5 h-5 text-orange-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-slate-900 truncate">{doc.Title}</p>
+                    {renamingId === file.ContentDocumentId ? (
+                      <input
+                        type="text"
+                        value={newTitle}
+                        onChange={(e) => setNewTitle(e.target.value)}
+                        autoFocus
+                        className="w-full px-2 py-1 border border-slate-300 rounded text-sm font-medium mb-1"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') submitRename(file.ContentDocumentId, doc.Title);
+                          if (e.key === 'Escape') {
+                            setRenamingId(null);
+                            setNewTitle('');
+                          }
+                        }}
+                      />
+                    ) : (
+                      <p className="font-medium text-slate-900 truncate">{doc.Title}</p>
+                    )}
                     <p className="text-xs text-slate-500">
                       {formatFileSize(doc.ContentSize)} • {formatDate(doc.CreatedDate)}
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-1 flex-shrink-0">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => handleViewFile(file)}
-                    title="View file"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </Button>
-                  <a
-                    href={`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`}
-                    download
-                    title="Download file"
-                  >
-                    <Button variant="ghost" size="sm">
-                      <Download className="w-4 h-4" />
-                    </Button>
-                  </a>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => handleDeleteFile(file.ContentDocumentId, doc.Title)}
-                    disabled={deleting === file.ContentDocumentId}
-                    title="Delete file"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    {deleting === file.ContentDocumentId ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="w-4 h-4" />
-                    )}
-                  </Button>
+                  {renamingId === file.ContentDocumentId ? (
+                    <>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => submitRename(file.ContentDocumentId, doc.Title)}
+                        title="Confirm rename"
+                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                      >
+                        <CheckSquare className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          setRenamingId(null);
+                          setNewTitle('');
+                        }}
+                        title="Cancel"
+                        className="text-slate-600 hover:text-slate-700"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleRenameFile(file.ContentDocumentId, doc.Title)}
+                        title="Rename file"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleViewFile(file)}
+                        title="View file"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <a
+                        href={`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`}
+                        download
+                        title="Download file"
+                      >
+                        <Button variant="ghost" size="sm">
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      </a>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDeleteFile(file.ContentDocumentId, doc.Title)}
+                        disabled={deleting === file.ContentDocumentId}
+                        title="Delete file"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        {deleting === file.ContentDocumentId ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </>
+                  )}
                 </div>
               </motion.div>
             );
