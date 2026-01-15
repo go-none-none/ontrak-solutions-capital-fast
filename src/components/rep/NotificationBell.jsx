@@ -16,24 +16,38 @@ export default function NotificationBell() {
   // Play bell sound and animate when notifications change
   useEffect(() => {
     if (unreadCount > 0) {
-      // Play bell sound
+      // Play pleasant notification sound (two tones)
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      
-      oscillator.frequency.value = 800;
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-      
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.3);
-      
+
+      // First tone - higher pitch
+      const osc1 = audioContext.createOscillator();
+      const gain1 = audioContext.createGain();
+      osc1.connect(gain1);
+      gain1.connect(audioContext.destination);
+
+      osc1.frequency.value = 1000;
+      gain1.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gain1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+
+      osc1.start(audioContext.currentTime);
+      osc1.stop(audioContext.currentTime + 0.4);
+
+      // Second tone - lower pitch, starts halfway through
+      const osc2 = audioContext.createOscillator();
+      const gain2 = audioContext.createGain();
+      osc2.connect(gain2);
+      gain2.connect(audioContext.destination);
+
+      osc2.frequency.value = 700;
+      gain2.gain.setValueAtTime(0.3, audioContext.currentTime + 0.2);
+      gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.6);
+
+      osc2.start(audioContext.currentTime + 0.2);
+      osc2.stop(audioContext.currentTime + 0.6);
+
       // Trigger animation
       setShouldRing(true);
-      setTimeout(() => setShouldRing(false), 500);
+      setTimeout(() => setShouldRing(false), 600);
     }
   }, [unreadCount]);
 
