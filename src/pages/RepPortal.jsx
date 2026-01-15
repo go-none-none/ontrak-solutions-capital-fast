@@ -42,7 +42,7 @@ export default function RepPortal() {
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [loadingContacts, setLoadingContacts] = useState(true);
-  const notifiedSids = useRef(new Set());
+  const lastPollTime = useRef(new Date());
   const itemsPerPage = 100;
 
   // Disposition color mapping
