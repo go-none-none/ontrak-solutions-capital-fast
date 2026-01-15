@@ -56,6 +56,8 @@ export default function RepPortalHeader({
             >
               <Home className="w-5 h-5" />
             </Button>
+
+            <NotificationBell />
             
             {showCreateTask && (
               <Button 
