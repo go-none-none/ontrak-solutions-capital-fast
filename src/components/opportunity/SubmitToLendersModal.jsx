@@ -188,32 +188,39 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
           </div>
         ) : (
           <>
-            {/* Filter */}
-            <div className="flex gap-2 mb-4">
-              <Button
-                variant={filter === 'All' ? 'default' : 'outline'}
-                onClick={() => setFilter('All')}
-                size="sm"
-              >
-                All
-              </Button>
-              <Button
-                variant={filter === 'Qualified' ? 'default' : 'outline'}
-                onClick={() => setFilter('Qualified')}
-                size="sm"
-              >
-                Qualified
-              </Button>
-              <Button
-                variant={filter === 'Unqualified' ? 'default' : 'outline'}
-                onClick={() => setFilter('Unqualified')}
-                size="sm"
-              >
-                Unqualified
-              </Button>
-            </div>
+            <Tabs defaultValue="lenders" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="lenders">Lenders</TabsTrigger>
+                <TabsTrigger value="files">Files</TabsTrigger>
+              </TabsList>
 
-            {/* Lenders Table */}
+              <TabsContent value="lenders" className="space-y-4">
+                {/* Filter */}
+                <div className="flex gap-2 mb-4">
+                  <Button
+                    variant={filter === 'All' ? 'default' : 'outline'}
+                    onClick={() => setFilter('All')}
+                    size="sm"
+                  >
+                    All
+                  </Button>
+                  <Button
+                    variant={filter === 'Qualified' ? 'default' : 'outline'}
+                    onClick={() => setFilter('Qualified')}
+                    size="sm"
+                  >
+                    Qualified
+                  </Button>
+                  <Button
+                    variant={filter === 'Unqualified' ? 'default' : 'outline'}
+                    onClick={() => setFilter('Unqualified')}
+                    size="sm"
+                  >
+                    Unqualified
+                  </Button>
+                </div>
+
+                {/* Lenders Table */}
             <div className="border rounded-lg overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 border-b">
