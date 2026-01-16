@@ -184,7 +184,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredLenders.map(lender => (
+                  {lenders.map(lender => (
                     <tr key={lender.Id} className="border-b hover:bg-slate-50">
                       <td className="p-2">
                         <Checkbox
