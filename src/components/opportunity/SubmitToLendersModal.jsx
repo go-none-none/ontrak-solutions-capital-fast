@@ -21,8 +21,26 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   useEffect(() => {
     if (isOpen && session) {
       loadLenders();
+      loadFiles();
     }
   }, [isOpen, session]);
+
+  const loadFiles = async () => {
+    setLoadingFiles(true);
+    try {
+      const response = await base44.functions.invoke('getSalesforceFiles', {
+        recordId: opportunity.Id,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      setFiles(response.data.files || []);
+    } catch (error) {
+      console.error('Error loading files:', error);
+    } finally {
+      setLoadingFiles(false);
+    }
+  };
 
   const loadLenders = async () => {
     setLoading(true);
