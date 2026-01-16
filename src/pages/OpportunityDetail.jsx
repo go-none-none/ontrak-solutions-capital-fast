@@ -124,13 +124,21 @@ export default function OpportunityDetail() {
       return;
     }
     
+    // Find the correct "Declined" stage value from picklist
+    const declinedStageValue = stagePicklistValues.find(v => 
+      v.toLowerCase().includes('declined') || v.toLowerCase().includes('closed')
+    ) || 'Closed - Declined';
+    
+    console.log('Using stage value:', declinedStageValue);
+    console.log('Using decline reason:', selectedDeclinedReason);
+    
     setUpdatingStatus(true);
     try {
       await base44.functions.invoke('updateSalesforceRecord', {
         objectType: 'Opportunity',
         recordId: opportunity.Id,
         data: { 
-          StageName: 'Closed - Declined',
+          StageName: declinedStageValue,
           csbs__Stage_Detail__c: selectedDeclinedReason
         },
         token: session.token,
@@ -142,7 +150,8 @@ export default function OpportunityDetail() {
       setSelectedDeclinedReason('');
     } catch (error) {
       console.error('Status update error:', error);
-      alert('Failed to update status');
+      console.error('Error details:', error.response?.data);
+      alert(`Failed to update status: ${error.response?.data?.details?.[0]?.message || error.message}`);
     } finally {
       setUpdatingStatus(false);
     }
