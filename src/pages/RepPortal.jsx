@@ -121,6 +121,8 @@ export default function RepPortal() {
               const email = contact.Email?.toLowerCase();
 
               let link = createPageUrl('ContactDetail') + `?id=${contact.Id}`;
+              let recordId = contact.Id;
+              let recordType = 'Contact';
 
               // Check for related lead first
               const relatedLead = leads.find(l => 
@@ -130,6 +132,8 @@ export default function RepPortal() {
 
               if (relatedLead) {
                 link = createPageUrl('LeadDetail') + `?id=${relatedLead.Id}`;
+                recordId = relatedLead.Id;
+                recordType = 'Lead';
               } else {
                 // Check for related opportunity through account or contact
                 const relatedOpp = opportunities.find(o => 
@@ -139,6 +143,8 @@ export default function RepPortal() {
 
                 if (relatedOpp) {
                   link = createPageUrl('OpportunityDetail') + `?id=${relatedOpp.Id}`;
+                  recordId = relatedOpp.Id;
+                  recordType = 'Opportunity';
                 }
               }
 
@@ -146,7 +152,9 @@ export default function RepPortal() {
                 title: `New SMS from ${contact.Name}`,
                 message: msg.body,
                 smsSid: msg.sid,
-                link: link
+                link: link,
+                recordId: recordId,
+                recordType: recordType
               });
             });
           } catch (err) {
