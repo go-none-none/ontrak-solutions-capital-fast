@@ -116,11 +116,37 @@ export default function RepPortal() {
             });
             
             inboundMessages.forEach(msg => {
+              // Find related lead or opportunity to link to
+              const phone = (contact.MobilePhone || contact.Phone)?.replace(/\D/g, '');
+              const email = contact.Email?.toLowerCase();
+
+              let link = createPageUrl('ContactDetail') + `?id=${contact.Id}`;
+
+              // Check for related lead first
+              const relatedLead = leads.find(l => 
+                l.MobilePhone?.replace(/\D/g, '') === phone || 
+                l.Email?.toLowerCase() === email
+              );
+
+              if (relatedLead) {
+                link = createPageUrl('LeadDetail') + `?id=${relatedLead.Id}`;
+              } else {
+                // Check for related opportunity through account or contact
+                const relatedOpp = opportunities.find(o => 
+                  o.Account?.Email__c?.toLowerCase() === email ||
+                  o.Account?.Phone?.replace(/\D/g, '') === phone
+                );
+
+                if (relatedOpp) {
+                  link = createPageUrl('OpportunityDetail') + `?id=${relatedOpp.Id}`;
+                }
+              }
+
               addNotification({
                 title: `New SMS from ${contact.Name}`,
                 message: msg.body,
                 smsSid: msg.sid,
-                link: createPageUrl('ContactDetail') + `?id=${contact.Id}`
+                link: link
               });
             });
           } catch (err) {
