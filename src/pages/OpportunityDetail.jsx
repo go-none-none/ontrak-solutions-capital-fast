@@ -42,6 +42,7 @@ export default function OpportunityDetail() {
   const [commissions, setCommissions] = useState([]);
   const [loadingRelated, setLoadingRelated] = useState(false);
   const [showNewStatement, setShowNewStatement] = useState(false);
+  const [editingStatement, setEditingStatement] = useState(null);
   const [showNewDebt, setShowNewDebt] = useState(false);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
@@ -681,7 +682,17 @@ export default function OpportunityDetail() {
                             <p className="font-semibold text-slate-900">{stmt.csbs__Bank_Name__c || 'Unknown Bank'}</p>
                             <p className="text-xs text-slate-500">{stmt.csbs__Account_No__c}</p>
                           </div>
-                          {stmt.csbs__Reconciled__c && <Badge className="bg-green-600">Reconciled</Badge>}
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setEditingStatement(stmt)}
+                              className="h-8 px-2"
+                            >
+                              Edit
+                            </Button>
+                            {stmt.csbs__Reconciled__c && <Badge className="bg-green-600">Reconciled</Badge>}
+                          </div>
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div>
@@ -1156,6 +1167,21 @@ export default function OpportunityDetail() {
           const urlParams = new URLSearchParams(window.location.search);
           const oppId = urlParams.get('id');
           loadRelatedRecords(session, oppId);
+        }}
+      />
+
+      {/* Edit Statement Modal */}
+      <NewStatementModal
+        isOpen={!!editingStatement}
+        onClose={() => setEditingStatement(null)}
+        opportunityId={opportunity.Id}
+        session={session}
+        statement={editingStatement}
+        onSuccess={() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const oppId = urlParams.get('id');
+          loadRelatedRecords(session, oppId);
+          setEditingStatement(null);
         }}
       />
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function NewStatementModal({ isOpen, onClose, opportunityId, session, onSuccess }) {
+export default function NewStatementModal({ isOpen, onClose, opportunityId, session, onSuccess, statement = null }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     accountNo: '',
@@ -36,17 +36,56 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     notes: ''
   });
 
+  useEffect(() => {
+    if (statement) {
+      setFormData({
+        accountNo: statement.csbs__Account_No__c || '',
+        accountTitle: statement.csbs__Account_Title__c || '',
+        company: statement.csbs__Company__c || '',
+        bankName: statement.csbs__Bank_Name__c || '',
+        startingDate: statement.csbs__Starting_Date__c || '',
+        startingBalance: statement.csbs__Starting_Balance__c || '',
+        endingDate: statement.csbs__Ending_Date__c || '',
+        endingBalance: statement.csbs__Ending_Balance__c || '',
+        reconciled: statement.csbs__Reconciled__c || false,
+        unreconciledEndBalance: statement.csbs__Unreconciled_End_Balance__c || '',
+        fraudScore: statement.csbs__Fraud_Score__c || '',
+        avgDailyBalance: statement.csbs__Average_Daily_Balance__c || '',
+        depositCount: statement.csbs__Deposit_Count__c || '',
+        depositAmount: statement.csbs__Deposit_Amount__c || '',
+        withdrawalsCount: statement.csbs__Withdrawals_Count__c || '',
+        totalWithdrawals: statement.csbs__Total_Withdrawals__c || '',
+        transactionsCount: statement.csbs__Transactions_Count__c || '',
+        minResolution: statement.csbs__Min_Resolution__c || '',
+        maxResolution: statement.csbs__Max_Resolution__c || '',
+        nsfs: statement.csbs__NSFs__c || '',
+        negativeDays: statement.csbs__Negative_Days__c || '',
+        fraudReasons: statement.csbs__Fraud_Reasons__c || '',
+        notes: statement.csbs__Notes__c || ''
+      });
+    }
+  }, [statement]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      await base44.functions.invoke('createSalesforceStatement', {
-        opportunityId,
-        statementData: formData,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
+      if (statement) {
+        await base44.functions.invoke('updateSalesforceStatement', {
+          statementId: statement.Id,
+          statementData: formData,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        });
+      } else {
+        await base44.functions.invoke('createSalesforceStatement', {
+          opportunityId,
+          statementData: formData,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        });
+      }
 
       onSuccess();
       
