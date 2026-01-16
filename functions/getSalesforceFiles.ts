@@ -27,14 +27,16 @@ Deno.serve(async (req) => {
     const data = await response.json();
     
     // Transform the response to include proper file data
-    const files = data.records.map(record => ({
-      Id: record.ContentDocumentId,
-      Title: record.ContentDocument.Title,
-      FileExtension: record.ContentDocument.FileExtension,
-      ContentSize: record.ContentDocument.ContentSize,
-      CreatedDate: record.ContentDocument.CreatedDate,
-      LastModifiedDate: record.ContentDocument.LastModifiedDate
-    }));
+    const files = data.records
+      .filter(record => record.ContentDocument) // Filter out records without ContentDocument
+      .map(record => ({
+        Id: record.ContentDocumentId,
+        Title: record.ContentDocument?.Title || 'Unknown',
+        FileExtension: record.ContentDocument?.FileExtension || '',
+        ContentSize: record.ContentDocument?.ContentSize || 0,
+        CreatedDate: record.ContentDocument?.CreatedDate,
+        LastModifiedDate: record.ContentDocument?.LastModifiedDate
+      }));
     
     return Response.json({ files });
   } catch (error) {
