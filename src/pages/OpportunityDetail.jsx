@@ -17,6 +17,7 @@ import RepPortalHeader from '../components/rep/RepPortalHeader';
 import ActivityPanel from '../components/rep/ActivityPanel';
 import NewStatementModal from '../components/opportunity/NewStatementModal';
 import NewDebtModal from '../components/opportunity/NewDebtModal';
+import SubmissionDetailsModal from '../components/opportunity/SubmissionDetailsModal';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ export default function OpportunityDetail() {
   const [showNewStatement, setShowNewStatement] = useState(false);
   const [editingStatement, setEditingStatement] = useState(null);
   const [showNewDebt, setShowNewDebt] = useState(false);
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -556,7 +558,11 @@ export default function OpportunityDetail() {
                 ) : (
                   <div className="space-y-3">
                     {submissions.map(sub => (
-                      <div key={sub.Id} className="bg-white rounded-xl p-4 shadow-sm">
+                      <div 
+                        key={sub.Id} 
+                        className="bg-white rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                        onClick={() => setSelectedSubmission(sub)}
+                      >
                         <div className="flex items-start justify-between mb-3">
                           <div>
                             <p className="font-semibold text-slate-900">{sub.csbs__Lender__r?.Name || 'Unknown Lender'}</p>
@@ -1196,6 +1202,13 @@ export default function OpportunityDetail() {
           const oppId = urlParams.get('id');
           loadRelatedRecords(session, oppId);
         }}
+      />
+
+      {/* Submission Details Modal */}
+      <SubmissionDetailsModal
+        isOpen={!!selectedSubmission}
+        onClose={() => setSelectedSubmission(null)}
+        submission={selectedSubmission}
       />
     </div>
   );
