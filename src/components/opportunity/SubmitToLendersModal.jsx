@@ -23,12 +23,20 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   }, [isOpen, session]);
 
   const loadLenders = async () => {
-    setLoading(true);
-    try {
-      const response = await base44.functions.invoke('getSubmissionLenders', {
-            token: session.token,
-            instanceUrl: session.instanceUrl
-          });
+        setLoading(true);
+        try {
+          const [response, tierResponse] = await Promise.all([
+            base44.functions.invoke('getSubmissionLenders', {
+              token: session.token,
+              instanceUrl: session.instanceUrl
+            }),
+            base44.functions.invoke('getSalesforcePicklistValues', {
+              objectType: 'Account',
+              fieldName: 'csbs__Tier__c',
+              token: session.token,
+              instanceUrl: session.instanceUrl
+            })
+          ]);
 
           console.log('Lenders response:', response.data);
           console.log('First lender full data:', response.data.lenders?.[0]);
