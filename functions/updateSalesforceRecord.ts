@@ -30,10 +30,25 @@ Deno.serve(async (req) => {
     );
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error('Salesforce update error:', error);
+      const errorText = await response.text();
+      console.error('Salesforce update error:', errorText);
       console.error('Update data:', JSON.stringify(updateData, null, 2));
-      return Response.json({ error, details: updateData }, { status: response.status });
+      console.error('Object type:', objectName);
+      console.error('Record ID:', recordId);
+      
+      let errorDetails;
+      try {
+        errorDetails = JSON.parse(errorText);
+      } catch {
+        errorDetails = errorText;
+      }
+      
+      return Response.json({ 
+        error: 'Salesforce update failed', 
+        details: errorDetails,
+        updateData,
+        objectType: objectName 
+      }, { status: response.status });
     }
 
     return Response.json({ success: true });
