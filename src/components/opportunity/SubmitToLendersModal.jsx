@@ -150,15 +150,17 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   };
 
   const filteredLenders = lenders.filter(lender => {
-    // Status filter
-    const statusMatch = filter === 'All' || 
-      (filter === 'Qualified' && lender.status === 'qualified') ||
-      (filter === 'Unqualified' && lender.status === 'unqualified');
-
-    // Tier filter
-    const tierMatch = tierFilter === 'All' || lender.csbs__Tier__c === tierFilter;
-
-    return statusMatch && tierMatch;
+    if (activeFilter === 'All') return true;
+    if (activeFilter === 'Qualified') return lender.status === 'qualified';
+    if (activeFilter === 'Not Qualified') return lender.status === 'unqualified';
+    if (activeFilter === 'Tier 1') return lender.csbs__Tier__c === 'Tier 1';
+    if (activeFilter === 'Tier 2') return lender.csbs__Tier__c === 'Tier 2';
+    if (activeFilter === 'Tier 3') return lender.csbs__Tier__c === 'Tier 3';
+    if (activeFilter === 'Tier 4') return lender.csbs__Tier__c === 'Tier 4';
+    if (activeFilter === 'Priority Lenders') return lender.csbs__Priority_Lender__c === true;
+    if (activeFilter === 'Priority Lenders (Qualified)') return lender.csbs__Priority_Lender__c === true && lender.status === 'qualified';
+    if (activeFilter === 'Submitted') return lender.submitted === true;
+    return true;
   });
 
   const getStatusIcon = (status) => {
