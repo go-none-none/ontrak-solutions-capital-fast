@@ -9,9 +9,10 @@ Deno.serve(async (req) => {
     }
 
     const query = `
-      SELECT Id, Name, csbs__Lender__r.Name, csbs__Status__c, csbs__Status_Detail__c,
+      SELECT Id, Name, csbs__Lender__r.Name, csbs__Opportunity__r.Name, csbs__Status__c, csbs__Status_Detail__c,
              csbs__Type__c, csbs__API_Lender_Status__c, csbs__Notes__c, csbs__URL__c,
-             csbs__Min_Term__c, csbs__Max_Term__c, CreatedDate, LastModifiedDate
+             csbs__Min_Term__c, csbs__Max_Term__c, csbs__Email__c, csbs__Email_to_CC__c, csbs__Email_to_BCC__c,
+             CreatedDate, LastModifiedDate
       FROM csbs__Submission__c
       WHERE csbs__Opportunity__c = '${opportunityId}'
       ORDER BY CreatedDate DESC
