@@ -28,8 +28,11 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
         instanceUrl: session.instanceUrl
       });
       
+      console.log('Lenders response:', response.data);
+      
       // Evaluate each lender's qualification
-      const lendersWithStatus = response.data.lenders.map(lender => ({
+      const lendersData = response.data.lenders || [];
+      const lendersWithStatus = lendersData.map(lender => ({
         ...lender,
         status: evaluateLenderQualification(lender, opportunity)
       }));
@@ -37,6 +40,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
       setLenders(lendersWithStatus);
     } catch (error) {
       console.error('Error loading lenders:', error);
+      alert('Failed to load lenders: ' + error.message);
     } finally {
       setLoading(false);
     }
