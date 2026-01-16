@@ -14,6 +14,9 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   const [selectedLenders, setSelectedLenders] = useState({});
   const [notes, setNotes] = useState({});
   const [filter, setFilter] = useState('All');
+  const [files, setFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState({});
+  const [loadingFiles, setLoadingFiles] = useState(false);
 
   useEffect(() => {
     if (isOpen && session) {
