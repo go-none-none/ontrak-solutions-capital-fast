@@ -134,9 +134,11 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
 
     setSubmitting(true);
     try {
+      const selectedFileIds = Object.keys(selectedFiles).filter(id => selectedFiles[id]);
       const lendersToSubmit = selected.map(lenderId => ({
         lenderId,
-        notes: notes[lenderId] || ''
+        notes: notes[lenderId] || '',
+        fileIds: selectedFileIds
       }));
 
       await base44.functions.invoke('createSubmissions', {
