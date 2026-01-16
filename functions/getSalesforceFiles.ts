@@ -25,20 +25,7 @@ Deno.serve(async (req) => {
     }
 
     const data = await response.json();
-    
-    // Transform the response to include proper file data
-    const files = (data.records || [])
-      .filter(record => record && record.ContentDocument) // Filter out records without ContentDocument
-      .map(record => ({
-        Id: record.ContentDocumentId,
-        Title: (record.ContentDocument && record.ContentDocument.Title) || 'Unknown',
-        FileExtension: (record.ContentDocument && record.ContentDocument.FileExtension) || '',
-        ContentSize: (record.ContentDocument && record.ContentDocument.ContentSize) || 0,
-        CreatedDate: record.ContentDocument && record.ContentDocument.CreatedDate,
-        LastModifiedDate: record.ContentDocument && record.ContentDocument.LastModifiedDate
-      }));
-    
-    return Response.json({ files });
+    return Response.json({ files: data.records });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
