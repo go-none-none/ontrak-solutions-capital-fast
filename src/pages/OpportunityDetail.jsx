@@ -160,6 +160,33 @@ export default function OpportunityDetail() {
     }
   };
 
+  const loadPicklistValues = async (sessionData) => {
+    try {
+      const [stageResponse, declineReasonResponse] = await Promise.all([
+        base44.functions.invoke('getSalesforcePicklistValues', {
+          objectType: 'Opportunity',
+          fieldName: 'StageName',
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforcePicklistValues', {
+          objectType: 'Opportunity',
+          fieldName: 'csbs__Stage_Detail__c',
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        })
+      ]);
+      
+      console.log('Stage picklist values:', stageResponse.data.values);
+      console.log('Decline reason picklist values:', declineReasonResponse.data.values);
+      
+      setStagePicklistValues(stageResponse.data.values || []);
+      setDeclineReasonPicklistValues(declineReasonResponse.data.values || []);
+    } catch (error) {
+      console.error('Load picklist values error:', error);
+    }
+  };
+
   const handleFieldSave = async (field) => {
     try {
       setEditing({ ...editing, [field]: true });
