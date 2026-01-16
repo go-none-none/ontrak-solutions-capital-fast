@@ -3,9 +3,19 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { token, instanceUrl } = await req.json();
+    let token, instanceUrl;
+    
+    try {
+      const body = await req.json();
+      token = body.token;
+      instanceUrl = body.instanceUrl;
+    } catch (e) {
+      console.error('Error parsing request body:', e);
+      return Response.json({ error: 'Invalid request body' }, { status: 400 });
+    }
 
     if (!token || !instanceUrl) {
+      console.error('Missing credentials - token:', !!token, 'instanceUrl:', !!instanceUrl);
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
     }
 
