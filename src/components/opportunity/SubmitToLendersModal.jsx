@@ -300,8 +300,8 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
               </TabsContent>
             </Tabs>
 
-                  {/* Actions */}
-                  <div className="flex justify-end gap-2 mt-4">
+            {/* Actions */}
+            <div className="flex justify-end gap-2 mt-4">
               <Button variant="outline" onClick={onClose} disabled={submitting}>
                 Cancel
               </Button>
