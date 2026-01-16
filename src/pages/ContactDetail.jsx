@@ -300,10 +300,11 @@ export default function ContactDetail() {
               recipientEmail={contact.Email}
               recipientName={contact.Name}
               phoneNumber={contact.MobilePhone || contact.Phone}
-              recordId={contact.Id}
-              recordType="Contact"
+              recordId={opportunities.length > 0 ? opportunities[0].Id : contact.Id}
+              recordType={opportunities.length > 0 ? "Opportunity" : "Contact"}
               session={session}
               smsColor="bg-[#08708E]"
+              firstName={contact.FirstName}
             />
 
             <div className="bg-white rounded-xl shadow-sm p-6">
