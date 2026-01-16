@@ -418,14 +418,22 @@ export default function OpportunityDetail() {
                       <SelectValue placeholder="Choose a reason..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Credit">Credit</SelectItem>
-                      <SelectItem value="NSFs">NSFs</SelectItem>
-                      <SelectItem value="Low Revenue">Low Revenue</SelectItem>
-                      <SelectItem value="Time In Business">Time In Business</SelectItem>
-                      <SelectItem value="Industry">Industry</SelectItem>
-                      <SelectItem value="Existing Debt">Existing Debt</SelectItem>
-                      <SelectItem value="Customer Declined">Customer Declined</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
+                      {declineReasonPicklistValues.length > 0 ? (
+                        declineReasonPicklistValues.map(value => (
+                          <SelectItem key={value} value={value}>{value}</SelectItem>
+                        ))
+                      ) : (
+                        <>
+                          <SelectItem value="Credit">Credit</SelectItem>
+                          <SelectItem value="NSFs">NSFs</SelectItem>
+                          <SelectItem value="Low Revenue">Low Revenue</SelectItem>
+                          <SelectItem value="Time In Business">Time In Business</SelectItem>
+                          <SelectItem value="Industry">Industry</SelectItem>
+                          <SelectItem value="Existing Debt">Existing Debt</SelectItem>
+                          <SelectItem value="Customer Declined">Customer Declined</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                   <div className="flex gap-2">
