@@ -24,11 +24,12 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
     setLoading(true);
     try {
       const response = await base44.functions.invoke('getSubmissionLenders', {
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
-      
-      console.log('Lenders response:', response.data);
+            token: session.token,
+            instanceUrl: session.instanceUrl
+          });
+
+          console.log('Lenders response:', response.data);
+          console.log('First lender full data:', response.data.lenders?.[0]);
       
       // Evaluate each lender's qualification
       const lendersData = response.data.lenders || [];
