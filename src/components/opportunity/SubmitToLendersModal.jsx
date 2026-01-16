@@ -1,26 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, CheckCircle2, XCircle, AlertCircle, FileText } from 'lucide-react';
+import { Loader2, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function SubmitToLendersModal({ isOpen, onClose, opportunity, session, onSuccess }) {
   const [lenders, setLenders] = useState([]);
-  const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [filesLoading, setFilesLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [selectedLenders, setSelectedLenders] = useState({});
-  const [selectedFiles, setSelectedFiles] = useState({});
   const [notes, setNotes] = useState({});
+  const [filter, setFilter] = useState('All');
 
   useEffect(() => {
     if (isOpen && session) {
       loadLenders();
-      loadFiles();
     }
   }, [isOpen, session]);
 
@@ -31,21 +27,12 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-
-      const lendersData = response.data.lenders || [];
-      const activeLenders = lendersData.filter(lender => 
-        lender.csbs__Minimum_Credit_Score__c || 
-        lender.csbs__Minimum_Monthly_Deposit_Amount__c ||
-        lender.csbs__Minimum_Monthly_Deposit_Count__c ||
-        lender.csbs__Maximum_NSFs__c ||
-        lender.csbs__Maximum_Negative_Days__c ||
-        lender.csbs__Minimum_Average_Daily_Balance__c ||
-        lender.csbs__Minimum_Months_in_Business__c ||
-        lender.csbs__Restricted_Industries__c ||
-        lender.csbs__Restricted_States__c
-      );
       
-      const lendersWithStatus = activeLenders.map(lender => ({
+      console.log('Lenders response:', response.data);
+      
+      // Evaluate each lender's qualification
+      const lendersData = response.data.lenders || [];
+      const lendersWithStatus = lendersData.map(lender => ({
         ...lender,
         status: evaluateLenderQualification(lender, opportunity)
       }));
@@ -151,7 +138,12 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
     setSelectedLenders(prev => ({ ...prev, [lenderId]: !prev[lenderId] }));
   };
 
-
+  const filteredLenders = lenders.filter(lender => {
+    if (filter === 'All') return true;
+    if (filter === 'Qualified') return lender.status === 'qualified';
+    if (filter === 'Unqualified') return lender.status === 'unqualified';
+    return true;
+  });
 
   const getStatusIcon = (status) => {
     if (status === 'qualified') return <CheckCircle2 className="w-4 h-4 text-green-600" />;
@@ -172,6 +164,31 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
           </div>
         ) : (
           <>
+            {/* Filter */}
+            <div className="flex gap-2 mb-4">
+              <Button
+                variant={filter === 'All' ? 'default' : 'outline'}
+                onClick={() => setFilter('All')}
+                size="sm"
+              >
+                All
+              </Button>
+              <Button
+                variant={filter === 'Qualified' ? 'default' : 'outline'}
+                onClick={() => setFilter('Qualified')}
+                size="sm"
+              >
+                Qualified
+              </Button>
+              <Button
+                variant={filter === 'Unqualified' ? 'default' : 'outline'}
+                onClick={() => setFilter('Unqualified')}
+                size="sm"
+              >
+                Unqualified
+              </Button>
+            </div>
+
             {/* Lenders Table */}
             <div className="border rounded-lg overflow-x-auto">
               <table className="w-full text-sm">
@@ -189,7 +206,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                   </tr>
                 </thead>
                 <tbody>
-                  {lenders.map(lender => (
+                  {filteredLenders.map(lender => (
                     <tr key={lender.Id} className="border-b hover:bg-slate-50">
                       <td className="p-2">
                         <Checkbox
