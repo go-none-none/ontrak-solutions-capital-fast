@@ -267,17 +267,17 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                 </div>
               </TabsContent>
 
-                  <TabsContent value="files" className="space-y-4">
-                  {loadingFiles ? (
+              <TabsContent value="files" className="space-y-4">
+                {loadingFiles ? (
                   <div className="flex items-center justify-center py-12">
                     <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
                   </div>
-                  ) : files.length === 0 ? (
+                ) : files.length === 0 ? (
                   <div className="py-8 text-center text-slate-600">
                     <File className="w-8 h-8 mx-auto mb-2 text-slate-400" />
                     <p>No files found</p>
                   </div>
-                  ) : (
+                ) : (
                   <div className="space-y-2">
                     {files.map(file => (
                       <div key={file.Id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-slate-50">
@@ -296,9 +296,9 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                       </div>
                     ))}
                   </div>
-                  )}
-                  </TabsContent>
-                  </Tabs>
+                )}
+              </TabsContent>
+            </Tabs>
 
                   {/* Actions */}
                   <div className="flex justify-end gap-2 mt-4">
