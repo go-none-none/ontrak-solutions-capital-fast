@@ -170,6 +170,7 @@ export default function OpportunityDetail() {
       setCommissions(commissionsRes.data.commissions || []);
     } catch (error) {
       console.error('Load related records error:', error);
+      // Don't let related records errors crash the page
     } finally {
       setLoadingRelated(false);
     }
