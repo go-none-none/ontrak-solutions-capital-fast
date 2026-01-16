@@ -153,11 +153,16 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   };
 
   const filteredLenders = lenders.filter(lender => {
-    if (filter === 'All') return true;
-    if (filter === 'Qualified') return lender.status === 'qualified';
-    if (filter === 'Unqualified') return lender.status === 'unqualified';
-    return true;
+    const statusMatch = filter === 'All' || 
+      (filter === 'Qualified' && lender.status === 'qualified') ||
+      (filter === 'Unqualified' && lender.status === 'unqualified');
+
+    const tierMatch = tierFilter === 'All' || lender.csbs__Tier_Position__c === tierFilter;
+
+    return statusMatch && tierMatch;
   });
+
+  const uniqueTiers = [...new Set(lenders.map(l => l.csbs__Tier_Position__c).filter(Boolean))].sort();
 
   const getStatusIcon = (status) => {
     if (status === 'qualified') return <CheckCircle2 className="w-4 h-4 text-green-600" />;
