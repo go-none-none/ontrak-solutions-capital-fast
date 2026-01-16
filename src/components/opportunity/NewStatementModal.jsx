@@ -130,7 +130,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>New Bank Statement</DialogTitle>
+          <DialogTitle>{statement ? 'Edit Statement' : 'New Statement'}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
