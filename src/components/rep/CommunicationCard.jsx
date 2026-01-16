@@ -190,7 +190,8 @@ export default function CommunicationCard({
 
   const useTemplate = () => {
     const statusLink = `https://ontrak.co/Status?rid=${recordId}`;
-    const template = `OnTrak: Hi ${firstName || 'there'}, ${session.name} Check status: ${statusLink}`;
+    const userFirstName = session.name?.split(' ')[0] || session.name;
+    const template = `OnTrak: Hi ${firstName || 'there'}, [add text here], check status: ${statusLink}, Thank you, ${userFirstName}`;
     setSmsMessage(template);
   };
 
