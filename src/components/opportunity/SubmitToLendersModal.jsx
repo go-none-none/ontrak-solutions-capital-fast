@@ -280,13 +280,17 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                 ) : (
                   <div className="space-y-2">
                     {files.map(file => (
-                      <div key={file.Id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-slate-50">
+                      <div 
+                        key={file.Id} 
+                        className="flex items-center gap-3 p-3 border rounded-lg hover:bg-slate-50 cursor-pointer"
+                        onClick={() => setSelectedFiles(prev => ({
+                          ...prev,
+                          [file.Id]: !prev[file.Id]
+                        }))}
+                      >
                         <Checkbox
                           checked={selectedFiles[file.Id] || false}
-                          onCheckedChange={(checked) => setSelectedFiles(prev => ({
-                            ...prev,
-                            [file.Id]: checked
-                          }))}
+                          onCheckedChange={() => {}}
                         />
                         <File className="w-4 h-4 text-slate-400" />
                         <div className="flex-1">
