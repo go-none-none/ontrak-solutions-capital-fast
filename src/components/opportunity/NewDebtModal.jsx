@@ -14,6 +14,7 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
   const [loadingPicklists, setLoadingPicklists] = useState(true);
   const [typePicklist, setTypePicklist] = useState([]);
   const [frequencyPicklist, setFrequencyPicklist] = useState([]);
+  const [lenders, setLenders] = useState([]);
   const [formData, setFormData] = useState({
     creditorId: '',
     balance: '',
@@ -35,7 +36,7 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
   const loadPicklists = async () => {
     setLoadingPicklists(true);
     try {
-      const [typeRes, frequencyRes] = await Promise.all([
+      const [typeRes, frequencyRes, lendersRes] = await Promise.all([
         base44.functions.invoke('getSalesforcePicklistValues', {
           objectType: 'csbs__Debt__c',
           fieldName: 'csbs__Type__c',
@@ -47,11 +48,16 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
           fieldName: 'csbs__Frequency__c',
           token: session.token,
           instanceUrl: session.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforceLenders', {
+          token: session.token,
+          instanceUrl: session.instanceUrl
         })
       ]);
 
       setTypePicklist(typeRes.data.values || []);
       setFrequencyPicklist(frequencyRes.data.values || []);
+      setLenders(lendersRes.data.lenders || []);
     } catch (error) {
       console.error('Load picklists error:', error);
     } finally {
@@ -117,12 +123,19 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="creditor">Creditor</Label>
-                    <Input
-                      id="creditor"
+                    <Select
                       value={formData.creditorId}
-                      onChange={(e) => setFormData({ ...formData, creditorId: e.target.value })}
-                      placeholder="Search Accounts..."
-                    />
+                      onValueChange={(value) => setFormData({ ...formData, creditorId: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="--None--" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {lenders.map(lender => (
+                          <SelectItem key={lender.Id} value={lender.Id}>{lender.Name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
