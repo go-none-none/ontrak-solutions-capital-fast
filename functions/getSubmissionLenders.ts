@@ -3,23 +3,18 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    let token, instanceUrl;
-    
-    try {
-      const body = await req.json();
-      token = body.token;
-      instanceUrl = body.instanceUrl;
-    } catch (e) {
-      console.error('Error parsing request body:', e);
-      return Response.json({ error: 'Invalid request body' }, { status: 400 });
-    }
+    const body = await req.json();
+    const { token, instanceUrl } = body;
+
+    console.log('getSubmissionLenders - Received:', { token: !!token, instanceUrl: !!instanceUrl });
 
     if (!token || !instanceUrl) {
-      console.error('Missing credentials - token:', !!token, 'instanceUrl:', !!instanceUrl);
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
     }
 
     const query = `SELECT Id, Name, csbs__Minimum_Credit_Score__c, csbs__Minimum_Monthly_Deposit_Count__c, csbs__Minimum_Monthly_Deposit_Amount__c, csbs__Maximum_Negative_Days__c, csbs__Maximum_NSFs__c, csbs__Minimum_Average_Daily_Balance__c, csbs__Minimum_Months_in_Business__c, csbs__Restricted_Industries__c, csbs__Restricted_States__c, csbs__Maximum_Offer_Amount__c FROM csbs__Lender__c ORDER BY Name ASC LIMIT 200`;
+
+    console.log('getSubmissionLenders - Query:', query);
 
     const response = await fetch(
       `${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(query)}`,
@@ -31,14 +26,19 @@ Deno.serve(async (req) => {
       }
     );
 
+    console.log('getSubmissionLenders - Response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.json();
+      console.error('getSubmissionLenders - Salesforce error:', errorData);
       return Response.json({ error: 'Query failed', details: errorData }, { status: response.status });
     }
 
     const data = await response.json();
+    console.log('getSubmissionLenders - Records found:', data.records?.length || 0);
     return Response.json({ lenders: data.records || [] });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('getSubmissionLenders - Error:', error.message, error.stack);
+    return Response.json({ error: error.message, stack: error.stack }, { status: 500 });
   }
 });
