@@ -291,24 +291,45 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                   <div className="space-y-2">
                     {files.map(file => (
                       <div 
-                        key={file.Id} 
-                        className="flex items-center gap-3 p-3 border rounded-lg hover:bg-slate-50 cursor-pointer"
+                        key={file.id} 
+                        className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                          selectedFiles[file.id]
+                            ? 'border-orange-500 bg-orange-50'
+                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        }`}
                         onClick={() => setSelectedFiles(prev => ({
                           ...prev,
-                          [file.Id]: !prev[file.Id]
+                          [file.id]: !prev[file.id]
                         }))}
                       >
                         <Checkbox
-                          checked={selectedFiles[file.Id] || false}
+                          checked={selectedFiles[file.id] || false}
                           onCheckedChange={() => {}}
+                          className="mt-1"
                         />
-                        <File className="w-4 h-4 text-slate-400" />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-slate-900">{file.Title}</p>
-                          <p className="text-xs text-slate-500">{(file.ContentSize / 1024 / 1024).toFixed(2)} MB</p>
+                        <File className="w-5 h-5 text-slate-400 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-900 truncate">{file.title}</p>
+                          <div className="flex gap-3 text-xs text-slate-500 mt-1">
+                            <span>.{file.extension}</span>
+                            <span>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                            {file.createdDate && (
+                              <span>{new Date(file.createdDate).toLocaleDateString()}</span>
+                            )}
+                          </div>
                         </div>
+                        {selectedFiles[file.id] && (
+                          <div className="flex-shrink-0 text-orange-600">
+                            <CheckCircle2 className="w-5 h-5" />
+                          </div>
+                        )}
                       </div>
                     ))}
+                  </div>
+                )}
+                {files.length > 0 && Object.values(selectedFiles).filter(Boolean).length > 0 && (
+                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+                    {Object.values(selectedFiles).filter(Boolean).length} file(s) selected for submission
                   </div>
                 )}
               </TabsContent>
