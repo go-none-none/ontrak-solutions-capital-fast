@@ -31,6 +31,8 @@ export default function OpportunityDetail() {
   const [users, setUsers] = useState([]);
   const [changingOwner, setChangingOwner] = useState(false);
   const [showOwnerChange, setShowOwnerChange] = useState(false);
+  const [stagePicklistValues, setStagePicklistValues] = useState([]);
+  const [declineReasonPicklistValues, setDeclineReasonPicklistValues] = useState([]);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
