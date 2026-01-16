@@ -3,28 +3,15 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { token, instanceUrl } = body;
 
+    console.log('getSubmissionLenders called with:', { token: !!token, instanceUrl: !!instanceUrl });
+
     if (!token || !instanceUrl) {
-      return Response.json({ error: 'Missing token or instanceUrl' }, { status: 400 });
+      return Response.json({ error: 'Missing token or instanceUrl', received: body }, { status: 400 });
     }
 
-    // Query lenders from csbs__Lender__c custom object
-    const query = `
-      SELECT Id, Name, 
-             csbs__Minimum_Credit_Score__c,
-             csbs__Minimum_Monthly_Deposit_Count__c,
-             csbs__Minimum_Monthly_Deposit_Amount__c,
-             csbs__Maximum_Negative_Days__c,
-             csbs__Maximum_NSFs__c,
-             csbs__Minimum_Average_Daily_Balance__c,
-             csbs__Minimum_Months_in_Business__c,
-             csbs__Restricted_Industries__c,
-             csbs__Restricted_States__c,
-             csbs__Maximum_Offer_Amount__c
-      FROM csbs__Lender__c
-      ORDER BY Name ASC
-      LIMIT 200
-    `;
+    const query = `SELECT Id, Name, csbs__Minimum_Credit_Score__c, csbs__Minimum_Monthly_Deposit_Count__c, csbs__Minimum_Monthly_Deposit_Amount__c, csbs__Maximum_Negative_Days__c, csbs__Maximum_NSFs__c, csbs__Minimum_Average_Daily_Balance__c, csbs__Minimum_Months_in_Business__c, csbs__Restricted_Industries__c, csbs__Restricted_States__c, csbs__Maximum_Offer_Amount__c FROM csbs__Lender__c ORDER BY Name ASC LIMIT 200`;
 
+    console.log('Querying Salesforce...');
     const response = await fetch(
       `${instanceUrl}/services/data/v62.0/query?q=${encodeURIComponent(query)}`,
       {
@@ -35,10 +22,12 @@ Deno.serve(async (req) => {
       }
     );
 
+    console.log('Salesforce response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.json();
       console.error('Salesforce query error:', errorData);
-      return Response.json({ error: errorData, query }, { status: response.status });
+      return Response.json({ error: 'Query failed', details: errorData }, { status: response.status });
     }
 
     const data = await response.json();
@@ -46,6 +35,6 @@ Deno.serve(async (req) => {
     return Response.json({ lenders: data.records || [] });
   } catch (error) {
     console.error('Function error:', error);
-    return Response.json({ error: error.message, stack: error.stack }, { status: 500 });
+    return Response.json({ error: error.message }, { status: 500 });
   }
 });
