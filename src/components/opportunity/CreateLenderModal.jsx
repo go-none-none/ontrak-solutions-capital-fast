@@ -34,15 +34,13 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
     csbs__Minimum_Credit_Score__c: '',
     csbs__Maximum_Negative_Days__c: '',
     csbs__Minimum_Monthly_Deposit_Count__c: '',
-    csbs__Minimum_Max__c: '',
+    csbs__Maximum_NSFs__c: '',
     csbs__Minimum_Monthly_Deposit_Amount__c: '',
-    csbs__Maximum_Open_Calc_Balance__c: '',
-    csbs__Minimum_Monthly_Balance__c: '',
-    csbs__Minimum_NSF_Tolerance__c: '',
-    csbs__Individual_Details__c: '',
-    csbs__Minimum_Offer_Amount__c: '',
-    csbs__Options__c: '',
-    csbs__Whitelist_Offer_Industries__c: '',
+    csbs__Minimum_Average_Daily_Balance__c: '',
+    csbs__Minimum_Months_in_Business__c: '',
+    csbs__Restricted_States__c: '',
+    csbs__Maximum_Offer_Amount__c: '',
+    csbs__Restricted_Industries__c: '',
     csbs__Net_Offer_Percentage__c: ''
   });
 
@@ -292,12 +290,12 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
                 />
               </div>
               <div>
-                <Label htmlFor="minMax">Minimum Max</Label>
+                <Label htmlFor="maxNSFs">Maximum NSFs</Label>
                 <Input
-                  id="minMax"
+                  id="maxNSFs"
                   type="number"
-                  value={formData.csbs__Minimum_Max__c}
-                  onChange={(e) => setFormData({ ...formData, csbs__Minimum_Max__c: e.target.value })}
+                  value={formData.csbs__Maximum_NSFs__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Maximum_NSFs__c: e.target.value })}
                 />
               </div>
               <div>
@@ -310,65 +308,50 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
                 />
               </div>
               <div>
-                <Label htmlFor="maxOpenBal">Maximum Open Calc Balance</Label>
+                <Label htmlFor="minAvgBalance">Minimum Average Daily Balance</Label>
                 <Input
-                  id="maxOpenBal"
+                  id="minAvgBalance"
                   type="number"
-                  value={formData.csbs__Maximum_Open_Calc_Balance__c}
-                  onChange={(e) => setFormData({ ...formData, csbs__Maximum_Open_Calc_Balance__c: e.target.value })}
+                  value={formData.csbs__Minimum_Average_Daily_Balance__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Minimum_Average_Daily_Balance__c: e.target.value })}
                 />
               </div>
               <div>
-                <Label htmlFor="minMonthBal">Minimum Monthly Balance</Label>
+                <Label htmlFor="minMonthsBiz">Minimum Months in Business</Label>
                 <Input
-                  id="minMonthBal"
+                  id="minMonthsBiz"
                   type="number"
-                  value={formData.csbs__Minimum_Monthly_Balance__c}
-                  onChange={(e) => setFormData({ ...formData, csbs__Minimum_Monthly_Balance__c: e.target.value })}
+                  value={formData.csbs__Minimum_Months_in_Business__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Minimum_Months_in_Business__c: e.target.value })}
                 />
               </div>
               <div>
-                <Label htmlFor="minNSF">Minimum NSF Tolerance</Label>
-                <Input
-                  id="minNSF"
-                  type="number"
-                  value={formData.csbs__Minimum_NSF_Tolerance__c}
-                  onChange={(e) => setFormData({ ...formData, csbs__Minimum_NSF_Tolerance__c: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="individualDetails">Individual Details</Label>
-                <Input
-                  id="individualDetails"
-                  value={formData.csbs__Individual_Details__c}
-                  onChange={(e) => setFormData({ ...formData, csbs__Individual_Details__c: e.target.value })}
-                  placeholder="Available"
-                />
-              </div>
-              <div>
-                <Label htmlFor="minOfferAmt">Minimum Offer Amount</Label>
-                <Input
-                  id="minOfferAmt"
-                  type="number"
-                  value={formData.csbs__Minimum_Offer_Amount__c}
-                  onChange={(e) => setFormData({ ...formData, csbs__Minimum_Offer_Amount__c: e.target.value })}
-                />
-              </div>
-              <div className="col-span-2">
-                <Label htmlFor="options">Options</Label>
+                <Label htmlFor="restrictedStates">Restricted States</Label>
                 <Textarea
-                  id="options"
-                  value={formData.csbs__Options__c}
-                  onChange={(e) => setFormData({ ...formData, csbs__Options__c: e.target.value })}
-                  rows={3}
+                  id="restrictedStates"
+                  value={formData.csbs__Restricted_States__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Restricted_States__c: e.target.value })}
+                  placeholder="Enter state codes separated by semicolons (e.g., AZ;CA;CO)"
+                  rows={2}
                 />
               </div>
               <div>
-                <Label htmlFor="whitelistIndustries">Whitelist Offer Industries</Label>
+                <Label htmlFor="maxOfferAmt">Maximum Offer Amount</Label>
                 <Input
-                  id="whitelistIndustries"
-                  value={formData.csbs__Whitelist_Offer_Industries__c}
-                  onChange={(e) => setFormData({ ...formData, csbs__Whitelist_Offer_Industries__c: e.target.value })}
+                  id="maxOfferAmt"
+                  type="number"
+                  value={formData.csbs__Maximum_Offer_Amount__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Maximum_Offer_Amount__c: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="restrictedIndustries">Restricted Industries</Label>
+                <Textarea
+                  id="restrictedIndustries"
+                  value={formData.csbs__Restricted_Industries__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Restricted_Industries__c: e.target.value })}
+                  placeholder="Enter industries separated by semicolons"
+                  rows={2}
                 />
               </div>
             </div>
