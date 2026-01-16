@@ -11,21 +11,28 @@ import { base44 } from '@/api/base44Client';
 export default function NewStatementModal({ isOpen, onClose, opportunityId, session, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    bankName: '',
     accountNo: '',
     accountTitle: '',
+    company: '',
+    bankName: '',
     startingDate: '',
-    endingDate: '',
     startingBalance: '',
+    endingDate: '',
     endingBalance: '',
+    reconciled: false,
+    unreconciledEndBalance: '',
+    fraudScore: '',
     avgDailyBalance: '',
-    depositAmount: '',
     depositCount: '',
-    totalWithdrawals: '',
+    depositAmount: '',
     withdrawalsCount: '',
+    totalWithdrawals: '',
+    transactionsCount: '',
+    minResolution: '',
+    maxResolution: '',
     nsfs: '',
     negativeDays: '',
-    reconciled: false,
+    fraudReasons: '',
     notes: ''
   });
 
@@ -42,23 +49,34 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       });
 
       onSuccess();
-      onClose();
+      
+      if (!e.nativeEvent.submitter.name.includes('new')) {
+        onClose();
+      }
+      
       setFormData({
-        bankName: '',
         accountNo: '',
         accountTitle: '',
+        company: '',
+        bankName: '',
         startingDate: '',
-        endingDate: '',
         startingBalance: '',
+        endingDate: '',
         endingBalance: '',
+        reconciled: false,
+        unreconciledEndBalance: '',
+        fraudScore: '',
         avgDailyBalance: '',
-        depositAmount: '',
         depositCount: '',
-        totalWithdrawals: '',
+        depositAmount: '',
         withdrawalsCount: '',
+        totalWithdrawals: '',
+        transactionsCount: '',
+        minResolution: '',
+        maxResolution: '',
         nsfs: '',
         negativeDays: '',
-        reconciled: false,
+        fraudReasons: '',
         notes: ''
       });
     } catch (error) {
@@ -76,196 +94,272 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
           <DialogTitle>New Bank Statement</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="bankName">Bank Name</Label>
-              <Input
-                id="bankName"
-                value={formData.bankName}
-                onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
-                placeholder="Enter bank name"
-              />
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Information Section */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-700 mb-4 pb-2 border-b">Information</h3>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+              {/* Left Column */}
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="accountNo">Account No</Label>
+                  <Input
+                    id="accountNo"
+                    value={formData.accountNo}
+                    onChange={(e) => setFormData({ ...formData, accountNo: e.target.value })}
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="accountNo">Account Number</Label>
-              <Input
-                id="accountNo"
-                value={formData.accountNo}
-                onChange={(e) => setFormData({ ...formData, accountNo: e.target.value })}
-                placeholder="Last 4 digits"
-              />
-            </div>
+                <div>
+                  <Label htmlFor="accountTitle">Account Title</Label>
+                  <Input
+                    id="accountTitle"
+                    value={formData.accountTitle}
+                    onChange={(e) => setFormData({ ...formData, accountTitle: e.target.value })}
+                  />
+                </div>
 
-            <div className="col-span-2">
-              <Label htmlFor="accountTitle">Account Title</Label>
-              <Input
-                id="accountTitle"
-                value={formData.accountTitle}
-                onChange={(e) => setFormData({ ...formData, accountTitle: e.target.value })}
-                placeholder="Account holder name"
-              />
-            </div>
+                <div>
+                  <Label htmlFor="company">Company</Label>
+                  <Input
+                    id="company"
+                    value={formData.company}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="startingDate">Starting Date</Label>
-              <Input
-                id="startingDate"
-                type="date"
-                value={formData.startingDate}
-                onChange={(e) => setFormData({ ...formData, startingDate: e.target.value })}
-              />
-            </div>
+                <div>
+                  <Label htmlFor="bankName">Bank Name</Label>
+                  <Input
+                    id="bankName"
+                    value={formData.bankName}
+                    onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="endingDate">Ending Date</Label>
-              <Input
-                id="endingDate"
-                type="date"
-                value={formData.endingDate}
-                onChange={(e) => setFormData({ ...formData, endingDate: e.target.value })}
-              />
-            </div>
+                <div>
+                  <Label htmlFor="startingDate">Starting Date</Label>
+                  <Input
+                    id="startingDate"
+                    type="date"
+                    value={formData.startingDate}
+                    onChange={(e) => setFormData({ ...formData, startingDate: e.target.value })}
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="startingBalance">Starting Balance</Label>
-              <Input
-                id="startingBalance"
-                type="number"
-                step="0.01"
-                value={formData.startingBalance}
-                onChange={(e) => setFormData({ ...formData, startingBalance: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
+                <div>
+                  <Label htmlFor="startingBalance">Starting Balance</Label>
+                  <Input
+                    id="startingBalance"
+                    type="number"
+                    step="0.01"
+                    value={formData.startingBalance}
+                    onChange={(e) => setFormData({ ...formData, startingBalance: e.target.value })}
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="endingBalance">Ending Balance</Label>
-              <Input
-                id="endingBalance"
-                type="number"
-                step="0.01"
-                value={formData.endingBalance}
-                onChange={(e) => setFormData({ ...formData, endingBalance: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
+                <div>
+                  <Label htmlFor="endingDate">Ending Date</Label>
+                  <Input
+                    id="endingDate"
+                    type="date"
+                    value={formData.endingDate}
+                    onChange={(e) => setFormData({ ...formData, endingDate: e.target.value })}
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="avgDailyBalance">Average Daily Balance</Label>
-              <Input
-                id="avgDailyBalance"
-                type="number"
-                step="0.01"
-                value={formData.avgDailyBalance}
-                onChange={(e) => setFormData({ ...formData, avgDailyBalance: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
+                <div>
+                  <Label htmlFor="endingBalance">Ending Balance</Label>
+                  <Input
+                    id="endingBalance"
+                    type="number"
+                    step="0.01"
+                    value={formData.endingBalance}
+                    onChange={(e) => setFormData({ ...formData, endingBalance: e.target.value })}
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="depositAmount">Total Deposits</Label>
-              <Input
-                id="depositAmount"
-                type="number"
-                step="0.01"
-                value={formData.depositAmount}
-                onChange={(e) => setFormData({ ...formData, depositAmount: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="reconciled"
+                    checked={formData.reconciled}
+                    onCheckedChange={(checked) => setFormData({ ...formData, reconciled: checked })}
+                  />
+                  <Label htmlFor="reconciled" className="cursor-pointer">Reconciled</Label>
+                </div>
 
-            <div>
-              <Label htmlFor="depositCount">Deposit Count</Label>
-              <Input
-                id="depositCount"
-                type="number"
-                value={formData.depositCount}
-                onChange={(e) => setFormData({ ...formData, depositCount: e.target.value })}
-                placeholder="0"
-              />
-            </div>
+                <div>
+                  <Label htmlFor="unreconciledEndBalance">Unreconciled End Balance</Label>
+                  <Input
+                    id="unreconciledEndBalance"
+                    type="number"
+                    step="0.01"
+                    value={formData.unreconciledEndBalance}
+                    onChange={(e) => setFormData({ ...formData, unreconciledEndBalance: e.target.value })}
+                  />
+                </div>
+              </div>
 
-            <div>
-              <Label htmlFor="totalWithdrawals">Total Withdrawals</Label>
-              <Input
-                id="totalWithdrawals"
-                type="number"
-                step="0.01"
-                value={formData.totalWithdrawals}
-                onChange={(e) => setFormData({ ...formData, totalWithdrawals: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
+              {/* Right Column */}
+              <div className="space-y-4">
+                <div>
+                  <Label>*Opportunity</Label>
+                  <div className="px-3 py-2 bg-slate-50 border rounded text-sm text-slate-600">
+                    Auto-filled
+                  </div>
+                </div>
 
-            <div>
-              <Label htmlFor="withdrawalsCount">Withdrawals Count</Label>
-              <Input
-                id="withdrawalsCount"
-                type="number"
-                value={formData.withdrawalsCount}
-                onChange={(e) => setFormData({ ...formData, withdrawalsCount: e.target.value })}
-                placeholder="0"
-              />
-            </div>
+                <div>
+                  <Label htmlFor="avgDailyBalance">Average Daily Balance</Label>
+                  <Input
+                    id="avgDailyBalance"
+                    type="number"
+                    step="0.01"
+                    value={formData.avgDailyBalance}
+                    onChange={(e) => setFormData({ ...formData, avgDailyBalance: e.target.value })}
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="nsfs">NSFs</Label>
-              <Input
-                id="nsfs"
-                type="number"
-                value={formData.nsfs}
-                onChange={(e) => setFormData({ ...formData, nsfs: e.target.value })}
-                placeholder="0"
-              />
-            </div>
+                <div>
+                  <Label htmlFor="depositCount">Deposit Count</Label>
+                  <Input
+                    id="depositCount"
+                    type="number"
+                    value={formData.depositCount}
+                    onChange={(e) => setFormData({ ...formData, depositCount: e.target.value })}
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="negativeDays">Negative Days</Label>
-              <Input
-                id="negativeDays"
-                type="number"
-                value={formData.negativeDays}
-                onChange={(e) => setFormData({ ...formData, negativeDays: e.target.value })}
-                placeholder="0"
-              />
-            </div>
+                <div>
+                  <Label htmlFor="depositAmount">Deposit Amount</Label>
+                  <Input
+                    id="depositAmount"
+                    type="number"
+                    step="0.01"
+                    value={formData.depositAmount}
+                    onChange={(e) => setFormData({ ...formData, depositAmount: e.target.value })}
+                  />
+                </div>
 
-            <div className="col-span-2">
-              <Label htmlFor="notes">Notes</Label>
-              <Textarea
-                id="notes"
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder="Additional notes..."
-                rows={3}
-              />
-            </div>
+                <div>
+                  <Label htmlFor="withdrawalsCount">Withdrawals Count</Label>
+                  <Input
+                    id="withdrawalsCount"
+                    type="number"
+                    value={formData.withdrawalsCount}
+                    onChange={(e) => setFormData({ ...formData, withdrawalsCount: e.target.value })}
+                  />
+                </div>
 
-            <div className="col-span-2 flex items-center gap-2">
-              <Checkbox
-                id="reconciled"
-                checked={formData.reconciled}
-                onCheckedChange={(checked) => setFormData({ ...formData, reconciled: checked })}
-              />
-              <Label htmlFor="reconciled" className="cursor-pointer">Reconciled</Label>
+                <div>
+                  <Label htmlFor="totalWithdrawals">Total Withdrawals</Label>
+                  <Input
+                    id="totalWithdrawals"
+                    type="number"
+                    step="0.01"
+                    value={formData.totalWithdrawals}
+                    onChange={(e) => setFormData({ ...formData, totalWithdrawals: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="transactionsCount">Transactions Count</Label>
+                  <Input
+                    id="transactionsCount"
+                    type="number"
+                    value={formData.transactionsCount}
+                    onChange={(e) => setFormData({ ...formData, transactionsCount: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="minResolution">Min Resolution</Label>
+                  <Input
+                    id="minResolution"
+                    type="number"
+                    value={formData.minResolution}
+                    onChange={(e) => setFormData({ ...formData, minResolution: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="maxResolution">Max Resolution</Label>
+                  <Input
+                    id="maxResolution"
+                    type="number"
+                    value={formData.maxResolution}
+                    onChange={(e) => setFormData({ ...formData, maxResolution: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="nsfs">NSFs</Label>
+                  <Input
+                    id="nsfs"
+                    type="number"
+                    value={formData.nsfs}
+                    onChange={(e) => setFormData({ ...formData, nsfs: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="negativeDays">Negative Days</Label>
+                  <Input
+                    id="negativeDays"
+                    type="number"
+                    value={formData.negativeDays}
+                    onChange={(e) => setFormData({ ...formData, negativeDays: e.target.value })}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
+          {/* Fraud Section */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-700 mb-4 pb-2 border-b">Fraud</h3>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+              <div>
+                <Label htmlFor="fraudScore">Fraud Score</Label>
+                <Input
+                  id="fraudScore"
+                  type="number"
+                  value={formData.fraudScore}
+                  onChange={(e) => setFormData({ ...formData, fraudScore: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="fraudReasons">Fraud Reasons</Label>
+                <Textarea
+                  id="fraudReasons"
+                  value={formData.fraudReasons}
+                  onChange={(e) => setFormData({ ...formData, fraudReasons: e.target.value })}
+                  rows={3}
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  rows={3}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t">
             <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="bg-orange-600 hover:bg-orange-700">
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                'Create Statement'
-              )}
+            <Button type="submit" name="saveNew" disabled={loading} variant="outline">
+              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save & New'}
+            </Button>
+            <Button type="submit" name="save" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save'}
             </Button>
           </div>
         </form>
