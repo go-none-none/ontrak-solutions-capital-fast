@@ -120,6 +120,8 @@ export default function RepPortal() {
               const phone = (contact.MobilePhone || contact.Phone)?.replace(/\D/g, '');
               const email = contact.Email?.toLowerCase();
 
+              console.log('SMS Notification - Contact:', contact.Name, 'Phone:', phone, 'Email:', email, 'AccountId:', contact.AccountId);
+
               let link = createPageUrl('ContactDetail') + `?id=${contact.Id}`;
               let recordId = contact.Id;
               let recordType = 'Contact';
@@ -128,25 +130,41 @@ export default function RepPortal() {
               const relatedLead = leads.find(l => {
                 const leadPhone = l.MobilePhone?.replace(/\D/g, '');
                 const leadEmail = l.Email?.toLowerCase();
-                return leadPhone === phone || leadEmail === email;
+                const phoneMatch = leadPhone === phone;
+                const emailMatch = leadEmail === email;
+                if (phoneMatch || emailMatch) {
+                  console.log('MATCH - Lead:', l.Name, 'phoneMatch:', phoneMatch, 'emailMatch:', emailMatch);
+                }
+                return phoneMatch || emailMatch;
               });
 
               if (relatedLead) {
+                console.log('✓ Using Lead:', relatedLead.Name, relatedLead.Id);
                 link = createPageUrl('LeadDetail') + `?id=${relatedLead.Id}`;
                 recordId = relatedLead.Id;
                 recordType = 'Lead';
               } else {
+                console.log('No lead found, checking opportunities...');
                 // Check for related opportunity through account
-                const relatedOpp = opportunities.find(o => 
-                  o.AccountId === contact.AccountId && contact.AccountId
-                );
+                const relatedOpp = opportunities.find(o => {
+                  const match = o.AccountId === contact.AccountId && contact.AccountId;
+                  if (match) {
+                    console.log('MATCH - Opportunity:', o.Name, 'AccountId:', o.AccountId);
+                  }
+                  return match;
+                });
 
                 if (relatedOpp) {
+                  console.log('✓ Using Opportunity:', relatedOpp.Name, relatedOpp.Id);
                   link = createPageUrl('OpportunityDetail') + `?id=${relatedOpp.Id}`;
                   recordId = relatedOpp.Id;
                   recordType = 'Opportunity';
+                } else {
+                  console.log('✗ No lead or opportunity found, using Contact');
                 }
               }
+
+              console.log('Final notification:', { link, recordId, recordType });
 
               addNotification({
                 title: `New SMS from ${contact.Name}`,
