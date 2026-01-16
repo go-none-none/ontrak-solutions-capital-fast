@@ -4,20 +4,6 @@ import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
 import { NotificationProvider } from './components/context/NotificationContext';
 
-// Suppress Base44 auth 401 error for Salesforce-only app
-if (typeof window !== 'undefined') {
-  const originalFetch = window.fetch;
-  window.fetch = function(...args) {
-    const promise = originalFetch.apply(this, args);
-    return promise.catch(err => {
-      if (args[0]?.includes?.('/entities/User/me')) {
-        return new Response('', { status: 200 });
-      }
-      throw err;
-    });
-  };
-}
-
 export default function Layout({ children, currentPageName }) {
   const { pathname } = useLocation();
   const isRepPortal = currentPageName === 'RepPortal' || currentPageName === 'LeadDetail' || currentPageName === 'OpportunityDetail' || currentPageName === 'AdminPipeline' || currentPageName === 'ContactDetail';
