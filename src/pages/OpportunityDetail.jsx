@@ -94,6 +94,12 @@ export default function OpportunityDetail() {
       const urlParams = new URLSearchParams(window.location.search);
       const oppId = urlParams.get('id');
 
+      if (!oppId) {
+        console.error('No opportunity ID found in URL');
+        setLoading(false);
+        return;
+      }
+
       const [oppResponse, contactRolesResponse] = await Promise.all([
         base44.functions.invoke('getSalesforceRecord', {
           recordId: oppId,
@@ -108,11 +114,13 @@ export default function OpportunityDetail() {
         })
       ]);
 
-      setOpportunity(oppResponse.data.record);
-      setContactRoles(contactRolesResponse.data.contactRoles || []);
-      
-      // Load related records
-      loadRelatedRecords(sessionData, oppId);
+      if (oppResponse.data.record) {
+        setOpportunity(oppResponse.data.record);
+        setContactRoles(contactRolesResponse.data.contactRoles || []);
+        loadRelatedRecords(sessionData, oppId);
+      } else {
+        console.error('No opportunity data returned');
+      }
     } catch (error) {
       console.error('Load error:', error);
     } finally {
