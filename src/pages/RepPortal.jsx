@@ -120,33 +120,43 @@ export default function RepPortal() {
               const phone = (contact.MobilePhone || contact.Phone)?.replace(/\D/g, '');
               const email = contact.Email?.toLowerCase();
 
+              console.log('SMS Notification - Contact:', contact.Name, 'Phone:', phone, 'Email:', email);
+
               let link = createPageUrl('ContactDetail') + `?id=${contact.Id}`;
               let recordId = contact.Id;
               let recordType = 'Contact';
 
               // Check for related lead first
-              const relatedLead = leads.find(l => 
-                l.MobilePhone?.replace(/\D/g, '') === phone || 
-                l.Email?.toLowerCase() === email
-              );
+              const relatedLead = leads.find(l => {
+                const leadPhone = l.MobilePhone?.replace(/\D/g, '');
+                const leadEmail = l.Email?.toLowerCase();
+                return leadPhone === phone || leadEmail === email;
+              });
 
               if (relatedLead) {
+                console.log('Found related lead:', relatedLead.Name, relatedLead.Id);
                 link = createPageUrl('LeadDetail') + `?id=${relatedLead.Id}`;
                 recordId = relatedLead.Id;
                 recordType = 'Lead';
               } else {
                 // Check for related opportunity through account or contact
-                const relatedOpp = opportunities.find(o => 
-                  o.Account?.Email__c?.toLowerCase() === email ||
-                  o.Account?.Phone?.replace(/\D/g, '') === phone
-                );
+                const relatedOpp = opportunities.find(o => {
+                  const oppEmail = o.Account?.Email__c?.toLowerCase();
+                  const oppPhone = o.Account?.Phone?.replace(/\D/g, '');
+                  return oppEmail === email || oppPhone === phone;
+                });
 
                 if (relatedOpp) {
+                  console.log('Found related opportunity:', relatedOpp.Name, relatedOpp.Id);
                   link = createPageUrl('OpportunityDetail') + `?id=${relatedOpp.Id}`;
                   recordId = relatedOpp.Id;
                   recordType = 'Opportunity';
+                } else {
+                  console.log('No lead or opportunity found, using contact');
                 }
               }
+
+              console.log('Final link:', link);
 
               addNotification({
                 title: `New SMS from ${contact.Name}`,
