@@ -9,9 +9,12 @@ import { base44 } from '@/api/base44Client';
 
 export default function SubmitToLendersModal({ isOpen, onClose, opportunity, session, onSuccess }) {
   const [lenders, setLenders] = useState([]);
+  const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filesLoading, setFilesLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [selectedLenders, setSelectedLenders] = useState({});
+  const [selectedFiles, setSelectedFiles] = useState({});
   const [notes, setNotes] = useState({});
 
   useEffect(() => {
