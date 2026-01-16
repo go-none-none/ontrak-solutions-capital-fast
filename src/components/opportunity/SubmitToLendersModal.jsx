@@ -61,6 +61,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
       }));
       
       setLenders(lendersWithStatus);
+      setTierOptions(tierResponse.data.values || []);
     } catch (error) {
       console.error('Error loading lenders:', error);
       alert('Failed to load lenders: ' + error.message);
