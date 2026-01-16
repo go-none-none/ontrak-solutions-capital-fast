@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import CreateLenderModal from './CreateLenderModal';
 
 export default function NewDebtModal({ isOpen, onClose, opportunityId, session, onSuccess }) {
   const [loading, setLoading] = useState(false);
@@ -15,6 +16,7 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
   const [typePicklist, setTypePicklist] = useState([]);
   const [frequencyPicklist, setFrequencyPicklist] = useState([]);
   const [lenders, setLenders] = useState([]);
+  const [showCreateLender, setShowCreateLender] = useState(false);
   const [formData, setFormData] = useState({
     creditorId: '',
     balance: '',
@@ -123,19 +125,30 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="creditor">Creditor</Label>
-                    <Select
-                      value={formData.creditorId}
-                      onValueChange={(value) => setFormData({ ...formData, creditorId: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="--None--" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {lenders.map(lender => (
-                          <SelectItem key={lender.Id} value={lender.Id}>{lender.Name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                      <Select
+                        value={formData.creditorId}
+                        onValueChange={(value) => setFormData({ ...formData, creditorId: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="--None--" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {lenders.map(lender => (
+                            <SelectItem key={lender.Id} value={lender.Id}>{lender.Name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setShowCreateLender(true)}
+                        title="Create New Lender"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
 
                   <div>
@@ -260,6 +273,17 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
           </form>
         )}
       </DialogContent>
+
+      <CreateLenderModal
+        isOpen={showCreateLender}
+        onClose={() => setShowCreateLender(false)}
+        session={session}
+        onSuccess={(newLenderId) => {
+          setFormData({ ...formData, creditorId: newLenderId });
+          loadPicklists();
+          setShowCreateLender(false);
+        }}
+      />
     </Dialog>
   );
 }
