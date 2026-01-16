@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
     }
 
-    const query = `SELECT Id, Name, csbs__Minimum_Credit_Score__c, csbs__Minimum_Monthly_Deposit_Count__c, csbs__Minimum_Monthly_Deposit_Amount__c, csbs__Maximum_Negative_Days__c, csbs__Maximum_NSFs__c, csbs__Minimum_Average_Daily_Balance__c, csbs__Minimum_Months_in_Business__c, csbs__Restricted_Industries__c, csbs__Restricted_States__c, csbs__Maximum_Offer_Amount__c FROM csbs__Lender__c ORDER BY Name ASC LIMIT 200`;
+    const query = `SELECT Id, Name, csbs__Minimum_Credit_Score__c, csbs__Minimum_Monthly_Deposit_Count__c, csbs__Minimum_Monthly_Deposit_Amount__c, csbs__Maximum_Negative_Days__c, csbs__Maximum_NSFs__c, csbs__Minimum_Average_Daily_Balance__c, csbs__Minimum_Months_in_Business__c, csbs__Restricted_Industries__c, csbs__Restricted_States__c, csbs__Maximum_Offer_Amount__c FROM Account WHERE csbs__Minimum_Credit_Score__c != null OR csbs__Minimum_Monthly_Deposit_Amount__c != null ORDER BY Name ASC LIMIT 200`;
 
     console.log('getSubmissionLenders - Query:', query);
 
