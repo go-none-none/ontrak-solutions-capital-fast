@@ -1,23 +1,11 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
-
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req);
-    
-    // Set token from request headers before auth check
-    const authHeader = req.headers.get('authorization');
-    if (authHeader) {
-      base44.setToken(authHeader.replace('Bearer ', ''));
-    }
-    
-    const user = await base44.auth.me();
-
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await req.json();
     const { token, instanceUrl } = body;
+
+    if (!token || !instanceUrl) {
+      return Response.json({ error: 'Missing token or instanceUrl' }, { status: 400 });
+    }
 
     // Query lenders from csbs__Lender__c custom object
     const query = `
