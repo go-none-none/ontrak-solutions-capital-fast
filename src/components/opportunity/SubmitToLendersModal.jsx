@@ -146,19 +146,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
     setSelectedLenders(prev => ({ ...prev, [lenderId]: !prev[lenderId] }));
   };
 
-  const filteredLenders = lenders.filter(lender => {
-    if (activeFilter === 'All') return true;
-    if (activeFilter === 'Qualified') return lender.status === 'qualified';
-    if (activeFilter === 'Not Qualified') return lender.status === 'unqualified';
-    if (activeFilter === 'Tier 1') return lender.csbs__Tier__c === 'Tier 1';
-    if (activeFilter === 'Tier 2') return lender.csbs__Tier__c === 'Tier 2';
-    if (activeFilter === 'Tier 3') return lender.csbs__Tier__c === 'Tier 3';
-    if (activeFilter === 'Tier 4') return lender.csbs__Tier__c === 'Tier 4';
-    if (activeFilter === 'Priority Lenders') return lender.csbs__Priority_Lender__c === true;
-    if (activeFilter === 'Priority Lenders (Qualified)') return lender.csbs__Priority_Lender__c === true && lender.status === 'qualified';
-    if (activeFilter === 'Submitted') return lender.submitted === true;
-    return true;
-  });
+
 
   const getStatusIcon = (status) => {
     if (status === 'qualified') return <CheckCircle2 className="w-4 h-4 text-green-600" />;
