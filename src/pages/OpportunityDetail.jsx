@@ -16,6 +16,7 @@ import CommunicationCard from '../components/rep/CommunicationCard.jsx';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
 import ActivityPanel from '../components/rep/ActivityPanel';
 import NewStatementModal from '../components/opportunity/NewStatementModal';
+import NewDebtModal from '../components/opportunity/NewDebtModal';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -41,6 +42,7 @@ export default function OpportunityDetail() {
   const [commissions, setCommissions] = useState([]);
   const [loadingRelated, setLoadingRelated] = useState(false);
   const [showNewStatement, setShowNewStatement] = useState(false);
+  const [showNewDebt, setShowNewDebt] = useState(false);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -707,6 +709,14 @@ export default function OpportunityDetail() {
 
               {/* Debt Tab */}
               <TabsContent value="debt" className="space-y-4">
+                <div className="flex justify-end mb-3">
+                  <Button
+                    onClick={() => setShowNewDebt(true)}
+                    className="bg-orange-600 hover:bg-orange-700"
+                  >
+                    + New Debt
+                  </Button>
+                </div>
                 {loadingRelated ? (
                   <div className="bg-white rounded-xl p-8 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
@@ -1140,6 +1150,19 @@ export default function OpportunityDetail() {
       <NewStatementModal
         isOpen={showNewStatement}
         onClose={() => setShowNewStatement(false)}
+        opportunityId={opportunity.Id}
+        session={session}
+        onSuccess={() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const oppId = urlParams.get('id');
+          loadRelatedRecords(session, oppId);
+        }}
+      />
+
+      {/* New Debt Modal */}
+      <NewDebtModal
+        isOpen={showNewDebt}
+        onClose={() => setShowNewDebt(false)}
         opportunityId={opportunity.Id}
         session={session}
         onSuccess={() => {
