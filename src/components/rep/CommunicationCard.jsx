@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, MessageSquare, Loader2, Send, ArrowUp, ArrowDown, Check, CheckCheck, AlertCircle } from 'lucide-react';
+import { Mail, MessageSquare, Loader2, Send, ArrowUp, ArrowDown, Check, CheckCheck, AlertCircle, Link2, Copy } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { NotificationContext } from '../context/NotificationContext';
@@ -16,7 +16,8 @@ export default function CommunicationCard({
         recordId, 
         recordType, 
         session,
-        smsColor = 'bg-blue-600'
+        smsColor = 'bg-blue-600',
+        firstName = ''
       }) {
         const [emailData, setEmailData] = useState({ subject: '', message: '' });
         const [smsMessage, setSmsMessage] = useState('');
@@ -181,6 +182,29 @@ export default function CommunicationCard({
     }
   };
 
+  const copyStatusLink = () => {
+    const statusLink = `https://ontrak.co/Status?rid=${recordId}`;
+    navigator.clipboard.writeText(statusLink);
+    toast.success('Status link copied to clipboard!');
+  };
+
+  const useTemplate = () => {
+    const statusLink = `https://ontrak.co/Status?rid=${recordId}`;
+    const template = `OnTrak: Hi ${firstName || 'there'}, ${session.name} Check status: ${statusLink}`;
+    setSmsMessage(template);
+  };
+
+  const makeLinksClickable = (text) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, i) => {
+      if (part.match(urlRegex)) {
+        return <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{part}</a>;
+      }
+      return part;
+    });
+  };
+
   const hasEmail = !!recipientEmail;
   const hasPhone = !!phoneNumber;
 
@@ -261,6 +285,26 @@ export default function CommunicationCard({
             <div>
               <label className="text-sm font-medium text-slate-700 mb-1 block">To:</label>
               <Input value={phoneNumber} disabled className="bg-slate-50" />
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                onClick={copyStatusLink} 
+                variant="outline"
+                size="sm"
+                className="flex-1"
+              >
+                <Copy className="w-3 h-3 mr-2" />
+                Copy Status Link
+              </Button>
+              <Button 
+                onClick={useTemplate} 
+                variant="outline"
+                size="sm"
+                className="flex-1"
+              >
+                <MessageSquare className="w-3 h-3 mr-2" />
+                Use Template
+              </Button>
             </div>
             <div>
               <label className="text-sm font-medium text-slate-700 mb-1 block">Message:</label>
@@ -346,7 +390,7 @@ export default function CommunicationCard({
                           </span>
                           <span className="text-xs text-slate-500">{formatDate(msg.date)}</span>
                         </div>
-                        <p className="text-slate-700 mt-2">{msg.body}</p>
+                        <p className="text-slate-700 mt-2">{makeLinksClickable(msg.body)}</p>
                       </div>
                     );
                   })}
