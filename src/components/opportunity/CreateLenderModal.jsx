@@ -7,6 +7,58 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { MultiSelect } from '@/components/ui/multi-select';
+
+const US_STATES = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'];
+
+const INDUSTRIES = [
+  'Agriculture and Landscaping',
+  'Apparel and Accessories',
+  'Automotive/Bicycle',
+  'Auto Repair Shops / Car Dealerships',
+  'Bars / Nightclubs / Breweries',
+  'Beauty Salon / Spa',
+  'Beauty Salons / Barber Shops / Spas',
+  'Building Materials',
+  'Business Services',
+  'Chiropractors / Physical Therapy Clinics',
+  'Cleaning Services / Janitorial Services',
+  'Clothing & Apparel Stores',
+  'Construction',
+  'Convenience Stores / Gas Stations',
+  'Courier Services',
+  'Dental Practices',
+  'Electronics',
+  'Fitness Studios / Gyms / Personal Training',
+  'Garden Store / Retail Nursery',
+  'General Merchandise',
+  'Grocery and Baked Goods',
+  'Health Services',
+  'Home Furnishing',
+  'Home Improvement / Contractors / Handyman Services',
+  'Hotel, Motel, and Lodging',
+  'Hotels / Motels / B&Bs',
+  'IT / Tech Support Companies',
+  'Landscaping / Lawn Care Services',
+  'Laundry and Garment Services',
+  'Manufacturing',
+  'Marketing / Advertising Agencies',
+  'Medical Offices / Urgent Care Clinics',
+  'Moving Companies',
+  'Online Retailers / E-Commerce',
+  'Recreation',
+  'Restaurant/Bar',
+  'Restaurants / Cafes / Food Trucks',
+  'Retail Store',
+  'Specialty Retail Shops (Pet Stores, Hobby Shops, etc.)',
+  'Staffing Agencies',
+  'Subscription Box Companies',
+  'Travel Agencies / Tour Operators',
+  'Travel and Transportation',
+  'Trucking / Delivery Services',
+  'Veterinary Clinic',
+  'Wholesale'
+];
 
 export default function CreateLenderModal({ isOpen, onClose, session, onSuccess }) {
   const [loading, setLoading] = useState(false);
@@ -38,9 +90,9 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
     csbs__Minimum_Monthly_Deposit_Amount__c: '',
     csbs__Minimum_Average_Daily_Balance__c: '',
     csbs__Minimum_Months_in_Business__c: '',
-    csbs__Restricted_States__c: '',
+    csbs__Restricted_States__c: [],
     csbs__Maximum_Offer_Amount__c: '',
-    csbs__Restricted_Industries__c: '',
+    csbs__Restricted_Industries__c: [],
     csbs__Net_Offer_Percentage__c: ''
   });
 
@@ -53,8 +105,19 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
 
     setLoading(true);
     try {
+      // Convert arrays to semicolon-separated strings for Salesforce multi-select picklists
+      const dataToSend = {
+        ...formData,
+        csbs__Restricted_States__c: formData.csbs__Restricted_States__c?.length > 0 
+          ? formData.csbs__Restricted_States__c.join(';') 
+          : '',
+        csbs__Restricted_Industries__c: formData.csbs__Restricted_Industries__c?.length > 0 
+          ? formData.csbs__Restricted_Industries__c.join(';') 
+          : ''
+      };
+
       const response = await base44.functions.invoke('createSalesforceLender', {
-        data: formData,
+        data: dataToSend,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
@@ -327,12 +390,11 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
               </div>
               <div>
                 <Label htmlFor="restrictedStates">Restricted States</Label>
-                <Textarea
-                  id="restrictedStates"
+                <MultiSelect
+                  options={US_STATES}
                   value={formData.csbs__Restricted_States__c}
-                  onChange={(e) => setFormData({ ...formData, csbs__Restricted_States__c: e.target.value })}
-                  placeholder="Enter state codes separated by semicolons (e.g., AZ;CA;CO)"
-                  rows={2}
+                  onChange={(value) => setFormData({ ...formData, csbs__Restricted_States__c: value })}
+                  placeholder="Select states..."
                 />
               </div>
               <div>
@@ -346,12 +408,11 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
               </div>
               <div>
                 <Label htmlFor="restrictedIndustries">Restricted Industries</Label>
-                <Textarea
-                  id="restrictedIndustries"
+                <MultiSelect
+                  options={INDUSTRIES}
                   value={formData.csbs__Restricted_Industries__c}
-                  onChange={(e) => setFormData({ ...formData, csbs__Restricted_Industries__c: e.target.value })}
-                  placeholder="Enter industries separated by semicolons"
-                  rows={2}
+                  onChange={(value) => setFormData({ ...formData, csbs__Restricted_Industries__c: value })}
+                  placeholder="Select industries..."
                 />
               </div>
             </div>
