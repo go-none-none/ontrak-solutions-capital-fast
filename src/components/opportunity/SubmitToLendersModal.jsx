@@ -33,8 +33,18 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-      
-      setFiles(response.data.files || []);
+
+      // Map files to include more details
+      const mappedFiles = (response.data.files || []).map(file => ({
+        id: file.ContentDocumentId,
+        title: file.ContentDocument.Title,
+        extension: file.ContentDocument.FileExtension,
+        size: file.ContentDocument.ContentSize,
+        createdDate: file.ContentDocument.CreatedDate,
+        lastModifiedDate: file.ContentDocument.LastModifiedDate
+      }));
+
+      setFiles(mappedFiles);
     } catch (error) {
       console.error('Error loading files:', error);
     } finally {
