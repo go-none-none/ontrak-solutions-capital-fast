@@ -9,12 +9,12 @@ import { base44 } from '@/api/base44Client';
 export default function SubmitToLendersModal({ isOpen, onClose, opportunity, session, onSuccess }) {
   const [lenders, setLenders] = useState([]);
   const [loading, setLoading] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
-    const [selectedLenders, setSelectedLenders] = useState({});
-    const [notes, setNotes] = useState({});
-    const [filter, setFilter] = useState('All');
-    const [tierFilter, setTierFilter] = useState('All');
-    const [tierOptions, setTierOptions] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [selectedLenders, setSelectedLenders] = useState({});
+  const [notes, setNotes] = useState({});
+  const [activeFilter, setActiveFilter] = useState('All');
+
+  const filterOptions = ['All', 'Tier 1', 'Tier 2', 'Tier 3', 'Tier 4', 'Priority Lenders', 'Priority Lenders (Qualified)', 'Qualified', 'Submitted', 'Not Qualified'];
 
   useEffect(() => {
     if (isOpen && session) {
