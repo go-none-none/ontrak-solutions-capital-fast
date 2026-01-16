@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
              csbs__Restricted_States__c,
              csbs__Maximum_Offer_Amount__c
       FROM Account
-      WHERE RecordType.Name = 'Lender' AND IsActive__c = true
+      WHERE RecordType.DeveloperName = 'Lender'
       ORDER BY Name ASC
     `;
 
