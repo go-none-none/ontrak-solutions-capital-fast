@@ -33,6 +33,12 @@ export default function OpportunityDetail() {
   const [showOwnerChange, setShowOwnerChange] = useState(false);
   const [stagePicklistValues, setStagePicklistValues] = useState([]);
   const [declineReasonPicklistValues, setDeclineReasonPicklistValues] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
+  const [offers, setOffers] = useState([]);
+  const [statements, setStatements] = useState([]);
+  const [debt, setDebt] = useState([]);
+  const [commissions, setCommissions] = useState([]);
+  const [loadingRelated, setLoadingRelated] = useState(false);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -84,10 +90,56 @@ export default function OpportunityDetail() {
 
       setOpportunity(oppResponse.data.record);
       setContactRoles(contactRolesResponse.data.contactRoles || []);
+      
+      // Load related records
+      loadRelatedRecords(sessionData, oppId);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadRelatedRecords = async (sessionData, oppId) => {
+    setLoadingRelated(true);
+    try {
+      const [submissionsRes, offersRes, statementsRes, debtRes, commissionsRes] = await Promise.all([
+        base44.functions.invoke('getOpportunitySubmissions', {
+          opportunityId: oppId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getOpportunityOffers', {
+          opportunityId: oppId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getOpportunityStatements', {
+          opportunityId: oppId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getOpportunityDebt', {
+          opportunityId: oppId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getOpportunityCommissions', {
+          opportunityId: oppId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        })
+      ]);
+
+      setSubmissions(submissionsRes.data.submissions || []);
+      setOffers(offersRes.data.offers || []);
+      setStatements(statementsRes.data.statements || []);
+      setDebt(debtRes.data.debt || []);
+      setCommissions(commissionsRes.data.commissions || []);
+    } catch (error) {
+      console.error('Load related records error:', error);
+    } finally {
+      setLoadingRelated(false);
     }
   };
 
@@ -485,6 +537,263 @@ export default function OpportunityDetail() {
                 <TabsTrigger value="debt">Debt</TabsTrigger>
                 <TabsTrigger value="commissions">Commissions</TabsTrigger>
               </TabsList>
+
+              {/* Submissions Tab */}
+              <TabsContent value="submissions" className="space-y-4">
+                {loadingRelated ? (
+                  <div className="bg-white rounded-xl p-8 text-center">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
+                  </div>
+                ) : submissions.length === 0 ? (
+                  <div className="bg-white rounded-xl p-8 text-center text-slate-600">
+                    No submissions found
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {submissions.map(sub => (
+                      <div key={sub.Id} className="bg-white rounded-xl p-4 shadow-sm">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <p className="font-semibold text-slate-900">{sub.csbs__Lender__r?.Name || 'Unknown Lender'}</p>
+                            <p className="text-xs text-slate-500">{sub.Name}</p>
+                          </div>
+                          <Badge>{sub.csbs__Status__c || 'Pending'}</Badge>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          {sub.csbs__Type__c && (
+                            <div>
+                              <p className="text-slate-500 text-xs">Type</p>
+                              <p className="font-medium">{sub.csbs__Type__c}</p>
+                            </div>
+                          )}
+                          {sub.csbs__API_Lender_Status__c && (
+                            <div>
+                              <p className="text-slate-500 text-xs">API Status</p>
+                              <p className="font-medium">{sub.csbs__API_Lender_Status__c}</p>
+                            </div>
+                          )}
+                          {(sub.csbs__Min_Term__c || sub.csbs__Max_Term__c) && (
+                            <div>
+                              <p className="text-slate-500 text-xs">Term Range</p>
+                              <p className="font-medium">{sub.csbs__Min_Term__c || 0} - {sub.csbs__Max_Term__c || 0} months</p>
+                            </div>
+                          )}
+                        </div>
+                        {sub.csbs__Notes__c && (
+                          <p className="text-sm text-slate-600 mt-3 pt-3 border-t">{sub.csbs__Notes__c}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Offers Tab */}
+              <TabsContent value="offers" className="space-y-4">
+                {loadingRelated ? (
+                  <div className="bg-white rounded-xl p-8 text-center">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
+                  </div>
+                ) : offers.length === 0 ? (
+                  <div className="bg-white rounded-xl p-8 text-center text-slate-600">
+                    No offers found
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {offers.map(offer => (
+                      <div key={offer.Id} className={`bg-white rounded-xl p-4 shadow-sm ${offer.csbs__Selected__c ? 'ring-2 ring-green-500' : ''}`}>
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <p className="font-semibold text-slate-900">{offer.csbs__Lender__c || 'Unknown Lender'}</p>
+                            <p className="text-xs text-slate-500">{offer.Name}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            {offer.csbs__Selected__c && <Badge className="bg-green-600">Selected</Badge>}
+                            {offer.csbs__Accepted_with_Lender__c && <Badge className="bg-blue-600">Accepted</Badge>}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3 text-sm">
+                          <div>
+                            <p className="text-slate-500 text-xs">Funded</p>
+                            <p className="font-bold text-orange-600">{formatCurrency(offer.csbs__Funded__c)}</p>
+                          </div>
+                          <div>
+                            <p className="text-slate-500 text-xs">Payment</p>
+                            <p className="font-medium">{formatCurrency(offer.csbs__Payment_Amount__c)}</p>
+                          </div>
+                          <div>
+                            <p className="text-slate-500 text-xs">Term</p>
+                            <p className="font-medium">{offer.csbs__Term__c} mo</p>
+                          </div>
+                          {offer.csbs__Factor_Rate__c && (
+                            <div>
+                              <p className="text-slate-500 text-xs">Factor</p>
+                              <p className="font-medium">{offer.csbs__Factor_Rate__c}</p>
+                            </div>
+                          )}
+                          {offer.csbs__Product__c && (
+                            <div>
+                              <p className="text-slate-500 text-xs">Product</p>
+                              <p className="font-medium">{offer.csbs__Product__c}</p>
+                            </div>
+                          )}
+                          {offer.csbs__Payment_Frequency__c && (
+                            <div>
+                              <p className="text-slate-500 text-xs">Frequency</p>
+                              <p className="font-medium">{offer.csbs__Payment_Frequency__c}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Statements Tab */}
+              <TabsContent value="statements" className="space-y-4">
+                {loadingRelated ? (
+                  <div className="bg-white rounded-xl p-8 text-center">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
+                  </div>
+                ) : statements.length === 0 ? (
+                  <div className="bg-white rounded-xl p-8 text-center text-slate-600">
+                    No statements found
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {statements.map(stmt => (
+                      <div key={stmt.Id} className="bg-white rounded-xl p-4 shadow-sm">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <p className="font-semibold text-slate-900">{stmt.csbs__Bank_Name__c || 'Unknown Bank'}</p>
+                            <p className="text-xs text-slate-500">{stmt.csbs__Account_No__c}</p>
+                          </div>
+                          {stmt.csbs__Reconciled__c && <Badge className="bg-green-600">Reconciled</Badge>}
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <p className="text-slate-500 text-xs">Period</p>
+                            <p className="font-medium">{formatDate(stmt.csbs__Starting_Date__c)} - {formatDate(stmt.csbs__Ending_Date__c)}</p>
+                          </div>
+                          <div>
+                            <p className="text-slate-500 text-xs">Avg Daily Balance</p>
+                            <p className="font-medium">{formatCurrency(stmt.csbs__Average_Daily_Balance__c)}</p>
+                          </div>
+                          <div>
+                            <p className="text-slate-500 text-xs">Deposits</p>
+                            <p className="font-medium">{formatCurrency(stmt.csbs__Deposit_Amount__c)} ({stmt.csbs__Deposit_Count__c})</p>
+                          </div>
+                          <div>
+                            <p className="text-slate-500 text-xs">NSFs</p>
+                            <p className="font-medium text-red-600">{stmt.csbs__NSFs__c || 0}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Debt Tab */}
+              <TabsContent value="debt" className="space-y-4">
+                {loadingRelated ? (
+                  <div className="bg-white rounded-xl p-8 text-center">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
+                  </div>
+                ) : debt.length === 0 ? (
+                  <div className="bg-white rounded-xl p-8 text-center text-slate-600">
+                    No debt records found
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {debt.map(d => (
+                      <div key={d.Id} className="bg-white rounded-xl p-4 shadow-sm">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <p className="font-semibold text-slate-900">{d.csbs__Lender__c || d.csbs__Creditor__r?.Name || 'Unknown'}</p>
+                            <p className="text-xs text-slate-500">{d.Name}</p>
+                          </div>
+                          {d.csbs__Open_Position__c && <Badge className="bg-orange-600">Open</Badge>}
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <p className="text-slate-500 text-xs">Balance</p>
+                            <p className="font-bold text-slate-900">{formatCurrency(d.csbs__Balance__c)}</p>
+                          </div>
+                          <div>
+                            <p className="text-slate-500 text-xs">Payment</p>
+                            <p className="font-medium">{formatCurrency(d.csbs__Payment__c)} {d.csbs__Frequency__c ? `(${d.csbs__Frequency__c})` : ''}</p>
+                          </div>
+                          {d.csbs__Type__c && (
+                            <div>
+                              <p className="text-slate-500 text-xs">Type</p>
+                              <p className="font-medium">{d.csbs__Type__c}</p>
+                            </div>
+                          )}
+                          {d.csbs__Estimated_Monthly_MCA_Amount__c && (
+                            <div>
+                              <p className="text-slate-500 text-xs">Est. Monthly MCA</p>
+                              <p className="font-medium">{formatCurrency(d.csbs__Estimated_Monthly_MCA_Amount__c)}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Commissions Tab */}
+              <TabsContent value="commissions" className="space-y-4">
+                {loadingRelated ? (
+                  <div className="bg-white rounded-xl p-8 text-center">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
+                  </div>
+                ) : commissions.length === 0 ? (
+                  <div className="bg-white rounded-xl p-8 text-center text-slate-600">
+                    No commissions found
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {commissions.map(comm => (
+                      <div key={comm.Id} className="bg-white rounded-xl p-4 shadow-sm">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <p className="font-semibold text-slate-900">{comm.csbs__Account__r?.Name || 'Unknown'}</p>
+                            <p className="text-xs text-slate-500">{comm.Name}</p>
+                          </div>
+                          <Badge>{comm.csbs__Status__c || 'Pending'}</Badge>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <p className="text-slate-500 text-xs">Amount</p>
+                            <p className="font-bold text-green-600">{formatCurrency(comm.csbs__Amount__c)}</p>
+                          </div>
+                          {comm.csbs__Type__c && (
+                            <div>
+                              <p className="text-slate-500 text-xs">Type</p>
+                              <p className="font-medium">{comm.csbs__Type__c}</p>
+                            </div>
+                          )}
+                          {comm.csbs__Date_Due__c && (
+                            <div>
+                              <p className="text-slate-500 text-xs">Date Due</p>
+                              <p className="font-medium">{formatDate(comm.csbs__Date_Due__c)}</p>
+                            </div>
+                          )}
+                          {comm.csbs__Date_Paid__c && (
+                            <div>
+                              <p className="text-slate-500 text-xs">Date Paid</p>
+                              <p className="font-medium text-green-600">{formatDate(comm.csbs__Date_Paid__c)}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
 
               {/* Details Tab */}
               <TabsContent value="details" className="space-y-4">
