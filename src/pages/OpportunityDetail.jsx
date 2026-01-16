@@ -708,6 +708,7 @@ export default function OpportunityDetail() {
               recordType="Opportunity"
               session={session}
               smsColor="bg-orange-600"
+              firstName={contactRoles[0]?.Contact?.FirstName || opportunity.Account?.Name?.split(' ')[0]}
             />
 
             {/* Contact Roles */}
