@@ -23,10 +23,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   const loadLenders = async () => {
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('getSubmissionLenders', {
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
+      const response = await base44.functions.invoke('getSubmissionLenders', {});
       
       console.log('Lenders response:', response.data);
       
