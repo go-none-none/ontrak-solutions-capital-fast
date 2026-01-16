@@ -52,16 +52,27 @@ export default function OpportunityDetail() {
   const { removeNotification, notifications } = useContext(NotificationContext);
 
   useEffect(() => {
-    const sessionData = sessionStorage.getItem('sfSession');
-    if (!sessionData) {
-      window.location.href = createPageUrl('RepPortal');
-      return;
-    }
-    const session = JSON.parse(sessionData);
-    setSession(session);
-    loadOpportunity(session);
-    loadUsers(session);
-    loadPicklistValues(session);
+    const initializePage = async () => {
+      const sessionData = sessionStorage.getItem('sfSession');
+      if (!sessionData) {
+        window.location.href = createPageUrl('RepPortal');
+        return;
+      }
+      try {
+        const session = JSON.parse(sessionData);
+        setSession(session);
+        await Promise.all([
+          loadOpportunity(session),
+          loadUsers(session),
+          loadPicklistValues(session)
+        ]);
+      } catch (error) {
+        console.error('Initialization error:', error);
+        setLoading(false);
+        alert('Failed to load opportunity');
+      }
+    };
+    initializePage();
   }, []);
 
   // Clear notifications for this record on load
