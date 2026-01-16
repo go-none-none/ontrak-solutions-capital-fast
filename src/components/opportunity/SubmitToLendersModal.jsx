@@ -167,20 +167,6 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
           </div>
         ) : (
           <>
-            {/* Filters */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              {filterOptions.map(option => (
-                <Button
-                  key={option}
-                  variant={activeFilter === option ? 'default' : 'outline'}
-                  onClick={() => setActiveFilter(option)}
-                  size="sm"
-                >
-                  {option}
-                </Button>
-              ))}
-            </div>
-
             {/* Lenders Table */}
             <div className="border rounded-lg overflow-x-auto">
               <table className="w-full text-sm">
