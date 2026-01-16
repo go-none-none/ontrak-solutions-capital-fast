@@ -121,6 +121,7 @@ export default function RepPortal() {
               const email = contact.Email?.toLowerCase();
 
               console.log('SMS Notification - Contact:', contact.Name, 'Phone:', phone, 'Email:', email);
+              console.log('Leads count:', leads.length, 'Opportunities count:', opportunities.length);
 
               let link = createPageUrl('ContactDetail') + `?id=${contact.Id}`;
               let recordId = contact.Id;
@@ -130,6 +131,7 @@ export default function RepPortal() {
               const relatedLead = leads.find(l => {
                 const leadPhone = l.MobilePhone?.replace(/\D/g, '');
                 const leadEmail = l.Email?.toLowerCase();
+                console.log('Checking lead:', l.Name, 'Phone:', leadPhone, 'Email:', leadEmail);
                 return leadPhone === phone || leadEmail === email;
               });
 
@@ -139,11 +141,12 @@ export default function RepPortal() {
                 recordId = relatedLead.Id;
                 recordType = 'Lead';
               } else {
-                // Check for related opportunity through account or contact
+                // Check for related opportunity through contact roles
                 const relatedOpp = opportunities.find(o => {
-                  const oppEmail = o.Account?.Email__c?.toLowerCase();
-                  const oppPhone = o.Account?.Phone?.replace(/\D/g, '');
-                  return oppEmail === email || oppPhone === phone;
+                  // Check if this contact is linked to the opportunity
+                  const oppContactId = o.Contact__c || o.AccountId;
+                  console.log('Checking opp:', o.Name, 'Contact/Account:', oppContactId, 'vs', contact.Id);
+                  return oppContactId === contact.Id || oppContactId === contact.AccountId;
                 });
 
                 if (relatedOpp) {
