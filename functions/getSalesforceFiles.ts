@@ -25,15 +25,7 @@ Deno.serve(async (req) => {
     }
 
     const data = await response.json();
-    const files = data.records.map(record => ({
-      Id: record.ContentDocumentId,
-      Title: record.ContentDocument.Title,
-      FileExtension: record.ContentDocument.FileExtension,
-      ContentSize: record.ContentDocument.ContentSize,
-      CreatedDate: record.ContentDocument.CreatedDate,
-      LastModifiedDate: record.ContentDocument.LastModifiedDate
-    }));
-    return Response.json({ files });
+    return Response.json({ files: data.records });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

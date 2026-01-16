@@ -52,31 +52,16 @@ export default function OpportunityDetail() {
   const { removeNotification, notifications } = useContext(NotificationContext);
 
   useEffect(() => {
-    const initializePage = async () => {
-      try {
-        const sessionData = sessionStorage.getItem('sfSession');
-        if (!sessionData) {
-          console.warn('No session found, redirecting to RepPortal');
-          setTimeout(() => {
-            window.location.href = createPageUrl('RepPortal');
-          }, 100);
-          return;
-        }
-        
-        const parsedSession = JSON.parse(sessionData);
-        setSession(parsedSession);
-        
-        // Don't use await for loadOpportunity since it handles its own loading state
-        loadOpportunity(parsedSession);
-        loadUsers(parsedSession);
-        loadPicklistValues(parsedSession);
-      } catch (error) {
-        console.error('Initialization error:', error);
-        setLoading(false);
-      }
-    };
-    
-    initializePage();
+    const sessionData = sessionStorage.getItem('sfSession');
+    if (!sessionData) {
+      window.location.href = createPageUrl('RepPortal');
+      return;
+    }
+    const session = JSON.parse(sessionData);
+    setSession(session);
+    loadOpportunity(session);
+    loadUsers(session);
+    loadPicklistValues(session);
   }, []);
 
   // Clear notifications for this record on load
@@ -98,12 +83,6 @@ export default function OpportunityDetail() {
       const urlParams = new URLSearchParams(window.location.search);
       const oppId = urlParams.get('id');
 
-      if (!oppId) {
-        console.error('No opportunity ID found in URL');
-        setLoading(false);
-        return;
-      }
-
       const [oppResponse, contactRolesResponse] = await Promise.all([
         base44.functions.invoke('getSalesforceRecord', {
           recordId: oppId,
@@ -118,13 +97,11 @@ export default function OpportunityDetail() {
         })
       ]);
 
-      if (oppResponse.data.record) {
-        setOpportunity(oppResponse.data.record);
-        setContactRoles(contactRolesResponse.data.contactRoles || []);
-        loadRelatedRecords(sessionData, oppId);
-      } else {
-        console.error('No opportunity data returned');
-      }
+      setOpportunity(oppResponse.data.record);
+      setContactRoles(contactRolesResponse.data.contactRoles || []);
+      
+      // Load related records
+      loadRelatedRecords(sessionData, oppId);
     } catch (error) {
       console.error('Load error:', error);
     } finally {
@@ -170,7 +147,6 @@ export default function OpportunityDetail() {
       setCommissions(commissionsRes.data.commissions || []);
     } catch (error) {
       console.error('Load related records error:', error);
-      // Don't let related records errors crash the page
     } finally {
       setLoadingRelated(false);
     }
