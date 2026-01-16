@@ -53,25 +53,29 @@ export default function OpportunityDetail() {
 
   useEffect(() => {
     const initializePage = async () => {
-      const sessionData = sessionStorage.getItem('sfSession');
-      if (!sessionData) {
-        window.location.href = createPageUrl('RepPortal');
-        return;
-      }
       try {
-        const session = JSON.parse(sessionData);
-        setSession(session);
-        await Promise.all([
-          loadOpportunity(session),
-          loadUsers(session),
-          loadPicklistValues(session)
-        ]);
+        const sessionData = sessionStorage.getItem('sfSession');
+        if (!sessionData) {
+          console.warn('No session found, redirecting to RepPortal');
+          setTimeout(() => {
+            window.location.href = createPageUrl('RepPortal');
+          }, 100);
+          return;
+        }
+        
+        const parsedSession = JSON.parse(sessionData);
+        setSession(parsedSession);
+        
+        // Don't use await for loadOpportunity since it handles its own loading state
+        loadOpportunity(parsedSession);
+        loadUsers(parsedSession);
+        loadPicklistValues(parsedSession);
       } catch (error) {
         console.error('Initialization error:', error);
         setLoading(false);
-        alert('Failed to load opportunity');
       }
     };
+    
     initializePage();
   }, []);
 
