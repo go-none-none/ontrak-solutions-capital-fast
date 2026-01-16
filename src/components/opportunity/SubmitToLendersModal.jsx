@@ -20,6 +20,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   useEffect(() => {
     if (isOpen && session) {
       loadLenders();
+      loadFiles();
     }
   }, [isOpen, session]);
 
