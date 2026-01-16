@@ -23,27 +23,14 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   }, [isOpen, session]);
 
   const loadLenders = async () => {
-        setLoading(true);
-        try {
-          const [response, tierResponse] = await Promise.all([
-            base44.functions.invoke('getSubmissionLenders', {
-              token: session.token,
-              instanceUrl: session.instanceUrl
-            }),
-            base44.functions.invoke('getSalesforcePicklistValues', {
-              objectType: 'Account',
-              fieldName: 'csbs__Tier__c',
-              token: session.token,
-              instanceUrl: session.instanceUrl
-            })
-          ]);
+    setLoading(true);
+    try {
+      const response = await base44.functions.invoke('getSubmissionLenders', {
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
 
-          console.log('Lenders response:', response.data);
-          console.log('First lender full data:', response.data.lenders?.[0]);
-      
-      // Evaluate each lender's qualification
       const lendersData = response.data.lenders || [];
-      // Filter out lenders with no qualification criteria
       const activeLenders = lendersData.filter(lender => 
         lender.csbs__Minimum_Credit_Score__c || 
         lender.csbs__Minimum_Monthly_Deposit_Amount__c ||
@@ -55,13 +42,13 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
         lender.csbs__Restricted_Industries__c ||
         lender.csbs__Restricted_States__c
       );
+      
       const lendersWithStatus = activeLenders.map(lender => ({
         ...lender,
         status: evaluateLenderQualification(lender, opportunity)
       }));
       
       setLenders(lendersWithStatus);
-      setTierOptions(tierResponse.data.values || []);
     } catch (error) {
       console.error('Error loading lenders:', error);
       alert('Failed to load lenders: ' + error.message);
