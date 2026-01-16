@@ -18,6 +18,7 @@ import ActivityPanel from '../components/rep/ActivityPanel';
 import NewStatementModal from '../components/opportunity/NewStatementModal';
 import NewDebtModal from '../components/opportunity/NewDebtModal';
 import SubmissionDetailsModal from '../components/opportunity/SubmissionDetailsModal';
+import SubmitToLendersModal from '../components/opportunity/SubmitToLendersModal';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -46,6 +47,7 @@ export default function OpportunityDetail() {
   const [editingStatement, setEditingStatement] = useState(null);
   const [showNewDebt, setShowNewDebt] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -547,6 +549,14 @@ export default function OpportunityDetail() {
 
               {/* Submissions Tab */}
               <TabsContent value="submissions" className="space-y-4">
+                <div className="flex justify-end mb-3">
+                  <Button
+                    onClick={() => setShowSubmitModal(true)}
+                    className="bg-orange-600 hover:bg-orange-700"
+                  >
+                    Submit
+                  </Button>
+                </div>
                 {loadingRelated ? (
                   <div className="bg-white rounded-xl p-8 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
@@ -1209,6 +1219,19 @@ export default function OpportunityDetail() {
         isOpen={!!selectedSubmission}
         onClose={() => setSelectedSubmission(null)}
         submission={selectedSubmission}
+        session={session}
+        onSuccess={() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const oppId = urlParams.get('id');
+          loadRelatedRecords(session, oppId);
+        }}
+      />
+
+      {/* Submit to Lenders Modal */}
+      <SubmitToLendersModal
+        isOpen={showSubmitModal}
+        onClose={() => setShowSubmitModal(false)}
+        opportunity={opportunity}
         session={session}
         onSuccess={() => {
           const urlParams = new URLSearchParams(window.location.search);
