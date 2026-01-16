@@ -13,6 +13,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   const [selectedLenders, setSelectedLenders] = useState({});
   const [notes, setNotes] = useState({});
   const [filter, setFilter] = useState('All');
+  const [tierFilter, setTierFilter] = useState('All');
 
   useEffect(() => {
     if (isOpen && session) {
