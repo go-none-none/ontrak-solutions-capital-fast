@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, CheckCircle2, XCircle, AlertCircle, File } from 'lucide-react';
+import { Loader2, CheckCircle2, XCircle, AlertCircle, File, CheckCircle2 as CheckCircleIcon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function SubmitToLendersModal({ isOpen, onClose, opportunity, session, onSuccess }) {
