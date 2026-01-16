@@ -193,29 +193,44 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
           </div>
         ) : (
           <>
-            {/* Filter */}
-            <div className="flex gap-2 mb-4">
-              <Button
-                variant={filter === 'All' ? 'default' : 'outline'}
-                onClick={() => setFilter('All')}
-                size="sm"
-              >
-                All
-              </Button>
-              <Button
-                variant={filter === 'Qualified' ? 'default' : 'outline'}
-                onClick={() => setFilter('Qualified')}
-                size="sm"
-              >
-                Qualified
-              </Button>
-              <Button
-                variant={filter === 'Unqualified' ? 'default' : 'outline'}
-                onClick={() => setFilter('Unqualified')}
-                size="sm"
-              >
-                Unqualified
-              </Button>
+            {/* Filters */}
+            <div className="flex gap-4 mb-4">
+              <div className="flex gap-2">
+                <Button
+                  variant={filter === 'All' ? 'default' : 'outline'}
+                  onClick={() => setFilter('All')}
+                  size="sm"
+                >
+                  All
+                </Button>
+                <Button
+                  variant={filter === 'Qualified' ? 'default' : 'outline'}
+                  onClick={() => setFilter('Qualified')}
+                  size="sm"
+                >
+                  Qualified
+                </Button>
+                <Button
+                  variant={filter === 'Unqualified' ? 'default' : 'outline'}
+                  onClick={() => setFilter('Unqualified')}
+                  size="sm"
+                >
+                  Unqualified
+                </Button>
+              </div>
+
+              {tierOptions.length > 0 && (
+                <select
+                  value={tierFilter}
+                  onChange={(e) => setTierFilter(e.target.value)}
+                  className="px-3 py-1.5 text-sm border border-slate-300 rounded-md bg-white hover:bg-slate-50"
+                >
+                  <option value="All">All Tiers</option>
+                  {tierOptions.map(tier => (
+                    <option key={tier} value={tier}>{tier}</option>
+                  ))}
+                </select>
+              )}
             </div>
 
             {/* Lenders Table */}
