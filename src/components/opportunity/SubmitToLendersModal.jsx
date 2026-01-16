@@ -221,51 +221,51 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                 </div>
 
                 {/* Lenders Table */}
-            <div className="border rounded-lg overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-slate-50 border-b">
-                  <tr>
-                    <th className="p-2 text-left w-8"></th>
-                    <th className="p-2 text-left w-8"></th>
-                    <th className="p-2 text-left">Name</th>
-                    <th className="p-2 text-left">Min Credit</th>
-                    <th className="p-2 text-left">Min Deposits</th>
-                    <th className="p-2 text-left">Max NSFs</th>
-                    <th className="p-2 text-left">Min Months</th>
-                    <th className="p-2 text-left">Restricted States</th>
-                    <th className="p-2 text-left">Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredLenders.map(lender => (
-                    <tr key={lender.Id} className="border-b hover:bg-slate-50">
-                      <td className="p-2">
-                        <Checkbox
-                          checked={selectedLenders[lender.Id] || false}
-                          onCheckedChange={() => toggleLender(lender.Id)}
-                        />
-                      </td>
-                      <td className="p-2">{getStatusIcon(lender.status)}</td>
-                      <td className="p-2 font-medium">{lender.Name}</td>
-                      <td className="p-2">{lender.csbs__Minimum_Credit_Score__c || '-'}</td>
-                      <td className="p-2">{lender.csbs__Minimum_Monthly_Deposit_Amount__c || '-'}</td>
-                      <td className="p-2">{lender.csbs__Maximum_NSFs__c || '-'}</td>
-                      <td className="p-2">{lender.csbs__Minimum_Months_in_Business__c || '-'}</td>
-                      <td className="p-2 text-xs">{lender.csbs__Restricted_States__c || '-'}</td>
-                      <td className="p-2">
-                        <Input
-                          placeholder="Notes..."
-                          value={notes[lender.Id] || ''}
-                          onChange={(e) => setNotes({ ...notes, [lender.Id]: e.target.value })}
-                          className="h-7 text-xs"
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                  </tbody>
+                <div className="border rounded-lg overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-slate-50 border-b">
+                      <tr>
+                        <th className="p-2 text-left w-8"></th>
+                        <th className="p-2 text-left w-8"></th>
+                        <th className="p-2 text-left">Name</th>
+                        <th className="p-2 text-left">Min Credit</th>
+                        <th className="p-2 text-left">Min Deposits</th>
+                        <th className="p-2 text-left">Max NSFs</th>
+                        <th className="p-2 text-left">Min Months</th>
+                        <th className="p-2 text-left">Restricted States</th>
+                        <th className="p-2 text-left">Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredLenders.map(lender => (
+                        <tr key={lender.Id} className="border-b hover:bg-slate-50">
+                          <td className="p-2">
+                            <Checkbox
+                              checked={selectedLenders[lender.Id] || false}
+                              onCheckedChange={() => toggleLender(lender.Id)}
+                            />
+                          </td>
+                          <td className="p-2">{getStatusIcon(lender.status)}</td>
+                          <td className="p-2 font-medium">{lender.Name}</td>
+                          <td className="p-2">{lender.csbs__Minimum_Credit_Score__c || '-'}</td>
+                          <td className="p-2">{lender.csbs__Minimum_Monthly_Deposit_Amount__c || '-'}</td>
+                          <td className="p-2">{lender.csbs__Maximum_NSFs__c || '-'}</td>
+                          <td className="p-2">{lender.csbs__Minimum_Months_in_Business__c || '-'}</td>
+                          <td className="p-2 text-xs">{lender.csbs__Restricted_States__c || '-'}</td>
+                          <td className="p-2">
+                            <Input
+                              placeholder="Notes..."
+                              value={notes[lender.Id] || ''}
+                              onChange={(e) => setNotes({ ...notes, [lender.Id]: e.target.value })}
+                              className="h-7 text-xs"
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                   </table>
-                  </div>
-                  </TabsContent>
+                </div>
+              </TabsContent>
 
                   <TabsContent value="files" className="space-y-4">
                   {loadingFiles ? (
