@@ -15,6 +15,7 @@ import EditableField from '../components/rep/EditableField.jsx';
 import CommunicationCard from '../components/rep/CommunicationCard.jsx';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
 import ActivityPanel from '../components/rep/ActivityPanel';
+import NewStatementModal from '../components/opportunity/NewStatementModal';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ export default function OpportunityDetail() {
   const [debt, setDebt] = useState([]);
   const [commissions, setCommissions] = useState([]);
   const [loadingRelated, setLoadingRelated] = useState(false);
+  const [showNewStatement, setShowNewStatement] = useState(false);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -652,6 +654,14 @@ export default function OpportunityDetail() {
 
               {/* Statements Tab */}
               <TabsContent value="statements" className="space-y-4">
+                <div className="flex justify-end mb-3">
+                  <Button
+                    onClick={() => setShowNewStatement(true)}
+                    className="bg-orange-600 hover:bg-orange-700"
+                  >
+                    + New Statement
+                  </Button>
+                </div>
                 {loadingRelated ? (
                   <div className="bg-white rounded-xl p-8 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
@@ -1125,6 +1135,19 @@ export default function OpportunityDetail() {
           </div>
         </div>
       </div>
+
+      {/* New Statement Modal */}
+      <NewStatementModal
+        isOpen={showNewStatement}
+        onClose={() => setShowNewStatement(false)}
+        opportunityId={opportunity.Id}
+        session={session}
+        onSuccess={() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const oppId = urlParams.get('id');
+          loadRelatedRecords(session, oppId);
+        }}
+      />
     </div>
   );
 }
