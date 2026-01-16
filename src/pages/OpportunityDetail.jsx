@@ -46,6 +46,7 @@ export default function OpportunityDetail() {
     setSession(session);
     loadOpportunity(session);
     loadUsers(session);
+    loadPicklistValues(session);
   }, []);
 
   // Clear notifications for this record on load
