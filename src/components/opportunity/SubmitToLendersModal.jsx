@@ -33,7 +33,19 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
       
       // Evaluate each lender's qualification
       const lendersData = response.data.lenders || [];
-      const lendersWithStatus = lendersData.map(lender => ({
+      // Filter out lenders with no qualification criteria
+      const activeLenders = lendersData.filter(lender => 
+        lender.csbs__Minimum_Credit_Score__c || 
+        lender.csbs__Minimum_Monthly_Deposit_Amount__c ||
+        lender.csbs__Minimum_Monthly_Deposit_Count__c ||
+        lender.csbs__Maximum_NSFs__c ||
+        lender.csbs__Maximum_Negative_Days__c ||
+        lender.csbs__Minimum_Average_Daily_Balance__c ||
+        lender.csbs__Minimum_Months_in_Business__c ||
+        lender.csbs__Restricted_Industries__c ||
+        lender.csbs__Restricted_States__c
+      );
+      const lendersWithStatus = activeLenders.map(lender => ({
         ...lender,
         status: evaluateLenderQualification(lender, opportunity)
       }));
