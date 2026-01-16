@@ -163,10 +163,15 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   };
 
   const filteredLenders = lenders.filter(lender => {
-    if (filter === 'All') return true;
-    if (filter === 'Qualified') return lender.status === 'qualified';
-    if (filter === 'Unqualified') return lender.status === 'unqualified';
-    return true;
+    // Status filter
+    const statusMatch = filter === 'All' || 
+      (filter === 'Qualified' && lender.status === 'qualified') ||
+      (filter === 'Unqualified' && lender.status === 'unqualified');
+
+    // Tier filter
+    const tierMatch = tierFilter === 'All' || lender.csbs__Tier__c === tierFilter;
+
+    return statusMatch && tierMatch;
   });
 
   const getStatusIcon = (status) => {
