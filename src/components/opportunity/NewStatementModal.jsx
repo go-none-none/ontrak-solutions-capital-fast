@@ -10,6 +10,9 @@ import { base44 } from '@/api/base44Client';
 
 export default function NewStatementModal({ isOpen, onClose, opportunityId, session, onSuccess, statement = null }) {
   const [loading, setLoading] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [parsingFile, setParsingFile] = useState(false);
+  
   const [formData, setFormData] = useState({
     accountNo: '',
     accountTitle: '',
