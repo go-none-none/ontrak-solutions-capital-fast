@@ -93,15 +93,15 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       const data = await response.json();
       const base64Data = data.file;
       
-      // Create blob from base64 and upload
+      // Create File from base64
       const binaryString = atob(base64Data);
       const bytes = new Uint8Array(binaryString.length);
       for (let i = 0; i < binaryString.length; i++) {
         bytes[i] = binaryString.charCodeAt(i);
       }
-      const pdfBlob = new Blob([bytes], { type: 'application/pdf' });
+      const pdfFile = new File([bytes], file.ContentDocument.Title + '.pdf', { type: 'application/pdf' });
       
-      const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfBlob });
+      const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfFile });
       const fileUrl = uploadResponse.file_url;
       
       const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
