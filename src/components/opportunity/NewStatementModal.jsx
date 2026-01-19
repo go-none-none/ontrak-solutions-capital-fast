@@ -132,7 +132,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
           transactionsCount: p.transactions_count || prev.transactionsCount,
           nsfs: p.nsf_count || prev.nsfs,
           negativeDays: p.negative_days || prev.negativeDays,
-          notes: p.notes || prev.notes
+          notes: (p.notes || prev.notes).slice(0, 255)
         }));
         setIsParsed(true);
         alert('✅ Statement parsed successfully! All data extracted and populated. Please review.');
