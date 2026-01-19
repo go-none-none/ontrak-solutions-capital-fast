@@ -23,6 +23,7 @@ import SubmitToLendersModal from '../components/opportunity/SubmitToLendersModal
 import RecordHistoryModal from '../components/rep/RecordHistoryModal';
 import NewOfferModal from '../components/opportunity/NewOfferModal';
 import NewCommissionModal from '../components/opportunity/NewCommissionModal';
+import StatementAnalysisDashboard from '../components/opportunity/StatementAnalysisDashboard';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -787,7 +788,9 @@ export default function OpportunityDetail() {
                     No statements found
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-6">
+                    <StatementAnalysisDashboard statements={statements} />
+                    <div className="space-y-3">
                     {statements.map(stmt => (
                       <div 
                         key={stmt.Id} 
