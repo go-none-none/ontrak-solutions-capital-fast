@@ -4,7 +4,10 @@ Deno.serve(async (req) => {
   try {
     const { phoneNumber } = await req.json();
 
+    console.log('getTwilioSmsHistory - phoneNumber:', phoneNumber);
+
     if (!phoneNumber) {
+      console.log('No phone number provided');
       return Response.json({ messages: [] });
     }
 
@@ -13,11 +16,13 @@ Deno.serve(async (req) => {
     const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN');
 
     if (!twilioAccountSid || !twilioAuthToken) {
+      console.log('Missing Twilio credentials');
       return Response.json({ messages: [] });
     }
 
     // Format phone number for Twilio (ensure +1 prefix for US)
     const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+1${phoneNumber}`;
+    console.log('Formatted phone:', formattedPhone);
 
     // Fetch messages from Twilio API with pagination
     let allMessages = [];
@@ -42,10 +47,13 @@ Deno.serve(async (req) => {
       }
 
       const data = await response.json();
+      console.log(`Page ${pageCount + 1}: Total messages in response:`, data.messages?.length);
       
       // Filter messages for this phone number before adding
       const filteredMessages = (data.messages || [])
         .filter(msg => msg.to === formattedPhone || msg.from === formattedPhone);
+      
+      console.log(`Filtered messages for ${formattedPhone}:`, filteredMessages.length);
       
       allMessages = allMessages.concat(filteredMessages);
       
@@ -80,6 +88,7 @@ Deno.serve(async (req) => {
         };
       });
 
+    console.log('Total messages found:', messages.length);
     return Response.json({ messages });
   } catch (error) {
     console.error('Get SMS history error:', error);
