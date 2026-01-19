@@ -19,47 +19,41 @@ Deno.serve(async (req) => {
     // Format phone number for Twilio (ensure +1 prefix for US)
     const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+1${phoneNumber}`;
 
-    // Fetch messages from Twilio API with pagination
-    let allMessages = [];
-    let nextPageUri = null;
-    const maxPages = 20; // Fetch up to 20 pages (1000 messages)
-    let pageCount = 0;
+    // Get Twilio phone number to filter conversations
+    const twilioPhoneNumber = Deno.env.get('TWILIO_PHONE_NUMBER');
 
-    do {
-      const url = nextPageUri 
-        ? `https://api.twilio.com${nextPageUri}`
-        : `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json?PageSize=50`;
-      
-      const response = await fetch(url, {
+    // Fetch messages from Twilio API - use 'To' and 'From' filters for efficiency
+    // We need to make two queries: one where we sent TO them, one where they sent TO us
+    const [sentMessagesResponse, receivedMessagesResponse] = await Promise.all([
+      // Messages we sent to them (To = their number, From = our Twilio number)
+      fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json?To=${encodeURIComponent(formattedPhone)}&PageSize=100`, {
         headers: {
           'Authorization': 'Basic ' + btoa(`${twilioAccountSid}:${twilioAuthToken}`)
         }
-      });
+      }),
+      // Messages they sent to us (From = their number, To = our Twilio number)
+      fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json?From=${encodeURIComponent(formattedPhone)}&PageSize=100`, {
+        headers: {
+          'Authorization': 'Basic ' + btoa(`${twilioAccountSid}:${twilioAuthToken}`)
+        }
+      })
+    ]);
 
-      if (!response.ok) {
-        console.error('Twilio API error:', response.status, response.statusText);
-        break;
-      }
+    let allMessages = [];
 
-      const data = await response.json();
-      
-      // Filter messages for this phone number before adding
-      const filteredMessages = (data.messages || [])
-        .filter(msg => msg.to === formattedPhone || msg.from === formattedPhone);
-      
-      allMessages = allMessages.concat(filteredMessages);
-      
-      nextPageUri = data.next_page_uri;
-      pageCount++;
-      
-      // Stop if we have enough messages for this contact or hit max pages
-      if (filteredMessages.length === 0 || pageCount >= maxPages) {
-        break;
-      }
-    } while (nextPageUri);
-    
-    // Get Twilio phone number
-    const twilioPhoneNumber = Deno.env.get('TWILIO_PHONE_NUMBER');
+    if (sentMessagesResponse.ok) {
+      const sentData = await sentMessagesResponse.json();
+      allMessages = allMessages.concat(sentData.messages || []);
+    } else {
+      console.error('Sent messages API error:', sentMessagesResponse.status);
+    }
+
+    if (receivedMessagesResponse.ok) {
+      const receivedData = await receivedMessagesResponse.json();
+      allMessages = allMessages.concat(receivedData.messages || []);
+    } else {
+      console.error('Received messages API error:', receivedMessagesResponse.status);
+    }
     
     // Format messages
     const messages = allMessages
