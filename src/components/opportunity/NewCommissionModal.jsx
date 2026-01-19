@@ -111,7 +111,8 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
       onClose();
     } catch (error) {
       console.error('Create commission error:', error);
-      alert('Failed to create commission');
+      console.error('Error response:', error.response?.data);
+      alert(`Failed to create commission: ${error.response?.data?.details?.[0]?.message || error.message}`);
     } finally {
       setLoading(false);
     }

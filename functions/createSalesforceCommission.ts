@@ -2,6 +2,8 @@ Deno.serve(async (req) => {
   try {
     const { opportunityId, accountId, recordTypeId, commissionData, token, instanceUrl } = await req.json();
 
+    console.log('Creating commission with:', { opportunityId, accountId, recordTypeId, commissionData });
+
     // Create commission record
     const createData = {
       csbs__Opportunity__c: opportunityId,
@@ -9,6 +11,8 @@ Deno.serve(async (req) => {
       RecordTypeId: recordTypeId,
       ...commissionData
     };
+
+    console.log('Request payload:', JSON.stringify(createData, null, 2));
 
     const response = await fetch(
       `${instanceUrl}/services/data/v59.0/sobjects/csbs__Commission__c`,
@@ -22,8 +26,11 @@ Deno.serve(async (req) => {
       }
     );
 
+    console.log('Response status:', response.status);
+
     if (!response.ok) {
       const error = await response.json();
+      console.error('Salesforce error:', JSON.stringify(error, null, 2));
       return Response.json({ error: 'Failed to create commission', details: error }, { status: response.status });
     }
 
