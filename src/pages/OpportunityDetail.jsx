@@ -1215,6 +1215,7 @@ export default function OpportunityDetail() {
                     setFileToParseStatement(file);
                     setShowNewStatement(true);
                   }}
+                  onFilesLoaded={(files) => setFileManagerFiles(files)}
                 />
               </TabsContent>
 
