@@ -50,6 +50,7 @@ export default function OpportunityDetail() {
   const [showNewStatement, setShowNewStatement] = useState(false);
   const [viewingStatement, setViewingStatement] = useState(null);
   const [editingStatement, setEditingStatement] = useState(null);
+  const [fileToParseStatement, setFileToParseStatement] = useState(null);
   const [showNewDebt, setShowNewDebt] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -1194,6 +1195,10 @@ export default function OpportunityDetail() {
                   recordId={opportunity.Id}
                   session={session}
                   onFileUploaded={() => setRefreshKey(prev => prev + 1)}
+                  onParseFile={(file) => {
+                    setFileToParseStatement(file);
+                    setShowNewStatement(true);
+                  }}
                 />
               </TabsContent>
 
@@ -1324,13 +1329,18 @@ export default function OpportunityDetail() {
       {/* New Statement Modal */}
       <NewStatementModal
         isOpen={showNewStatement}
-        onClose={() => setShowNewStatement(false)}
+        onClose={() => {
+          setShowNewStatement(false);
+          setFileToParseStatement(null);
+        }}
         opportunityId={opportunity.Id}
         session={session}
+        fileToProcess={fileToParseStatement}
         onSuccess={() => {
           const urlParams = new URLSearchParams(window.location.search);
           const oppId = urlParams.get('id');
           loadRelatedRecords(session, oppId);
+          setFileToParseStatement(null);
         }}
       />
 
