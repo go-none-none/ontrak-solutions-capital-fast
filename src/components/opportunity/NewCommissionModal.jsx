@@ -28,10 +28,23 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
     if (isOpen) {
       loadRecordTypes();
       loadPicklists();
+      
+      // If editing, populate form
+      if (commission) {
+        setSelectedRecordType(commission.RecordTypeId);
+        setFormData({
+          csbs__Amount__c: commission.csbs__Amount__c || '',
+          csbs__Status__c: commission.csbs__Status__c || 'Open',
+          csbs__Type__c: commission.csbs__Type__c || '',
+          csbs__Date_Due__c: commission.csbs__Date_Due__c || '',
+          csbs__Date_Paid__c: commission.csbs__Date_Paid__c || ''
+        });
+        setStep(2); // Skip record type selection when editing
+      }
     } else {
       resetForm();
     }
-  }, [isOpen]);
+  }, [isOpen, commission]);
 
   const loadRecordTypes = async () => {
     setLoadingRecordTypes(true);
@@ -86,7 +99,7 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
   };
 
   const handleSubmit = async () => {
-    if (!selectedRecordType) {
+    if (!commission && !selectedRecordType) {
       alert('Please select a record type');
       return;
     }
@@ -98,21 +111,33 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
 
     setLoading(true);
     try {
-      await base44.functions.invoke('createSalesforceCommission', {
-        opportunityId,
-        accountId,
-        recordTypeId: selectedRecordType,
-        commissionData: formData,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
+      if (commission) {
+        // Update existing commission
+        await base44.functions.invoke('updateSalesforceRecord', {
+          objectType: 'csbs__Commission__c',
+          recordId: commission.Id,
+          data: formData,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        });
+      } else {
+        // Create new commission
+        await base44.functions.invoke('createSalesforceCommission', {
+          opportunityId,
+          accountId,
+          recordTypeId: selectedRecordType,
+          commissionData: formData,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        });
+      }
 
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Create commission error:', error);
+      console.error('Commission error:', error);
       console.error('Error response:', error.response?.data);
-      alert(`Failed to create commission: ${error.response?.data?.details?.[0]?.message || error.message}`);
+      alert(`Failed to ${commission ? 'update' : 'create'} commission: ${error.response?.data?.details?.[0]?.message || error.message}`);
     } finally {
       setLoading(false);
     }
@@ -247,10 +272,10 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
+              {!commission && <Button variant="outline" onClick={() => setStep(1)}>Back</Button>}
               <Button variant="outline" onClick={onClose}>Cancel</Button>
               <Button onClick={handleSubmit} disabled={loading} className="bg-orange-600 hover:bg-orange-700">
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : commission ? 'Update' : 'Create'}
               </Button>
             </div>
           </div>
