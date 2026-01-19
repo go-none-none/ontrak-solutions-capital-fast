@@ -84,10 +84,10 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       });
 
       if (!response.ok) throw new Error('Failed to fetch file');
-      
+
       const data = await response.json();
       const base64Data = data.file;
-      
+
       // Create File from base64
       const binaryString = atob(base64Data);
       const bytes = new Uint8Array(binaryString.length);
@@ -95,9 +95,11 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
         bytes[i] = binaryString.charCodeAt(i);
       }
       const pdfFile = new File([bytes], file.ContentDocument.Title + '.pdf', { type: 'application/pdf' });
-      
+
       const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfFile });
       const fileUrl = uploadResponse.file_url;
+
+      setFormData(prev => ({ ...prev, csbs__Source_File_ID__c: file.ContentDocumentId }));
       
       const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
       
