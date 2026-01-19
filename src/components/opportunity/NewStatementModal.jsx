@@ -69,12 +69,6 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     }
   }, [statement]);
 
-  useEffect(() => {
-    if (fileToProcess && isOpen) {
-      parseExistingFile(fileToProcess);
-    }
-  }, [fileToProcess, isOpen]);
-
   const parseExistingFile = async (file) => {
     setParsingFile(true);
     try {
@@ -139,6 +133,12 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       setParsingFile(false);
     }
   };
+
+  useEffect(() => {
+    if (fileToProcess && isOpen) {
+      parseExistingFile(fileToProcess);
+    }
+  }, [fileToProcess, isOpen]);
 
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
