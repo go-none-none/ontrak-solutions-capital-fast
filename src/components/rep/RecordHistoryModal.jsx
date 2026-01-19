@@ -84,6 +84,30 @@ export default function RecordHistoryModal({ isOpen, onClose, recordId, session 
               </div>
             </div>
 
+            {/* Stage History */}
+            {history.stageHistory && history.stageHistory.length > 0 && (
+              <div>
+                <h3 className="font-semibold text-slate-900 mb-3">
+                  Stage History ({history.stageHistory.length})
+                </h3>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {history.stageHistory.map((change, idx) => (
+                    <div key={idx} className="border-l-4 border-orange-500 bg-orange-50 rounded-r-lg p-3 text-sm">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-orange-900">
+                            {change.oldValue || '(None)'} → {change.newValue}
+                          </span>
+                        </div>
+                        <p className="text-xs text-orange-700">{formatDate(change.changedDate)}</p>
+                      </div>
+                      <p className="text-xs text-orange-600">Changed by {change.changedBy}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Field History */}
             {history.fieldHistory.length > 0 && (
               <div>
