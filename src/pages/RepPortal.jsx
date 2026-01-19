@@ -72,6 +72,9 @@ export default function RepPortal() {
   useEffect(() => {
     checkSession();
     
+    // Clear admin portal flag when on rep portal
+    sessionStorage.removeItem('fromAdminPortal');
+    
     // Restore state from sessionStorage
     const savedState = sessionStorage.getItem('repPortalState');
     if (savedState) {

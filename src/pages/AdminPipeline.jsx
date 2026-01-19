@@ -32,6 +32,9 @@ export default function AdminPipeline() {
   useEffect(() => {
     checkSession();
     
+    // Set admin portal flag when on admin pipeline
+    sessionStorage.setItem('fromAdminPortal', 'true');
+    
     // Restore state from sessionStorage
     const savedState = sessionStorage.getItem('adminPipelineState');
     if (savedState) {
