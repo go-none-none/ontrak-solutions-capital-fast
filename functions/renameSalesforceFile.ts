@@ -68,11 +68,11 @@ Deno.serve(async (req) => {
 
     // Update the ContentVersion with new title
     const response = await fetch(
-      `${instanceUrl}/services/data/v59.0/sobjects/ContentVersion/${contentVersionId}`,
+      `${sfInstanceUrl}/services/data/v59.0/sobjects/ContentVersion/${contentVersionId}`,
       {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ Title: newTitle })
