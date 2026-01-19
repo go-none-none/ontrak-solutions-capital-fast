@@ -28,6 +28,7 @@ Deno.serve(async (req) => {
     }
 
     const data = await response.json();
+    console.log('Record types found:', data.records?.length || 0);
     return Response.json({ recordTypes: data.records || [] });
 
   } catch (error) {
