@@ -14,7 +14,8 @@ export default function RepPortalHeader({
   showCreateTask = false,
   onCreateTaskClick,
   showBackButton = false,
-  onBackClick = null
+  onBackClick = null,
+  isAdminPortal = false
 }) {
   const navigate = useNavigate();
 
@@ -50,7 +51,7 @@ export default function RepPortalHeader({
             <Button 
               variant="outline" 
               size="icon"
-              onClick={() => navigate(createPageUrl('RepPortal'))}
+              onClick={() => navigate(createPageUrl(isAdminPortal ? 'AdminPipeline' : 'RepPortal'))}
               className="h-10 w-10"
               title="Go to Home"
             >
