@@ -153,7 +153,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       return;
     }
 
-    await proceedWithParsing(file);
+    await proceedWithParsing(file, null);
   };
 
   const proceedWithParsing = async (file, fileContentDocumentId = null) => {
