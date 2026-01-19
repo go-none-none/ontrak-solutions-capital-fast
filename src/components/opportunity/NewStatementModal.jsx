@@ -297,56 +297,101 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
         </DialogHeader>
 
         {!statement && (
-          <div className={`border-2 rounded-xl p-6 shadow-sm ${isParsed ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300' : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-300'}`}>
-            <div className="flex items-start gap-4">
-              <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${isParsed ? 'bg-green-600' : 'bg-blue-600'}`}>
-                {isParsed ? (
-                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                ) : (
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
+          <>
+            {availableFiles.length > 0 && (
+              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-6 mb-6">
+                <h3 className="text-sm font-semibold text-purple-900 mb-4">Select PDFs to Parse</h3>
+                <div className="space-y-2 mb-4">
+                  {availableFiles.map(file => (
+                    <div key={file.ContentDocumentId} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-purple-100">
+                      <Checkbox
+                        id={`file-${file.ContentDocumentId}`}
+                        checked={selectedFileIds.includes(file.ContentDocumentId)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedFileIds([...selectedFileIds, file.ContentDocumentId]);
+                          } else {
+                            setSelectedFileIds(selectedFileIds.filter(id => id !== file.ContentDocumentId));
+                          }
+                        }}
+                      />
+                      <label htmlFor={`file-${file.ContentDocumentId}`} className="flex-1 cursor-pointer">
+                        <p className="text-sm font-medium text-slate-900">{file.ContentDocument.Title}</p>
+                        <p className="text-xs text-slate-500">PDF • {formatFileSize(file.ContentDocument.ContentSize)}</p>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                {selectedFileIds.length > 0 && (
+                  <Button
+                    onClick={parseSelectedFiles}
+                    disabled={parsingFile}
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                  >
+                    {parsingFile ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Parsing {selectedFileIds.length}...
+                      </>
+                    ) : (
+                      <>Parse {selectedFileIds.length} Selected PDF{selectedFileIds.length !== 1 ? 's' : ''}</>
+                    )}
+                  </Button>
                 )}
               </div>
-              <div className="flex-1">
-                <h3 className={`font-bold text-lg mb-1 ${isParsed ? 'text-green-900' : 'text-blue-900'}`}>
-                  {isParsed ? '✓ Statement Parsed Successfully' : 'AI-Powered Statement Parser'}
-                </h3>
-                <p className={`text-sm mb-4 ${isParsed ? 'text-green-700' : 'text-blue-700'}`}>
-                  {isParsed ? 'All data has been extracted. Review and edit below as needed.' : 'Upload your PDF bank statement and let AI extract all the data automatically'}
-                </p>
-                {!isParsed && (
-                  <div className="flex items-center gap-3">
-                    <label 
-                      htmlFor="statement-upload" 
-                      className={`inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium cursor-pointer hover:bg-blue-700 transition-colors ${uploadingFile ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      Choose PDF File
-                    </label>
-                    <input
-                      type="file"
-                      accept="application/pdf"
-                      onChange={handleFileUpload}
-                      disabled={uploadingFile}
-                      className="hidden"
-                      id="statement-upload"
-                    />
-                    {parsingFile && (
-                      <div className="flex items-center gap-2 text-blue-700 bg-blue-100 px-3 py-2 rounded-lg">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="text-sm font-medium">Analyzing statement with AI...</span>
-                      </div>
-                    )}
-                  </div>
-                )}
+            )}
+
+            <div className={`border-2 rounded-xl p-6 shadow-sm ${isParsed ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300' : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-300'}`}>
+              <div className="flex items-start gap-4">
+                <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${isParsed ? 'bg-green-600' : 'bg-blue-600'}`}>
+                  {isParsed ? (
+                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3 className={`font-bold text-lg mb-1 ${isParsed ? 'text-green-900' : 'text-blue-900'}`}>
+                    {isParsed ? '✓ Statement Parsed Successfully' : 'AI-Powered Statement Parser'}
+                  </h3>
+                  <p className={`text-sm mb-4 ${isParsed ? 'text-green-700' : 'text-blue-700'}`}>
+                    {isParsed ? 'All data has been extracted. Review and edit below as needed.' : 'Upload your PDF bank statement and let AI extract all the data automatically'}
+                  </p>
+                  {!isParsed && (
+                    <div className="flex items-center gap-3">
+                      <label 
+                        htmlFor="statement-upload" 
+                        className={`inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium cursor-pointer hover:bg-blue-700 transition-colors ${uploadingFile ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Choose PDF File
+                      </label>
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        onChange={handleFileUpload}
+                        disabled={uploadingFile}
+                        className="hidden"
+                        id="statement-upload"
+                      />
+                      {parsingFile && (
+                        <div className="flex items-center gap-2 text-blue-700 bg-blue-100 px-3 py-2 rounded-lg">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span className="text-sm font-medium">Analyzing statement with AI...</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
 
         {isParsed && (
