@@ -315,7 +315,7 @@ export default function LeadDetail() {
   return (
     <div className="min-h-screen bg-slate-50">
       <RepPortalHeader
-        isAdmin={false}
+        isAdmin={session?.isAdmin || false}
         refreshing={false}
         onRefresh={() => loadLead(session)}
         onLogout={() => {
@@ -326,6 +326,7 @@ export default function LeadDetail() {
         showCreateTask={false}
         showBackButton={true}
         onBackClick={() => navigate(-1)}
+        isAdminPortal={window.location.pathname.includes('AdminPipeline') || sessionStorage.getItem('fromAdminPortal') === 'true'}
       />
 
       {/* Detail Header */}
