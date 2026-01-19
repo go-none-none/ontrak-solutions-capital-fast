@@ -9,6 +9,7 @@ import RepPortalHeader from '../components/rep/RepPortalHeader';
 import CommunicationCard from '../components/rep/CommunicationCard.jsx';
 import ActivityPanel from '../components/rep/ActivityPanel';
 import { NotificationContext } from '../components/context/NotificationContext';
+import RecordHistoryModal from '../components/rep/RecordHistoryModal';
 
 export default function ContactDetail() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function ContactDetail() {
   const [contact, setContact] = useState(null);
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showHistory, setShowHistory] = useState(false);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -128,9 +130,20 @@ export default function ContactDetail() {
       {/* Detail Header */}
       <div className="bg-white border-b border-slate-200 shadow-sm sticky top-[73px] z-40">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">{contact.Name}</h1>
-            {contact.Title && <p className="text-sm text-slate-600">{contact.Title}</p>}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">{contact.Name}</h1>
+              {contact.Title && <p className="text-sm text-slate-600">{contact.Title}</p>}
+            </div>
+            {session?.isAdmin && (
+              <Button 
+                onClick={() => setShowHistory(true)} 
+                variant="outline"
+                size="sm"
+              >
+                History
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -350,6 +363,13 @@ export default function ContactDetail() {
           </div>
         </div>
       </div>
+
+      <RecordHistoryModal
+        isOpen={showHistory}
+        onClose={() => setShowHistory(false)}
+        recordId={contact?.Id}
+        session={session}
+      />
     </div>
   );
 }

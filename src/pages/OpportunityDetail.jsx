@@ -19,6 +19,7 @@ import NewStatementModal from '../components/opportunity/NewStatementModal';
 import NewDebtModal from '../components/opportunity/NewDebtModal';
 import SubmissionDetailsModal from '../components/opportunity/SubmissionDetailsModal';
 import SubmitToLendersModal from '../components/opportunity/SubmitToLendersModal';
+import RecordHistoryModal from '../components/rep/RecordHistoryModal';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ export default function OpportunityDetail() {
   const [showNewDebt, setShowNewDebt] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -390,9 +392,20 @@ export default function OpportunityDetail() {
                       <h1 className="text-2xl font-bold text-slate-900">{opportunity.Name}</h1>
                       <p className="text-sm text-slate-600">{opportunity.Account?.Name}</p>
                     </div>
-                    <Badge className={stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}>
-                      {opportunity.StageName}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      {session?.isAdmin && (
+                        <Button 
+                          onClick={() => setShowHistory(true)} 
+                          variant="outline"
+                          size="sm"
+                        >
+                          History
+                        </Button>
+                      )}
+                      <Badge className={stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}>
+                        {opportunity.StageName}
+                      </Badge>
+                    </div>
                   </div>
         </div>
       </div>
@@ -1240,6 +1253,14 @@ export default function OpportunityDetail() {
           loadRelatedRecords(session, oppId);
         }}
       />
-    </div>
-  );
-}
+
+      {/* Record History Modal */}
+      <RecordHistoryModal
+        isOpen={showHistory}
+        onClose={() => setShowHistory(false)}
+        recordId={opportunity?.Id}
+        session={session}
+      />
+      </div>
+      );
+      }

@@ -13,6 +13,7 @@ import EditableField from '../components/rep/EditableField.jsx';
 import CommunicationCard from '../components/rep/CommunicationCard.jsx';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
 import ActivityPanel from '../components/rep/ActivityPanel';
+import RecordHistoryModal from '../components/rep/RecordHistoryModal';
 
 export default function LeadDetail() {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export default function LeadDetail() {
   const [showDispositionChange, setShowDispositionChange] = useState(false);
   const [showStatusChange, setShowStatusChange] = useState(false);
   const [updatingQuickStatus, setUpdatingQuickStatus] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [openSections, setOpenSections] = useState({
     contact: true,
     owner1: false,
@@ -337,16 +339,27 @@ export default function LeadDetail() {
               <h1 className="text-2xl font-bold text-slate-900">{lead.Name}</h1>
               <p className="text-sm text-slate-600">{lead.Company}</p>
             </div>
-            {!lead.IsConverted && (
-              <Button 
-                onClick={handleConvertLead} 
-                disabled={converting}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {converting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ArrowRight className="w-4 h-4 mr-2" />}
-                Convert to Opportunity
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {session?.isAdmin && (
+                <Button 
+                  onClick={() => setShowHistory(true)} 
+                  variant="outline"
+                  size="sm"
+                >
+                  History
+                </Button>
+              )}
+              {!lead.IsConverted && (
+                <Button 
+                  onClick={handleConvertLead} 
+                  disabled={converting}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {converting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ArrowRight className="w-4 h-4 mr-2" />}
+                  Convert to Opportunity
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -811,6 +824,13 @@ export default function LeadDetail() {
           </div>
         </div>
       </div>
+
+      <RecordHistoryModal
+        isOpen={showHistory}
+        onClose={() => setShowHistory(false)}
+        recordId={lead?.Id}
+        session={session}
+      />
     </div>
   );
 }
