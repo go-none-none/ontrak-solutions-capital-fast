@@ -545,26 +545,6 @@ export default function RepPortal() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            onClick={() => { setActiveTab('contacts'); setCurrentPage(1); }}
-            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
-              activeTab === 'contacts' ? 'ring-2 ring-indigo-500 shadow-md' : 'hover:shadow-md'
-            }`}
-          >
-            <div className="flex items-center justify-between h-full">
-              <div>
-                <p className="text-xs sm:text-sm text-slate-600 mb-1">Contacts</p>
-                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{contacts.length}</p>
-              </div>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
-                <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             onClick={() => { setActiveTab('dispositions'); setDispositionFilter('all'); setCurrentPage(1); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
@@ -585,7 +565,7 @@ export default function RepPortal() {
           </div>
 
         {/* Pipeline */}
-        {activeTab !== 'tasks' && activeTab !== 'dispositions' && activeTab !== 'contacts' && (
+        {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
           <PipelineView 
             leads={leads} 
             opportunities={opportunities} 
@@ -888,79 +868,6 @@ export default function RepPortal() {
                               );
                             })}
                           </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                            disabled={currentPage === totalPages}
-                          >
-                            Next
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'contacts' && (
-          <div>
-            <div className="mb-4 sm:mb-6">
-              <div className="relative flex-1 mb-4">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
-                <Input
-                  placeholder="Search contacts by name, email, company..."
-                  value={searchTerm}
-                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                  className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(() => {
-                const filtered = contacts.filter(contact => {
-                  const term = searchTerm.toLowerCase();
-                  return contact.Name?.toLowerCase().includes(term) ||
-                    contact.Email?.toLowerCase().includes(term) ||
-                    contact.AccountName?.toLowerCase().includes(term) ||
-                    contact.MobilePhone?.toLowerCase().includes(term);
-                });
-
-                const totalPages = Math.ceil(filtered.length / itemsPerPage);
-                const startIdx = (currentPage - 1) * itemsPerPage;
-                const endIdx = startIdx + itemsPerPage;
-                const paginated = filtered.slice(startIdx, endIdx);
-
-                return (
-                  <>
-                    {filtered.length === 0 ? (
-                      <div className="col-span-full text-center py-12">
-                        <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                        <p className="text-slate-600">No contacts found</p>
-                      </div>
-                    ) : (
-                      paginated.map(contact => (
-                        <ContactCard key={contact.Id} contact={contact} />
-                      ))
-                    )}
-                    {totalPages > 1 && (
-                      <div className="col-span-full flex items-center justify-between mt-6 pt-6 border-t">
-                        <p className="text-sm text-slate-600">
-                          Showing {startIdx + 1}-{Math.min(endIdx, filtered.length)} of {filtered.length}
-                        </p>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                            disabled={currentPage === 1}
-                          >
-                            Previous
-                          </Button>
                           <Button
                             variant="outline"
                             size="sm"
