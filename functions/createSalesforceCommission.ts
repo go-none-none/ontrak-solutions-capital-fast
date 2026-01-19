@@ -4,12 +4,16 @@ Deno.serve(async (req) => {
 
     console.log('Creating commission with:', { opportunityId, accountId, recordTypeId, commissionData });
 
-    // Create commission record
+    // Create commission record - filter out empty date fields
+    const filteredData = Object.fromEntries(
+      Object.entries(commissionData).filter(([key, value]) => value !== '' && value !== null && value !== undefined)
+    );
+    
     const createData = {
       csbs__Opportunity__c: opportunityId,
       csbs__Account__c: accountId,
       RecordTypeId: recordTypeId,
-      ...commissionData
+      ...filteredData
     };
 
     console.log('Request payload:', JSON.stringify(createData, null, 2));
