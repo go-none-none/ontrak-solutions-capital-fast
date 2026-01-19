@@ -82,6 +82,11 @@ Instructions:
 
     console.log('Parsed data:', result);
 
+    // Ensure transaction count is calculated if not provided
+    if (!result.transactions_count && result.deposit_count !== null && result.withdrawals_count !== null) {
+      result.transactions_count = result.deposit_count + result.withdrawals_count;
+    }
+
     return Response.json({ 
       success: true,
       data: result
