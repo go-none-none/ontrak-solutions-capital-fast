@@ -8,6 +8,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
+const formatFileSize = (bytes) => {
+  if (!bytes) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+};
+
 export default function NewStatementModal({ isOpen, onClose, opportunityId, session, onSuccess, statement = null, fileToProcess = null, availableFiles = [] }) {
   const [loading, setLoading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
