@@ -39,10 +39,10 @@ Deno.serve(async (req) => {
 
     // First, get the ContentVersion associated with this ContentDocument
     const versionQuery = await fetch(
-      `${instanceUrl}/services/data/v59.0/query?q=SELECT+Id+FROM+ContentVersion+WHERE+ContentDocumentId='${contentDocumentId}'+ORDER+BY+CreatedDate+DESC+LIMIT+1`,
+      `${sfInstanceUrl}/services/data/v59.0/query?q=SELECT+Id+FROM+ContentVersion+WHERE+ContentDocumentId='${contentDocumentId}'+ORDER+BY+CreatedDate+DESC+LIMIT+1`,
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json'
         }
       }
