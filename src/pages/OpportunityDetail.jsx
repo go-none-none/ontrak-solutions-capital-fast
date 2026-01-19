@@ -1351,6 +1351,7 @@ export default function OpportunityDetail() {
         opportunityId={opportunity.Id}
         session={session}
         fileToProcess={fileToParseStatement}
+        availableFiles={[]}
         onSuccess={() => {
           const urlParams = new URLSearchParams(window.location.search);
           const oppId = urlParams.get('id');
