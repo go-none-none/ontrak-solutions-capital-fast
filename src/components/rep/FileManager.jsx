@@ -17,6 +17,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
   const [deleting, setDeleting] = useState(null);
   const [renamingId, setRenamingId] = useState(null);
   const [newTitle, setNewTitle] = useState('');
+  const [previewingData, setPreviewingData] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
