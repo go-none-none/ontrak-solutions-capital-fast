@@ -7,7 +7,7 @@ import PDFViewer from './PDFViewer';
 import ImageViewer from './ImageViewer';
 import { base44 } from '@/api/base44Client';
 
-export default function FileManager({ recordId, session, onFileUploaded, onParseFile }) {
+export default function FileManager({ recordId, session, onFileUploaded, onParseFile, statements = [] }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
