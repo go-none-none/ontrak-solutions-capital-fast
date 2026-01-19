@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function NewStatementModal({ isOpen, onClose, opportunityId, session, onSuccess, statement = null }) {
+export default function NewStatementModal({ isOpen, onClose, opportunityId, session, onSuccess, statement = null, fileToProcess = null }) {
   const [loading, setLoading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [parsingFile, setParsingFile] = useState(false);
@@ -69,6 +69,77 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     }
   }, [statement]);
 
+  useEffect(() => {
+    if (fileToProcess && isOpen) {
+      parseExistingFile(fileToProcess);
+    }
+  }, [fileToProcess, isOpen]);
+
+  const parseExistingFile = async (file) => {
+    setParsingFile(true);
+    try {
+      const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contentDocumentId: file.ContentDocumentId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch file');
+      
+      const data = await response.json();
+      const base64Data = data.file;
+      
+      // Create blob from base64 and upload
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const pdfBlob = new Blob([bytes], { type: 'application/pdf' });
+      
+      const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfBlob });
+      const fileUrl = uploadResponse.file_url;
+      
+      const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
+      
+      if (parseResponse.data.success && parseResponse.data.data) {
+        const p = parseResponse.data.data;
+        setFormData(prev => ({
+          ...prev,
+          bankName: p.bank_name || prev.bankName,
+          accountNo: p.account_number || prev.accountNo,
+          accountTitle: p.account_title || prev.accountTitle,
+          company: p.company || prev.company,
+          startingDate: p.starting_date || prev.startingDate,
+          endingDate: p.ending_date || prev.endingDate,
+          startingBalance: p.starting_balance || prev.startingBalance,
+          endingBalance: p.ending_balance || prev.endingBalance,
+          avgDailyBalance: p.average_daily_balance || prev.avgDailyBalance,
+          depositAmount: p.deposit_amount || prev.depositAmount,
+          depositCount: p.deposit_count || prev.depositCount,
+          withdrawalsCount: p.withdrawals_count || prev.withdrawalsCount,
+          totalWithdrawals: p.total_withdrawals || prev.totalWithdrawals,
+          transactionsCount: p.transactions_count || prev.transactionsCount,
+          nsfs: p.nsf_count || prev.nsfs,
+          negativeDays: p.negative_days || prev.negativeDays,
+          notes: p.notes ? (prev.notes ? prev.notes + '\n\n' + p.notes : p.notes) : prev.notes
+        }));
+        alert('✅ Statement parsed successfully! All data extracted and populated. Please review.');
+      } else {
+        throw new Error('Failed to parse statement');
+      }
+    } catch (error) {
+      console.error('File parse error:', error);
+      alert('Failed to parse statement. Please fill manually.');
+    } finally {
+      setParsingFile(false);
+    }
+  };
+
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -90,26 +161,26 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       if (parseResponse.data.success && parseResponse.data.data) {
         const p = parseResponse.data.data;
         
-        setFormData({
-          ...formData,
-          bankName: p.bank_name || formData.bankName,
-          accountNo: p.account_number || formData.accountNo,
-          accountTitle: p.account_title || formData.accountTitle,
-          company: p.company || formData.company,
-          startingDate: p.starting_date || formData.startingDate,
-          endingDate: p.ending_date || formData.endingDate,
-          startingBalance: p.starting_balance || formData.startingBalance,
-          endingBalance: p.ending_balance || formData.endingBalance,
-          avgDailyBalance: p.average_daily_balance || formData.avgDailyBalance,
-          depositAmount: p.deposit_amount || formData.depositAmount,
-          depositCount: p.deposit_count || formData.depositCount,
-          withdrawalsCount: p.withdrawals_count || formData.withdrawalsCount,
-          totalWithdrawals: p.total_withdrawals || formData.totalWithdrawals,
-          transactionsCount: p.transactions_count || formData.transactionsCount,
-          nsfs: p.nsf_count || formData.nsfs,
-          negativeDays: p.negative_days || formData.negativeDays,
-          notes: p.notes ? (formData.notes ? formData.notes + '\n\n' + p.notes : p.notes) : formData.notes
-        });
+        setFormData(prev => ({
+          ...prev,
+          bankName: p.bank_name || prev.bankName,
+          accountNo: p.account_number || prev.accountNo,
+          accountTitle: p.account_title || prev.accountTitle,
+          company: p.company || prev.company,
+          startingDate: p.starting_date || prev.startingDate,
+          endingDate: p.ending_date || prev.endingDate,
+          startingBalance: p.starting_balance || prev.startingBalance,
+          endingBalance: p.ending_balance || prev.endingBalance,
+          avgDailyBalance: p.average_daily_balance || prev.avgDailyBalance,
+          depositAmount: p.deposit_amount || prev.depositAmount,
+          depositCount: p.deposit_count || prev.depositCount,
+          withdrawalsCount: p.withdrawals_count || prev.withdrawalsCount,
+          totalWithdrawals: p.total_withdrawals || prev.totalWithdrawals,
+          transactionsCount: p.transactions_count || prev.transactionsCount,
+          nsfs: p.nsf_count || prev.nsfs,
+          negativeDays: p.negative_days || prev.negativeDays,
+          notes: p.notes ? (prev.notes ? prev.notes + '\n\n' + p.notes : p.notes) : prev.notes
+        }));
         
         alert('✅ Statement parsed successfully! All data extracted and populated. Please review.');
       } else {
