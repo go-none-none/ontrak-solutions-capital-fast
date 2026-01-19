@@ -790,11 +790,18 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
             <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
               Cancel
             </Button>
-            <Button type="submit" name="saveNew" disabled={loading} variant="outline">
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save & New'}
-            </Button>
+            {fileQueue.length > 0 && currentFileIndex < fileQueue.length - 1 && (
+              <Button type="submit" name="saveNew" disabled={loading} variant="outline">
+                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : `Save & Next (${currentFileIndex + 1}/${fileQueue.length})`}
+              </Button>
+            )}
+            {!fileQueue.length && (
+              <Button type="submit" name="saveNew" disabled={loading} variant="outline">
+                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save & New'}
+              </Button>
+            )}
             <Button type="submit" name="save" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save'}
+              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : fileQueue.length > 0 && currentFileIndex === fileQueue.length - 1 ? 'Finish' : 'Save'}
             </Button>
           </div>
         </form>
