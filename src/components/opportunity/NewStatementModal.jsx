@@ -156,13 +156,17 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     await proceedWithParsing(file);
   };
 
-  const proceedWithParsing = async (file) => {
+  const proceedWithParsing = async (file, fileContentDocumentId = null) => {
     setUploadingFile(true);
     setParsingFile(true);
-    
+
     try {
       const uploadResponse = await base44.integrations.Core.UploadFile({ file });
       const fileUrl = uploadResponse.file_url;
+
+      if (fileContentDocumentId) {
+        setFormData(prev => ({ ...prev, csbs__Source_File_ID__c: fileContentDocumentId }));
+      }
       
       const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
       
