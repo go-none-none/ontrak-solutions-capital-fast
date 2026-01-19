@@ -22,6 +22,7 @@ import MissingDocs from './pages/MissingDocs';
 import OpportunityDetail from './pages/OpportunityDetail';
 import OwnerContact from './pages/OwnerContact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import RecordHistory from './pages/RecordHistory';
 import RepPortal from './pages/RepPortal';
 import Reviews from './pages/Reviews';
 import Status from './pages/Status';
@@ -29,7 +30,6 @@ import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
-import RecordHistory from './pages/RecordHistory';
 import __Layout from './Layout.jsx';
 
 
@@ -58,6 +58,7 @@ export const PAGES = {
     "OpportunityDetail": OpportunityDetail,
     "OwnerContact": OwnerContact,
     "PrivacyPolicy": PrivacyPolicy,
+    "RecordHistory": RecordHistory,
     "RepPortal": RepPortal,
     "Reviews": Reviews,
     "Status": Status,
@@ -65,7 +66,6 @@ export const PAGES = {
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
-    "RecordHistory": RecordHistory,
 }
 
 export const pagesConfig = {

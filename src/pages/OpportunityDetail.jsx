@@ -20,6 +20,7 @@ import NewDebtModal from '../components/opportunity/NewDebtModal';
 import SubmissionDetailsModal from '../components/opportunity/SubmissionDetailsModal';
 import SubmitToLendersModal from '../components/opportunity/SubmitToLendersModal';
 import RecordHistoryModal from '../components/rep/RecordHistoryModal';
+import NewOfferModal from '../components/opportunity/NewOfferModal';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -50,6 +51,7 @@ export default function OpportunityDetail() {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showNewOffer, setShowNewOffer] = useState(false);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -625,6 +627,14 @@ export default function OpportunityDetail() {
 
               {/* Offers Tab */}
               <TabsContent value="offers" className="space-y-4">
+                <div className="flex justify-end mb-3">
+                  <Button
+                    onClick={() => setShowNewOffer(true)}
+                    className="bg-orange-600 hover:bg-orange-700"
+                  >
+                    + New Offer
+                  </Button>
+                </div>
                 {loadingRelated ? (
                   <div className="bg-white rounded-xl p-8 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
@@ -1260,6 +1270,19 @@ export default function OpportunityDetail() {
         onClose={() => setShowHistory(false)}
         recordId={opportunity?.Id}
         session={session}
+      />
+
+      {/* New Offer Modal */}
+      <NewOfferModal
+        isOpen={showNewOffer}
+        onClose={() => setShowNewOffer(false)}
+        opportunityId={opportunity.Id}
+        session={session}
+        onSuccess={() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const oppId = urlParams.get('id');
+          loadRelatedRecords(session, oppId);
+        }}
       />
       </div>
       );
