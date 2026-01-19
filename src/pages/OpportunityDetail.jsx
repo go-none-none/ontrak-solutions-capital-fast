@@ -153,11 +153,11 @@ export default function OpportunityDetail() {
 
       setSubmissions(submissionsRes.data.submissions || []);
       setOffers(offersRes.data.offers || []);
-      // Sort statements by ending date, most recent first
+      // Sort statements by ending date, oldest first
       const sortedStatements = (statementsRes.data.statements || []).sort((a, b) => {
         const dateA = new Date(a.csbs__Ending_Date__c || 0);
         const dateB = new Date(b.csbs__Ending_Date__c || 0);
-        return dateB - dateA;
+        return dateA - dateB;
       });
       setStatements(sortedStatements);
       setDebt(debtRes.data.debt || []);
