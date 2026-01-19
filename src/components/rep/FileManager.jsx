@@ -225,79 +225,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
     }
   };
 
-  const handlePreviewData = async (file) => {
-    try {
-      // Fetch file content to parse and match with statements
-      const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contentDocumentId: file.ContentDocumentId,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
-      });
 
-      if (!response.ok) throw new Error('Failed to fetch file');
-      
-      const data = await response.json();
-      const base64Data = data.file;
-      
-      const binaryString = atob(base64Data);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      const pdfFile = new File([bytes], file.ContentDocument.Title + '.pdf', { type: 'application/pdf' });
-      
-      const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfFile });
-      const fileUrl = uploadResponse.file_url;
-      
-      const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
-      
-      if (parseResponse.data.success && parseResponse.data.data) {
-        const parsedData = parseResponse.data.data;
-        
-        // Find matching statement by bank name and date range
-        const matchingStatement = statements.find(stmt => {
-          if (!stmt.csbs__Bank_Name__c) return false;
-          const nameMatches = stmt.csbs__Bank_Name__c === parsedData.bank_name;
-          const startMatches = stmt.csbs__Starting_Date__c === parsedData.starting_date;
-          const endMatches = stmt.csbs__Ending_Date__c === parsedData.ending_date;
-          return nameMatches && startMatches && endMatches;
-        });
-
-        if (matchingStatement) {
-          const data = {
-            bank_name: matchingStatement.csbs__Bank_Name__c,
-            account_number: matchingStatement.csbs__Account_No__c,
-            account_title: matchingStatement.csbs__Account_Title__c,
-            company: matchingStatement.csbs__Company__c,
-            starting_date: matchingStatement.csbs__Starting_Date__c,
-            ending_date: matchingStatement.csbs__Ending_Date__c,
-            starting_balance: matchingStatement.csbs__Starting_Balance__c,
-            ending_balance: matchingStatement.csbs__Ending_Balance__c,
-            average_daily_balance: matchingStatement.csbs__Average_Daily_Balance__c,
-            deposit_count: matchingStatement.csbs__Deposit_Count__c,
-            deposit_amount: matchingStatement.csbs__Deposit_Amount__c,
-            withdrawals_count: matchingStatement.csbs__Withdrawals_Count__c,
-            total_withdrawals: matchingStatement.csbs__Total_Withdrawals__c,
-            transactions_count: matchingStatement.csbs__Transactions_Count__c,
-            nsf_count: matchingStatement.csbs__NSFs__c,
-            negative_days: matchingStatement.csbs__Negative_Days__c
-          };
-          setPreviewingData(data);
-        } else {
-          alert('Could not match file to a statement');
-        }
-      } else {
-        alert('Failed to parse statement');
-      }
-    } catch (error) {
-      console.error('Preview error:', error);
-      alert('Failed to preview parsed data');
-    }
-  };
 
   return (
     <>
