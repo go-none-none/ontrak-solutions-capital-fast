@@ -151,13 +151,6 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       return;
     }
 
-    // If already parsed, show warning
-    if (isParsed) {
-      setPendingFile(file);
-      setShowReparseWarning(true);
-      return;
-    }
-
     await proceedWithParsing(file);
   };
 
