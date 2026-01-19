@@ -102,6 +102,7 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
     try {
       await base44.functions.invoke('createSalesforceCommission', {
         opportunityId,
+        accountId,
         recordTypeId: selectedRecordType,
         commissionData: formData,
         token: session.token,

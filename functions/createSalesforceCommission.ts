@@ -1,10 +1,11 @@
 Deno.serve(async (req) => {
   try {
-    const { opportunityId, recordTypeId, commissionData, token, instanceUrl } = await req.json();
+    const { opportunityId, accountId, recordTypeId, commissionData, token, instanceUrl } = await req.json();
 
     // Create commission record
     const createData = {
       csbs__Opportunity__c: opportunityId,
+      csbs__Account__c: accountId,
       RecordTypeId: recordTypeId,
       ...commissionData
     };
