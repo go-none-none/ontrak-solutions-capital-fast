@@ -1,12 +1,40 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+
 Deno.serve(async (req) => {
   try {
     const { contentDocumentId, newTitle, token, instanceUrl } = await req.json();
 
-    if (!contentDocumentId || !newTitle || !token || !instanceUrl) {
+    if (!contentDocumentId || !newTitle) {
       return Response.json(
         { error: 'Missing required parameters' },
         { status: 400 }
       );
+    }
+
+    let accessToken = token;
+    let sfInstanceUrl = instanceUrl;
+
+    // Try to get fresh token from app connector if available
+    try {
+      const base44 = createClientFromRequest(req);
+      accessToken = await base44.asServiceRole.connectors.getAccessToken('salesforce');
+      
+      // Get instance URL from Salesforce if not provided
+      if (!sfInstanceUrl) {
+        const userInfo = await fetch('https://login.salesforce.com/services/oauth2/userinfo', {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        const userData = await userInfo.json();
+        sfInstanceUrl = userData.instance_url;
+      }
+    } catch (e) {
+      // Fallback to provided token
+      if (!token || !instanceUrl) {
+        return Response.json(
+          { error: 'Missing required parameters and could not get connector token' },
+          { status: 400 }
+        );
+      }
     }
 
     // First, get the ContentVersion associated with this ContentDocument
