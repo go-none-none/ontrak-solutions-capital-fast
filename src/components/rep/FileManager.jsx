@@ -7,7 +7,7 @@ import PDFViewer from './PDFViewer';
 import ImageViewer from './ImageViewer';
 import { base44 } from '@/api/base44Client';
 
-export default function FileManager({ recordId, session, onFileUploaded, onParseFile, statements = [] }) {
+export default function FileManager({ recordId, session, onFileUploaded, onParseFile, statements = [], onFilesLoaded }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -37,7 +37,16 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
         })
       });
       const data = await response.json();
-      setFiles(data.files || []);
+      const fileList = data.files || [];
+      setFiles(fileList);
+      
+      // Get unparsed PDFs and notify parent
+      const unparsedPdfs = fileList.filter(file => {
+        const isPdf = file.ContentDocument?.FileExtension?.toLowerCase() === 'pdf';
+        const hasStatement = statements.some(stmt => stmt.csbs__Source_File_ID__c === file.ContentDocumentId);
+        return isPdf && !hasStatement;
+      });
+      onFilesLoaded?.(unparsedPdfs);
     } catch (error) {
       console.error('Load files error:', error);
     } finally {
