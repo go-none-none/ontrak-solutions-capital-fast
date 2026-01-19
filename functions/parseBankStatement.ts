@@ -45,7 +45,7 @@ NEGATIVE BALANCE:
 16. Negative Days - Count how many days the account had a negative/overdrawn balance
 
 NOTES/FRAUD:
-17. Any unusual patterns or red flags
+17. Any unusual patterns or red flags (KEEP UNDER 255 CHARACTERS - summarize concisely)
 
 Instructions:
 - Read the ENTIRE statement page by page
@@ -53,7 +53,8 @@ Instructions:
 - For NSFs: Look for "NSF", "Returned Item", "Insufficient Funds", "Bounced", "Returned Check" fees or notations
 - For Negative Days: Track when daily balance goes below zero
 - Be thorough and precise
-- Use null only if data genuinely cannot be found`,
+- Use null only if data genuinely cannot be found
+- For notes: Keep the summary brief and under 255 characters`,
       file_urls: [fileUrl],
       response_json_schema: {
         type: "object",
@@ -74,7 +75,7 @@ Instructions:
           transactions_count: { type: ["integer", "null"] },
           nsf_count: { type: ["integer", "null"], description: "Count of NSF/Returned Item fees or transactions" },
           negative_days: { type: ["integer", "null"], description: "Days with negative balance" },
-          notes: { type: ["string", "null"], description: "Any red flags or unusual patterns" }
+          notes: { type: ["string", "null"], description: "Any red flags or unusual patterns (max 255 characters)" }
         }
       }
     });
