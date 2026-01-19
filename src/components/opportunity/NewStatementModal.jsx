@@ -244,6 +244,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    const isNew = e.nativeEvent.submitter.name.includes('new');
 
     try {
       if (statement) {
@@ -264,35 +265,53 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
 
       onSuccess();
       
-      if (!e.nativeEvent.submitter.name.includes('new')) {
+      // Check if there are more files in the queue
+      if (isNew && fileQueue.length > 0 && currentFileIndex < fileQueue.length - 1) {
+        const nextIndex = currentFileIndex + 1;
+        setCurrentFileIndex(nextIndex);
+        setIsParsed(false);
+        setFormData({
+          accountNo: '',
+          accountTitle: '',
+          company: '',
+          bankName: '',
+          startingDate: '',
+          startingBalance: '',
+          endingDate: '',
+          endingBalance: '',
+          reconciled: false,
+          unreconciledEndBalance: '',
+          fraudScore: '',
+          avgDailyBalance: '',
+          depositCount: '',
+          depositAmount: '',
+          withdrawalsCount: '',
+          totalWithdrawals: '',
+          transactionsCount: '',
+          minResolution: '',
+          maxResolution: '',
+          nsfs: '',
+          negativeDays: '',
+          fraudReasons: '',
+          notes: ''
+        });
+        
+        // Parse the next file
+        setParsingFile(true);
+        try {
+          await parseExistingFile(fileQueue[nextIndex]);
+        } catch (error) {
+          console.error('Parse next file error:', error);
+        } finally {
+          setParsingFile(false);
+        }
+      } else {
+        // No more files, close modal
+        setFileQueue([]);
+        setCurrentFileIndex(0);
+        setSelectedFileIds([]);
         onClose();
       }
-      
-      setFormData({
-        accountNo: '',
-        accountTitle: '',
-        company: '',
-        bankName: '',
-        startingDate: '',
-        startingBalance: '',
-        endingDate: '',
-        endingBalance: '',
-        reconciled: false,
-        unreconciledEndBalance: '',
-        fraudScore: '',
-        avgDailyBalance: '',
-        depositCount: '',
-        depositAmount: '',
-        withdrawalsCount: '',
-        totalWithdrawals: '',
-        transactionsCount: '',
-        minResolution: '',
-        maxResolution: '',
-        nsfs: '',
-        negativeDays: '',
-        fraudReasons: '',
-        notes: ''
-      });
     } catch (error) {
       console.error('Create statement error:', error);
       alert('Failed to create statement: ' + (error.response?.data?.error || error.message));
