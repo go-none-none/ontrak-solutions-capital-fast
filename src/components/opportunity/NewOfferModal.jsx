@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
@@ -32,6 +33,13 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
     csbs__Term__c: '',
     csbs__Payment_Method__c: '',
     csbs__Holdback_Percentage__c: '',
+    csbs__Selected__c: false,
+    csbs__Origination_Fee_Percentage__c: '',
+    csbs__Origination_Fee_Amount__c: '',
+    csbs__Commission_Percentage__c: '',
+    csbs__Commission_Amount__c: '',
+    csbs__Draw_Fee_Percent__c: '',
+    csbs__Draw_Fee_Amount__c: '',
     csbs__Notes__c: ''
   });
 
@@ -55,6 +63,13 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
           csbs__Term__c: offer.csbs__Term__c || '',
           csbs__Payment_Method__c: offer.csbs__Payment_Method__c || '',
           csbs__Holdback_Percentage__c: offer.csbs__Holdback_Percentage__c || '',
+          csbs__Selected__c: offer.csbs__Selected__c || false,
+          csbs__Origination_Fee_Percentage__c: offer.csbs__Origination_Fee_Percentage__c || '',
+          csbs__Origination_Fee_Amount__c: offer.csbs__Origination_Fee_Amount__c || '',
+          csbs__Commission_Percentage__c: offer.csbs__Commission_Percentage__c || '',
+          csbs__Commission_Amount__c: offer.csbs__Commission_Amount__c || '',
+          csbs__Draw_Fee_Percent__c: offer.csbs__Draw_Fee_Percent__c || '',
+          csbs__Draw_Fee_Amount__c: offer.csbs__Draw_Fee_Amount__c || '',
           csbs__Notes__c: offer.csbs__Notes__c || ''
         });
       }
@@ -79,6 +94,13 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
       csbs__Term__c: '',
       csbs__Payment_Method__c: '',
       csbs__Holdback_Percentage__c: '',
+      csbs__Selected__c: false,
+      csbs__Origination_Fee_Percentage__c: '',
+      csbs__Origination_Fee_Amount__c: '',
+      csbs__Commission_Percentage__c: '',
+      csbs__Commission_Amount__c: '',
+      csbs__Draw_Fee_Percent__c: '',
+      csbs__Draw_Fee_Amount__c: '',
       csbs__Notes__c: ''
     });
   };
@@ -353,6 +375,79 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
                       onChange={(e) => setFormData({...formData, csbs__Holdback_Percentage__c: e.target.value})}
                     />
                   </div>
+                </div>
+
+                {/* Fees & Commission */}
+                <div className="border-t pt-4 mt-2">
+                  <h3 className="font-semibold text-slate-900 mb-3">Fees & Commission</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Origination Fee %</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={formData.csbs__Origination_Fee_Percentage__c}
+                        onChange={(e) => setFormData({...formData, csbs__Origination_Fee_Percentage__c: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label>Origination Fee $</Label>
+                      <Input
+                        type="number"
+                        value={formData.csbs__Origination_Fee_Amount__c}
+                        onChange={(e) => setFormData({...formData, csbs__Origination_Fee_Amount__c: e.target.value})}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Commission %</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={formData.csbs__Commission_Percentage__c}
+                        onChange={(e) => setFormData({...formData, csbs__Commission_Percentage__c: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label>Commission $</Label>
+                      <Input
+                        type="number"
+                        value={formData.csbs__Commission_Amount__c}
+                        onChange={(e) => setFormData({...formData, csbs__Commission_Amount__c: e.target.value})}
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Draw Fee %</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={formData.csbs__Draw_Fee_Percent__c}
+                        onChange={(e) => setFormData({...formData, csbs__Draw_Fee_Percent__c: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label>Draw Fee $</Label>
+                      <Input
+                        type="number"
+                        value={formData.csbs__Draw_Fee_Amount__c}
+                        onChange={(e) => setFormData({...formData, csbs__Draw_Fee_Amount__c: e.target.value})}
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Selected & Notes */}
+                <div className="flex items-center gap-2 pt-2">
+                  <Checkbox
+                    id="selected"
+                    checked={formData.csbs__Selected__c}
+                    onCheckedChange={(checked) => setFormData({...formData, csbs__Selected__c: checked})}
+                  />
+                  <Label htmlFor="selected" className="cursor-pointer">Mark as Selected Offer</Label>
                 </div>
 
                 <div>
