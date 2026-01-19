@@ -417,15 +417,26 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                         <Eye className="w-4 h-4" />
                       </Button>
                       {doc.FileExtension?.toLowerCase() === 'pdf' && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => onParseFile?.(file)}
-                          title="Parse with AI"
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                        >
-                          <Sparkles className="w-4 h-4" />
-                        </Button>
+                        <>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => onParseFile?.(file)}
+                            title="Parse with AI"
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          >
+                            <Sparkles className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => handlePreviewData(file)}
+                            title="View parsed data"
+                            className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                          >
+                            <Zap className="w-4 h-4" />
+                          </Button>
+                        </>
                       )}
                       <Button 
                         variant="ghost" 
