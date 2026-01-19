@@ -53,8 +53,9 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const error = await response.json();
+      console.error('Salesforce error:', error);
       return Response.json(
-        { error: error.message || 'Failed to rename file' },
+        { error: error[0]?.message || error.message || 'Failed to rename file. You may not have permission to modify this file.' },
         { status: response.status }
       );
     }
