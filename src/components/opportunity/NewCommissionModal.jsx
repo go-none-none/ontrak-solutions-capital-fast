@@ -17,7 +17,6 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
   const [typeOptions, setTypeOptions] = useState([]);
 
   const [formData, setFormData] = useState({
-    csbs__Account__c: accountId || '',
     csbs__Amount__c: '',
     csbs__Status__c: 'Open',
     csbs__Type__c: '',
@@ -78,7 +77,6 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
     setStep(1);
     setSelectedRecordType('');
     setFormData({
-      csbs__Account__c: accountId || '',
       csbs__Amount__c: '',
       csbs__Status__c: 'Open',
       csbs__Type__c: '',
