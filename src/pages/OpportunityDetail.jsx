@@ -843,11 +843,12 @@ export default function OpportunityDetail() {
                         </div>
                       </div>
                     ))}
-                  </div>
-                )}
-              </TabsContent>
+                    </div>
+                    </div>
+                    )}
+                    </TabsContent>
 
-              {/* Debt Tab */}
+                    {/* Debt Tab */}
               <TabsContent value="debt" className="space-y-4">
                 <div className="flex justify-end mb-3">
                   <Button
