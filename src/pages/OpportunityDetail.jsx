@@ -16,6 +16,7 @@ import CommunicationCard from '../components/rep/CommunicationCard.jsx';
 import RepPortalHeader from '../components/rep/RepPortalHeader';
 import ActivityPanel from '../components/rep/ActivityPanel';
 import NewStatementModal from '../components/opportunity/NewStatementModal';
+import ViewStatementModal from '../components/opportunity/ViewStatementModal';
 import NewDebtModal from '../components/opportunity/NewDebtModal';
 import SubmissionDetailsModal from '../components/opportunity/SubmissionDetailsModal';
 import SubmitToLendersModal from '../components/opportunity/SubmitToLendersModal';
@@ -47,6 +48,7 @@ export default function OpportunityDetail() {
   const [commissions, setCommissions] = useState([]);
   const [loadingRelated, setLoadingRelated] = useState(false);
   const [showNewStatement, setShowNewStatement] = useState(false);
+  const [viewingStatement, setViewingStatement] = useState(null);
   const [editingStatement, setEditingStatement] = useState(null);
   const [showNewDebt, setShowNewDebt] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState(null);
@@ -780,13 +782,17 @@ export default function OpportunityDetail() {
                 ) : (
                   <div className="space-y-3">
                     {statements.map(stmt => (
-                      <div key={stmt.Id} className="bg-white rounded-xl p-4 shadow-sm">
+                      <div 
+                        key={stmt.Id} 
+                        className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                        onClick={() => setViewingStatement(stmt)}
+                      >
                         <div className="flex items-start justify-between mb-3">
-                          <div>
+                          <div className="flex-1">
                             <p className="font-semibold text-slate-900">{stmt.csbs__Bank_Name__c || 'Unknown Bank'}</p>
                             <p className="text-xs text-slate-500">{stmt.csbs__Account_No__c}</p>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -1320,6 +1326,13 @@ export default function OpportunityDetail() {
           const oppId = urlParams.get('id');
           loadRelatedRecords(session, oppId);
         }}
+      />
+
+      {/* View Statement Modal */}
+      <ViewStatementModal
+        isOpen={!!viewingStatement}
+        onClose={() => setViewingStatement(null)}
+        statement={viewingStatement}
       />
 
       {/* Edit Statement Modal */}
