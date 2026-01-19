@@ -426,110 +426,17 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
       )}
 
       <PDFViewer 
-        file={viewingFile}
-        session={session}
-        isOpen={!!viewingFile}
-        onClose={closeViewer}
+      file={viewingFile}
+      session={session}
+      isOpen={!!viewingFile}
+      onClose={closeViewer}
       />
       <ImageViewer 
-        file={viewingImage}
-        session={session}
-        isOpen={!!viewingImage}
-        onClose={closeImageViewer}
+      file={viewingImage}
+      session={session}
+      isOpen={!!viewingImage}
+      onClose={closeImageViewer}
       />
-
-      {/* Parsed Data Preview Modal */}
-      {previewingData && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 shadow-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900">Parsed Data Preview</h3>
-              <button
-                onClick={() => setPreviewingData(null)}
-                className="text-slate-500 hover:text-slate-700"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="bg-gradient-to-br from-orange-50 to-yellow-50 border border-orange-200 rounded-xl p-6">
-              <div className="grid grid-cols-3 gap-3 text-sm">
-                <div>
-                  <p className="text-orange-700 font-medium">Bank Name</p>
-                  <p className="text-slate-900">{previewingData.bank_name || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Account No</p>
-                  <p className="text-slate-900">{previewingData.account_number || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Account Title</p>
-                  <p className="text-slate-900">{previewingData.account_title || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Company</p>
-                  <p className="text-slate-900">{previewingData.company || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Starting Date</p>
-                  <p className="text-slate-900">{previewingData.starting_date || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Ending Date</p>
-                  <p className="text-slate-900">{previewingData.ending_date || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Starting Balance</p>
-                  <p className="text-slate-900">{previewingData.starting_balance ? `$${Number(previewingData.starting_balance).toLocaleString()}` : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Ending Balance</p>
-                  <p className="text-slate-900">{previewingData.ending_balance ? `$${Number(previewingData.ending_balance).toLocaleString()}` : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Avg Daily Balance</p>
-                  <p className="text-slate-900">{previewingData.average_daily_balance ? `$${Number(previewingData.average_daily_balance).toLocaleString()}` : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Deposit Count</p>
-                  <p className="text-slate-900">{previewingData.deposit_count || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Deposit Amount</p>
-                  <p className="text-slate-900">{previewingData.deposit_amount ? `$${Number(previewingData.deposit_amount).toLocaleString()}` : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Withdrawals Count</p>
-                  <p className="text-slate-900">{previewingData.withdrawals_count || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Total Withdrawals</p>
-                  <p className="text-slate-900">{previewingData.total_withdrawals ? `$${Number(previewingData.total_withdrawals).toLocaleString()}` : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Transactions Count</p>
-                  <p className="text-slate-900">{previewingData.transactions_count || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">NSFs</p>
-                  <p className="text-slate-900">{previewingData.nsf_count || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-orange-700 font-medium">Negative Days</p>
-                  <p className="text-slate-900">{previewingData.negative_days || '—'}</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button
-                onClick={() => setPreviewingData(null)}
-                variant="outline"
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
     </>
   );
