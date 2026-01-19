@@ -139,6 +139,26 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     }
   };
 
+  const parseSelectedFiles = async () => {
+    if (selectedFileIds.length === 0) return;
+    setParsingFile(true);
+    
+    try {
+      for (const fileId of selectedFileIds) {
+        const file = availableFiles.find(f => f.ContentDocumentId === fileId);
+        if (file) {
+          await parseExistingFile(file);
+        }
+      }
+      alert(`✅ ${selectedFileIds.length} statement(s) parsed successfully!`);
+      setSelectedFileIds([]);
+    } catch (error) {
+      console.error('Batch parse error:', error);
+    } finally {
+      setParsingFile(false);
+    }
+  };
+
   useEffect(() => {
     if (fileToProcess && isOpen) {
       parseExistingFile(fileToProcess);
