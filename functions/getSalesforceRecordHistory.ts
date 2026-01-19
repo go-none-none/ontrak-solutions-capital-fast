@@ -52,6 +52,17 @@ Deno.serve(async (req) => {
       console.log('Field history not available or not tracked:', error.message);
     }
 
+    // Extract stage history (StageName for Opportunity, Status for Lead)
+    const stageField = objectType === 'Opportunity' ? 'StageName' : objectType === 'Lead' ? 'Status' : null;
+    const stageHistory = stageField 
+      ? fieldHistory.filter(h => h.Field === stageField).map(h => ({
+          oldValue: h.OldValue,
+          newValue: h.NewValue,
+          changedBy: h.CreatedBy?.Name,
+          changedDate: h.CreatedDate
+        }))
+      : [];
+
     return Response.json({
       record: {
         id: record.Id,
@@ -67,6 +78,7 @@ Deno.serve(async (req) => {
         changedBy: h.CreatedBy?.Name,
         changedDate: h.CreatedDate
       })),
+      stageHistory,
       objectType
     });
 
