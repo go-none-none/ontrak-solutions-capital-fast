@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square, Trash2, Edit2, Sparkles, Zap } from 'lucide-react';
+import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square, Trash2, Edit2, Sparkles } from 'lucide-react';
 import PDFViewer from './PDFViewer';
 import ImageViewer from './ImageViewer';
 import { base44 } from '@/api/base44Client';
