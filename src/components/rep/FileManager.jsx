@@ -380,14 +380,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                       </Button>
                       {doc.FileExtension?.toLowerCase() === 'pdf' && (
                         (() => {
-                          const fileName = doc.Title?.toLowerCase() || '';
-                          const matchingStatement = statements.find(stmt => {
-                            if (!stmt.csbs__Bank_Name__c || !stmt.csbs__Starting_Date__c || !stmt.csbs__Ending_Date__c) return false;
-                            // Match by bank name and date range (should be unique per opportunity)
-                            const bankMatch = stmt.csbs__Bank_Name__c.toLowerCase().includes(fileName.split('.')[0].toLowerCase()) || fileName.toLowerCase().includes(stmt.csbs__Bank_Name__c.toLowerCase());
-                            const dateMatch = stmt.csbs__Starting_Date__c && stmt.csbs__Ending_Date__c;
-                            return bankMatch && dateMatch;
-                          });
+                          const matchingStatement = statements.find(stmt => stmt.csbs__Source_File_ID__c === file.ContentDocumentId);
                           return matchingStatement ? (
                             <Button 
                               variant="ghost" 
