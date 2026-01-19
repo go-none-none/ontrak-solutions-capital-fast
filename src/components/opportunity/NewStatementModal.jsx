@@ -199,10 +199,8 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     } finally {
       setUploadingFile(false);
       setParsingFile(false);
-      setShowReparseWarning(false);
-      setPendingFile(null);
     }
-  };
+    };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
