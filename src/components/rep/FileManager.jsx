@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square, Trash2, Edit2 } from 'lucide-react';
+import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square, Trash2, Edit2, Sparkles } from 'lucide-react';
 import PDFViewer from './PDFViewer';
 import ImageViewer from './ImageViewer';
 
-export default function FileManager({ recordId, session, onFileUploaded }) {
+export default function FileManager({ recordId, session, onFileUploaded, onParseFile }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -374,6 +374,17 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
+                      {doc.FileExtension?.toLowerCase() === 'pdf' && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => onParseFile?.(file)}
+                          title="Parse with AI"
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        >
+                          <Sparkles className="w-4 h-4" />
+                        </Button>
+                      )}
                       <Button 
                         variant="ghost" 
                         size="sm"
