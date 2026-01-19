@@ -72,8 +72,10 @@ export default function CommunicationCard({
 
       inboundMessages.forEach(msg => {
          const msgDate = new Date(msg.date);
-         // Only notify if message is after last poll AND not already notified AND not the current record
-         if (msgDate > lastPollTime.current && !isSmsSidNotified(msg.sid) && !isCurrentRecord) {
+         // Only notify if message is VERY recent (last 60 seconds) AND not already notified AND not the current record
+         const sixtySecondsAgo = new Date(Date.now() - 60000);
+         if (msgDate > sixtySecondsAgo && !isSmsSidNotified(msg.sid) && !isCurrentRecord) {
+           console.log('Creating SMS notification for:', msg.sid, msg.body);
            addNotification({
              title: `New SMS from ${recipientName}`,
              message: msg.body,
