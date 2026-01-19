@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function NewCommissionModal({ isOpen, onClose, opportunityId, accountId, session, onSuccess }) {
+export default function NewCommissionModal({ isOpen, onClose, opportunityId, accountId, session, commission, onSuccess }) {
   const [step, setStep] = useState(1);
   const [recordTypes, setRecordTypes] = useState([]);
   const [selectedRecordType, setSelectedRecordType] = useState('');
@@ -122,7 +122,7 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>New Commission</DialogTitle>
+          <DialogTitle>{commission ? 'Edit Commission' : 'New Commission'}</DialogTitle>
         </DialogHeader>
 
         {step === 1 && (

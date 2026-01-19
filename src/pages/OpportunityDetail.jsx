@@ -55,6 +55,7 @@ export default function OpportunityDetail() {
   const [showNewOffer, setShowNewOffer] = useState(false);
   const [editingOffer, setEditingOffer] = useState(null);
   const [showNewCommission, setShowNewCommission] = useState(false);
+  const [editingCommission, setEditingCommission] = useState(null);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -843,7 +844,11 @@ export default function OpportunityDetail() {
                 ) : (
                   <div className="space-y-3">
                     {commissions.map(comm => (
-                      <div key={comm.Id} className="bg-white rounded-xl p-4 shadow-sm">
+                      <div 
+                        key={comm.Id} 
+                        onClick={() => setEditingCommission(comm)}
+                        className="bg-white rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                      >
                         <div className="flex items-start justify-between mb-3">
                           <div>
                             <p className="font-semibold text-slate-900">{comm.csbs__Account__r?.Name || 'Unknown'}</p>
@@ -1326,6 +1331,22 @@ export default function OpportunityDetail() {
           const urlParams = new URLSearchParams(window.location.search);
           const oppId = urlParams.get('id');
           loadRelatedRecords(session, oppId);
+        }}
+      />
+
+      {/* Edit Commission Modal */}
+      <NewCommissionModal
+        isOpen={!!editingCommission}
+        onClose={() => setEditingCommission(null)}
+        opportunityId={opportunity.Id}
+        accountId={opportunity.AccountId}
+        session={session}
+        commission={editingCommission}
+        onSuccess={() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const oppId = urlParams.get('id');
+          loadRelatedRecords(session, oppId);
+          setEditingCommission(null);
         }}
       />
       </div>
