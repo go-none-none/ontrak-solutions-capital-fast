@@ -69,6 +69,53 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     }
   }, [statement]);
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      alert('Please upload a PDF file');
+      return;
+    }
+
+    setUploadingFile(true);
+    setParsingFile(true);
+    
+    try {
+      const uploadResponse = await base44.integrations.Core.UploadFile({ file });
+      const fileUrl = uploadResponse.file_url;
+      
+      const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
+      
+      if (parseResponse.data.success && parseResponse.data.data) {
+        const p = parseResponse.data.data;
+        
+        setFormData({
+          ...formData,
+          bankName: p.bank_name || formData.bankName,
+          accountNo: p.account_number || formData.accountNo,
+          startingDate: p.starting_date || formData.startingDate,
+          endingDate: p.ending_date || formData.endingDate,
+          avgDailyBalance: p.average_daily_balance || formData.avgDailyBalance,
+          depositAmount: p.deposit_amount || formData.depositAmount,
+          depositCount: p.deposit_count || formData.depositCount,
+          nsfs: p.nsf_count || formData.nsfs,
+          endingBalance: p.ending_balance || formData.endingBalance
+        });
+        
+        alert('Statement parsed successfully! Review the filled data.');
+      } else {
+        throw new Error('Failed to parse statement');
+      }
+    } catch (error) {
+      console.error('File upload/parse error:', error);
+      alert('Failed to parse statement. Please fill manually.');
+    } finally {
+      setUploadingFile(false);
+      setParsingFile(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -135,6 +182,29 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
         <DialogHeader>
           <DialogTitle>{statement ? 'Edit Statement' : 'New Statement'}</DialogTitle>
         </DialogHeader>
+
+        {!statement && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="font-semibold text-blue-900 mb-2">Upload Bank Statement</h3>
+            <p className="text-sm text-blue-700 mb-3">Upload a PDF to automatically extract statement data</p>
+            <div className="flex items-center gap-3">
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileUpload}
+                disabled={uploadingFile}
+                className="text-sm"
+                id="statement-upload"
+              />
+              {parsingFile && (
+                <div className="flex items-center gap-2 text-blue-600">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-sm">Parsing statement...</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Information Section */}
