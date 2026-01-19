@@ -10,37 +10,71 @@ Deno.serve(async (req) => {
 
     // Use InvokeLLM with file attachment to analyze the bank statement
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analyze this bank statement PDF in detail and extract the following information:
+      prompt: `Analyze this bank statement PDF comprehensively and extract ALL of the following information:
 
-1. Bank Name
-2. Account Number (last 4 digits if partially masked)
-3. Statement Period: Starting Date and Ending Date
-4. Average Daily Balance
-5. Total Deposit Amount (sum of all deposits)
-6. Number of Deposits (count of deposit transactions)
-7. Number of NSF/Returned Items
-8. Ending Balance
+ACCOUNT INFORMATION:
+1. Bank Name - Extract the financial institution name
+2. Account Number - Last 4 digits if partially masked
+3. Account Title/Name - Account holder name
+4. Company Name - Business name if present
 
-Please analyze the entire document carefully, looking at:
-- Account summary sections
-- Transaction listings
-- Any balance information
-- Fees or penalties that might indicate NSFs
+STATEMENT PERIOD:
+5. Starting Date - First day of statement period (format: YYYY-MM-DD)
+6. Ending Date - Last day of statement period (format: YYYY-MM-DD)
 
-Return the data in a structured format. Use null for any field you cannot confidently extract.`,
+BALANCES:
+7. Starting Balance - Balance at beginning of period
+8. Ending Balance - Balance at end of period
+9. Average Daily Balance - Calculate or extract from summary
+
+DEPOSITS:
+10. Deposit Count - Total number of deposit transactions
+11. Deposit Amount - Total sum of all deposits
+
+WITHDRAWALS:
+12. Withdrawals Count - Total number of withdrawal/debit transactions
+13. Total Withdrawals - Total sum of all withdrawals
+
+TRANSACTIONS:
+14. Transactions Count - Total count of all transactions (deposits + withdrawals)
+
+NSF/RETURNED ITEMS (CRITICAL):
+15. NSFs - Count NSF fees, returned items, insufficient funds fees, bounced checks, or any transaction labeled as NSF/Returned/Insufficient Funds
+
+NEGATIVE BALANCE:
+16. Negative Days - Count how many days the account had a negative/overdrawn balance
+
+NOTES/FRAUD:
+17. Any unusual patterns or red flags
+
+Instructions:
+- Read the ENTIRE statement page by page
+- Look at summary sections, transaction details, and fee sections
+- For NSFs: Look for "NSF", "Returned Item", "Insufficient Funds", "Bounced", "Returned Check" fees or notations
+- For Negative Days: Track when daily balance goes below zero
+- Be thorough and precise
+- Use null only if data genuinely cannot be found`,
       file_urls: [fileUrl],
       response_json_schema: {
         type: "object",
         properties: {
           bank_name: { type: ["string", "null"] },
           account_number: { type: ["string", "null"] },
-          starting_date: { type: ["string", "null"], description: "Format as YYYY-MM-DD" },
-          ending_date: { type: ["string", "null"], description: "Format as YYYY-MM-DD" },
+          account_title: { type: ["string", "null"] },
+          company: { type: ["string", "null"] },
+          starting_date: { type: ["string", "null"], description: "YYYY-MM-DD" },
+          ending_date: { type: ["string", "null"], description: "YYYY-MM-DD" },
+          starting_balance: { type: ["number", "null"] },
+          ending_balance: { type: ["number", "null"] },
           average_daily_balance: { type: ["number", "null"] },
-          deposit_amount: { type: ["number", "null"] },
           deposit_count: { type: ["integer", "null"] },
-          nsf_count: { type: ["integer", "null"] },
-          ending_balance: { type: ["number", "null"] }
+          deposit_amount: { type: ["number", "null"] },
+          withdrawals_count: { type: ["integer", "null"] },
+          total_withdrawals: { type: ["number", "null"] },
+          transactions_count: { type: ["integer", "null"] },
+          nsf_count: { type: ["integer", "null"], description: "Count of NSF/Returned Item fees or transactions" },
+          negative_days: { type: ["integer", "null"], description: "Days with negative balance" },
+          notes: { type: ["string", "null"], description: "Any red flags or unusual patterns" }
         }
       }
     });
