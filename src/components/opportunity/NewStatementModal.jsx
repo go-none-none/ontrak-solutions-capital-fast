@@ -370,6 +370,14 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
                 <p className="text-slate-900">{formData.endingBalance ? `$${Number(formData.endingBalance).toLocaleString()}` : '—'}</p>
               </div>
               <div>
+                <p className="text-green-700 font-medium">Reconciled</p>
+                <p className="text-slate-900">{formData.reconciled ? 'Yes' : 'No'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Unreconciled End Balance</p>
+                <p className="text-slate-900">{formData.unreconciledEndBalance ? `$${Number(formData.unreconciledEndBalance).toLocaleString()}` : '—'}</p>
+              </div>
+              <div>
                 <p className="text-green-700 font-medium">Avg Daily Balance</p>
                 <p className="text-slate-900">{formData.avgDailyBalance ? `$${Number(formData.avgDailyBalance).toLocaleString()}` : '—'}</p>
               </div>
@@ -394,12 +402,28 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
                 <p className="text-slate-900">{formData.transactionsCount || '—'}</p>
               </div>
               <div>
+                <p className="text-green-700 font-medium">Min Resolution</p>
+                <p className="text-slate-900">{formData.minResolution || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Max Resolution</p>
+                <p className="text-slate-900">{formData.maxResolution || '—'}</p>
+              </div>
+              <div>
                 <p className="text-green-700 font-medium">NSFs</p>
                 <p className="text-slate-900">{formData.nsfs || '—'}</p>
               </div>
               <div>
                 <p className="text-green-700 font-medium">Negative Days</p>
                 <p className="text-slate-900">{formData.negativeDays || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Fraud Score</p>
+                <p className="text-slate-900">{formData.fraudScore || '—'}</p>
+              </div>
+              <div className="col-span-2">
+                <p className="text-green-700 font-medium">Fraud Reasons</p>
+                <p className="text-slate-900">{formData.fraudReasons || '—'}</p>
               </div>
               <div className="col-span-4">
                 <p className="text-green-700 font-medium">Notes</p>
