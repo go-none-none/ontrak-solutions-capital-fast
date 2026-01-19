@@ -56,6 +56,7 @@ export default function OpportunityDetail() {
   const [editingOffer, setEditingOffer] = useState(null);
   const [showNewCommission, setShowNewCommission] = useState(false);
   const [editingCommission, setEditingCommission] = useState(null);
+  const [deletingRecord, setDeletingRecord] = useState(null);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -280,6 +281,31 @@ export default function OpportunityDetail() {
     } catch (error) {
       console.error('Update error:', error);
       setEditing({ ...editing, [field]: false });
+    }
+  };
+
+  const handleDeleteRecord = async (objectType, recordId, recordName) => {
+    if (!confirm(`Are you sure you want to delete ${recordName}?`)) {
+      return;
+    }
+
+    setDeletingRecord(recordId);
+    try {
+      await base44.functions.invoke('deleteSalesforceRecord', {
+        objectType,
+        recordId,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const oppId = urlParams.get('id');
+      loadRelatedRecords(session, oppId);
+    } catch (error) {
+      console.error('Delete error:', error);
+      alert('Failed to delete record');
+    } finally {
+      setDeletingRecord(null);
     }
   };
 
@@ -590,15 +616,31 @@ export default function OpportunityDetail() {
                     {submissions.map(sub => (
                       <div 
                         key={sub.Id} 
-                        className="bg-white rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                        onClick={() => setSelectedSubmission(sub)}
+                        className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow"
                       >
                         <div className="flex items-start justify-between mb-3">
-                          <div>
+                          <div 
+                            className="flex-1 cursor-pointer"
+                            onClick={() => setSelectedSubmission(sub)}
+                          >
                             <p className="font-semibold text-slate-900">{sub.csbs__Lender__r?.Name || 'Unknown Lender'}</p>
                             <p className="text-xs text-slate-500">{sub.Name}</p>
                           </div>
-                          <Badge>{sub.csbs__Status__c || 'Pending'}</Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge>{sub.csbs__Status__c || 'Pending'}</Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={deletingRecord === sub.Id}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteRecord('csbs__Submission__c', sub.Id, sub.Name);
+                              }}
+                              className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           {sub.csbs__Type__c && (
@@ -652,17 +694,31 @@ export default function OpportunityDetail() {
                     {offers.map(offer => (
                       <div 
                         key={offer.Id} 
-                        onClick={() => setEditingOffer(offer)}
-                        className={`bg-white rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow ${offer.csbs__Selected__c ? 'ring-2 ring-green-500' : ''}`}
+                        className={`bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow ${offer.csbs__Selected__c ? 'ring-2 ring-green-500' : ''}`}
                       >
                         <div className="flex items-start justify-between mb-3">
-                          <div>
+                          <div 
+                            className="flex-1 cursor-pointer"
+                            onClick={() => setEditingOffer(offer)}
+                          >
                             <p className="font-semibold text-slate-900">{offer.csbs__Lender__c || 'Unknown Lender'}</p>
                             <p className="text-xs text-slate-500">{offer.Name}</p>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex items-center gap-2">
                             {offer.csbs__Selected__c && <Badge className="bg-green-600">Selected</Badge>}
                             {offer.csbs__Accepted_with_Lender__c && <Badge className="bg-blue-600">Accepted</Badge>}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={deletingRecord === offer.Id}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteRecord('csbs__Offer__c', offer.Id, offer.Name);
+                              }}
+                              className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              Delete
+                            </Button>
                           </div>
                         </div>
                         <div className="grid grid-cols-3 gap-3 text-sm">
@@ -739,6 +795,15 @@ export default function OpportunityDetail() {
                             >
                               Edit
                             </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={deletingRecord === stmt.Id}
+                              onClick={() => handleDeleteRecord('csbs__Statement__c', stmt.Id, stmt.Name)}
+                              className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              Delete
+                            </Button>
                             {stmt.csbs__Reconciled__c && <Badge className="bg-green-600">Reconciled</Badge>}
                           </div>
                         </div>
@@ -793,7 +858,18 @@ export default function OpportunityDetail() {
                             <p className="font-semibold text-slate-900">{d.csbs__Lender__c || d.csbs__Creditor__r?.Name || 'Unknown'}</p>
                             <p className="text-xs text-slate-500">{d.Name}</p>
                           </div>
-                          {d.csbs__Open_Position__c && <Badge className="bg-orange-600">Open</Badge>}
+                          <div className="flex items-center gap-2">
+                            {d.csbs__Open_Position__c && <Badge className="bg-orange-600">Open</Badge>}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={deletingRecord === d.Id}
+                              onClick={() => handleDeleteRecord('csbs__Debt__c', d.Id, d.Name)}
+                              className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div>
@@ -846,15 +922,31 @@ export default function OpportunityDetail() {
                     {commissions.map(comm => (
                       <div 
                         key={comm.Id} 
-                        onClick={() => setEditingCommission(comm)}
-                        className="bg-white rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                        className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow"
                       >
                         <div className="flex items-start justify-between mb-3">
-                          <div>
+                          <div 
+                            className="flex-1 cursor-pointer"
+                            onClick={() => setEditingCommission(comm)}
+                          >
                             <p className="font-semibold text-slate-900">{comm.csbs__Account__r?.Name || 'Unknown'}</p>
                             <p className="text-xs text-slate-500">{comm.Name}</p>
                           </div>
-                          <Badge>{comm.csbs__Status__c || 'Pending'}</Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge>{comm.csbs__Status__c || 'Pending'}</Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={deletingRecord === comm.Id}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteRecord('csbs__Commission__c', comm.Id, comm.Name);
+                              }}
+                              className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div>
