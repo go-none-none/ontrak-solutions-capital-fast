@@ -12,6 +12,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
   const [loading, setLoading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [parsingFile, setParsingFile] = useState(false);
+  const [isParsed, setIsParsed] = useState(false);
   
   const [formData, setFormData] = useState({
     accountNo: '',
@@ -122,6 +123,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
           negativeDays: p.negative_days || prev.negativeDays,
           notes: p.notes || prev.notes
         }));
+        setIsParsed(true);
         alert('✅ Statement parsed successfully! All data extracted and populated. Please review.');
       } else {
         throw new Error('Failed to parse statement');
@@ -181,6 +183,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
           negativeDays: p.negative_days || prev.negativeDays,
           notes: p.notes || prev.notes
         }));
+        setIsParsed(true);
         
         alert('✅ Statement parsed successfully! All data extracted and populated. Please review.');
       } else {
@@ -263,48 +266,164 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
         </DialogHeader>
 
         {!statement && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl p-6 shadow-sm">
+          <div className={`border-2 rounded-xl p-6 shadow-sm ${isParsed ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300' : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-300'}`}>
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
+              <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${isParsed ? 'bg-green-600' : 'bg-blue-600'}`}>
+                {isParsed ? (
+                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                )}
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-blue-900 text-lg mb-1">AI-Powered Statement Parser</h3>
-                <p className="text-sm text-blue-700 mb-4">Upload your PDF bank statement and let AI extract all the data automatically</p>
-                <div className="flex items-center gap-3">
-                  <label 
-                    htmlFor="statement-upload" 
-                    className={`inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium cursor-pointer hover:bg-blue-700 transition-colors ${uploadingFile ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Choose PDF File
-                  </label>
-                  <input
-                    type="file"
-                    accept="application/pdf"
-                    onChange={handleFileUpload}
-                    disabled={uploadingFile}
-                    className="hidden"
-                    id="statement-upload"
-                  />
-                  {parsingFile && (
-                    <div className="flex items-center gap-2 text-blue-700 bg-blue-100 px-3 py-2 rounded-lg">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span className="text-sm font-medium">Analyzing statement with AI...</span>
-                    </div>
-                  )}
-                </div>
+                <h3 className={`font-bold text-lg mb-1 ${isParsed ? 'text-green-900' : 'text-blue-900'}`}>
+                  {isParsed ? '✓ Statement Parsed Successfully' : 'AI-Powered Statement Parser'}
+                </h3>
+                <p className={`text-sm mb-4 ${isParsed ? 'text-green-700' : 'text-blue-700'}`}>
+                  {isParsed ? 'All data has been extracted. Review and edit below as needed.' : 'Upload your PDF bank statement and let AI extract all the data automatically'}
+                </p>
+                {!isParsed && (
+                  <div className="flex items-center gap-3">
+                    <label 
+                      htmlFor="statement-upload" 
+                      className={`inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium cursor-pointer hover:bg-blue-700 transition-colors ${uploadingFile ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Choose PDF File
+                    </label>
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handleFileUpload}
+                      disabled={uploadingFile}
+                      className="hidden"
+                      id="statement-upload"
+                    />
+                    {parsingFile && (
+                      <div className="flex items-center gap-2 text-blue-700 bg-blue-100 px-3 py-2 rounded-lg">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="text-sm font-medium">Analyzing statement with AI...</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         )}
 
+        {isParsed && (
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
+            <h3 className="text-sm font-semibold text-green-900 mb-4">Extracted Data Preview</h3>
+            <div className="grid grid-cols-3 gap-4 text-xs">
+              {formData.bankName && (
+                <div>
+                  <p className="text-green-700 font-medium">Bank</p>
+                  <p className="text-slate-900 font-semibold">{formData.bankName}</p>
+                </div>
+              )}
+              {formData.accountNo && (
+                <div>
+                  <p className="text-green-700 font-medium">Account No</p>
+                  <p className="text-slate-900 font-semibold">{formData.accountNo}</p>
+                </div>
+              )}
+              {formData.accountTitle && (
+                <div>
+                  <p className="text-green-700 font-medium">Account Title</p>
+                  <p className="text-slate-900 font-semibold">{formData.accountTitle}</p>
+                </div>
+              )}
+              {formData.startingDate && (
+                <div>
+                  <p className="text-green-700 font-medium">Starting Date</p>
+                  <p className="text-slate-900 font-semibold">{formData.startingDate}</p>
+                </div>
+              )}
+              {formData.endingDate && (
+                <div>
+                  <p className="text-green-700 font-medium">Ending Date</p>
+                  <p className="text-slate-900 font-semibold">{formData.endingDate}</p>
+                </div>
+              )}
+              {formData.startingBalance && (
+                <div>
+                  <p className="text-green-700 font-medium">Starting Balance</p>
+                  <p className="text-slate-900 font-semibold">${Number(formData.startingBalance).toLocaleString()}</p>
+                </div>
+              )}
+              {formData.endingBalance && (
+                <div>
+                  <p className="text-green-700 font-medium">Ending Balance</p>
+                  <p className="text-slate-900 font-semibold">${Number(formData.endingBalance).toLocaleString()}</p>
+                </div>
+              )}
+              {formData.avgDailyBalance && (
+                <div>
+                  <p className="text-green-700 font-medium">Avg Daily Balance</p>
+                  <p className="text-slate-900 font-semibold">${Number(formData.avgDailyBalance).toLocaleString()}</p>
+                </div>
+              )}
+              {formData.depositCount && (
+                <div>
+                  <p className="text-green-700 font-medium">Deposit Count</p>
+                  <p className="text-slate-900 font-semibold">{formData.depositCount}</p>
+                </div>
+              )}
+              {formData.depositAmount && (
+                <div>
+                  <p className="text-green-700 font-medium">Deposit Amount</p>
+                  <p className="text-slate-900 font-semibold">${Number(formData.depositAmount).toLocaleString()}</p>
+                </div>
+              )}
+              {formData.withdrawalsCount && (
+                <div>
+                  <p className="text-green-700 font-medium">Withdrawals Count</p>
+                  <p className="text-slate-900 font-semibold">{formData.withdrawalsCount}</p>
+                </div>
+              )}
+              {formData.totalWithdrawals && (
+                <div>
+                  <p className="text-green-700 font-medium">Total Withdrawals</p>
+                  <p className="text-slate-900 font-semibold">${Number(formData.totalWithdrawals).toLocaleString()}</p>
+                </div>
+              )}
+              {formData.transactionsCount && (
+                <div>
+                  <p className="text-green-700 font-medium">Transactions Count</p>
+                  <p className="text-slate-900 font-semibold">{formData.transactionsCount}</p>
+                </div>
+              )}
+              {formData.nsfs && (
+                <div>
+                  <p className="text-green-700 font-medium">NSFs</p>
+                  <p className="text-slate-900 font-semibold">{formData.nsfs}</p>
+                </div>
+              )}
+              {formData.negativeDays && (
+                <div>
+                  <p className="text-green-700 font-medium">Negative Days</p>
+                  <p className="text-slate-900 font-semibold">{formData.negativeDays}</p>
+                </div>
+              )}
+              {formData.notes && (
+                <div className="col-span-3">
+                  <p className="text-green-700 font-medium">Notes</p>
+                  <p className="text-slate-900 font-semibold">{formData.notes}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Information Section */}
+           {/* Information Section */}
           <div>
             <h3 className="text-sm font-semibold text-slate-700 mb-4 pb-2 border-b">Information</h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-4">
