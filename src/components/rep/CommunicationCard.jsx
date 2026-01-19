@@ -41,7 +41,6 @@ export default function CommunicationCard({
 
   const loadSmsHistory = async () => {
     try {
-      console.log('loadSmsHistory - phoneNumber:', phoneNumber, 'cleaned:', phoneNumber?.replace(/\D/g, ''));
       const response = await base44.functions.invoke('getTwilioSmsHistory', {
         phoneNumber: phoneNumber.replace(/\D/g, ''),
         recordId,
@@ -49,7 +48,6 @@ export default function CommunicationCard({
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-      console.log('getTwilioSmsHistory response:', response.data);
       const messages = response.data.messages || [];
       console.log('SMS messages fetched:', messages.length, messages);
       const allSmsSids = new Set(messages.map(m => m.sid));

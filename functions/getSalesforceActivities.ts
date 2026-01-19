@@ -45,12 +45,12 @@ Deno.serve(async (req) => {
 
     const eventQuery = `SELECT ${eventFields} FROM Event ${eventWhere} ORDER BY StartDateTime DESC`;
 
-    // Build EmailMessage query - try multiple approaches
+    // Build EmailMessage query
     const emailFields = [
       'Id', 'Subject', 'TextBody', 'HtmlBody', 'FromAddress', 'ToAddress',
       'CcAddress', 'BccAddress', 'MessageDate', 'Status', 'Incoming',
       'CreatedDate', 'RelatedToId', 'LastModifiedDate', 'FirstOpenedDate',
-      'LastOpenedDate'
+      'LastOpenedDate', 'EmailStatus'
     ].join(',');
 
     const emailQuery = `SELECT ${emailFields} FROM EmailMessage WHERE RelatedToId = '${recordId}' ORDER BY MessageDate DESC`;
@@ -63,17 +63,13 @@ Deno.serve(async (req) => {
     console.log('Email Query:', emailQuery);
     console.log('==================');
 
-    // First, test if EmailMessage object is accessible
-    const testEmailQuery = `SELECT COUNT() FROM EmailMessage`;
-    const testEmailResponse = await fetch(`${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(testEmailQuery)}`, {
+    // First, test if we can get ANY tasks at all
+    const testQuery = `SELECT COUNT() FROM Task`;
+    const testResponse = await fetch(`${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(testQuery)}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    if (testEmailResponse.ok) {
-      const testEmailData = await testEmailResponse.json();
-      console.log('Total emails in org:', testEmailData.totalSize);
-    } else {
-      console.log('EmailMessage object not accessible or does not exist');
-    }
+    const testData = await testResponse.json();
+    console.log('Total tasks in org:', testData.totalSize);
 
     // Execute all queries in parallel
     const [tasksResponse, eventsResponse, emailsResponse] = await Promise.all([
@@ -112,10 +108,6 @@ Deno.serve(async (req) => {
     if (emailsResponse.ok) {
       emailsData = await emailsResponse.json();
       console.log('Emails response:', JSON.stringify(emailsData, null, 2));
-      console.log('Email records found:', emailsData.records?.length);
-      if (emailsData.records?.length > 0) {
-        console.log('First email sample:', JSON.stringify(emailsData.records[0], null, 2));
-      }
     } else {
       const errorText = await emailsResponse.text();
       console.error('Email query failed:', emailsResponse.status, errorText);
@@ -142,9 +134,7 @@ Deno.serve(async (req) => {
                      task.Subject?.toLowerCase().includes('call');
       
       const isSMS = task.Subject?.toLowerCase().includes('sms') || 
-                    task.Subject?.toLowerCase().includes('text message') ||
-                    task.TaskSubtype === 'SMS' ||
-                    task.TaskSubtype === 'Text';
+                    task.TaskSubtype === 'SMS';
       
       activities.push({
         id: task.Id,
