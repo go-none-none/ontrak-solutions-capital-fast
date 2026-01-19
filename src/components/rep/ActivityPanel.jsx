@@ -31,6 +31,7 @@ export default function ActivityPanel({ recordId, recordType, session }) {
       console.log('Activities response:', response);
       console.log('Activities count:', response.data?.activities?.length);
       console.log('Counts:', response.data?.counts);
+      console.log('Email activities:', response.data?.activities?.filter(a => a.type === 'email'));
       
       setActivities(response.data.activities || []);
       setCounts(response.data.counts || { tasks: 0, events: 0, emails: 0, total: 0 });
@@ -270,13 +271,22 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                             {!activity.incoming && (
                               <div className="flex items-center gap-1 mt-1 text-xs text-slate-600">
                                 <Mail className="w-3 h-3" />
-                                {activity.firstOpenedDate ? (
-                                  <span>Last opened {formatDate(activity.firstOpenedDate)}</span>
+                                {activity.lastOpenedDate || activity.firstOpenedDate ? (
+                                  <span>Last opened {formatDate(activity.lastOpenedDate || activity.firstOpenedDate)}</span>
                                 ) : (
                                   <span>Unopened</span>
                                 )}
                               </div>
                             )}
+                            {/* Debug info */}
+                            {console.log('Email activity debug:', {
+                              id: activity.id,
+                              subject: activity.subject,
+                              incoming: activity.incoming,
+                              firstOpenedDate: activity.firstOpenedDate,
+                              lastOpenedDate: activity.lastOpenedDate,
+                              emailStatus: activity.emailStatus
+                            })}
                           </div>
                         )}
 
