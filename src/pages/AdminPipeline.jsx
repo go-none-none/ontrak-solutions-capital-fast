@@ -807,6 +807,7 @@ export default function AdminPipeline() {
                                         key={idx}
                                         onClick={(e) => {
                                           e.stopPropagation();
+                                          sessionStorage.setItem('fromAdminPortal', 'true');
                                           navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`);
                                         }}
                                         className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full"
@@ -847,6 +848,7 @@ export default function AdminPipeline() {
                                           key={idx}
                                           onClick={(e) => {
                                             e.stopPropagation();
+                                            sessionStorage.setItem('fromAdminPortal', 'true');
                                             navigate(createPageUrl('OpportunityDetail') + `?id=${opp.Id}`);
                                           }}
                                           className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full"
