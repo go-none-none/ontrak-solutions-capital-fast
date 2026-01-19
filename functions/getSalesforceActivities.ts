@@ -142,7 +142,9 @@ Deno.serve(async (req) => {
                      task.Subject?.toLowerCase().includes('call');
       
       const isSMS = task.Subject?.toLowerCase().includes('sms') || 
-                    task.TaskSubtype === 'SMS';
+                    task.Subject?.toLowerCase().includes('text message') ||
+                    task.TaskSubtype === 'SMS' ||
+                    task.TaskSubtype === 'Text';
       
       activities.push({
         id: task.Id,
