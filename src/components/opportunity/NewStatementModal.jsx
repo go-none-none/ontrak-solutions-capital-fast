@@ -13,6 +13,8 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
   const [uploadingFile, setUploadingFile] = useState(false);
   const [parsingFile, setParsingFile] = useState(false);
   const [isParsed, setIsParsed] = useState(false);
+  const [showReparseWarning, setShowReparseWarning] = useState(false);
+  const [pendingFile, setPendingFile] = useState(null);
   
   const [formData, setFormData] = useState({
     accountNo: '',
@@ -151,6 +153,17 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       return;
     }
 
+    // If already parsed, show warning
+    if (isParsed) {
+      setPendingFile(file);
+      setShowReparseWarning(true);
+      return;
+    }
+
+    await proceedWithParsing(file);
+  };
+
+  const proceedWithParsing = async (file) => {
     setUploadingFile(true);
     setParsingFile(true);
     
@@ -195,6 +208,8 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     } finally {
       setUploadingFile(false);
       setParsingFile(false);
+      setShowReparseWarning(false);
+      setPendingFile(null);
     }
   };
 
@@ -321,103 +336,116 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
         {isParsed && (
           <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
             <h3 className="text-sm font-semibold text-green-900 mb-4">Extracted Data Preview</h3>
-            <div className="grid grid-cols-3 gap-4 text-xs">
-              {formData.bankName && (
+            <div className="grid grid-cols-4 gap-3 text-xs">
+              <div>
+                <p className="text-green-700 font-medium">Bank Name</p>
+                <p className="text-slate-900">{formData.bankName || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Account No</p>
+                <p className="text-slate-900">{formData.accountNo || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Account Title</p>
+                <p className="text-slate-900">{formData.accountTitle || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Company</p>
+                <p className="text-slate-900">{formData.company || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Starting Date</p>
+                <p className="text-slate-900">{formData.startingDate || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Ending Date</p>
+                <p className="text-slate-900">{formData.endingDate || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Starting Balance</p>
+                <p className="text-slate-900">{formData.startingBalance ? `$${Number(formData.startingBalance).toLocaleString()}` : '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Ending Balance</p>
+                <p className="text-slate-900">{formData.endingBalance ? `$${Number(formData.endingBalance).toLocaleString()}` : '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Avg Daily Balance</p>
+                <p className="text-slate-900">{formData.avgDailyBalance ? `$${Number(formData.avgDailyBalance).toLocaleString()}` : '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Deposit Count</p>
+                <p className="text-slate-900">{formData.depositCount || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Deposit Amount</p>
+                <p className="text-slate-900">{formData.depositAmount ? `$${Number(formData.depositAmount).toLocaleString()}` : '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Withdrawals Count</p>
+                <p className="text-slate-900">{formData.withdrawalsCount || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Total Withdrawals</p>
+                <p className="text-slate-900">{formData.totalWithdrawals ? `$${Number(formData.totalWithdrawals).toLocaleString()}` : '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Transactions Count</p>
+                <p className="text-slate-900">{formData.transactionsCount || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">NSFs</p>
+                <p className="text-slate-900">{formData.nsfs || '—'}</p>
+              </div>
+              <div>
+                <p className="text-green-700 font-medium">Negative Days</p>
+                <p className="text-slate-900">{formData.negativeDays || '—'}</p>
+              </div>
+              <div className="col-span-4">
+                <p className="text-green-700 font-medium">Notes</p>
+                <p className="text-slate-900">{formData.notes || '—'}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showReparseWarning && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-lg">
+              <div className="flex items-start gap-3 mb-4">
+                <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
                 <div>
-                  <p className="text-green-700 font-medium">Bank</p>
-                  <p className="text-slate-900 font-semibold">{formData.bankName}</p>
+                  <h3 className="text-lg font-semibold text-slate-900">Re-parse Statement?</h3>
+                  <p className="text-sm text-slate-600 mt-1">This statement has already been parsed. Uploading a new file will replace all extracted data.</p>
                 </div>
-              )}
-              {formData.accountNo && (
-                <div>
-                  <p className="text-green-700 font-medium">Account No</p>
-                  <p className="text-slate-900 font-semibold">{formData.accountNo}</p>
-                </div>
-              )}
-              {formData.accountTitle && (
-                <div>
-                  <p className="text-green-700 font-medium">Account Title</p>
-                  <p className="text-slate-900 font-semibold">{formData.accountTitle}</p>
-                </div>
-              )}
-              {formData.startingDate && (
-                <div>
-                  <p className="text-green-700 font-medium">Starting Date</p>
-                  <p className="text-slate-900 font-semibold">{formData.startingDate}</p>
-                </div>
-              )}
-              {formData.endingDate && (
-                <div>
-                  <p className="text-green-700 font-medium">Ending Date</p>
-                  <p className="text-slate-900 font-semibold">{formData.endingDate}</p>
-                </div>
-              )}
-              {formData.startingBalance && (
-                <div>
-                  <p className="text-green-700 font-medium">Starting Balance</p>
-                  <p className="text-slate-900 font-semibold">${Number(formData.startingBalance).toLocaleString()}</p>
-                </div>
-              )}
-              {formData.endingBalance && (
-                <div>
-                  <p className="text-green-700 font-medium">Ending Balance</p>
-                  <p className="text-slate-900 font-semibold">${Number(formData.endingBalance).toLocaleString()}</p>
-                </div>
-              )}
-              {formData.avgDailyBalance && (
-                <div>
-                  <p className="text-green-700 font-medium">Avg Daily Balance</p>
-                  <p className="text-slate-900 font-semibold">${Number(formData.avgDailyBalance).toLocaleString()}</p>
-                </div>
-              )}
-              {formData.depositCount && (
-                <div>
-                  <p className="text-green-700 font-medium">Deposit Count</p>
-                  <p className="text-slate-900 font-semibold">{formData.depositCount}</p>
-                </div>
-              )}
-              {formData.depositAmount && (
-                <div>
-                  <p className="text-green-700 font-medium">Deposit Amount</p>
-                  <p className="text-slate-900 font-semibold">${Number(formData.depositAmount).toLocaleString()}</p>
-                </div>
-              )}
-              {formData.withdrawalsCount && (
-                <div>
-                  <p className="text-green-700 font-medium">Withdrawals Count</p>
-                  <p className="text-slate-900 font-semibold">{formData.withdrawalsCount}</p>
-                </div>
-              )}
-              {formData.totalWithdrawals && (
-                <div>
-                  <p className="text-green-700 font-medium">Total Withdrawals</p>
-                  <p className="text-slate-900 font-semibold">${Number(formData.totalWithdrawals).toLocaleString()}</p>
-                </div>
-              )}
-              {formData.transactionsCount && (
-                <div>
-                  <p className="text-green-700 font-medium">Transactions Count</p>
-                  <p className="text-slate-900 font-semibold">{formData.transactionsCount}</p>
-                </div>
-              )}
-              {formData.nsfs && (
-                <div>
-                  <p className="text-green-700 font-medium">NSFs</p>
-                  <p className="text-slate-900 font-semibold">{formData.nsfs}</p>
-                </div>
-              )}
-              {formData.negativeDays && (
-                <div>
-                  <p className="text-green-700 font-medium">Negative Days</p>
-                  <p className="text-slate-900 font-semibold">{formData.negativeDays}</p>
-                </div>
-              )}
-              {formData.notes && (
-                <div className="col-span-3">
-                  <p className="text-green-700 font-medium">Notes</p>
-                  <p className="text-slate-900 font-semibold">{formData.notes}</p>
-                </div>
-              )}
+              </div>
+              <div className="flex gap-3">
+                <Button 
+                  onClick={() => {
+                    setShowReparseWarning(false);
+                    setPendingFile(null);
+                  }}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={() => {
+                    if (pendingFile) {
+                      setShowReparseWarning(false);
+                      proceedWithParsing(pendingFile);
+                    }
+                  }}
+                  className="flex-1 bg-yellow-600 hover:bg-yellow-700"
+                >
+                  Replace & Parse
+                </Button>
+              </div>
             </div>
           </div>
         )}
