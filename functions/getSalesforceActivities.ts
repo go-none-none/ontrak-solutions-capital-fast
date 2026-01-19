@@ -49,7 +49,8 @@ Deno.serve(async (req) => {
     const emailFields = [
       'Id', 'Subject', 'TextBody', 'HtmlBody', 'FromAddress', 'ToAddress',
       'CcAddress', 'BccAddress', 'MessageDate', 'Status', 'Incoming',
-      'CreatedDate', 'RelatedToId', 'LastModifiedDate'
+      'CreatedDate', 'RelatedToId', 'LastModifiedDate', 'FirstOpenedDate',
+      'LastOpenedDate', 'EmailStatus'
     ].join(',');
 
     const emailQuery = `SELECT ${emailFields} FROM EmailMessage WHERE RelatedToId = '${recordId}' ORDER BY MessageDate DESC`;
@@ -194,6 +195,9 @@ Deno.serve(async (req) => {
         status: email.Status,
         incoming: email.Incoming,
         relatedToId: email.RelatedToId,
+        firstOpenedDate: email.FirstOpenedDate,
+        lastOpenedDate: email.LastOpenedDate,
+        emailStatus: email.EmailStatus,
         rawData: email
       });
     });

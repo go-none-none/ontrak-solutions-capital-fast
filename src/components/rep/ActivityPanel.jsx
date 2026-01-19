@@ -261,10 +261,32 @@ export default function ActivityPanel({ recordId, recordType, session }) {
 
                         {/* Email details */}
                         {activity.type === 'email' && (
-                          <div className="mt-2 text-xs text-slate-600">
-                            <div><strong>From:</strong> {activity.from}</div>
-                            <div><strong>To:</strong> {activity.to}</div>
-                            {activity.cc && <div><strong>Cc:</strong> {activity.cc}</div>}
+                          <div className="mt-2 space-y-1">
+                            <div className="text-xs text-slate-600">
+                              <div><strong>From:</strong> {activity.from}</div>
+                              <div><strong>To:</strong> {activity.to}</div>
+                              {activity.cc && <div><strong>Cc:</strong> {activity.cc}</div>}
+                            </div>
+                            {!activity.incoming && (
+                              <div className="flex items-center gap-2 mt-2">
+                                {activity.firstOpenedDate ? (
+                                  <Badge className="bg-green-100 text-green-800 text-xs flex items-center gap-1">
+                                    <Mail className="w-3 h-3" />
+                                    Opened {formatDate(activity.firstOpenedDate)}
+                                  </Badge>
+                                ) : (
+                                  <Badge className="bg-slate-100 text-slate-600 text-xs flex items-center gap-1">
+                                    <Mail className="w-3 h-3" />
+                                    Not opened
+                                  </Badge>
+                                )}
+                                {activity.lastOpenedDate && activity.lastOpenedDate !== activity.firstOpenedDate && (
+                                  <span className="text-xs text-slate-500">
+                                    Last: {formatDate(activity.lastOpenedDate)}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
                         )}
 
