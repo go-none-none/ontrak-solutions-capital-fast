@@ -378,16 +378,31 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      {doc.FileExtension?.toLowerCase() === 'pdf' && statements.find(stmt => stmt.ContentDocument?.Id === file.ContentDocumentId || (stmt.csbs__Bank_Name__c && stmt.csbs__Starting_Date__c && stmt.csbs__Ending_Date__c)) ? null : (
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => onParseFile?.(file)}
-                          title="Parse with AI"
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                        >
-                          <Sparkles className="w-4 h-4" />
-                        </Button>
+                      {doc.FileExtension?.toLowerCase() === 'pdf' && (
+                        (() => {
+                          const matchingStatement = statements.find(stmt => stmt.ContentDocument?.Id === file.ContentDocumentId || (stmt.csbs__Bank_Name__c && stmt.csbs__Starting_Date__c && stmt.csbs__Ending_Date__c));
+                          return matchingStatement ? (
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => setPreviewingStatement(matchingStatement)}
+                              title="View parsed data"
+                              className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                            >
+                              <Zap className="w-4 h-4" />
+                            </Button>
+                          ) : (
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => onParseFile?.(file)}
+                              title="Parse with AI"
+                              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            >
+                              <Sparkles className="w-4 h-4" />
+                            </Button>
+                          );
+                        })()
                       )}
                       <Button 
                         variant="ghost" 
