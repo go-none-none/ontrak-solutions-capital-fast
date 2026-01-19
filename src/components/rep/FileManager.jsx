@@ -395,7 +395,9 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                             <Button 
                               variant="ghost" 
                               size="sm"
-                              onClick={() => onParseFile?.(file)}
+                              onClick={() => {
+                                onParseFile?.(file);
+                              }}
                               title="Parse with AI"
                               className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                             >
