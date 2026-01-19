@@ -748,12 +748,16 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
               </div>
 
               <div className="col-span-2">
-                <Label htmlFor="notes">Notes</Label>
+                <div className="flex items-center justify-between mb-1">
+                  <Label htmlFor="notes">Notes</Label>
+                  <span className="text-xs text-slate-500">{formData.notes.length}/255</span>
+                </div>
                 <Textarea
                   id="notes"
                   value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value.slice(0, 255) })}
                   rows={3}
+                  maxLength="255"
                 />
               </div>
             </div>
