@@ -8,11 +8,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function NewStatementModal({ isOpen, onClose, opportunityId, session, onSuccess, statement = null, fileToProcess = null }) {
+export default function NewStatementModal({ isOpen, onClose, opportunityId, session, onSuccess, statement = null, fileToProcess = null, availableFiles = [] }) {
   const [loading, setLoading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [parsingFile, setParsingFile] = useState(false);
   const [isParsed, setIsParsed] = useState(false);
+  const [selectedFileIds, setSelectedFileIds] = useState([]);
   
   const [formData, setFormData] = useState({
     accountNo: '',
