@@ -25,13 +25,24 @@ export default function RecordHistory() {
 
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('getSalesforceRecordHistory', {
-        recordId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
+      const [historyResponse, activitiesResponse] = await Promise.all([
+        base44.functions.invoke('getSalesforceRecordHistory', {
+          recordId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforceActivities', {
+          recordId,
+          recordType: recordId.startsWith('006') ? 'Opportunity' : recordId.startsWith('00Q') ? 'Lead' : 'Contact',
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
+      ]);
 
-      setHistory(response.data);
+      setHistory({
+        ...historyResponse.data,
+        activities: activitiesResponse.data.activities || []
+      });
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to fetch history: ' + error.message);
@@ -152,6 +163,38 @@ export default function RecordHistory() {
                 </div>
               )}
             </div>
+
+            {/* Activity History */}
+            {history.activities && history.activities.length > 0 && (
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">
+                  Activity History ({history.activities.length} activities)
+                </h2>
+                <div className="space-y-3">
+                  {history.activities.map((activity, idx) => (
+                    <div key={idx} className="border border-slate-200 rounded-lg p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <p className="font-semibold text-slate-900">
+                            {activity.type === 'email' ? '📧' : activity.type === 'call' ? '📞' : activity.type === 'sms' ? '💬' : '📝'}{' '}
+                            {activity.subject || activity.type}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            By {activity.who} • {formatDate(activity.date)}
+                          </p>
+                        </div>
+                      </div>
+                      {activity.description && (
+                        <p className="text-sm text-slate-600 mt-2">{activity.description}</p>
+                      )}
+                      {activity.status && (
+                        <p className="text-xs text-slate-500 mt-1">Status: {activity.status}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
