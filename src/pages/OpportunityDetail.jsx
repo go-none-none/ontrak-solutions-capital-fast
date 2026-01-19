@@ -153,7 +153,13 @@ export default function OpportunityDetail() {
 
       setSubmissions(submissionsRes.data.submissions || []);
       setOffers(offersRes.data.offers || []);
-      setStatements(statementsRes.data.statements || []);
+      // Sort statements by ending date, most recent first
+      const sortedStatements = (statementsRes.data.statements || []).sort((a, b) => {
+        const dateA = new Date(a.csbs__Ending_Date__c || 0);
+        const dateB = new Date(b.csbs__Ending_Date__c || 0);
+        return dateB - dateA;
+      });
+      setStatements(sortedStatements);
       setDebt(debtRes.data.debt || []);
       setCommissions(commissionsRes.data.commissions || []);
     } catch (error) {
