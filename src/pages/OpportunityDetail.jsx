@@ -52,6 +52,7 @@ export default function OpportunityDetail() {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showNewOffer, setShowNewOffer] = useState(false);
+  const [editingOffer, setEditingOffer] = useState(null);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -646,7 +647,11 @@ export default function OpportunityDetail() {
                 ) : (
                   <div className="space-y-3">
                     {offers.map(offer => (
-                      <div key={offer.Id} className={`bg-white rounded-xl p-4 shadow-sm ${offer.csbs__Selected__c ? 'ring-2 ring-green-500' : ''}`}>
+                      <div 
+                        key={offer.Id} 
+                        onClick={() => setEditingOffer(offer)}
+                        className={`bg-white rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow ${offer.csbs__Selected__c ? 'ring-2 ring-green-500' : ''}`}
+                      >
                         <div className="flex items-start justify-between mb-3">
                           <div>
                             <p className="font-semibold text-slate-900">{offer.csbs__Lender__c || 'Unknown Lender'}</p>
@@ -1282,6 +1287,21 @@ export default function OpportunityDetail() {
           const urlParams = new URLSearchParams(window.location.search);
           const oppId = urlParams.get('id');
           loadRelatedRecords(session, oppId);
+        }}
+      />
+
+      {/* Edit Offer Modal */}
+      <NewOfferModal
+        isOpen={!!editingOffer}
+        onClose={() => setEditingOffer(null)}
+        opportunityId={opportunity.Id}
+        session={session}
+        offer={editingOffer}
+        onSuccess={() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const oppId = urlParams.get('id');
+          loadRelatedRecords(session, oppId);
+          setEditingOffer(null);
         }}
       />
       </div>

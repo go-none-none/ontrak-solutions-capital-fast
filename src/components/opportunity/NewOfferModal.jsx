@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function NewOfferModal({ isOpen, onClose, opportunityId, session, onSuccess }) {
+export default function NewOfferModal({ isOpen, onClose, opportunityId, session, onSuccess, offer = null }) {
   const [step, setStep] = useState(1);
   const [recordType, setRecordType] = useState('');
   const [submissions, setSubmissions] = useState([]);
@@ -39,10 +39,29 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
     if (isOpen) {
       loadSubmissions();
       loadPicklists();
+      if (offer) {
+        // Pre-populate form with offer data
+        setStep(3);
+        setSelectedSubmission(offer.csbs__Submission__c);
+        setFormData({
+          csbs__Funded__c: offer.csbs__Funded__c || '',
+          csbs__Product__c: offer.csbs__Product__c || '',
+          csbs__Buy_Rate__c: offer.csbs__Buy_Rate__c || '',
+          csbs__Payoff__c: offer.csbs__Payoff__c || '',
+          csbs__Factor_Rate__c: offer.csbs__Factor_Rate__c || '',
+          csbs__Payment_Frequency__c: offer.csbs__Payment_Frequency__c || '',
+          csbs__Payback__c: offer.csbs__Payback__c || '',
+          csbs__Payment_Amount__c: offer.csbs__Payment_Amount__c || '',
+          csbs__Term__c: offer.csbs__Term__c || '',
+          csbs__Payment_Method__c: offer.csbs__Payment_Method__c || '',
+          csbs__Holdback_Percentage__c: offer.csbs__Holdback_Percentage__c || '',
+          csbs__Notes__c: offer.csbs__Notes__c || ''
+        });
+      }
     } else {
       resetForm();
     }
-  }, [isOpen]);
+  }, [isOpen, offer]);
 
   const resetForm = () => {
     setStep(1);
@@ -112,26 +131,38 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
   };
 
   const handleSubmit = async () => {
-    if (!selectedSubmission) {
+    if (!selectedSubmission && !offer) {
       alert('Please select a submission');
       return;
     }
 
     setLoading(true);
     try {
-      await base44.functions.invoke('createSalesforceOffer', {
-        opportunityId,
-        submissionId: selectedSubmission,
-        offerData: formData,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
+      if (offer) {
+        // Update existing offer
+        await base44.functions.invoke('updateSalesforceRecord', {
+          objectType: 'csbs__Offer__c',
+          recordId: offer.Id,
+          data: formData,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        });
+      } else {
+        // Create new offer
+        await base44.functions.invoke('createSalesforceOffer', {
+          opportunityId,
+          submissionId: selectedSubmission,
+          offerData: formData,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        });
+      }
 
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Create offer error:', error);
-      alert('Failed to create offer');
+      console.error('Save offer error:', error);
+      alert(`Failed to ${offer ? 'update' : 'create'} offer`);
     } finally {
       setLoading(false);
     }
@@ -141,7 +172,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>New Offer</DialogTitle>
+          <DialogTitle>{offer ? 'Edit Offer' : 'New Offer'}</DialogTitle>
         </DialogHeader>
 
         {step === 1 && (
@@ -334,7 +365,8 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
                 </div>
 
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
+                  {!offer && <Button variant="outline" onClick={() => setStep(2)}>Back</Button>}
+                  <Button variant="outline" onClick={onClose}>Cancel</Button>
                   <Button onClick={handleSubmit} disabled={loading}>
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
                   </Button>
