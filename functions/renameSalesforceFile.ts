@@ -9,8 +9,38 @@ Deno.serve(async (req) => {
       );
     }
 
+    // First, get the ContentVersion associated with this ContentDocument
+    const versionQuery = await fetch(
+      `${instanceUrl}/services/data/v59.0/query?q=SELECT+Id+FROM+ContentVersion+WHERE+ContentDocumentId='${contentDocumentId}'+ORDER+BY+CreatedDate+DESC+LIMIT+1`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (!versionQuery.ok) {
+      const error = await versionQuery.json();
+      return Response.json(
+        { error: error.message || 'Failed to find content version' },
+        { status: versionQuery.status }
+      );
+    }
+
+    const versionData = await versionQuery.json();
+    if (!versionData.records || versionData.records.length === 0) {
+      return Response.json(
+        { error: 'No content version found for this document' },
+        { status: 404 }
+      );
+    }
+
+    const contentVersionId = versionData.records[0].Id;
+
+    // Update the ContentVersion with new title
     const response = await fetch(
-      `${instanceUrl}/services/data/v59.0/sobjects/ContentDocument/${contentDocumentId}`,
+      `${instanceUrl}/services/data/v59.0/sobjects/ContentVersion/${contentVersionId}`,
       {
         method: 'PATCH',
         headers: {
