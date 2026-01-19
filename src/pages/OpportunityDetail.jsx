@@ -61,6 +61,7 @@ export default function OpportunityDetail() {
   const [showNewCommission, setShowNewCommission] = useState(false);
   const [editingCommission, setEditingCommission] = useState(null);
   const [deletingRecord, setDeletingRecord] = useState(null);
+  const [previewingStatement, setPreviewingStatement] = useState(null);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
