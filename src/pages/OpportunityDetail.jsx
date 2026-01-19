@@ -804,25 +804,34 @@ export default function OpportunityDetail() {
                             <p className="text-xs text-slate-500">{stmt.csbs__Account_No__c}</p>
                           </div>
                           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setEditingStatement(stmt)}
-                              className="h-8 px-2"
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              disabled={deletingRecord === stmt.Id}
-                              onClick={() => handleDeleteRecord('csbs__Statement__c', stmt.Id, stmt.Name)}
-                              className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            >
-                              Delete
-                            </Button>
-                            {stmt.csbs__Reconciled__c && <Badge className="bg-green-600">Reconciled</Badge>}
-                          </div>
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               onClick={() => setPreviewingStatement(stmt)}
+                               className="h-8 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                               title="View parsed data"
+                             >
+                               <Zap className="w-4 h-4" />
+                             </Button>
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               onClick={() => setEditingStatement(stmt)}
+                               className="h-8 px-2"
+                             >
+                               Edit
+                             </Button>
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               disabled={deletingRecord === stmt.Id}
+                               onClick={() => handleDeleteRecord('csbs__Statement__c', stmt.Id, stmt.Name)}
+                               className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                             >
+                               Delete
+                             </Button>
+                             {stmt.csbs__Reconciled__c && <Badge className="bg-green-600">Reconciled</Badge>}
+                           </div>
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div>
