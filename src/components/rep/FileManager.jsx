@@ -452,6 +452,99 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
       isOpen={!!viewingImage}
       onClose={closeImageViewer}
       />
+
+      {/* Statement Data Preview Modal */}
+      {previewingStatement && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 shadow-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-slate-900">Parsed Data</h3>
+              <button
+                onClick={() => setPreviewingStatement(null)}
+                className="text-slate-500 hover:text-slate-700"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+              <div className="grid grid-cols-3 gap-3 text-sm">
+                <div>
+                  <p className="text-blue-700 font-medium">Bank Name</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Bank_Name__c || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Account No</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Account_No__c || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Account Title</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Account_Title__c || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Company</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Company__c || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Starting Date</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Starting_Date__c || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Ending Date</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Ending_Date__c || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Starting Balance</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Starting_Balance__c ? `$${Number(previewingStatement.csbs__Starting_Balance__c).toLocaleString()}` : '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Ending Balance</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Ending_Balance__c ? `$${Number(previewingStatement.csbs__Ending_Balance__c).toLocaleString()}` : '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Avg Daily Balance</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Average_Daily_Balance__c ? `$${Number(previewingStatement.csbs__Average_Daily_Balance__c).toLocaleString()}` : '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Deposit Count</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Deposit_Count__c || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Deposit Amount</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Deposit_Amount__c ? `$${Number(previewingStatement.csbs__Deposit_Amount__c).toLocaleString()}` : '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Withdrawals Count</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Withdrawals_Count__c || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Total Withdrawals</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Total_Withdrawals__c ? `$${Number(previewingStatement.csbs__Total_Withdrawals__c).toLocaleString()}` : '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Transactions Count</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Transactions_Count__c || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">NSFs</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__NSFs__c || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-blue-700 font-medium">Negative Days</p>
+                  <p className="text-slate-900">{previewingStatement.csbs__Negative_Days__c || '—'}</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                onClick={() => setPreviewingStatement(null)}
+                variant="outline"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
     </>
   );
