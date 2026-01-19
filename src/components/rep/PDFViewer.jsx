@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, Download, X, AlertCircle } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
 
 export default function PDFViewer({ file, session, isOpen, onClose }) {
   const [pdfData, setPdfData] = useState(null);
@@ -23,18 +22,31 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
     setError(null);
     
     try {
-      const response = await base44.functions.invoke('getSalesforceFileContent', {
-        contentDocumentId: file.ContentDocumentId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
+      // Direct fetch to avoid base44 auth check
+      const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contentDocumentId: file.ContentDocumentId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
       });
 
-      if (!response.data || !response.data.file) {
+      if (!response.ok) {
+        throw new Error('Failed to fetch file content');
+      }
+
+      const data = await response.json();
+
+      if (!data || !data.file) {
         throw new Error('No file content received');
       }
 
       // Create blob from base64
-      const base64 = response.data.file;
+      const base64 = data.file;
       const binaryString = atob(base64);
       const bytes = new Uint8Array(binaryString.length);
       

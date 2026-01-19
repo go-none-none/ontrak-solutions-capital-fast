@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FileText, Upload, Loader2, Download, Eye, X, CheckSquare, Square, Trash2, Edit2 } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
 import PDFViewer from './PDFViewer';
 import ImageViewer from './ImageViewer';
 
@@ -26,12 +25,17 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
   const loadFiles = async () => {
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('getSalesforceFiles', {
-        recordId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
+      const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFiles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recordId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
       });
-      setFiles(response.data.files || []);
+      const data = await response.json();
+      setFiles(data.files || []);
     } catch (error) {
       console.error('Load files error:', error);
     } finally {
@@ -55,12 +59,16 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
       
       const base64Data = await base64Promise;
 
-      await base44.functions.invoke('uploadSalesforceFile', {
-        fileName: file.name,
-        fileData: base64Data,
-        recordId: recordId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
+      await fetch('/api/apps/6932157da76cc7fc545d1203/functions/uploadSalesforceFile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileData: base64Data,
+          recordId: recordId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
       });
       
       await loadFiles();
@@ -162,10 +170,14 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
 
     setDeleting(contentDocumentId);
     try {
-      await base44.functions.invoke('deleteSalesforceFile', {
-        contentDocumentId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
+      await fetch('/api/apps/6932157da76cc7fc545d1203/functions/deleteSalesforceFile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contentDocumentId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
       });
       
       await loadFiles();
@@ -191,11 +203,15 @@ export default function FileManager({ recordId, session, onFileUploaded }) {
     }
 
     try {
-      await base44.functions.invoke('renameSalesforceFile', {
-        contentDocumentId,
-        newTitle: newTitle.trim(),
-        token: session.token,
-        instanceUrl: session.instanceUrl
+      await fetch('/api/apps/6932157da76cc7fc545d1203/functions/renameSalesforceFile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contentDocumentId,
+          newTitle: newTitle.trim(),
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
       });
       
       await loadFiles();
