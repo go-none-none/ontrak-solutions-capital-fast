@@ -1208,6 +1208,7 @@ export default function OpportunityDetail() {
                   key={refreshKey}
                   recordId={opportunity.Id}
                   session={session}
+                  statements={statements}
                   onFileUploaded={() => setRefreshKey(prev => prev + 1)}
                   onParseFile={(file) => {
                     setFileToParseStatement(file);
