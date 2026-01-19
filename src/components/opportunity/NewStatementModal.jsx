@@ -22,6 +22,8 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
   const [parsingFile, setParsingFile] = useState(false);
   const [isParsed, setIsParsed] = useState(false);
   const [selectedFileIds, setSelectedFileIds] = useState([]);
+  const [fileQueue, setFileQueue] = useState([]);
+  const [currentFileIndex, setCurrentFileIndex] = useState(0);
   
   const [formData, setFormData] = useState({
     accountNo: '',
