@@ -125,19 +125,9 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
 
     setLoading(true);
     try {
-      // Generate PDF from selected offers
       const selected = offers.filter(o => selectedOffers.includes(o.Id));
-      
-      // Create PDF content
-      const pdfContent = selected.map((offer, idx) => {
-        return `Offer ${idx + 1}\n` +
-               `Funded: ${formatCurrency(offer.csbs__Funded__c)}\n` +
-               `Payment: ${formatCurrency(offer.csbs__Payment_Amount__c)}\n` +
-               `Term: ${offer.csbs__Term__c} months\n` +
-               `Frequency: ${offer.csbs__Payment_Frequency__c}\n\n`;
-      }).join('');
 
-      // Send email
+      // Send email with PDF and activity
       await base44.functions.invoke('sendClientEmail', {
         recipientEmail: emailData.to,
         recipientName: opportunity.Account?.Name || 'Valued Customer',
@@ -145,7 +135,11 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         message: emailData.body,
         senderName: session.name || 'OnTrak Capital',
         token: session.token,
-        instanceUrl: session.instanceUrl
+        instanceUrl: session.instanceUrl,
+        offers: selected,
+        opportunityId: opportunity.Id,
+        pdfLinkLabel: pdfData.linkLabel,
+        pdfFileName: pdfData.fileName
       });
 
       setSent(true);
