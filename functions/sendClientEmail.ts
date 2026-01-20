@@ -164,8 +164,8 @@ Deno.serve(async (req) => {
     doc.setFontSize(9);
     doc.text(`© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.`, 20, yPosition);
 
-    const pdfBytes = doc.output('arraybuffer');
-    const pdfBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(pdfBytes)));
+    // Generate base64 for email attachment
+    const pdfBase64 = Buffer.from(doc.output('arraybuffer')).toString('base64');
 
     const emailHTML = `<!DOCTYPE html>
     <html lang="en">
