@@ -237,16 +237,7 @@ Deno.serve(async (req) => {
                           </tr>
                       </table>
 
-                      <!-- CTA Button -->
-                      ${pdfLink ? `<table width="100%" cellpadding="0" cellspacing="0">
-                          <tr>
-                              <td align="center" style="padding: 20px 0;">
-                                  <a href="${pdfLink}" style="display: inline-block; background: linear-gradient(to right, #08708E, #065a72); color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 40px; border-radius: 30px; box-shadow: 0 4px 6px rgba(8, 112, 142, 0.2);">
-                                      View Full Proposal PDF
-                                  </a>
-                              </td>
-                          </tr>
-                      </table>` : ''}
+
 
                       <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
 
