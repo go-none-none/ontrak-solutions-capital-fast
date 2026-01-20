@@ -24,6 +24,9 @@ Deno.serve(async (req) => {
 
     console.log('Starting to send email to:', recipientEmail);
 
+    // Clean message - strip HTML tags if present
+    const cleanMessage = message.replace(/<[^>]*>/g, '').trim() || 'Please review the offers below.';
+
     // Generate PDF
       const doc = new jsPDF();
       let yPosition = 20;
