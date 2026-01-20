@@ -226,7 +226,6 @@ export default function RepPortal() {
 
 
   const handleLogin = async () => {
-    setLoading(true);
     try {
       const response = await base44.functions.invoke('salesforceAuth', {
         action: 'getLoginUrl'
@@ -235,7 +234,6 @@ export default function RepPortal() {
     } catch (error) {
       console.error('Login error:', error);
       alert('Failed to connect to Salesforce. Please try again.');
-      setLoading(false);
     }
   };
 
