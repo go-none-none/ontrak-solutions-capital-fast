@@ -277,8 +277,49 @@ Deno.serve(async (req) => {
       throw new Error(`SendGrid API error: ${JSON.stringify(errorData)}`);
     }
 
-    // Log email as activity in Salesforce
+    // Upload PDF to Salesforce as ContentVersion and link to opportunity
     if (token && instanceUrl) {
+      try {
+        // Create ContentVersion
+        const contentVersionResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/ContentVersion`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            Title: 'Offer_Proposal',
+            PathOnClient: '/Offer_Proposal.pdf',
+            VersionData: pdfBase64,
+            IsMajorVersion: true
+          })
+        });
+
+        if (contentVersionResponse.ok) {
+          const contentVersionData = await contentVersionResponse.json();
+          const contentDocumentId = contentVersionData.ContentDocumentId || contentVersionData.id;
+
+          // Link ContentDocument to Opportunity
+          await fetch(`${instanceUrl}/services/data/v59.0/sobjects/ContentDocumentLink`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              ContentDocumentId: contentDocumentId,
+              LinkedEntityId: opportunityId,
+              ShareType: 'V'
+            })
+          }).catch(err => console.warn('Could not link document to opportunity:', err.message));
+        } else {
+          console.warn('Could not create ContentVersion');
+        }
+      } catch (err) {
+        console.warn('Could not upload PDF to Salesforce:', err.message);
+      }
+
+      // Log email as activity in Salesforce
       await fetch(`${instanceUrl}/services/data/v59.0/sobjects/EmailMessage`, {
         method: 'POST',
         headers: {
