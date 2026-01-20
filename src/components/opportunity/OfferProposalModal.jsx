@@ -91,28 +91,12 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
     }
 
     if (step === 2) {
-      // Validate PDF fields
-      if (!pdfData.linkLabel.trim() || !pdfData.fileName.trim()) {
-        alert('Please fill in both PDF Link Label and File Name');
-        return;
+        // Validate PDF fields
+        if (!pdfData.linkLabel.trim() || !pdfData.fileName.trim()) {
+          alert('Please fill in both PDF Link Label and File Name');
+          return;
+        }
       }
-      
-      // Generate email body with selected offers
-      const selected = offers.filter(o => selectedOffers.includes(o.Id));
-      let bodyContent = '<p>Offer Proposal</p>';
-      
-      selected.forEach((offer, idx) => {
-        bodyContent += `<p>Offer ${idx + 1} - ${formatCurrency(offer.csbs__Funded__c)}</p>`;
-        bodyContent += `<p><strong>Payment Amount:</strong>${formatCurrency(offer.csbs__Payment_Amount__c)} <strong>Term:</strong>${offer.csbs__Term__c || 0} <strong>Payment Frequency:</strong>${offer.csbs__Payment_Frequency__c || 'N/A'}</p>`;
-      });
-      
-      bodyContent += `<p>${pdfData.linkLabel}</p>`;
-      
-      setEmailData(prev => ({
-        ...prev,
-        body: bodyContent
-      }));
-    }
     
     setStep(step + 1);
   };
