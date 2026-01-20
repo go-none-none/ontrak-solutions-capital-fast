@@ -134,12 +134,9 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         subject: emailData.subject,
         message: emailData.body,
         senderName: session.name || 'OnTrak Capital',
-        token: session.token,
         instanceUrl: session.instanceUrl,
         offers: selected,
-        opportunityId: opportunity.Id,
-        pdfLinkLabel: pdfData.linkLabel,
-        pdfFileName: pdfData.fileName
+        opportunityId: opportunity.Id
       });
 
       setSent(true);
