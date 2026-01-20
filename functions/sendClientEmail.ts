@@ -87,8 +87,8 @@ Deno.serve(async (req) => {
         TextBody: 'Please view this email in HTML format to see the offer proposal.',
         RelatedToId: opportunityId,
         FromName: senderName || 'OnTrak Capital',
-        FromAddress: 'info@ontrak.co',
-        Status: '1'
+        ValidatedFromAddress: '0D2Vz0000000E4b',
+        Status: '3'
       })
     });
 
