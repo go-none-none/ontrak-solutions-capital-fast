@@ -26,39 +26,62 @@ Deno.serve(async (req) => {
     // Clean message - strip HTML tags if present
     const cleanMessage = message.replace(/<[^>]*>/g, '').trim() || 'Please review the offers below.';
 
-    // Generate PDF
+    // Generate PDF with professional styling matching email template
     const doc = new jsPDF();
-    let yPosition = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let yPosition = 0;
 
-    // Header
+    // Header with gradient effect (using color blocks)
     doc.setFillColor(8, 112, 142);
-    doc.rect(0, 0, 210, 40, 'F');
+    doc.rect(0, 0, pageWidth, 50, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
-    doc.text('OnTrak Capital', 105, 20, { align: 'center' });
+    doc.setFontSize(28);
+    doc.setFont(undefined, 'bold');
+    doc.text('Your Offer Proposal', pageWidth / 2, 25, { align: 'center' });
     doc.setFontSize(12);
-    doc.text('Offer Proposal', 105, 28, { align: 'center' });
+    doc.setFont(undefined, 'normal');
+    doc.text('OnTrak Capital - Funding Specialist', pageWidth / 2, 38, { align: 'center' });
 
-    // Reset text color
-    doc.setTextColor(0, 0, 0);
-    yPosition = 50;
+    yPosition = 60;
 
     // Greeting
-    doc.setFontSize(12);
+    doc.setTextColor(15, 23, 42);
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
     doc.text(`Hi ${recipientName || 'Valued Customer'},`, 20, yPosition);
-    yPosition += 15;
+    yPosition += 12;
 
-    // Message (clean text only, no HTML)
+    // Message
     doc.setFontSize(11);
+    doc.setFont(undefined, 'normal');
     const cleanMessageLines = doc.splitTextToSize(cleanMessage, 170);
     doc.text(cleanMessageLines, 20, yPosition);
-    yPosition += cleanMessageLines.length * 6 + 10;
+    yPosition += cleanMessageLines.length * 5 + 8;
 
-    // Offers table
+    // Next Steps box
+    doc.setFillColor(240, 249, 255);
+    doc.setDrawColor(8, 112, 142);
+    doc.setLineWidth(0.5);
+    doc.rect(20, yPosition, 170, 22, 'FD');
+    doc.setTextColor(8, 112, 142);
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'bold');
+    doc.text('✓ NEXT STEPS', 25, yPosition + 6);
+    doc.setTextColor(15, 23, 42);
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(10);
+    const nextStepsText = doc.splitTextToSize('Review the offers below and let us know which one works best for you. We\'re ready to fund within 24-48 hours!', 160);
+    doc.text(nextStepsText, 25, yPosition + 13);
+    yPosition += 28;
+
+    // Your Offers title
+    doc.setTextColor(15, 23, 42);
     doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
     doc.text('Your Offers', 20, yPosition);
-    yPosition += 10;
+    yPosition += 8;
 
+    // Table data
     const tableData = [
       ['Offer', 'Lender', 'Funded Amount', 'Payment Amount', 'Term'],
       ...offers.map((offer, idx) => [
@@ -74,19 +97,68 @@ Deno.serve(async (req) => {
       startY: yPosition,
       head: [tableData[0]],
       body: tableData.slice(1),
-      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0] },
-      bodyStyles: { fillColor: [255, 255, 255] },
-      alternateRowStyles: { fillColor: [250, 250, 250] },
-      margin: 20,
-      columnStyles: { 0: { cellWidth: 25 }, 1: { cellWidth: 40 } }
+      headStyles: {
+        fillColor: [240, 240, 240],
+        textColor: [15, 23, 42],
+        fontStyle: 'bold',
+        fontSize: 10
+      },
+      bodyStyles: {
+        fillColor: [255, 255, 255],
+        textColor: [15, 23, 42],
+        fontSize: 10
+      },
+      alternateRowStyles: {
+        fillColor: [250, 250, 250]
+      },
+      margin: { left: 20, right: 20 },
+      columnStyles: {
+        0: { cellWidth: 25 },
+        1: { cellWidth: 40 },
+        2: { cellWidth: 35 },
+        3: { cellWidth: 40 },
+        4: { cellWidth: 20 }
+      }
     });
 
-    // Footer
-    const finalY = doc.lastAutoTable.finalY + 15;
+    yPosition = doc.lastAutoTable.finalY + 15;
+
+    // Questions box
+    doc.setFillColor(240, 249, 255);
+    doc.setDrawColor(8, 112, 142);
+    doc.setLineWidth(0.5);
+    doc.rect(20, yPosition, 170, 22, 'FD');
+    doc.setTextColor(8, 112, 142);
     doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.text('Please review the offers above and let us know if you have any questions.', 20, finalY);
-    doc.text(`Best regards, ${senderName || 'OnTrak Capital'}`, 20, finalY + 10);
+    doc.setFont(undefined, 'bold');
+    doc.text('❓ QUESTIONS?', 25, yPosition + 6);
+    doc.setTextColor(15, 23, 42);
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(9);
+    doc.text('I\'m here to help! Feel free to reach out if you need any clarification on these offers.', 25, yPosition + 13);
+    yPosition += 28;
+
+    // Footer
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.5);
+    doc.line(20, yPosition, 190, yPosition);
+    yPosition += 8;
+
+    doc.setTextColor(15, 23, 42);
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.text('Best regards,', 20, yPosition);
+    yPosition += 6;
+    doc.text(senderName || 'OnTrak Capital', 20, yPosition);
+    yPosition += 6;
+    doc.setFont(undefined, 'normal');
+    doc.setTextColor(100, 115, 128);
+    doc.setFontSize(10);
+    doc.text('Funding Specialist', 20, yPosition);
+    yPosition += 10;
+
+    doc.setFontSize(9);
+    doc.text(`© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.`, 20, yPosition);
 
     const pdfBytes = doc.output('arraybuffer');
     const base64PDF = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
