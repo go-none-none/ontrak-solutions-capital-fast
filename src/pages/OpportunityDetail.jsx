@@ -837,7 +837,7 @@ export default function OpportunityDetail() {
                                <Button
                                  variant="ghost"
                                  size="sm"
-                                 onClick={() => setViewingPdfUrl(statementPdfs[stmt.Id])}
+                                 onClick={() => openPdfViewer(statementPdfs[stmt.Id])}
                                  className="h-8 px-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
                                  title="View PDF"
                                >
