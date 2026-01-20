@@ -2,14 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { recipientEmail, recipientName, subject, message } = await req.json();
+    const { recipientEmail, recipientName, subject, message, senderName } = await req.json();
 
     if (!recipientEmail || !subject || !message) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
@@ -28,7 +21,6 @@ Deno.serve(async (req) => {
           .content { background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
           .message { background: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; }
           .footer { background: #f3f4f6; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; border-radius: 0 0 10px 10px; }
-          .button { display: inline-block; padding: 12px 24px; background: #08708E; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
         </style>
       </head>
       <body>
@@ -42,7 +34,7 @@ Deno.serve(async (req) => {
               ${message}
             </div>
             <p>If you have any questions, feel free to reach out anytime.</p>
-            <p style="margin-top: 30px;">Best regards,<br><strong>${user.full_name}</strong><br>OnTrak Capital</p>
+            <p style="margin-top: 30px;">Best regards,<br><strong>${senderName || 'OnTrak Capital'}</strong><br>OnTrak Capital</p>
           </div>
           <div class="footer">
             <p>© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.</p>
@@ -53,6 +45,8 @@ Deno.serve(async (req) => {
       </html>
     `;
 
+    const base44 = createClientFromRequest(req);
+    
     await base44.integrations.Core.SendEmail({
       to: recipientEmail,
       subject: subject,
