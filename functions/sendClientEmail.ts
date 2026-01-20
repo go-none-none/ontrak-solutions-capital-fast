@@ -273,50 +273,52 @@ Deno.serve(async (req) => {
     </body>
     </html>`;
 
-    // Send email via Salesforce using emailSimple invocable action
-    console.log('Sending email via Salesforce...');
-    const sendResponse = await fetch(`${instanceUrl}/services/data/v59.0/actions/standard/emailSimple`, {
+    // Send email via SendGrid
+    console.log('Sending email via SendGrid...');
+    const sendResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${SENDGRID_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        inputs: [{
-          emailAddresses: recipientEmail,
-          emailSubject: subject,
-          emailBody: emailHTML,
-          useSignature: false
+        personalizations: [{
+          to: [{ email: recipientEmail }]
+        }],
+        from: { email: SENDER_EMAIL, name: senderName || 'OnTrak Capital' },
+        subject: subject,
+        content: [{
+          type: 'text/html',
+          value: emailHTML
         }]
       })
     });
 
-    const responseData = await sendResponse.json();
-    console.log('Salesforce response status:', sendResponse.status);
-    console.log('Salesforce response:', JSON.stringify(responseData));
-
     if (!sendResponse.ok) {
-      throw new Error(`Salesforce API error: ${JSON.stringify(responseData)}`);
+      const errorData = await sendResponse.json();
+      throw new Error(`SendGrid API error: ${JSON.stringify(errorData)}`);
     }
 
-    // Log email as activity
-    await fetch(`${instanceUrl}/services/data/v59.0/sobjects/EmailMessage`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ToAddress: recipientEmail,
-        Subject: subject,
-        HtmlBody: emailHTML,
-        RelatedToId: opportunityId,
-        Status: '3'
-      })
-    }).catch(err => console.warn('Could not log activity:', err.message));
+    // Log email as activity in Salesforce
+    if (token && instanceUrl) {
+      await fetch(`${instanceUrl}/services/data/v59.0/sobjects/EmailMessage`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ToAddress: recipientEmail,
+          Subject: subject,
+          HtmlBody: emailHTML,
+          RelatedToId: opportunityId,
+          Status: '3'
+        })
+      }).catch(err => console.warn('Could not log activity:', err.message));
+    }
 
-    console.log('Email sent successfully');
-    return Response.json({ success: true, pdfLink });
+    console.log('Email sent successfully via SendGrid');
+    return Response.json({ success: true });
   } catch (error) {
     console.error('Error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
