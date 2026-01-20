@@ -262,18 +262,21 @@ Deno.serve(async (req) => {
     </body>
     </html>`;
 
-    // Send email via Salesforce using SingleEmailMessage API
+    // Send email via Salesforce using emailSimple invocable action
     console.log('Sending email via Salesforce...');
-    const sendResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/SingleEmailMessage`, {
+    const sendResponse = await fetch(`${instanceUrl}/services/data/v59.0/actions/standard/emailSimple`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        toAddresses: [recipientEmail],
-        subject: subject,
-        htmlBody: emailHTML
+        inputs: [{
+          emailAddresses: recipientEmail,
+          emailSubject: subject,
+          emailBody: emailHTML,
+          useSignature: false
+        }]
       })
     });
 
