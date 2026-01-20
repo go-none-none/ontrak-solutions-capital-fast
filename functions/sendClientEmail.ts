@@ -20,24 +20,39 @@ Deno.serve(async (req) => {
 
     const cleanMessage = message.replace(/<[^>]*>/g, '').trim();
 
-    // Generate PDF
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    let yPosition = 0;
+        // Generate PDF
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        let yPosition = 0;
 
-    // Header
-    doc.setFillColor(8, 112, 142);
-    doc.rect(0, 0, pageWidth, 50, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
-    doc.setFont(undefined, 'bold');
-    doc.text('OnTrak Capital', 20, 20);
-    doc.setFontSize(28);
-    doc.setFont(undefined, 'bold');
-    doc.text('Your Offer Proposal', pageWidth / 2, 32, { align: 'center' });
-    doc.setFontSize(10);
-    doc.setFont(undefined, 'normal');
-    doc.text('Funding Specialist', pageWidth / 2, 42, { align: 'center' });
+        // Header
+        doc.setFillColor(8, 112, 142);
+        doc.rect(0, 0, pageWidth, 50, 'F');
+        doc.setTextColor(255, 255, 255);
+
+        // Try to add logo image
+        try {
+          const logoUrl = 'https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png';
+          const logoResponse = await fetch(logoUrl);
+          if (logoResponse.ok) {
+            const logoBlob = await logoResponse.blob();
+            const logoDataUrl = await new Promise(resolve => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.readAsDataURL(logoBlob);
+            });
+            doc.addImage(logoDataUrl, 'PNG', 20, 8, 15, 15);
+          }
+        } catch (err) {
+          // Silently continue without logo
+        }
+
+        doc.setFontSize(28);
+        doc.setFont(undefined, 'bold');
+        doc.text('Your Offer Proposal', pageWidth / 2, 32, { align: 'center' });
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.text('Funding Specialist', pageWidth / 2, 42, { align: 'center' });
 
     yPosition = 60;
 
