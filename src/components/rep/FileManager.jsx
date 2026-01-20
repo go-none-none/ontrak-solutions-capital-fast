@@ -53,8 +53,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
             CreatedDate: tf.uploadedAt
           },
           isTemp: true,
-          tempUrl: tf.url,
-          tempFileUrl: tf.url
+          tempUrl: tf.url
         })),
         ...sfFiles
       ];

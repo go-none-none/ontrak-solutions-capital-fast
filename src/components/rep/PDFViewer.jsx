@@ -11,35 +11,18 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
   useEffect(() => {
     if (isOpen && file) {
       loadPDF();
-    } else if (!isOpen && pdfData && !file?.isTemp) {
-      URL.revokeObjectURL(pdfData);
+    } else {
       setPdfData(null);
       setError(null);
     }
   }, [isOpen, file]);
-  
-  useEffect(() => {
-    return () => {
-      if (pdfData && !file?.isTemp) {
-        URL.revokeObjectURL(pdfData);
-      }
-    };
-  }, [pdfData]);
 
   const loadPDF = async () => {
     setLoading(true);
     setError(null);
-    setPdfData(null);
     
     try {
-      // Check if it's a temp file
-      if (file.isTemp && file.tempUrl) {
-        setPdfData(file.tempUrl);
-        setLoading(false);
-        return;
-      }
-
-      // Fetch from Salesforce
+      // Direct fetch to avoid base44 auth check
       const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
         method: 'POST',
         headers: {
@@ -62,17 +45,16 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
         throw new Error('No file content received');
       }
 
-      // Create blob from base64 with proper handling
+      // Create blob from base64
       const base64 = data.file;
-      const byteCharacters = atob(base64);
-      const byteNumbers = new Array(byteCharacters.length);
+      const binaryString = atob(base64);
+      const bytes = new Uint8Array(binaryString.length);
       
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
       }
       
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      const blob = new Blob([bytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       
       setPdfData(url);
@@ -96,12 +78,11 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
   };
 
   const handleClose = () => {
-    if (pdfData && !file?.isTemp) {
+    if (pdfData) {
       URL.revokeObjectURL(pdfData);
     }
     setPdfData(null);
     setError(null);
-    setLoading(false);
     onClose();
   };
 
