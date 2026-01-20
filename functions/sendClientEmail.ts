@@ -36,15 +36,10 @@ Deno.serve(async (req) => {
       doc.setFontSize(12);
     });
 
-    const pdfBytes = doc.output('arraybuffer');
-    const uint8Array = new Uint8Array(pdfBytes);
-    const base64Pdf = btoa(String.fromCharCode.apply(null, uint8Array));
+    // Get PDF as base64
+    const pdfBase64 = doc.output('dataurlstring').split(',')[1];
 
     // Upload PDF to Salesforce Files
-    console.log('Uploading PDF to Salesforce...');
-    console.log('InstanceUrl:', instanceUrl);
-    console.log('Token length:', token?.length);
-    
     const uploadResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/ContentVersion`, {
       method: 'POST',
       headers: {
@@ -53,21 +48,17 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         Title: pdfFileName + '.pdf',
-        VersionData: base64Pdf,
+        VersionData: pdfBase64,
         ContentLocation: 'S'
       })
     });
 
-    console.log('Upload response status:', uploadResponse.status);
-
     if (!uploadResponse.ok) {
-      const errorData = await uploadResponse.text();
-      console.error('Upload error response:', errorData);
-      throw new Error(`Failed to upload PDF: ${uploadResponse.status} ${errorData}`);
+      const errorText = await uploadResponse.text();
+      throw new Error(`PDF upload failed (${uploadResponse.status}): ${errorText}`);
     }
 
     const uploadData = await uploadResponse.json();
-    console.log('Upload successful:', uploadData);
     const contentDocumentId = uploadData.id;
 
     // Link file to opportunity
@@ -80,13 +71,13 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         ContentDocumentId: contentDocumentId,
         LinkedEntityId: opportunityId,
-        ShareType: 'V',
-        Visibility: 'AllUsers'
+        ShareType: 'V'
       })
     });
 
     if (!linkResponse.ok) {
-      throw new Error('Failed to link PDF to opportunity');
+      const errorText = await linkResponse.text();
+      throw new Error(`Link PDF failed (${linkResponse.status}): ${errorText}`);
     }
 
     // Create Email Activity
@@ -95,7 +86,6 @@ Deno.serve(async (req) => {
       <html>
       <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
           body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
           .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -116,11 +106,10 @@ Deno.serve(async (req) => {
               ${message}
             </div>
             <p>If you have any questions, feel free to reach out anytime.</p>
-            <p style="margin-top: 30px;">Best regards,<br><strong>${senderName || 'OnTrak Capital'}</strong><br>OnTrak Capital</p>
+            <p style="margin-top: 30px;">Best regards,<br><strong>${senderName || 'OnTrak Capital'}</strong></p>
           </div>
           <div class="footer">
             <p>© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.</p>
-            <p>This email was sent from OnTrak Capital's Rep Portal.</p>
           </div>
         </div>
       </body>
@@ -138,21 +127,22 @@ Deno.serve(async (req) => {
         ToAddress: recipientEmail,
         Subject: subject,
         HtmlBody: emailHTML,
-        TextBody: 'View this email in HTML format.',
+        TextBody: 'View email in HTML format',
         RelatedToId: opportunityId,
         FromName: senderName || 'OnTrak Capital',
-        FromAddress: 'info@ontrak.co'
+        FromAddress: 'info@ontrak.co',
+        Status: '1'
       })
     });
 
     if (!activityResponse.ok) {
-      const errorData = await activityResponse.json();
-      throw new Error(errorData[0]?.message || 'Failed to create email activity');
+      const errorText = await activityResponse.text();
+      throw new Error(`Email activity failed (${activityResponse.status}): ${errorText}`);
     }
 
     return Response.json({ success: true });
   } catch (error) {
-    console.error('Send email error:', error);
+    console.error('Send email error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
