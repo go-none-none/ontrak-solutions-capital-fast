@@ -204,28 +204,7 @@ Deno.serve(async (req) => {
                           </tr>
                       </table>
 
-                      <!-- Offers Table -->
-                      <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
-                          <tr>
-                              <td>
-                                  <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">Your Offers</p>
-                              </td>
-                          </tr>
-                          <tr>
-                              <td>
-                                  <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
-                                      <tr style="background-color: #f0f0f0;">
-                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Offer</th>
-                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Lender</th>
-                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Funded Amount</th>
-                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Payment Amount</th>
-                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Term</th>
-                                      </tr>
-                                      ${offersRows}
-                                  </table>
-                              </td>
-                          </tr>
-                      </table>
+
 
 
 
