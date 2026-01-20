@@ -61,6 +61,11 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
       setStep(1);
       setSelectedOffers([]);
       setSent(false);
+      const today = formatDate(new Date());
+      setPdfData({
+        linkLabel: `Offer Proposal - ${opportunity.Name || ''} - ${today}`,
+        fileName: `Offer Proposal - ${opportunity.Name || ''} - ${today.replace(/\//g, '-')}`
+      });
       setEmailData({
         to: contactEmail || '',
         cc: '',
@@ -69,7 +74,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         body: ''
       });
     }
-  }, [isOpen, contactEmail]);
+  }, [isOpen, contactEmail, opportunity.Name]);
 
   const toggleOfferSelection = (offerId) => {
     setSelectedOffers(prev =>
