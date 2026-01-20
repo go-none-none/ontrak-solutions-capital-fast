@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         inputs: [{
-          emailAddresses: [recipientEmail],
+          emailAddresses: recipientEmail,
           emailSubject: subject,
           emailBody: emailHTML,
           useSignature: false
