@@ -242,7 +242,7 @@ Deno.serve(async (req) => {
     </body>
     </html>`;
 
-    // Send email via SendGrid
+    // Send email via SendGrid with PDF attachment
     console.log('Sending email via SendGrid...');
     const sendResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
       method: 'POST',
@@ -259,6 +259,12 @@ Deno.serve(async (req) => {
         content: [{
           type: 'text/html',
           value: emailHTML
+        }],
+        attachments: [{
+          content: pdfBase64,
+          type: 'application/pdf',
+          filename: 'Offer_Proposal.pdf',
+          disposition: 'attachment'
         }]
       })
     });
