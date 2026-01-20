@@ -172,13 +172,12 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
 
         {/* Progress Indicator */}
         <div className="mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <div className={`flex-1 h-2 rounded ${step >= 1 ? 'bg-blue-600' : 'bg-slate-200'}`} />
-            <div className={`flex-1 h-2 rounded mx-2 ${step >= 2 ? 'bg-blue-600' : 'bg-slate-200'}`} />
-            <div className={`flex-1 h-2 rounded ${step >= 3 ? 'bg-blue-600' : 'bg-slate-200'}`} />
-          </div>
-          <div className="text-xs text-slate-500 mt-2">
-            Step {step} of 3
+          <div className="flex items-center gap-4 mb-4">
+            <div className={`w-2 h-2 rounded-full ${step >= 1 ? 'bg-blue-600' : 'bg-slate-200'}`} />
+            <div className={`flex-1 h-1 rounded ${step >= 2 ? 'bg-blue-600' : 'bg-slate-200'}`} />
+            <div className={`w-2 h-2 rounded-full ${step >= 2 ? 'bg-blue-600' : 'bg-slate-200'}`} />
+            <div className={`flex-1 h-1 rounded ${step >= 3 ? 'bg-blue-600' : 'bg-slate-200'}`} />
+            <div className={`w-2 h-2 rounded-full ${step >= 3 ? 'bg-blue-600' : 'bg-slate-200'}`} />
           </div>
         </div>
 
