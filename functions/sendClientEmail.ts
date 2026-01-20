@@ -197,11 +197,11 @@ Deno.serve(async (req) => {
                           ${cleanMessage}
                       </p>
 
-                      <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%); border-left: 4px solid #08708E; border-radius: 8px; margin: 30px 0;">
+                      <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #fff5ee 0%, #fee2e2 100%); border-left: 4px solid #dc2626; border-radius: 8px; margin: 30px 0; border-collapse: collapse;">
                           <tr>
                               <td style="padding: 20px;">
-                                  <p style="color: #08708E; font-size: 14px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">⏰ Time Sensitive</p>
-                                  <p style="color: #0f172a; font-size: 15px; margin: 0;"><strong>This is urgent!</strong> Review the attached offer proposal immediately. Most offers expire within 24-48 hours, and we can fund the same day once you select your preferred option. Don't miss this opportunity—respond today to move forward.</p>
+                                  <p style="color: #dc2626; font-size: 14px; font-weight: 700; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">⏰ TIME SENSITIVE - FUNDING AVAILABLE TODAY</p>
+                                  <p style="color: #0f172a; font-size: 14px; line-height: 1.6; margin: 0;"><strong>Act immediately!</strong> These offers expire within 24-48 hours. We can process your funding and get money to you TODAY once you select your preferred option. Don't delay—respond now to move forward.</p>
                               </td>
                           </tr>
                       </table>
