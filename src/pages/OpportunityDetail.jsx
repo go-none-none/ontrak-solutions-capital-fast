@@ -727,7 +727,13 @@ export default function OpportunityDetail() {
 
               {/* Offers Tab */}
               <TabsContent value="offers" className="space-y-4">
-                <div className="flex justify-end mb-3">
+                <div className="flex justify-end gap-3 mb-3">
+                  <Button
+                    onClick={() => setShowOfferProposal(true)}
+                    variant="outline"
+                  >
+                    Offer Proposal
+                  </Button>
                   <Button
                     onClick={() => setShowNewOffer(true)}
                     className="bg-orange-600 hover:bg-orange-700"
