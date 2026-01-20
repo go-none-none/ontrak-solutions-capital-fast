@@ -25,32 +25,32 @@ Deno.serve(async (req) => {
     console.log('Starting to send email to:', recipientEmail);
 
     // Generate PDF
-    const doc = new jsPDF();
-    let yPosition = 20;
+      const doc = new jsPDF();
+      let yPosition = 20;
 
-    // Header
-    doc.setFillColor(8, 112, 142);
-    doc.rect(0, 0, 210, 40, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
-    doc.text('OnTrak Capital', 105, 20, { align: 'center' });
-    doc.setFontSize(12);
-    doc.text('Offer Proposal', 105, 28, { align: 'center' });
+      // Header
+      doc.setFillColor(8, 112, 142);
+      doc.rect(0, 0, 210, 40, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(24);
+      doc.text('OnTrak Capital', 105, 20, { align: 'center' });
+      doc.setFontSize(12);
+      doc.text('Offer Proposal', 105, 28, { align: 'center' });
 
-    // Reset text color
-    doc.setTextColor(0, 0, 0);
-    yPosition = 50;
+      // Reset text color
+      doc.setTextColor(0, 0, 0);
+      yPosition = 50;
 
-    // Greeting
-    doc.setFontSize(12);
-    doc.text(`Hi ${recipientName || 'Valued Customer'},`, 20, yPosition);
-    yPosition += 15;
+      // Greeting
+      doc.setFontSize(12);
+      doc.text(`Hi ${recipientName || 'Valued Customer'},`, 20, yPosition);
+      yPosition += 15;
 
-    // Message
-    doc.setFontSize(11);
-    const messageLines = doc.splitTextToSize(message, 170);
-    doc.text(messageLines, 20, yPosition);
-    yPosition += messageLines.length * 6 + 10;
+      // Message (clean text only, no HTML)
+      doc.setFontSize(11);
+      const cleanMessageLines = doc.splitTextToSize(cleanMessage, 170);
+      doc.text(cleanMessageLines, 20, yPosition);
+      yPosition += cleanMessageLines.length * 6 + 10;
 
     // Offers table
     doc.setFontSize(12);
