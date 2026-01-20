@@ -21,9 +21,6 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
   const [uploadingFile, setUploadingFile] = useState(false);
   const [parsingFile, setParsingFile] = useState(false);
   const [isParsed, setIsParsed] = useState(false);
-  const [selectedFileIds, setSelectedFileIds] = useState([]);
-  const [fileQueue, setFileQueue] = useState([]);
-  const [currentFileIndex, setCurrentFileIndex] = useState(0);
   
   const [formData, setFormData] = useState({
     accountNo: '',
@@ -161,27 +158,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     }
   };
 
-  const parseSelectedFiles = async () => {
-    if (selectedFileIds.length === 0) return;
-    
-    const filesToParse = selectedFileIds.map(fileId => 
-      availableFiles.find(f => f.ContentDocumentId === fileId)
-    ).filter(Boolean);
-    
-    setFileQueue(filesToParse);
-    setCurrentFileIndex(0);
-    
-    if (filesToParse.length > 0) {
-      setParsingFile(true);
-      try {
-        await parseExistingFile(filesToParse[0]);
-      } catch (error) {
-        console.error('Batch parse error:', error);
-      } finally {
-        setParsingFile(false);
-      }
-    }
-  };
+
 
   useEffect(() => {
     if (fileToProcess && isOpen) {
@@ -256,7 +233,6 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const isNew = e.nativeEvent.submitter.name.includes('new');
 
     try {
       if (statement) {
@@ -284,53 +260,34 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
 
       onSuccess();
       
-      // Check if there are more files in the queue
-      if (isNew && fileQueue.length > 0 && currentFileIndex < fileQueue.length - 1) {
-        const nextIndex = currentFileIndex + 1;
-        setCurrentFileIndex(nextIndex);
-        setIsParsed(false);
-        setFormData({
-          accountNo: '',
-          accountTitle: '',
-          company: '',
-          bankName: '',
-          startingDate: '',
-          startingBalance: '',
-          endingDate: '',
-          endingBalance: '',
-          reconciled: false,
-          unreconciledEndBalance: '',
-          fraudScore: '',
-          avgDailyBalance: '',
-          depositCount: '',
-          depositAmount: '',
-          withdrawalsCount: '',
-          totalWithdrawals: '',
-          transactionsCount: '',
-          minResolution: '',
-          maxResolution: '',
-          nsfs: '',
-          negativeDays: '',
-          fraudReasons: '',
-          notes: ''
-        });
-        
-        // Parse the next file
-        setParsingFile(true);
-        try {
-          await parseExistingFile(fileQueue[nextIndex]);
-        } catch (error) {
-          console.error('Parse next file error:', error);
-        } finally {
-          setParsingFile(false);
-        }
-      } else {
-        // No more files, close modal
-        setFileQueue([]);
-        setCurrentFileIndex(0);
-        setSelectedFileIds([]);
-        onClose();
-      }
+      // Clear form and close modal
+      setIsParsed(false);
+      setFormData({
+        accountNo: '',
+        accountTitle: '',
+        company: '',
+        bankName: '',
+        startingDate: '',
+        startingBalance: '',
+        endingDate: '',
+        endingBalance: '',
+        reconciled: false,
+        unreconciledEndBalance: '',
+        fraudScore: '',
+        avgDailyBalance: '',
+        depositCount: '',
+        depositAmount: '',
+        withdrawalsCount: '',
+        totalWithdrawals: '',
+        transactionsCount: '',
+        minResolution: '',
+        maxResolution: '',
+        nsfs: '',
+        negativeDays: '',
+        fraudReasons: '',
+        notes: ''
+      });
+      onClose();
     } catch (error) {
       console.error('Create statement error:', error);
       alert('Failed to create statement: ' + (error.response?.data?.error || error.message));
@@ -346,50 +303,31 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
           <DialogTitle>{statement ? 'Edit Statement' : 'New Statement'}</DialogTitle>
         </DialogHeader>
 
-        {!statement && (
+        {!statement && availableFiles.length > 0 && (
           <>
-            {availableFiles.length > 0 && (
-              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-6 mb-6">
-                <h3 className="text-sm font-semibold text-purple-900 mb-4">Select PDFs to Parse</h3>
-                <div className="space-y-2 mb-4">
-                  {availableFiles.map(file => (
-                    <div key={file.ContentDocumentId} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-purple-100">
-                      <Checkbox
-                        id={`file-${file.ContentDocumentId}`}
-                        checked={selectedFileIds.includes(file.ContentDocumentId)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedFileIds([...selectedFileIds, file.ContentDocumentId]);
-                          } else {
-                            setSelectedFileIds(selectedFileIds.filter(id => id !== file.ContentDocumentId));
-                          }
-                        }}
-                      />
-                      <label htmlFor={`file-${file.ContentDocumentId}`} className="flex-1 cursor-pointer">
-                        <p className="text-sm font-medium text-slate-900">{file.ContentDocument.Title}</p>
-                        <p className="text-xs text-slate-500">PDF • {formatFileSize(file.ContentDocument.ContentSize)}</p>
-                      </label>
-                    </div>
-                  ))}
-                </div>
-                {selectedFileIds.length > 0 && (
-                  <Button
-                    onClick={parseSelectedFiles}
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-xl p-6 mb-6">
+              <h3 className="text-sm font-semibold text-purple-900 mb-4">Select a PDF to Parse</h3>
+              <div className="space-y-2">
+                {availableFiles.map(file => (
+                  <button
+                    key={file.ContentDocumentId}
+                    type="button"
+                    onClick={() => parseExistingFile(file)}
                     disabled={parsingFile}
-                    className="w-full bg-purple-600 hover:bg-purple-700"
+                    className="w-full flex items-center gap-3 p-3 bg-white rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors text-left disabled:opacity-50"
                   >
-                    {parsingFile ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Parsing {selectedFileIds.length}...
-                      </>
-                    ) : (
-                      <>Parse {selectedFileIds.length} Selected PDF{selectedFileIds.length !== 1 ? 's' : ''}</>
-                    )}
-                  </Button>
-                )}
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-slate-900">{file.ContentDocument.Title}</p>
+                      <p className="text-xs text-slate-500">PDF • {formatFileSize(file.ContentDocument.ContentSize)}</p>
+                    </div>
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
+          </>
+        )}
+
+        {!statement && (
 
             <div className={`border-2 rounded-xl p-6 shadow-sm ${isParsed ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300' : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-300'}`}>
               <div className="flex items-start gap-4">
@@ -543,6 +481,8 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
             </div>
           </div>
         )}
+        </>
+      )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
            {/* Information Section */}
@@ -809,18 +749,8 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
             <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
               Cancel
             </Button>
-            {fileQueue.length > 0 && currentFileIndex < fileQueue.length - 1 && (
-              <Button type="submit" name="saveNew" disabled={loading} variant="outline">
-                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : `Save & Next (${currentFileIndex + 1}/${fileQueue.length})`}
-              </Button>
-            )}
-            {!fileQueue.length && (
-              <Button type="submit" name="saveNew" disabled={loading} variant="outline">
-                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save & New'}
-              </Button>
-            )}
-            <Button type="submit" name="save" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : fileQueue.length > 0 && currentFileIndex === fileQueue.length - 1 ? 'Finish' : 'Save'}
+            <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save'}
             </Button>
           </div>
         </form>
