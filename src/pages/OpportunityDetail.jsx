@@ -67,6 +67,20 @@ export default function OpportunityDetail() {
   const [viewingStatementPdf, setViewingStatementPdf] = useState(null);
   const [statementPdfs, setStatementPdfs] = useState({});
   const [viewingPdfUrl, setViewingPdfUrl] = useState(null);
+  const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
+
+  const openPdfViewer = async (url) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      setPdfBlobUrl(blobUrl);
+      setViewingPdfUrl(url);
+    } catch (error) {
+      console.error('Error loading PDF:', error);
+      setViewingPdfUrl(url);
+    }
+  };
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
