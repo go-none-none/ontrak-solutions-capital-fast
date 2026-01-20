@@ -164,17 +164,7 @@ Deno.serve(async (req) => {
     doc.text(`© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.`, 20, yPosition);
 
     const pdfBytes = doc.output('arraybuffer');
-
-    // Build email from template
-    const offersRows = offers.map((offer, idx) => `
-      <tr>
-        <td style="padding: 12px; border: 1px solid #e5e7eb;">Offer ${idx + 1}</td>
-        <td style="padding: 12px; border: 1px solid #e5e7eb;">${offer.csbs__Lender__c || 'Unknown'}</td>
-        <td style="padding: 12px; border: 1px solid #e5e7eb;">$${Number(offer.csbs__Funded__c).toLocaleString()}</td>
-        <td style="padding: 12px; border: 1px solid #e5e7eb;">$${Number(offer.csbs__Payment_Amount__c).toLocaleString()} ${offer.csbs__Payment_Frequency__c}</td>
-        <td style="padding: 12px; border: 1px solid #e5e7eb;">${offer.csbs__Term__c} mo</td>
-      </tr>
-    `).join('');
+    const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
 
     const emailHTML = `<!DOCTYPE html>
     <html lang="en">
