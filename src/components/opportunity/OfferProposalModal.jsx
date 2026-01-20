@@ -96,6 +96,21 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
           alert('Please fill in both PDF Link Label and File Name');
           return;
         }
+
+        // Auto-generate email body based on selected offers
+        const selected = offers.filter(o => selectedOffers.includes(o.Id));
+        let bodyContent = 'Review the offers below:';
+
+        selected.forEach((offer, idx) => {
+          bodyContent += `\n\nOffer ${idx + 1}: ${formatCurrency(offer.csbs__Funded__c)}`;
+          bodyContent += `\nPayment: ${formatCurrency(offer.csbs__Payment_Amount__c)} ${offer.csbs__Payment_Frequency__c}`;
+          bodyContent += `\nTerm: ${offer.csbs__Term__c} months`;
+        });
+
+        setEmailData(prev => ({
+          ...prev,
+          body: bodyContent
+        }));
       }
     
     setStep(step + 1);
