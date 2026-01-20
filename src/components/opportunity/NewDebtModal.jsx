@@ -145,7 +145,7 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>New Debt</DialogTitle>
+          <DialogTitle>{debt ? 'Edit Debt' : 'New Debt'}</DialogTitle>
         </DialogHeader>
 
         {loadingPicklists ? (
@@ -300,9 +300,11 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
               <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
                 Cancel
               </Button>
-              <Button type="submit" name="saveNew" disabled={loading} variant="outline">
-                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save & New'}
-              </Button>
+              {!debt && (
+                <Button type="submit" name="saveNew" disabled={loading} variant="outline">
+                  {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save & New'}
+                </Button>
+              )}
               <Button type="submit" name="save" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
                 {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save'}
               </Button>
