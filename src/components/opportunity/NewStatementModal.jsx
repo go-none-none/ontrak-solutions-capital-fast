@@ -328,8 +328,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
         )}
 
         {!statement && (
-
-            <div className={`border-2 rounded-xl p-6 shadow-sm ${isParsed ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300' : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-300'}`}>
+          <div className={`border-2 rounded-xl p-6 shadow-sm ${isParsed ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300' : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-300'}`}>
               <div className="flex items-start gap-4">
                 <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${isParsed ? 'bg-green-600' : 'bg-blue-600'}`}>
                   {isParsed ? (
@@ -379,7 +378,6 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
                 </div>
               </div>
             </div>
-          </>
         )}
 
         {isParsed && (
@@ -481,8 +479,6 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
             </div>
           </div>
         )}
-        </>
-      )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
            {/* Information Section */}
