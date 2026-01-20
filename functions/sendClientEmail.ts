@@ -143,7 +143,9 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Build email from template
+    // Build email from template - parse the message body if it's HTML, otherwise clean it
+    const cleanMessage = message.replace(/<[^>]*>/g, '').trim() || 'Please review the offers below.';
+
     const offersRows = offers.map((offer, idx) => `
       <tr>
         <td style="padding: 12px; border: 1px solid #e5e7eb;">Offer ${idx + 1}</td>
