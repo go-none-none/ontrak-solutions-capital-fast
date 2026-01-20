@@ -116,7 +116,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
     try {
       const selected = offers.filter(o => selectedOffers.includes(o.Id));
 
-      // Send email with PDF and activity
+      // Send email with SendGrid
       await base44.functions.invoke('sendClientEmail', {
         recipientEmail: emailData.to,
         recipientName: opportunity.Account?.Name || 'Valued Customer',
@@ -126,8 +126,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         token: session.token,
         instanceUrl: session.instanceUrl,
         offers: selected,
-        opportunityId: opportunity.Id,
-        pdfFileName: pdfData.fileName
+        opportunityId: opportunity.Id
       });
 
       setSent(true);
