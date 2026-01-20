@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { jsPDF } from 'npm:jspdf@4.0.0';
+import 'npm:jspdf-autotable@3.5.31';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
