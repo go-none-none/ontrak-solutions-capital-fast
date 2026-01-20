@@ -1,6 +1,9 @@
 import { jsPDF } from 'npm:jspdf@4.0.0';
 import 'npm:jspdf-autotable@3.5.31';
 
+const SENDGRID_API_KEY = Deno.env.get("SENDGRID_API_KEY");
+const SENDER_EMAIL = "info@ontrak.com";
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
@@ -15,7 +18,7 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json().catch(() => ({}));
-    const { recipientEmail, recipientName, subject, message, senderName, instanceUrl, offers, opportunityId, token, pdfFileName } = body;
+    const { recipientEmail, recipientName, subject, message, senderName, instanceUrl, offers, opportunityId, token } = body;
 
     if (!recipientEmail || !subject || !message || !instanceUrl || !offers || !opportunityId || !token || !pdfFileName) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
