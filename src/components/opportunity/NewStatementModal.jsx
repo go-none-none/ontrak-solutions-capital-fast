@@ -114,15 +114,17 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
 
         const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfFile });
         fileUrl = uploadResponse.file_url;
-      }
+        }
 
-      setFormData(prev => ({ 
+        setFormData(prev => ({ 
         ...prev, 
         tempFileUrl: file.tempFileUrl || null,
         csbs__Source_File_ID__c: file.isTemp ? null : fileId 
-      }));
-      
-      const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
+        }));
+
+        setParsedFileUrl(fileUrl);
+
+        const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
       
       if (parseResponse.data.success && parseResponse.data.data) {
         const p = parseResponse.data.data;
