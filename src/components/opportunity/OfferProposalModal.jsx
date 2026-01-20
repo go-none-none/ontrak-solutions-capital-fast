@@ -143,7 +143,9 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         recipientName: opportunity.Account?.Name || 'Valued Customer',
         subject: emailData.subject,
         message: emailData.body,
-        senderName: session.name || 'OnTrak Capital'
+        senderName: session.name || 'OnTrak Capital',
+        token: session.token,
+        instanceUrl: session.instanceUrl
       });
 
       setSent(true);
