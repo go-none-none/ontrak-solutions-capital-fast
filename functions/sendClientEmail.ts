@@ -41,6 +41,10 @@ Deno.serve(async (req) => {
     const base64Pdf = btoa(String.fromCharCode.apply(null, uint8Array));
 
     // Upload PDF to Salesforce Files
+    console.log('Uploading PDF to Salesforce...');
+    console.log('InstanceUrl:', instanceUrl);
+    console.log('Token length:', token?.length);
+    
     const uploadResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/ContentVersion`, {
       method: 'POST',
       headers: {
@@ -54,13 +58,16 @@ Deno.serve(async (req) => {
       })
     });
 
+    console.log('Upload response status:', uploadResponse.status);
+
     if (!uploadResponse.ok) {
       const errorData = await uploadResponse.text();
       console.error('Upload error response:', errorData);
-      throw new Error(`Failed to upload PDF to Salesforce: ${uploadResponse.status} ${errorData}`);
+      throw new Error(`Failed to upload PDF: ${uploadResponse.status} ${errorData}`);
     }
 
     const uploadData = await uploadResponse.json();
+    console.log('Upload successful:', uploadData);
     const contentDocumentId = uploadData.id;
 
     // Link file to opportunity
