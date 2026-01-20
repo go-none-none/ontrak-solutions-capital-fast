@@ -1,7 +1,9 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { jsPDF } from 'npm:jspdf@4.0.0';
 
 Deno.serve(async (req) => {
   try {
+    const base44 = createClientFromRequest(req);
     const { recipientEmail, recipientName, subject, message, senderName, token, instanceUrl, offers, opportunityId, pdfLinkLabel, pdfFileName } = await req.json();
 
     if (!recipientEmail || !subject || !message || !token || !instanceUrl || !offers || !opportunityId || !pdfFileName) {
@@ -36,51 +38,12 @@ Deno.serve(async (req) => {
       doc.setFontSize(12);
     });
 
-    // Get PDF as base64
-    const pdfBase64 = doc.output('dataurlstring').split(',')[1];
+    // Get PDF as blob and upload
+    const pdfBlob = doc.output('blob');
+    const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfBlob });
+    const pdfUrl = uploadResponse.file_url;
 
-    // Upload PDF to Salesforce Files
-    const uploadResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/ContentVersion`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        Title: pdfFileName + '.pdf',
-        VersionData: pdfBase64,
-        ContentLocation: 'S'
-      })
-    });
-
-    if (!uploadResponse.ok) {
-      const errorText = await uploadResponse.text();
-      throw new Error(`PDF upload failed (${uploadResponse.status}): ${errorText}`);
-    }
-
-    const uploadData = await uploadResponse.json();
-    const contentDocumentId = uploadData.id;
-
-    // Link file to opportunity
-    const linkResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/ContentDocumentLink`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ContentDocumentId: contentDocumentId,
-        LinkedEntityId: opportunityId,
-        ShareType: 'V'
-      })
-    });
-
-    if (!linkResponse.ok) {
-      const errorText = await linkResponse.text();
-      throw new Error(`Link PDF failed (${linkResponse.status}): ${errorText}`);
-    }
-
-    // Create Email Activity
+    // Create Email Activity record with HTML body
     const emailHTML = `
       <!DOCTYPE html>
       <html>
@@ -92,6 +55,7 @@ Deno.serve(async (req) => {
           .header { background: linear-gradient(135deg, #08708E 0%, #065a72 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
           .content { background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
           .message { background: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; }
+          .pdf-link { display: inline-block; background: #08708E; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; margin: 20px 0; }
           .footer { background: #f3f4f6; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; border-radius: 0 0 10px 10px; }
         </style>
       </head>
@@ -105,6 +69,7 @@ Deno.serve(async (req) => {
             <div class="message">
               ${message}
             </div>
+            <a href="${pdfUrl}" class="pdf-link" target="_blank">${pdfLinkLabel || 'View Offer Proposal'}</a>
             <p>If you have any questions, feel free to reach out anytime.</p>
             <p style="margin-top: 30px;">Best regards,<br><strong>${senderName || 'OnTrak Capital'}</strong></p>
           </div>
@@ -116,7 +81,7 @@ Deno.serve(async (req) => {
       </html>
     `;
 
-    // Create Email Activity record
+    // Create Email Activity in Salesforce
     const activityResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/EmailMessage`, {
       method: 'POST',
       headers: {
@@ -127,7 +92,7 @@ Deno.serve(async (req) => {
         ToAddress: recipientEmail,
         Subject: subject,
         HtmlBody: emailHTML,
-        TextBody: 'View email in HTML format',
+        TextBody: 'Please view this email in HTML format to see the offer proposal link.',
         RelatedToId: opportunityId,
         FromName: senderName || 'OnTrak Capital',
         FromAddress: 'info@ontrak.co',
