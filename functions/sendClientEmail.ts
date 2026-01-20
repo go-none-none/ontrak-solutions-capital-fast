@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const { recipientEmail, recipientName, subject, message, senderName, instanceUrl, offers, opportunityId, token } = body;
 
-    if (!recipientEmail || !subject || !message || !instanceUrl || !offers || !opportunityId || !token || !pdfFileName) {
+    if (!recipientEmail || !subject || !message || !offers || !opportunityId) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
