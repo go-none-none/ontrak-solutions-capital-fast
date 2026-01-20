@@ -37,11 +37,31 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
         })
       });
       const data = await response.json();
-      const fileList = data.files || [];
-      setFiles(fileList);
+      const sfFiles = data.files || [];
+      
+      // Load temp files from localStorage
+      const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${recordId}`) || '[]');
+      
+      // Combine SF files with temp files
+      const combinedFiles = [
+        ...tempFiles.map(tf => ({
+          ContentDocumentId: tf.id,
+          ContentDocument: {
+            Title: tf.name.replace(/\.[^/.]+$/, ''),
+            FileExtension: tf.name.split('.').pop(),
+            ContentSize: tf.size,
+            CreatedDate: tf.uploadedAt
+          },
+          isTemp: true,
+          tempUrl: tf.url
+        })),
+        ...sfFiles
+      ];
+      
+      setFiles(combinedFiles);
       
       // Get unparsed PDFs and notify parent
-      const unparsedPdfs = fileList.filter(file => {
+      const unparsedPdfs = combinedFiles.filter(file => {
         const isPdf = file.ContentDocument?.FileExtension?.toLowerCase() === 'pdf';
         const hasStatement = statements.some(stmt => stmt.csbs__Source_File_ID__c === file.ContentDocumentId);
         return isPdf && !hasStatement;
@@ -60,27 +80,20 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
 
     setUploading(true);
     try {
-      // Convert file to base64
-      const reader = new FileReader();
-      const base64Promise = new Promise((resolve, reject) => {
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      // Upload to Base44 storage only (not Salesforce yet)
+      const uploadResponse = await base44.integrations.Core.UploadFile({ file });
       
-      const base64Data = await base64Promise;
-
-      await fetch('/api/apps/6932157da76cc7fc545d1203/functions/uploadSalesforceFile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fileName: file.name,
-          fileData: base64Data,
-          recordId: recordId,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
+      // Store file metadata in temp storage (will link to SF when statement is saved)
+      const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${recordId}`) || '[]');
+      tempFiles.push({
+        id: `temp_${Date.now()}`,
+        name: file.name,
+        url: uploadResponse.file_url,
+        size: file.size,
+        type: file.type,
+        uploadedAt: new Date().toISOString()
       });
+      localStorage.setItem(`temp_files_${recordId}`, JSON.stringify(tempFiles));
       
       await loadFiles();
       if (onFileUploaded) onFileUploaded();
@@ -118,6 +131,12 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
   };
 
   const handleViewFile = (file) => {
+    if (file.isTemp) {
+      // Open temp file in new tab
+      window.open(file.tempUrl, '_blank');
+      return;
+    }
+    
     const doc = file.ContentDocument;
     const ext = doc.FileExtension?.toLowerCase();
     const isPdf = ext === 'pdf' || doc.Title?.toLowerCase().endsWith('.pdf');
@@ -174,22 +193,31 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
     }
   };
 
-  const handleDeleteFile = async (contentDocumentId, fileName) => {
+  const handleDeleteFile = async (file, fileName) => {
     if (!confirm(`Are you sure you want to delete "${fileName}"? This cannot be undone.`)) {
       return;
     }
 
+    const contentDocumentId = file.ContentDocumentId;
     setDeleting(contentDocumentId);
     try {
-      await fetch('/api/apps/6932157da76cc7fc545d1203/functions/deleteSalesforceFile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contentDocumentId,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
-      });
+      if (file.isTemp) {
+        // Remove from localStorage
+        const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${recordId}`) || '[]');
+        const filtered = tempFiles.filter(tf => tf.id !== contentDocumentId);
+        localStorage.setItem(`temp_files_${recordId}`, JSON.stringify(filtered));
+      } else {
+        // Delete from Salesforce
+        await fetch('/api/apps/6932157da76cc7fc545d1203/functions/deleteSalesforceFile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contentDocumentId,
+            token: session.token,
+            instanceUrl: session.instanceUrl
+          })
+        });
+      }
       
       await loadFiles();
       if (onFileUploaded) onFileUploaded();
@@ -431,7 +459,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => handleDeleteFile(file.ContentDocumentId, doc.Title)}
+                        onClick={() => handleDeleteFile(file, doc.Title)}
                         disabled={deleting === file.ContentDocumentId}
                         title="Delete file"
                         className="text-red-600 hover:text-red-700 hover:bg-red-50"

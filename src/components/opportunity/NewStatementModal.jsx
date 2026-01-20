@@ -84,33 +84,45 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
   const parseExistingFile = async (file) => {
     setParsingFile(true);
     try {
-      const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contentDocumentId: file.ContentDocumentId,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
-      });
+      let fileUrl;
+      let fileId = file.ContentDocumentId;
+      
+      // Check if it's a temp file
+      if (file.tempFileUrl) {
+        fileUrl = file.tempFileUrl;
+      } else {
+        const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contentDocumentId: file.ContentDocumentId,
+            token: session.token,
+            instanceUrl: session.instanceUrl
+          })
+        });
 
-      if (!response.ok) throw new Error('Failed to fetch file');
+        if (!response.ok) throw new Error('Failed to fetch file');
 
-      const data = await response.json();
-      const base64Data = data.file;
+        const data = await response.json();
+        const base64Data = data.file;
 
-      // Create File from base64
-      const binaryString = atob(base64Data);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+        // Create File from base64
+        const binaryString = atob(base64Data);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        const pdfFile = new File([bytes], file.ContentDocument.Title + '.pdf', { type: 'application/pdf' });
+
+        const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfFile });
+        fileUrl = uploadResponse.file_url;
       }
-      const pdfFile = new File([bytes], file.ContentDocument.Title + '.pdf', { type: 'application/pdf' });
 
-      const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfFile });
-      const fileUrl = uploadResponse.file_url;
-
-      setFormData(prev => ({ ...prev, csbs__Source_File_ID__c: file.ContentDocumentId }));
+      setFormData(prev => ({ 
+        ...prev, 
+        tempFileUrl: file.tempFileUrl || null,
+        csbs__Source_File_ID__c: file.isTemp ? null : fileId 
+      }));
       
       const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
       
