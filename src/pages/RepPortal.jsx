@@ -306,63 +306,53 @@ export default function RepPortal() {
         instanceUrl: sessionData.instanceUrl 
       });
 
-      const [leadsRes, oppsRes, tasksRes] = await Promise.all([
-                        base44.functions.invoke('getRepLeads', {
-                          userId: sessionData.userId,
-                          token: sessionData.token,
-                          instanceUrl: sessionData.instanceUrl
-                        }),
-                        base44.functions.invoke('getRepOpportunities', {
-                          userId: sessionData.userId,
-                          token: sessionData.token,
-                          instanceUrl: sessionData.instanceUrl
-                        }),
-                        base44.functions.invoke('getSalesforceTasks', {
-                          userId: sessionData.userId,
-                          token: sessionData.token,
-                          instanceUrl: sessionData.instanceUrl
-                        })
-                      ]);
-
-              setLeads(leadsRes.data.leads || []);
-              setOpportunities(oppsRes.data.opportunities || []);
-              setTasks(tasksRes.data);
-
-              // Load contacts separately with error handling
-              try {
-                console.log('Loading contacts for userId:', sessionData.userId);
-                const contactsRes = await base44.functions.invoke('getRepContacts', {
-                  userId: sessionData.userId,
-                  token: sessionData.token,
-                  instanceUrl: sessionData.instanceUrl
-                });
-                console.log('Contacts response:', contactsRes.data);
-                console.log('Contacts count:', contactsRes.data.contacts?.length || 0);
-                console.log('First contact:', contactsRes.data.contacts?.[0]);
-                setContacts(contactsRes.data.contacts || []);
-              } catch (error) {
-                console.error('Contacts load error:', error);
-                console.error('Error response:', error.response?.data);
-                setContacts([]);
-              }
-              setLoadingContacts(false);
-      setLoadingTasks(false);
-
-      // Load disposition options separately so it doesn't break the main data load
-      try {
-        const dispositionRes = await base44.functions.invoke('getSalesforcePicklistValues', {
+      // Load ALL data in parallel
+      const [leadsRes, oppsRes, tasksRes, contactsRes, dispositionRes] = await Promise.all([
+        base44.functions.invoke('getRepLeads', {
+          userId: sessionData.userId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getRepOpportunities', {
+          userId: sessionData.userId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforceTasks', {
+          userId: sessionData.userId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }),
+        base44.functions.invoke('getRepContacts', {
+          userId: sessionData.userId,
+          token: sessionData.token,
+          instanceUrl: sessionData.instanceUrl
+        }).catch(error => {
+          console.error('Contacts load error:', error);
+          return { data: { contacts: [] } };
+        }),
+        base44.functions.invoke('getSalesforcePicklistValues', {
           objectType: 'Lead',
           fieldName: 'Call_Disposition__c',
           token: sessionData.token,
           instanceUrl: sessionData.instanceUrl
-        });
-        setDispositionOptions(dispositionRes.data.values || []);
-      } catch (err) {
-        console.error('Load disposition error:', err);
-      }
+        }).catch(err => {
+          console.error('Load disposition error:', err);
+          return { data: { values: [] } };
+        })
+      ]);
+
+      setLeads(leadsRes.data.leads || []);
+      setOpportunities(oppsRes.data.opportunities || []);
+      setTasks(tasksRes.data);
+      setContacts(contactsRes.data.contacts || []);
+      setDispositionOptions(dispositionRes.data.values || []);
+      setLoadingContacts(false);
+      setLoadingTasks(false);
     } catch (error) {
       console.error('Load error:', error);
       setLoadingTasks(false);
+      setLoadingContacts(false);
     } finally {
       if (isRefresh) {
         setRefreshing(false);
