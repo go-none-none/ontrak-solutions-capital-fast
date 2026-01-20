@@ -177,14 +177,22 @@ export default function OpportunityDetail() {
       setDebt(debtRes.data.debt || []);
       setCommissions(commissionsRes.data.commissions || []);
       
-      // Load PDF URLs for statements
+      // Load PDF URLs and timestamps from Base44
       if (sortedStatements.length > 0) {
         const pdfRecords = await base44.entities.StatementPdf.list();
         const pdfMap = {};
+        const timestampMap = {};
         pdfRecords.forEach(record => {
           pdfMap[record.salesforce_statement_id] = record.pdf_url;
+          timestampMap[record.salesforce_statement_id] = record.created_date;
         });
         setStatementPdfs(pdfMap);
+        // Store timestamps in statements
+        const statementsWithTimestamps = sortedStatements.map(stmt => ({
+          ...stmt,
+          pdfCreatedDate: timestampMap[stmt.Id]
+        }));
+        setStatements(statementsWithTimestamps);
       }
     } catch (error) {
       console.error('Load related records error:', error);
