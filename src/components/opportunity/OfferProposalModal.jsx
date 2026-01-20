@@ -297,41 +297,40 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         {/* Step 3: Compose Email */}
         {step === 3 && (
           <div className="space-y-4">
-            <h3 className="font-semibold text-slate-900">Compose Message</h3>
+            <h3 className="font-semibold text-slate-900">Offer Proposal</h3>
             
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
               <p className="text-sm text-blue-800">
-                The PDF Link will activate after you click "Send".
+                Please note the PDF Link will not work on this screen. The PDF Link will not become active until "Send" is clicked.
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="space-y-3 text-sm">
               <div>
-                <p className="text-slate-600">To</p>
-                <p className="font-medium">{emailData.to}</p>
+                <p className="text-slate-600 font-medium">To</p>
+                <p className="text-slate-900">{emailData.to}</p>
               </div>
               {emailData.cc && (
                 <div>
-                  <p className="text-slate-600">CC</p>
-                  <p className="font-medium">{emailData.cc}</p>
+                  <p className="text-slate-600 font-medium">CC</p>
+                  <p className="text-slate-900">{emailData.cc}</p>
                 </div>
               )}
+              <div>
+                <p className="text-slate-600 font-medium">Subject</p>
+                <p className="text-slate-900">{emailData.subject}</p>
+              </div>
             </div>
 
             <div>
-              <p className="text-slate-600 text-sm mb-2">Subject</p>
-              <p className="font-medium text-slate-900">{emailData.subject}</p>
-            </div>
-
-            <div>
-              <Label htmlFor="body" className="mb-2 block">*Email Body</Label>
+              <Label htmlFor="body" className="mb-2 block font-medium">*Email Body</Label>
               <ReactQuill
                 theme="snow"
                 value={emailData.body}
                 onChange={(content) => setEmailData({ ...emailData, body: content })}
                 modules={modules}
                 className="bg-white"
-                style={{ height: '300px', marginBottom: '40px' }}
+                style={{ height: '350px', marginBottom: '50px' }}
               />
             </div>
           </div>
