@@ -137,7 +137,8 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         token: session.token,
         instanceUrl: session.instanceUrl,
         offers: selected,
-        opportunityId: opportunity.Id
+        opportunityId: opportunity.Id,
+        pdfFileName: pdfData.fileName
       });
 
       setSent(true);
