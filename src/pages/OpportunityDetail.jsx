@@ -71,7 +71,7 @@ export default function OpportunityDetail() {
 
   const openPdfViewer = async (url) => {
     const proxyUrl = `/api/apps/6932157da76cc7fc545d1203/functions/proxyPdf?url=${encodeURIComponent(url)}`;
-    setViewingPdfUrl(proxyUrl);
+    window.open(proxyUrl, '_blank');
   };
 
   const { removeNotification, notifications } = useContext(NotificationContext);
