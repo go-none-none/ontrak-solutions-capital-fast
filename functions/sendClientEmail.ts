@@ -13,21 +13,14 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
-    const { recipientEmail, recipientName, subject, message, senderName, instanceUrl, offers, opportunityId } = body;
+    const { recipientEmail, recipientName, subject, message, senderName, instanceUrl, offers, opportunityId, token } = body;
 
-    if (!recipientEmail || !subject || !message || !instanceUrl || !offers || !opportunityId) {
+    if (!recipientEmail || !subject || !message || !instanceUrl || !offers || !opportunityId || !token) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     console.log('Starting to send email to:', recipientEmail);
-
-    // Get fresh Salesforce token via connector
-    const token = await base44.asServiceRole.connectors.getAccessToken("salesforce");
-    if (!token) {
-      return Response.json({ error: 'Salesforce connector not authorized' }, { status: 401 });
-    }
 
     // Build offers table for email
     const offersHTML = offers.map((offer, idx) => `
