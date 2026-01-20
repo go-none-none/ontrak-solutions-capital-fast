@@ -78,9 +78,6 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
   };
 
   const handleClose = () => {
-    if (pdfData) {
-      URL.revokeObjectURL(pdfData);
-    }
     setPdfData(null);
     setError(null);
     onClose();
