@@ -24,6 +24,7 @@ import RecordHistoryModal from '../components/rep/RecordHistoryModal';
 import NewOfferModal from '../components/opportunity/NewOfferModal';
 import NewCommissionModal from '../components/opportunity/NewCommissionModal';
 import StatementAnalysisDashboard from '../components/opportunity/StatementAnalysisDashboard';
+import StatementPdfViewer from '../components/opportunity/StatementPdfViewer';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ export default function OpportunityDetail() {
   const [deletingRecord, setDeletingRecord] = useState(null);
   const [previewingStatement, setPreviewingStatement] = useState(null);
   const [fileManagerFiles, setFileManagerFiles] = useState([]);
+  const [viewingStatementPdf, setViewingStatementPdf] = useState(null);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -805,6 +807,17 @@ export default function OpportunityDetail() {
                             <p className="text-xs text-slate-500">{stmt.csbs__Account_No__c}</p>
                           </div>
                           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                             {stmt.csbs__Source_File_ID__c && (
+                               <Button
+                                 variant="ghost"
+                                 size="sm"
+                                 onClick={() => setViewingStatementPdf(stmt)}
+                                 className="h-8 px-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                                 title="View original PDF"
+                               >
+                                 <Eye className="w-4 h-4" />
+                               </Button>
+                             )}
                              <Button
                                variant="ghost"
                                size="sm"
@@ -1588,6 +1601,14 @@ export default function OpportunityDetail() {
           loadRelatedRecords(session, oppId);
           setEditingCommission(null);
         }}
+      />
+
+      {/* Statement PDF Viewer */}
+      <StatementPdfViewer
+        statement={viewingStatementPdf}
+        session={session}
+        isOpen={!!viewingStatementPdf}
+        onClose={() => setViewingStatementPdf(null)}
       />
       </div>
       );

@@ -387,20 +387,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
 
         {isParsed && (
           <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-green-900">Extracted Data Preview</h3>
-              {parsedFileUrl && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.open(parsedFileUrl, '_blank')}
-                  className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                >
-                  View Original PDF
-                </Button>
-              )}
-            </div>
+            <h3 className="text-sm font-semibold text-green-900 mb-4">Extracted Data Preview</h3>
             <div className="grid grid-cols-4 gap-3 text-xs">
               <div>
                 <p className="text-green-700 font-medium">Bank Name</p>
