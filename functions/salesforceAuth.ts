@@ -63,32 +63,6 @@ Deno.serve(async (req) => {
       const userInfo = await userInfoResponse.json();
       const subParts = userInfo.sub.split('/');
       const userId = subParts[subParts.length - 1];
-      console.log('Auth Debug - Raw sub:', userInfo.sub);
-      console.log('Auth Debug - Extracted userId:', userId);
-      console.log('Auth Debug - User email:', userInfo.email);
-      console.log('Auth Debug - Access token type:', typeof tokenData.access_token);
-      console.log('Auth Debug - Access token length:', tokenData.access_token?.length);
-      
-      // Check if user is admin by querying their profile
-      const profileResponse = await fetch(
-        `${tokenData.instance_url}/services/data/v58.0/query?q=${encodeURIComponent(
-          `SELECT Profile.Name FROM User WHERE Id = '${userId}'`
-        )}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${tokenData.access_token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      let isAdmin = false;
-      if (profileResponse.ok) {
-        const profileData = await profileResponse.json();
-        const profileName = profileData.records?.[0]?.Profile?.Name || '';
-        isAdmin = profileName.toLowerCase().includes('system administrator') || 
-                  profileName.toLowerCase().includes('admin');
-      }
       
       const responseData = {
         userId: userId,
@@ -96,9 +70,8 @@ Deno.serve(async (req) => {
         name: userInfo.name,
         instanceUrl: tokenData.instance_url,
         token: tokenData.access_token,
-        isAdmin
+        isAdmin: false
       };
-      console.log('Auth Debug - Sending response:', { userId, email: userInfo.email, instanceUrl: tokenData.instance_url, tokenLength: tokenData.access_token?.length });
       return Response.json(responseData);
     }
     
