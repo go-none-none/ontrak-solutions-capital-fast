@@ -10,7 +10,7 @@ import { Loader2, Plus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import CreateLenderModal from './CreateLenderModal';
 
-export default function NewDebtModal({ isOpen, onClose, opportunityId, session, onSuccess }) {
+export default function NewDebtModal({ isOpen, onClose, opportunityId, session, onSuccess, debt }) {
   const [loading, setLoading] = useState(false);
   const [loadingPicklists, setLoadingPicklists] = useState(true);
   const [typePicklist, setTypePicklist] = useState([]);
@@ -32,8 +32,21 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
   useEffect(() => {
     if (isOpen) {
       loadPicklists();
+      if (debt) {
+        setFormData({
+          creditorId: debt.csbs__Creditor__c || '',
+          balance: debt.csbs__Balance__c || '',
+          lender: debt.csbs__Lender__c || '',
+          estimatedMonthlyMCA: debt.csbs__Estimated_Monthly_MCA_Amount__c || '',
+          openPosition: debt.csbs__Open_Position__c || false,
+          notes: debt.csbs__Notes__c || '',
+          type: debt.csbs__Type__c || '',
+          payment: debt.csbs__Payment__c || '',
+          frequency: debt.csbs__Frequency__c || ''
+        });
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, debt]);
 
   const loadPicklists = async () => {
     setLoadingPicklists(true);
