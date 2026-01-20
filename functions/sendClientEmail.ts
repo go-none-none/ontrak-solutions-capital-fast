@@ -45,24 +45,40 @@ Deno.serve(async (req) => {
       </html>
     `;
 
-    // Use Salesforce to send email via SingleEmailMessage
-    const response = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/EmailMessage`, {
+    // Use Salesforce Tooling API to send email
+    const soapRequest = `<?xml version="1.0" encoding="utf-8"?>
+      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:met="http://soap.sforce.com/2006/04/metadata">
+        <soapenv:Header>
+          <met:SessionHeader>
+            <met:sessionId>${token}</met:sessionId>
+          </met:SessionHeader>
+        </soapenv:Header>
+        <soapenv:Body>
+          <met:sendEmail>
+            <met:request>
+              <met:lists>
+                <met:toAddresses>${recipientEmail}</met:toAddresses>
+              </met:lists>
+              <met:subject>${subject}</met:subject>
+              <met:plainTextBody>View this email in HTML format.</met:plainTextBody>
+              <met:htmlBody><![CDATA[${emailHTML}]]></met:htmlBody>
+            </met:request>
+          </met:sendEmail>
+        </soapenv:Body>
+      </soapenv:Envelope>`;
+
+    const response = await fetch(`${instanceUrl}/services/Soap/m/57.0`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'text/xml; charset=UTF-8',
+        'SOAPAction': 'sendEmail'
       },
-      body: JSON.stringify({
-        ToAddress: recipientEmail,
-        Subject: subject,
-        HtmlBody: emailHTML,
-        ValidatedFromAddress: null
-      })
+      body: soapRequest
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData[0]?.message || 'Failed to send email via Salesforce');
+    const responseText = await response.text();
+    if (!response.ok || responseText.includes('faultstring')) {
+      throw new Error('Failed to send email via Salesforce');
     }
 
     return Response.json({ success: true });
