@@ -192,7 +192,9 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       if (fileContentDocumentId) {
         setFormData(prev => ({ ...prev, csbs__Source_File_ID__c: fileContentDocumentId }));
       }
-      
+
+      setParsedFileUrl(fileUrl);
+
       const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
       
       if (parseResponse.data.success && parseResponse.data.data) {
