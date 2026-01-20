@@ -1,8 +1,7 @@
-import { jsPDF } from 'npm:jspdf@4.0.0';
-
 Deno.serve(async (req) => {
   try {
-    const { recipientEmail, recipientName, subject, message, senderName, token, instanceUrl, offers, opportunityId, pdfLinkLabel } = await req.json();
+    const body = await req.json();
+    const { recipientEmail, recipientName, subject, message, senderName, token, instanceUrl, offers, opportunityId, pdfLinkLabel } = body;
 
     if (!recipientEmail || !subject || !message || !token || !instanceUrl || !offers || !opportunityId) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
