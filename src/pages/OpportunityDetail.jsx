@@ -66,6 +66,7 @@ export default function OpportunityDetail() {
   const [fileManagerFiles, setFileManagerFiles] = useState([]);
   const [viewingStatementPdf, setViewingStatementPdf] = useState(null);
   const [statementPdfs, setStatementPdfs] = useState({});
+  const [viewingPdfUrl, setViewingPdfUrl] = useState(null);
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -822,7 +823,7 @@ export default function OpportunityDetail() {
                                <Button
                                  variant="ghost"
                                  size="sm"
-                                 onClick={() => window.open(statementPdfs[stmt.Id], '_blank')}
+                                 onClick={() => setViewingPdfUrl(statementPdfs[stmt.Id])}
                                  className="h-8 px-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
                                  title="View PDF"
                                >
@@ -1621,6 +1622,30 @@ export default function OpportunityDetail() {
         isOpen={!!viewingStatementPdf}
         onClose={() => setViewingStatementPdf(null)}
       />
+
+      {/* PDF Viewer Modal */}
+      {viewingPdfUrl && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl w-[95vw] h-[95vh] flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h3 className="text-lg font-semibold text-slate-900">Statement PDF</h3>
+              <button
+                onClick={() => setViewingPdfUrl(null)}
+                className="text-slate-500 hover:text-slate-700 text-2xl leading-none"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <iframe
+                src={viewingPdfUrl}
+                className="w-full h-full"
+                title="Statement PDF"
+              />
+            </div>
+          </div>
+        </div>
+      )}
       </div>
       );
       }
