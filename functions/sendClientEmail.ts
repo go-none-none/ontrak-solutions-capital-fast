@@ -164,16 +164,8 @@ Deno.serve(async (req) => {
     doc.setFontSize(9);
     doc.text(`© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.`, 20, yPosition);
 
-    // Upload PDF to Base44 storage
-    const base44 = createClientFromRequest(req);
     const pdfBytes = doc.output('arraybuffer');
-    const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
-    const uploadRes = await base44.integrations.Core.UploadFile({
-      file: pdfBlob
-    });
-
-    const pdfUrl = uploadRes.file_url;
-    const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
+    const pdfBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(pdfBytes)));
 
     const emailHTML = `<!DOCTYPE html>
     <html lang="en">
