@@ -178,6 +178,7 @@ export default function OpportunityDetail() {
           pdfMap[record.salesforce_statement_id] = record.pdf_url;
         });
         setStatementPdfs(pdfMap);
+      }
     } catch (error) {
       console.error('Load related records error:', error);
     } finally {
