@@ -139,15 +139,11 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
 
       // Send email
       await base44.functions.invoke('sendClientEmail', {
-        to: emailData.to,
-        cc: emailData.cc || undefined,
-        bcc: emailData.bcc || undefined,
+        recipientEmail: emailData.to,
+        recipientName: opportunity.Account?.Name || 'Valued Customer',
         subject: emailData.subject,
-        body: emailData.body,
-        recordId: opportunity.Id,
-        recordType: 'Opportunity',
-        token: session.token,
-        instanceUrl: session.instanceUrl
+        message: emailData.body,
+        senderName: session.name || 'OnTrak Capital'
       });
 
       setSent(true);
