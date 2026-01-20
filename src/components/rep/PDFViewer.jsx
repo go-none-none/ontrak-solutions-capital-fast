@@ -11,11 +11,20 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
   useEffect(() => {
     if (isOpen && file) {
       loadPDF();
-    } else {
+    } else if (!isOpen && pdfData && !file?.isTemp) {
+      URL.revokeObjectURL(pdfData);
       setPdfData(null);
       setError(null);
     }
   }, [isOpen, file]);
+  
+  useEffect(() => {
+    return () => {
+      if (pdfData && !file?.isTemp) {
+        URL.revokeObjectURL(pdfData);
+      }
+    };
+  }, [pdfData]);
 
   const loadPDF = async () => {
     setLoading(true);
