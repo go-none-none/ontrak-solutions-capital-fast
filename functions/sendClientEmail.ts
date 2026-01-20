@@ -1,5 +1,6 @@
 import { jsPDF } from 'npm:jspdf@2.5.2';
 import 'npm:jspdf-autotable@3.5.31';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 const SENDGRID_API_KEY = Deno.env.get("SENDGRID_API_KEY");
 const SENDER_EMAIL = "funding@ontrak.co";
@@ -163,8 +164,9 @@ Deno.serve(async (req) => {
     doc.setFontSize(9);
     doc.text(`© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.`, 20, yPosition);
 
+    // Generate base64 for email attachment
     const pdfBytes = doc.output('arraybuffer');
-    const pdfBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(pdfBytes)));
+    const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
 
     const emailHTML = `<!DOCTYPE html>
     <html lang="en">
