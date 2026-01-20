@@ -43,6 +43,11 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   
+  const [pdfData, setPdfData] = useState({
+    linkLabel: '',
+    fileName: ''
+  });
+
   const [emailData, setEmailData] = useState({
     to: contactEmail || '',
     cc: '',
