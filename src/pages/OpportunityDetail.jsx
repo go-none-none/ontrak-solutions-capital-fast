@@ -829,12 +829,12 @@ export default function OpportunityDetail() {
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            <p className="font-semibold text-slate-900">{stmt.csbs__Bank_Name__c || 'Unknown Bank'}</p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <p className="text-xs text-slate-500">{stmt.csbs__Account_No__c}</p>
-                              <p className="text-xs text-slate-400">•</p>
-                              <p className="text-xs text-slate-400">{formatDate(stmt.created_date)}</p>
-                            </div>
+                           <p className="font-semibold text-slate-900">{stmt.csbs__Bank_Name__c || 'Unknown Bank'}</p>
+                           <div className="flex items-center gap-2 mt-1">
+                             <p className="text-xs text-slate-500">{stmt.csbs__Account_No__c}</p>
+                             <p className="text-xs text-slate-400">•</p>
+                             <p className="text-xs text-slate-400">{stmt.pdfCreatedDate ? formatDate(stmt.pdfCreatedDate) : formatDate(stmt.created_date)}</p>
+                           </div>
                           </div>
                           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                              {statementPdfs[stmt.Id] && (
