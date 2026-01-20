@@ -70,7 +70,7 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
     if (pdfData) {
       const a = document.createElement('a');
       a.href = pdfData;
-      a.download = file.ContentDocument.Title + '.pdf';
+      a.download = `${file.ContentDocument.Title}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
