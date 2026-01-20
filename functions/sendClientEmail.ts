@@ -28,15 +28,14 @@ Deno.serve(async (req) => {
     console.log('Starting to send email to:', recipientEmail);
     console.log('Subject:', subject);
 
-    // Clean message - strip HTML tags if present
-    const cleanMessage = message.replace(/<[^>]*>/g, '').trim() || 'Please review the offers below.';
+    const cleanMessage = message.replace(/<[^>]*>/g, '').trim();
 
-    // Generate PDF with professional styling
+    // Generate PDF
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     let yPosition = 0;
 
-    // Header with gradient effect
+    // Header with logo
     doc.setFillColor(8, 112, 142);
     doc.rect(0, 0, pageWidth, 50, 'F');
     doc.setTextColor(255, 255, 255);
@@ -56,28 +55,20 @@ Deno.serve(async (req) => {
     doc.text(`Hi ${recipientName || 'Valued Customer'},`, 20, yPosition);
     yPosition += 12;
 
-    // Message
+    // Introduction about the offer
     doc.setFontSize(11);
     doc.setFont(undefined, 'normal');
-    const cleanMessageLines = doc.splitTextToSize(cleanMessage, 170);
-    doc.text(cleanMessageLines, 20, yPosition);
-    yPosition += cleanMessageLines.length * 5 + 8;
+    const introText = 'Great news! We\'ve secured funding offers specifically tailored for your business. These offers are designed to provide fast access to capital when you need it most, helping you grow, manage cash flow, and seize opportunities.';
+    const introLines = doc.splitTextToSize(introText, 170);
+    doc.text(introLines, 20, yPosition);
+    yPosition += introLines.length * 5 + 8;
 
-    // Time Sensitive Urgency box
-    doc.setFillColor(255, 245, 238);
-    doc.setDrawColor(220, 38, 38);
-    doc.setLineWidth(0.5);
-    doc.rect(20, yPosition, 170, 28, 'FD');
-    doc.setTextColor(220, 38, 38);
-    doc.setFontSize(10);
-    doc.setFont(undefined, 'bold');
-    doc.text('⏰ TIME SENSITIVE - FUNDING AVAILABLE TODAY', 25, yPosition + 6);
-    doc.setTextColor(15, 23, 42);
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(9);
-    const urgencyText = doc.splitTextToSize('These offers expire within 24-48 hours. We can process funding TODAY once you select your preferred offer. Act now to secure your funding.', 160);
-    doc.text(urgencyText, 25, yPosition + 13);
-    yPosition += 32;
+    // Custom message
+    if (cleanMessage) {
+      const messageLines = doc.splitTextToSize(cleanMessage, 170);
+      doc.text(messageLines, 20, yPosition);
+      yPosition += messageLines.length * 5 + 8;
+    }
 
     // Your Offers title
     doc.setTextColor(15, 23, 42);
@@ -103,8 +94,8 @@ Deno.serve(async (req) => {
       head: [tableData[0]],
       body: tableData.slice(1),
       headStyles: {
-        fillColor: [240, 240, 240],
-        textColor: [15, 23, 42],
+        fillColor: [8, 112, 142],
+        textColor: [255, 255, 255],
         fontStyle: 'bold',
         fontSize: 10
       },
@@ -114,7 +105,7 @@ Deno.serve(async (req) => {
         fontSize: 10
       },
       alternateRowStyles: {
-        fillColor: [250, 250, 250]
+        fillColor: [240, 248, 255]
       },
       margin: { left: 20, right: 20 },
       columnStyles: {
@@ -128,20 +119,21 @@ Deno.serve(async (req) => {
 
     yPosition = doc.lastAutoTable.finalY + 15;
 
-    // Questions box
-    doc.setFillColor(240, 249, 255);
-    doc.setDrawColor(8, 112, 142);
+    // Time Sensitive Urgency box
+    doc.setFillColor(255, 245, 238);
+    doc.setDrawColor(220, 38, 38);
     doc.setLineWidth(0.5);
-    doc.rect(20, yPosition, 170, 22, 'FD');
-    doc.setTextColor(8, 112, 142);
+    doc.rect(20, yPosition, 170, 32, 'FD');
+    doc.setTextColor(220, 38, 38);
     doc.setFontSize(10);
     doc.setFont(undefined, 'bold');
-    doc.text('❓ QUESTIONS?', 25, yPosition + 6);
+    doc.text('⏰ TIME SENSITIVE - ACT NOW FOR SAME-DAY FUNDING', 25, yPosition + 6);
     doc.setTextColor(15, 23, 42);
     doc.setFont(undefined, 'normal');
     doc.setFontSize(9);
-    doc.text('I\'m here to help! Feel free to reach out if you need any clarification on these offers.', 25, yPosition + 13);
-    yPosition += 28;
+    const urgencyText = doc.splitTextToSize('These offers expire within 24-48 hours. Once you select your preferred offer, we can process funding and get money to your account TODAY. Don\'t miss this opportunity—respond immediately to lock in your funding.', 160);
+    doc.text(urgencyText, 25, yPosition + 13);
+    yPosition += 36;
 
     // Footer
     doc.setDrawColor(226, 232, 240);
@@ -184,7 +176,7 @@ Deno.serve(async (req) => {
 
           <!-- Header -->
           <tr>
-              <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 30px 30px 20px 30px; text-align: center;">
+              <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
                   <img src="https://ontrak.co/logo.png" alt="OnTrak Capital" style="height: 40px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;" />
                   <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Your Offer Proposal</h1>
               </td>
@@ -195,28 +187,38 @@ Deno.serve(async (req) => {
               <td style="padding: 40px 30px;">
                   <p style="color: #0f172a; font-size: 18px; margin: 0 0 20px 0; font-weight: 600;">Hi ${recipientName || 'Valued Customer'},</p>
 
-                  <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                      ${cleanMessage}
+                  <p style="color: #64748b; font-size: 15px; line-height: 1.8; margin: 0 0 20px 0;">
+                      Great news! We've secured funding offers specifically tailored for your business. These offers are designed to provide fast access to capital when you need it most, helping you grow, manage cash flow, and seize opportunities.
                   </p>
 
-                  <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #fff5ee 0%, #fee2e2 100%); border-left: 4px solid #dc2626; border-radius: 8px; margin: 30px 0; border-collapse: collapse;">
-                      <tr>
-                          <td style="padding: 20px;">
-                              <p style="color: #dc2626; font-size: 14px; font-weight: 700; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">⏰ TIME SENSITIVE - FUNDING AVAILABLE TODAY</p>
-                              <p style="color: #0f172a; font-size: 14px; line-height: 1.6; margin: 0;"><strong>Act immediately!</strong> These offers expire within 24-48 hours. We can process your funding and get money to you TODAY once you select your preferred option. Don't delay—respond now to move forward.</p>
-                          </td>
+                  ${cleanMessage ? `<p style="color: #64748b; font-size: 15px; line-height: 1.8; margin: 0 0 30px 0;">${cleanMessage}</p>` : ''}
+
+                  <h3 style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 30px 0 20px 0;">Your Offers</h3>
+
+                  <table width="100%" cellpadding="12" cellspacing="0" style="background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
+                      <tr style="background-color: #08708E;">
+                          <td style="color: #ffffff; font-weight: bold; font-size: 13px; border-radius: 12px 0 0 0;">Offer</td>
+                          <td style="color: #ffffff; font-weight: bold; font-size: 13px;">Lender</td>
+                          <td style="color: #ffffff; font-weight: bold; font-size: 13px;">Funded Amount</td>
+                          <td style="color: #ffffff; font-weight: bold; font-size: 13px;">Payment Amount</td>
+                          <td style="color: #ffffff; font-weight: bold; font-size: 13px; border-radius: 0 12px 0 0;">Term</td>
                       </tr>
+                      ${offers.map((offer, idx) => `
+                      <tr style="border-top: 1px solid #e2e8f0; background-color: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+                          <td style="color: #0f172a; font-size: 13px; font-weight: 500;">Offer ${idx + 1}</td>
+                          <td style="color: #0f172a; font-size: 13px;">${offer.csbs__Lender__c || 'Unknown'}</td>
+                          <td style="color: #0f172a; font-size: 13px; font-weight: 600;">$${Number(offer.csbs__Funded__c).toLocaleString()}</td>
+                          <td style="color: #0f172a; font-size: 13px;">$${Number(offer.csbs__Payment_Amount__c).toLocaleString()} ${offer.csbs__Payment_Frequency__c}</td>
+                          <td style="color: #0f172a; font-size: 13px;">${offer.csbs__Term__c} months</td>
+                      </tr>
+                      `).join('')}
                   </table>
 
-                  <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
-
-                  <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 20px 0;">
+                  <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #fff5ee 0%, #fee2e2 100%); border-left: 5px solid #dc2626; border-radius: 12px; margin: 30px 0; border-collapse: collapse;">
                       <tr>
-                          <td style="padding: 20px; background-color: #f0f9ff; border-radius: 12px;">
-                              <p style="color: #0f172a; font-size: 15px; font-weight: 600; margin: 0 0 10px 0;">❓ Questions?</p>
-                              <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
-                                  I'm here to help! Feel free to reach out if you need any clarification on these offers.
-                              </p>
+                          <td style="padding: 25px;">
+                              <p style="color: #dc2626; font-size: 15px; font-weight: 700; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px;">⏰ TIME SENSITIVE - ACT NOW FOR SAME-DAY FUNDING</p>
+                              <p style="color: #0f172a; font-size: 14px; line-height: 1.7; margin: 0;"><strong>These offers expire within 24-48 hours.</strong> Once you select your preferred offer, we can process funding and get money to your account TODAY. Don't miss this opportunity—respond immediately to lock in your funding.</p>
                           </td>
                       </tr>
                   </table>
@@ -226,9 +228,9 @@ Deno.serve(async (req) => {
           <!-- Footer -->
           <tr>
               <td style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
-                  <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Best regards,</p>
-                  <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">${senderName || 'OnTrak Capital'}</p>
-                  <p style="color: #64748b; font-size: 14px; margin: 0 0 15px 0;">Funding Specialist</p>
+                  <p style="color: #0f172a; font-size: 15px; font-weight: 600; margin: 0 0 4px 0;">Best regards,</p>
+                  <p style="color: #0f172a; font-size: 15px; font-weight: 600; margin: 0 0 4px 0;">${senderName || 'OnTrak Capital'}</p>
+                  <p style="color: #64748b; font-size: 13px; margin: 0 0 15px 0;">Funding Specialist</p>
                   <p style="color: #94a3b8; font-size: 12px; margin: 15px 0 0 0; line-height: 1.6;">
                       © ${new Date().getFullYear()} OnTrak Capital. All rights reserved.
                   </p>
@@ -242,7 +244,7 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-    // Send email via SendGrid with PDF attachment
+    // Send email via SendGrid
     console.log('Sending email via SendGrid...');
     const sendResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
       method: 'POST',
@@ -274,10 +276,9 @@ Deno.serve(async (req) => {
       throw new Error(`SendGrid API error: ${JSON.stringify(errorData)}`);
     }
 
-    // Upload PDF to Salesforce as ContentVersion and link to opportunity
+    // Upload PDF to Salesforce
     if (token && instanceUrl) {
       try {
-        // Create ContentVersion
         const contentVersionResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/ContentVersion`, {
           method: 'POST',
           headers: {
@@ -296,7 +297,6 @@ Deno.serve(async (req) => {
           const contentVersionData = await contentVersionResponse.json();
           const contentDocumentId = contentVersionData.ContentDocumentId || contentVersionData.id;
 
-          // Link ContentDocument to Opportunity
           await fetch(`${instanceUrl}/services/data/v59.0/sobjects/ContentDocumentLink`, {
             method: 'POST',
             headers: {
@@ -308,29 +308,30 @@ Deno.serve(async (req) => {
               LinkedEntityId: opportunityId,
               ShareType: 'V'
             })
-          }).catch(err => console.warn('Could not link document to opportunity:', err.message));
-        } else {
-          console.warn('Could not create ContentVersion');
+          }).catch(err => console.warn('Could not link document:', err.message));
         }
       } catch (err) {
         console.warn('Could not upload PDF to Salesforce:', err.message);
       }
 
-      // Log email as activity in Salesforce
-      await fetch(`${instanceUrl}/services/data/v59.0/sobjects/EmailMessage`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ToAddress: recipientEmail,
-          Subject: subject,
-          HtmlBody: emailHTML,
-          RelatedToId: opportunityId,
-          Status: '3'
-        })
-      }).catch(err => console.warn('Could not log activity:', err.message));
+      try {
+        await fetch(`${instanceUrl}/services/data/v59.0/sobjects/EmailMessage`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ToAddress: recipientEmail,
+            Subject: subject,
+            HtmlBody: emailHTML,
+            RelatedToId: opportunityId,
+            Status: '3'
+          })
+        });
+      } catch (err) {
+        console.warn('Could not log activity:', err.message);
+      }
     }
 
     console.log('Email sent successfully');
