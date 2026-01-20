@@ -20,9 +20,17 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
   const loadPDF = async () => {
     setLoading(true);
     setError(null);
+    setPdfData(null);
     
     try {
-      // Direct fetch to avoid base44 auth check
+      // Check if it's a temp file
+      if (file.isTemp && file.tempUrl) {
+        setPdfData(file.tempUrl);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch from Salesforce
       const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
         method: 'POST',
         headers: {
@@ -45,16 +53,17 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
         throw new Error('No file content received');
       }
 
-      // Create blob from base64
+      // Create blob from base64 with proper handling
       const base64 = data.file;
-      const binaryString = atob(base64);
-      const bytes = new Uint8Array(binaryString.length);
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
       
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       
-      const blob = new Blob([bytes], { type: 'application/pdf' });
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       
       setPdfData(url);
