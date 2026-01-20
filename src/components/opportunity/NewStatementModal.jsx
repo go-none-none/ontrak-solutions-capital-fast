@@ -21,6 +21,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
   const [uploadingFile, setUploadingFile] = useState(false);
   const [parsingFile, setParsingFile] = useState(false);
   const [isParsed, setIsParsed] = useState(false);
+  const [parsedFileUrl, setParsedFileUrl] = useState(null);
   
   const [formData, setFormData] = useState({
     accountNo: '',
