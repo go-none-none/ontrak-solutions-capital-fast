@@ -9,13 +9,15 @@ Deno.serve(async (req) => {
     }
 
     const query = `
-      SELECT Id, Name, csbs__Account_No__c, csbs__Ending_Date__c, csbs__Starting_Balance__c,
+      SELECT Id, Name, csbs__Bank_Name__c, csbs__Account_No__c, csbs__Account_Title__c,
+             csbs__Starting_Date__c, csbs__Ending_Date__c, csbs__Starting_Balance__c,
              csbs__Ending_Balance__c, csbs__Average_Daily_Balance__c, csbs__Deposit_Amount__c,
-             csbs__Deposit_Count__c, csbs__NSFs__c, csbs__Negative_Days__c, csbs__Notes__c,
+             csbs__Deposit_Count__c, csbs__Total_Withdrawals__c, csbs__Withdrawals_Count__c,
+             csbs__NSFs__c, csbs__Negative_Days__c, csbs__Reconciled__c, csbs__Notes__c,
              CreatedDate, LastModifiedDate
       FROM csbs__Statement__c
       WHERE csbs__Opportunity__c = '${opportunityId}'
-      ORDER BY csbs__Ending_Date__c DESC
+      ORDER BY csbs__Starting_Date__c DESC
     `;
 
     const response = await fetch(
