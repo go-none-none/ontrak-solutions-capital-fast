@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
           <div class="content">
             <p>Hi ${recipientName || 'there'},</p>
             <div class="message">
-              ${message.replace(/\n/g, '<br>')}
+              ${message}
             </div>
             <p>If you have any questions, feel free to reach out anytime.</p>
             <p style="margin-top: 30px;">Best regards,<br><strong>${user.full_name}</strong><br>OnTrak Capital</p>
