@@ -55,7 +55,9 @@ Deno.serve(async (req) => {
     });
 
     if (!uploadResponse.ok) {
-      throw new Error('Failed to upload PDF to Salesforce');
+      const errorData = await uploadResponse.text();
+      console.error('Upload error response:', errorData);
+      throw new Error(`Failed to upload PDF to Salesforce: ${uploadResponse.status} ${errorData}`);
     }
 
     const uploadData = await uploadResponse.json();
