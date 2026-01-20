@@ -8,8 +8,8 @@ Deno.serve(async (req) => {
     
     console.log('Parsing bank statement from:', fileUrl);
 
-    // Use InvokeLLM with file attachment to analyze the bank statement
-    const result = await base44.integrations.Core.InvokeLLM({
+    // Use InvokeLLM with service role (no user auth required for parsing)
+    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: `Analyze this bank statement PDF comprehensively and extract ALL of the following information:
 
 ACCOUNT INFORMATION:
