@@ -52,7 +52,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
     to: contactEmail || '',
     cc: '',
     bcc: '',
-    subject: 'Offer Proposal',
+    subject: 'Your Offer Proposal',
     body: ''
   });
 
@@ -66,7 +66,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         to: contactEmail || '',
         cc: '',
         bcc: '',
-        subject: 'Offer Proposal',
+        subject: 'Your Offer Proposal',
         body: ''
       });
     }
