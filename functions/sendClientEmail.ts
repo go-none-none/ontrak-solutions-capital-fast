@@ -1,11 +1,24 @@
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      }
+    });
+  }
+
   try {
-    const body = await req.json();
-    const { recipientEmail, recipientName, subject, message, senderName, token, instanceUrl, offers, opportunityId, pdfLinkLabel } = body;
+    const body = await req.json().catch(() => ({}));
+    const { recipientEmail, recipientName, subject, message, senderName, token, instanceUrl, offers, opportunityId } = body;
 
     if (!recipientEmail || !subject || !message || !token || !instanceUrl || !offers || !opportunityId) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
+
+    console.log('Starting to send email to:', recipientEmail);
 
     // Build offers table for email
     const offersHTML = offers.map((offer, idx) => `
@@ -72,6 +85,8 @@ Deno.serve(async (req) => {
       </html>
     `;
 
+    console.log('Creating EmailMessage in Salesforce...');
+
     // Create Email Activity in Salesforce
     const activityResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/EmailMessage`, {
       method: 'POST',
@@ -91,15 +106,19 @@ Deno.serve(async (req) => {
       })
     });
 
+    console.log('Salesforce response:', activityResponse.status);
+
     if (!activityResponse.ok) {
       const errorData = await activityResponse.json();
       const errorMsg = errorData[0]?.message || JSON.stringify(errorData);
-      throw new Error(`${errorMsg}`);
+      console.error('Salesforce error:', errorMsg);
+      throw new Error(`Salesforce error: ${errorMsg}`);
     }
 
+    console.log('Email sent successfully');
     return Response.json({ success: true });
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error('Error sending email:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
