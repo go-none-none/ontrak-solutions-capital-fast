@@ -2,7 +2,7 @@ import { jsPDF } from 'npm:jspdf@4.0.0';
 import 'npm:jspdf-autotable@3.5.31';
 
 const SENDGRID_API_KEY = Deno.env.get("SENDGRID_API_KEY");
-const SENDER_EMAIL = "info@ontrak.com";
+const SENDER_EMAIL = "noreply@ontrak.com";
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
