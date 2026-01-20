@@ -52,22 +52,12 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
         throw new Error('No file content received');
       }
 
-      // Create blob from base64
+      // Use data URL instead of blob URL for better iframe compatibility
       const base64 = data.file;
-      const binaryString = atob(base64);
-      const bytes = new Uint8Array(binaryString.length);
+      const dataUrl = `data:application/pdf;base64,${base64}`;
+      console.log('Data URL created, length:', dataUrl.length);
       
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      
-      const blob = new Blob([bytes], { type: 'application/pdf' });
-      console.log('Blob created, size:', blob.size, 'type:', blob.type);
-      
-      const url = URL.createObjectURL(blob);
-      console.log('Blob URL created:', url);
-      
-      setPdfData(url);
+      setPdfData(dataUrl);
     } catch (error) {
       console.error('PDF load error:', error);
       setError(error.message || 'Failed to load PDF');
