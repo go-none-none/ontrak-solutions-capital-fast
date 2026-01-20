@@ -37,7 +37,8 @@ Deno.serve(async (req) => {
     });
 
     const pdfBytes = doc.output('arraybuffer');
-    const base64Pdf = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
+    const uint8Array = new Uint8Array(pdfBytes);
+    const base64Pdf = btoa(String.fromCharCode.apply(null, uint8Array));
 
     // Upload PDF to Salesforce Files
     const uploadResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/ContentVersion`, {
