@@ -847,7 +847,7 @@ export default function OpportunityDetail() {
                            <div className="flex items-center gap-2 mt-1">
                              <p className="text-xs text-slate-500">{stmt.csbs__Account_No__c}</p>
                              <p className="text-xs text-slate-400">•</p>
-                             <p className="text-xs text-slate-400">{stmt.pdfCreatedDate ? formatDate(stmt.pdfCreatedDate) : formatDate(stmt.created_date)}</p>
+                             <p className="text-xs text-slate-400">{stmt.pdfCreatedDate ? formatDateTime(stmt.pdfCreatedDate) : formatDateTime(stmt.created_date)}</p>
                            </div>
                           </div>
                           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
