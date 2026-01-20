@@ -87,11 +87,12 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
   };
 
   const handleClose = () => {
-    if (pdfData) {
+    if (pdfData && !file?.isTemp) {
       URL.revokeObjectURL(pdfData);
     }
     setPdfData(null);
     setError(null);
+    setLoading(false);
     onClose();
   };
 
