@@ -61,11 +61,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
       setStep(1);
       setSelectedOffers([]);
       setSent(false);
-      const today = formatDate(new Date());
-      setPdfData({
-        linkLabel: `Offer Proposal - ${opportunity.Name || ''} - ${today}`,
-        fileName: `Offer Proposal - ${opportunity.Name || ''} - ${today.replace(/\//g, '-')}`
-      });
+      setPdfData({});
       setEmailData({
         to: contactEmail || '',
         cc: '',
