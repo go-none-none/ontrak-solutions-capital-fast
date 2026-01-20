@@ -130,9 +130,8 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
     return FileText;
   };
 
-  const handleViewFile = (file) => {
+  const handleViewFile = async (file) => {
     if (file.isTemp) {
-      // Open temp file in new tab
       window.open(file.tempUrl, '_blank');
       return;
     }
@@ -143,11 +142,42 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
     const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext);
     
     if (isPdf) {
-      setViewingFile(file);
+      // For PDFs, fetch and open in new tab directly (more reliable than iframe)
+      try {
+        const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contentDocumentId: file.ContentDocumentId,
+            token: session.token,
+            instanceUrl: session.instanceUrl
+          })
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch file');
+
+        const data = await response.json();
+        const base64 = data.file;
+        const binaryString = atob(base64);
+        const bytes = new Uint8Array(binaryString.length);
+        
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        
+        const blob = new Blob([bytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        
+        // Cleanup after a delay
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (error) {
+        console.error('PDF open error:', error);
+        alert('Failed to open PDF. Please try downloading it instead.');
+      }
     } else if (isImage) {
       setViewingImage(file);
     } else {
-      // Download other files
       window.open(`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`, '_blank');
     }
   };
