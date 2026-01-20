@@ -2,9 +2,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const { recipientEmail, recipientName, subject, message, senderName } = await req.json();
+    const { recipientEmail, recipientName, subject, message, senderName, token, instanceUrl } = await req.json();
 
-    if (!recipientEmail || !subject || !message) {
+    if (!recipientEmail || !subject || !message || !token || !instanceUrl) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -45,14 +45,25 @@ Deno.serve(async (req) => {
       </html>
     `;
 
-    const base44 = createClientFromRequest(req);
-    
-    await base44.integrations.Core.SendEmail({
-      to: recipientEmail,
-      subject: subject,
-      body: emailHTML,
-      from_name: 'OnTrak Capital'
+    // Use Salesforce to send email via SingleEmailMessage
+    const response = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/EmailMessage`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ToAddress: recipientEmail,
+        Subject: subject,
+        HtmlBody: emailHTML,
+        ValidatedFromAddress: null
+      })
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData[0]?.message || 'Failed to send email via Salesforce');
+    }
 
     return Response.json({ success: true });
   } catch (error) {
