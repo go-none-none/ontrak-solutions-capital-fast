@@ -250,7 +250,10 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       } else {
         await base44.functions.invoke('createSalesforceStatement', {
           opportunityId,
-          statementData: formData,
+          statementData: {
+            ...formData,
+            fileUrl: parsedFileUrl
+          },
           token: session.token,
           instanceUrl: session.instanceUrl
         });
