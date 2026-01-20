@@ -25,6 +25,7 @@ import NewOfferModal from '../components/opportunity/NewOfferModal';
 import NewCommissionModal from '../components/opportunity/NewCommissionModal';
 import StatementAnalysisDashboard from '../components/opportunity/StatementAnalysisDashboard';
 import StatementPdfViewer from '../components/opportunity/StatementPdfViewer';
+import OfferProposalModal from '../components/opportunity/OfferProposalModal';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
