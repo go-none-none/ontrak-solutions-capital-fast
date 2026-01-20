@@ -163,13 +163,7 @@ Deno.serve(async (req) => {
     doc.setFontSize(9);
     doc.text(`© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.`, 20, yPosition);
 
-    const pdfBytes = doc.output('arraybuffer');
-    const uint8Array = new Uint8Array(pdfBytes);
-    let pdfBase64 = '';
-    for (let i = 0; i < uint8Array.length; i++) {
-      pdfBase64 += String.fromCharCode(uint8Array[i]);
-    }
-    pdfBase64 = btoa(pdfBase64);
+    const pdfBase64 = doc.output('dataurlstring').split(',')[1];
 
     const emailHTML = `<!DOCTYPE html>
     <html lang="en">
