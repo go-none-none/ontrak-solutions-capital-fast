@@ -1,4 +1,4 @@
-import { jsPDF } from 'npm:jspdf@4.0.0';
+import { jsPDF } from 'npm:jspdf@2.5.2';
 import 'npm:jspdf-autotable@3.5.31';
 
 const SENDGRID_API_KEY = Deno.env.get("SENDGRID_API_KEY");
