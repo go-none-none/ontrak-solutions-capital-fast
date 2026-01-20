@@ -272,10 +272,10 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         {step === 3 && (
           <div className="space-y-4">
             <h3 className="font-semibold text-slate-900">Offer Proposal</h3>
-            
+
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
               <p className="text-sm text-blue-800">
-                Please note the PDF Link will not work on this screen. The PDF Link will not become active until "Send" is clicked.
+                Add a personal message to include in the email. The offers and PDF link will be added automatically.
               </p>
             </div>
 
@@ -297,14 +297,14 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
             </div>
 
             <div>
-              <Label htmlFor="body" className="mb-2 block font-medium">*Email Body</Label>
-              <ReactQuill
-                theme="snow"
+              <Label htmlFor="body" className="mb-2 block font-medium">Message (Plain Text)</Label>
+              <textarea
+                id="body"
                 value={emailData.body}
-                onChange={(content) => setEmailData({ ...emailData, body: content })}
-                modules={modules}
-                className="bg-white"
-                style={{ height: '350px', marginBottom: '50px' }}
+                onChange={(e) => setEmailData({ ...emailData, body: e.target.value })}
+                placeholder="Enter your message here..."
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                style={{ height: '150px' }}
               />
             </div>
           </div>
