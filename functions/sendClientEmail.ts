@@ -29,12 +29,15 @@ Deno.serve(async (req) => {
     doc.setFillColor(8, 112, 142);
     doc.rect(0, 0, pageWidth, 50, 'F');
     doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'bold');
+    doc.text('OnTrak Capital', 20, 20);
     doc.setFontSize(28);
     doc.setFont(undefined, 'bold');
-    doc.text('Your Offer Proposal', pageWidth / 2, 25, { align: 'center' });
-    doc.setFontSize(12);
+    doc.text('Your Offer Proposal', pageWidth / 2, 32, { align: 'center' });
+    doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
-    doc.text('OnTrak Capital - Funding Specialist', pageWidth / 2, 38, { align: 'center' });
+    doc.text('Funding Specialist', pageWidth / 2, 42, { align: 'center' });
 
     yPosition = 60;
 
