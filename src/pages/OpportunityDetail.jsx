@@ -1633,33 +1633,7 @@ export default function OpportunityDetail() {
         onClose={() => setViewingStatementPdf(null)}
       />
 
-      {/* PDF Viewer Modal */}
-      {viewingPdfUrl && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-[95vw] h-[95vh] flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="text-lg font-semibold text-slate-900">Statement PDF</h3>
-              <button
-                onClick={() => {
-                  setViewingPdfUrl(null);
-                  if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
-                  setPdfBlobUrl(null);
-                }}
-                className="text-slate-500 hover:text-slate-700 text-2xl leading-none"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <iframe
-                src={pdfBlobUrl || viewingPdfUrl}
-                className="w-full h-full"
-                title="Statement PDF"
-              />
-            </div>
-          </div>
-        </div>
-      )}
+
       </div>
       );
       }
