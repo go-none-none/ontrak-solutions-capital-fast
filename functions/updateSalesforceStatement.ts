@@ -11,18 +11,14 @@ Deno.serve(async (req) => {
     const sfData = {
       Name: statementData.accountTitle || statementData.accountNo,
       csbs__Account_No__c: statementData.accountNo,
-      csbs__Starting_Date__c: statementData.startingDate,
-      csbs__Ending_Date__c: statementData.endingDate,
       csbs__Starting_Balance__c: statementData.startingBalance,
+      csbs__Ending_Date__c: statementData.endingDate,
       csbs__Ending_Balance__c: statementData.endingBalance,
       csbs__Average_Daily_Balance__c: statementData.avgDailyBalance,
       csbs__Deposit_Amount__c: statementData.depositAmount,
       csbs__Deposit_Count__c: statementData.depositCount,
-      csbs__Total_Withdrawals__c: statementData.totalWithdrawals,
-      csbs__Withdrawals_Count__c: statementData.withdrawalsCount,
       csbs__NSFs__c: statementData.nsfs,
       csbs__Negative_Days__c: statementData.negativeDays,
-      csbs__Reconciled__c: statementData.reconciled || false,
       csbs__Notes__c: statementData.notes
     };
 
