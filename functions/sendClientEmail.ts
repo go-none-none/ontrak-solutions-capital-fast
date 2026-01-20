@@ -1,13 +1,85 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { jsPDF } from 'npm:jspdf@4.0.0';
 
 Deno.serve(async (req) => {
   try {
-    const { recipientEmail, recipientName, subject, message, senderName, token, instanceUrl } = await req.json();
+    const { recipientEmail, recipientName, subject, message, senderName, token, instanceUrl, offers, opportunityId, pdfLinkLabel, pdfFileName } = await req.json();
 
-    if (!recipientEmail || !subject || !message || !token || !instanceUrl) {
+    if (!recipientEmail || !subject || !message || !token || !instanceUrl || !offers || !opportunityId || !pdfFileName) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Generate PDF
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text(pdfLinkLabel || 'Offer Proposal', 10, 10);
+    
+    doc.setFontSize(12);
+    let yPos = 25;
+    
+    offers.forEach((offer, idx) => {
+      doc.text(`Offer ${idx + 1}`, 10, yPos);
+      yPos += 7;
+      doc.setFontSize(10);
+      doc.text(`Lender: ${offer.csbs__Lender__c || 'Unknown'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Funded: $${Number(offer.csbs__Funded__c).toLocaleString()}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Payment: $${Number(offer.csbs__Payment_Amount__c).toLocaleString()} ${offer.csbs__Payment_Frequency__c}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Term: ${offer.csbs__Term__c} months`, 10, yPos);
+      yPos += 5;
+      if (offer.csbs__Factor_Rate__c) {
+        doc.text(`Factor Rate: ${offer.csbs__Factor_Rate__c}`, 10, yPos);
+        yPos += 5;
+      }
+      yPos += 10;
+      doc.setFontSize(12);
+    });
+
+    const pdfBytes = doc.output('arraybuffer');
+    const base64Pdf = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
+
+    // Upload PDF to Salesforce Files
+    const uploadResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/ContentVersion`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        Title: pdfFileName + '.pdf',
+        VersionData: base64Pdf,
+        ContentLocation: 'S'
+      })
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error('Failed to upload PDF to Salesforce');
+    }
+
+    const uploadData = await uploadResponse.json();
+    const contentDocumentId = uploadData.id;
+
+    // Link file to opportunity
+    const linkResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/ContentDocumentLink`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ContentDocumentId: contentDocumentId,
+        LinkedEntityId: opportunityId,
+        ShareType: 'V',
+        Visibility: 'AllUsers'
+      })
+    });
+
+    if (!linkResponse.ok) {
+      throw new Error('Failed to link PDF to opportunity');
+    }
+
+    // Create Email Activity
     const emailHTML = `
       <!DOCTYPE html>
       <html>
@@ -45,40 +117,27 @@ Deno.serve(async (req) => {
       </html>
     `;
 
-    // Use Salesforce Tooling API to send email
-    const soapRequest = `<?xml version="1.0" encoding="utf-8"?>
-      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:met="http://soap.sforce.com/2006/04/metadata">
-        <soapenv:Header>
-          <met:SessionHeader>
-            <met:sessionId>${token}</met:sessionId>
-          </met:SessionHeader>
-        </soapenv:Header>
-        <soapenv:Body>
-          <met:sendEmail>
-            <met:request>
-              <met:lists>
-                <met:toAddresses>${recipientEmail}</met:toAddresses>
-              </met:lists>
-              <met:subject>${subject}</met:subject>
-              <met:plainTextBody>View this email in HTML format.</met:plainTextBody>
-              <met:htmlBody><![CDATA[${emailHTML}]]></met:htmlBody>
-            </met:request>
-          </met:sendEmail>
-        </soapenv:Body>
-      </soapenv:Envelope>`;
-
-    const response = await fetch(`${instanceUrl}/services/Soap/m/57.0`, {
+    // Create Email Activity record
+    const activityResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/EmailMessage`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'text/xml; charset=UTF-8',
-        'SOAPAction': 'sendEmail'
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
-      body: soapRequest
+      body: JSON.stringify({
+        ToAddress: recipientEmail,
+        Subject: subject,
+        HtmlBody: emailHTML,
+        TextBody: 'View this email in HTML format.',
+        RelatedToId: opportunityId,
+        FromName: senderName || 'OnTrak Capital',
+        FromAddress: 'info@ontrak.co'
+      })
     });
 
-    const responseText = await response.text();
-    if (!response.ok || responseText.includes('faultstring')) {
-      throw new Error('Failed to send email via Salesforce');
+    if (!activityResponse.ok) {
+      const errorData = await activityResponse.json();
+      throw new Error(errorData[0]?.message || 'Failed to create email activity');
     }
 
     return Response.json({ success: true });
