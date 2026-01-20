@@ -283,16 +283,10 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
           </div>
         )}
 
-        {/* Step 3: Compose Email */}
+        {/* Step 3: Review & Send */}
         {step === 3 && (
           <div className="space-y-4">
-            <h3 className="font-semibold text-slate-900">Offer Proposal</h3>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-              <p className="text-sm text-blue-800">
-                Add a personal message to include in the email. The offers and PDF link will be added automatically.
-              </p>
-            </div>
+            <h3 className="font-semibold text-slate-900">Review & Send</h3>
 
             <div className="space-y-3 text-sm">
               <div>
@@ -311,15 +305,23 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
               </div>
             </div>
 
+            <div className="bg-slate-50 border rounded-lg p-4">
+              <p className="text-slate-600 font-medium text-sm mb-3">Preview:</p>
+              <p className="text-slate-900 text-sm whitespace-pre-wrap">{emailData.body}</p>
+              <p className="text-slate-600 text-xs mt-4 pt-4 border-t">Your offers and PDF link will be included in the email automatically.</p>
+            </div>
+
             <div>
-              <Label htmlFor="body" className="mb-2 block font-medium">Message (Plain Text)</Label>
+              <Label htmlFor="customMessage" className="mb-2 block font-medium">Add Custom Message (Optional)</Label>
               <textarea
-                id="body"
-                value={emailData.body}
-                onChange={(e) => setEmailData({ ...emailData, body: e.target.value })}
-                placeholder="Enter your message here..."
+                id="customMessage"
+                placeholder="Add any additional message before the offers..."
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                style={{ height: '150px' }}
+                style={{ height: '100px' }}
+                onChange={(e) => setEmailData(prev => ({
+                  ...prev,
+                  customMessage: e.target.value
+                }))}
               />
             </div>
           </div>
