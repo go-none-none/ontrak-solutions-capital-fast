@@ -203,26 +203,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         {/* Step 2: PDF & Email Details */}
         {step === 2 && (
           <div className="space-y-4">
-            <h3 className="font-semibold text-slate-900">PDF & Email Details</h3>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="linkLabel">*PDF Link Label</Label>
-                <Input
-                  id="linkLabel"
-                  value={pdfData.linkLabel}
-                  onChange={(e) => setPdfData({ ...pdfData, linkLabel: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="fileName">*PDF File Name</Label>
-                <Input
-                  id="fileName"
-                  value={pdfData.fileName}
-                  onChange={(e) => setPdfData({ ...pdfData, fileName: e.target.value })}
-                />
-              </div>
-            </div>
+            <h3 className="font-semibold text-slate-900">Email Details</h3>
 
             <div className="border-t pt-4">
               <h4 className="font-medium text-slate-900 mb-4">Email Recipients</h4>
