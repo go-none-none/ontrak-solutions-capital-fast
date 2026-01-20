@@ -157,10 +157,10 @@ Deno.serve(async (req) => {
     `).join('');
 
     const emailHTML = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <style>
     body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #f9fafb; }
     .email-wrapper { background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
     .header p { margin: 8px 0 0 0; font-size: 14px; opacity: 0.9; }
     .content { padding: 40px 30px; }
     .greeting { font-size: 16px; margin-bottom: 20px; }
-    .message-box { background: #f0f9ff; border-left: 4px solid #08708E; padding: 15px; margin: 20px 0; }
+    .message-box { background: #f0f9ff; border-left: 4px solid #08708E; padding: 15px; margin: 20px 0; font-size: 14px; line-height: 1.5; }
     .offers-section { margin: 30px 0; }
     .offers-section h3 { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #08708E; }
     .offers-table { width: 100%; border-collapse: collapse; }
@@ -182,10 +182,10 @@ Deno.serve(async (req) => {
     .footer-text { color: #6b7280; font-size: 13px; margin-top: 20px; }
     .divider { border-top: 1px solid #e5e7eb; margin: 20px 0; }
     .footer { background: #f3f4f6; padding: 20px 30px; text-align: center; font-size: 12px; color: #6b7280; }
-  </style>
-</head>
-<body>
-  <div class="container">
+    </style>
+    </head>
+    <body>
+    <div class="container">
     <div class="email-wrapper">
       <div class="header">
         <h1>OnTrak Capital</h1>
@@ -194,7 +194,7 @@ Deno.serve(async (req) => {
       <div class="content">
         <div class="greeting">Hi ${recipientName || 'Valued Customer'},</div>
         <div class="message-box">
-          ${message}
+          ${cleanMessage}
         </div>
         <div class="offers-section">
           <h3>Your Offers</h3>
@@ -226,9 +226,9 @@ Deno.serve(async (req) => {
         <p>© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.</p>
       </div>
     </div>
-  </div>
-</body>
-</html>`;
+    </div>
+    </body>
+    </html>`;
 
     // Send email via Salesforce
     console.log('Sending email via Salesforce...');
