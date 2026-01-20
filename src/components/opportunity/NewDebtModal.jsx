@@ -85,16 +85,40 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
     setLoading(true);
 
     try {
-      await base44.functions.invoke('createSalesforceDebt', {
-        opportunityId,
-        debtData: formData,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
+      if (debt) {
+        // Update existing debt
+        await base44.functions.invoke('updateSalesforceRecord', {
+          objectType: 'csbs__Debt__c',
+          recordId: debt.Id,
+          data: {
+            csbs__Creditor__c: formData.creditorId,
+            csbs__Balance__c: formData.balance,
+            csbs__Lender__c: formData.lender,
+            csbs__Estimated_Monthly_MCA_Amount__c: formData.estimatedMonthlyMCA,
+            csbs__Open_Position__c: formData.openPosition,
+            csbs__Notes__c: formData.notes,
+            csbs__Type__c: formData.type,
+            csbs__Payment__c: formData.payment,
+            csbs__Frequency__c: formData.frequency
+          },
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        });
+      } else {
+        // Create new debt
+        await base44.functions.invoke('createSalesforceDebt', {
+          opportunityId,
+          debtData: formData,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        });
+      }
 
       onSuccess();
       
-      if (!e.nativeEvent.submitter.name.includes('new')) {
+      if (!debt && !e.nativeEvent.submitter.name.includes('new')) {
+        onClose();
+      } else if (debt) {
         onClose();
       }
       
@@ -110,8 +134,8 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
         frequency: ''
       });
     } catch (error) {
-      console.error('Create debt error:', error);
-      alert('Failed to create debt: ' + (error.response?.data?.error || error.message));
+      console.error('Debt operation error:', error);
+      alert('Failed to save debt: ' + (error.response?.data?.error || error.message));
     } finally {
       setLoading(false);
     }
