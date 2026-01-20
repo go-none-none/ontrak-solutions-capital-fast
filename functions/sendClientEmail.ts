@@ -157,76 +157,108 @@ Deno.serve(async (req) => {
     `).join('');
 
     const emailHTML = `<!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-    <meta charset="utf-8">
-    <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #f9fafb; }
-    .email-wrapper { background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .header { background: linear-gradient(135deg, #08708E 0%, #065a72 100%); color: white; padding: 40px 30px; text-align: center; }
-    .header h1 { margin: 0; font-size: 28px; font-weight: bold; }
-    .header p { margin: 8px 0 0 0; font-size: 14px; opacity: 0.9; }
-    .content { padding: 40px 30px; }
-    .greeting { font-size: 16px; margin-bottom: 20px; }
-    .message-box { background: #f0f9ff; border-left: 4px solid #08708E; padding: 15px; margin: 20px 0; font-size: 14px; line-height: 1.5; }
-    .offers-section { margin: 30px 0; }
-    .offers-section h3 { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #08708E; }
-    .offers-table { width: 100%; border-collapse: collapse; }
-    .offers-table th { background: #f0f0f0; padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; }
-    .offers-table td { padding: 12px; border: 1px solid #e5e7eb; font-size: 13px; }
-    .offers-table tr:nth-child(even) { background: #fafafa; }
-    .cta-section { margin: 30px 0; text-align: center; }
-    .cta-button { display: inline-block; background: #08708E; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px; }
-    .cta-button:hover { background: #065a72; }
-    .footer-text { color: #6b7280; font-size: 13px; margin-top: 20px; }
-    .divider { border-top: 1px solid #e5e7eb; margin: 20px 0; }
-    .footer { background: #f3f4f6; padding: 20px 30px; text-align: center; font-size: 12px; color: #6b7280; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Offer Proposal</title>
     </head>
-    <body>
-    <div class="container">
-    <div class="email-wrapper">
-      <div class="header">
-        <h1>OnTrak Capital</h1>
-        <p>Offer Proposal</p>
-      </div>
-      <div class="content">
-        <div class="greeting">Hi ${recipientName || 'Valued Customer'},</div>
-        <div class="message-box">
-          ${cleanMessage}
-        </div>
-        <div class="offers-section">
-          <h3>Your Offers</h3>
-          <table class="offers-table">
-            <thead>
+    <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f8fafc;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+
+              <!-- Header -->
               <tr>
-                <th>Offer</th>
-                <th>Lender</th>
-                <th>Funded Amount</th>
-                <th>Payment Amount</th>
-                <th>Term</th>
+                  <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
+                      <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Your Offer Proposal</h1>
+                  </td>
               </tr>
-            </thead>
-            <tbody>
-              ${offersRows}
-            </tbody>
+
+              <!-- Body Content -->
+              <tr>
+                  <td style="padding: 40px 30px;">
+                      <p style="color: #0f172a; font-size: 18px; margin: 0 0 20px 0; font-weight: 600;">Hi ${recipientName || 'Valued Customer'},</p>
+
+                      <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                          ${cleanMessage}
+                      </p>
+
+                      <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%); border-left: 4px solid #08708E; border-radius: 8px; margin: 30px 0;">
+                          <tr>
+                              <td style="padding: 20px;">
+                                  <p style="color: #08708E; font-size: 14px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">✓ Next Steps</p>
+                                  <p style="color: #0f172a; font-size: 15px; margin: 0;">Review the offers below and let us know which one works best for you. We're ready to fund within 24-48 hours!</p>
+                              </td>
+                          </tr>
+                      </table>
+
+                      <!-- Offers Table -->
+                      <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
+                          <tr>
+                              <td>
+                                  <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">Your Offers</p>
+                              </td>
+                          </tr>
+                          <tr>
+                              <td>
+                                  <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+                                      <tr style="background-color: #f0f0f0;">
+                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Offer</th>
+                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Lender</th>
+                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Funded Amount</th>
+                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Payment Amount</th>
+                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Term</th>
+                                      </tr>
+                                      ${offersRows}
+                                  </table>
+                              </td>
+                          </tr>
+                      </table>
+
+                      <!-- CTA Button -->
+                      ${pdfLink ? `<table width="100%" cellpadding="0" cellspacing="0">
+                          <tr>
+                              <td align="center" style="padding: 20px 0;">
+                                  <a href="${pdfLink}" style="display: inline-block; background: linear-gradient(to right, #08708E, #065a72); color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 40px; border-radius: 30px; box-shadow: 0 4px 6px rgba(8, 112, 142, 0.2);">
+                                      View Full Proposal PDF
+                                  </a>
+                              </td>
+                          </tr>
+                      </table>` : ''}
+
+                      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+
+                      <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 20px 0;">
+                          <tr>
+                              <td style="padding: 20px; background-color: #f0f9ff; border-radius: 12px;">
+                                  <p style="color: #0f172a; font-size: 15px; font-weight: 600; margin: 0 0 10px 0;">❓ Questions?</p>
+                                  <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
+                                      I'm here to help! Feel free to reach out if you need any clarification on these offers.
+                                  </p>
+                              </td>
+                          </tr>
+                      </table>
+                  </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                  <td style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                      <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Best regards,</p>
+                      <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">${senderName || 'OnTrak Capital'}</p>
+                      <p style="color: #64748b; font-size: 14px; margin: 0 0 15px 0;">Funding Specialist</p>
+                      <p style="color: #94a3b8; font-size: 12px; margin: 15px 0 0 0; line-height: 1.6;">
+                          © ${new Date().getFullYear()} OnTrak Capital. All rights reserved.
+                      </p>
+                  </td>
+              </tr>
+
           </table>
-        </div>
-        ${pdfLink ? `<div class="cta-section"><a href="${pdfLink}" class="cta-button">View Full Proposal PDF</a></div>` : ''}
-        <div class="footer-text">
-          <p>Please review the offers above and let us know if you have any questions.</p>
-        </div>
-        <div class="divider"></div>
-        <div style="margin-top: 30px;">
-          <p>Best regards,<br><strong>${senderName || 'OnTrak Capital'}</strong></p>
-        </div>
-      </div>
-      <div class="footer">
-        <p>© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.</p>
-      </div>
-    </div>
-    </div>
+      </td>
+    </tr>
+    </table>
     </body>
     </html>`;
 
