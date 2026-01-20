@@ -65,6 +65,7 @@ export default function OpportunityDetail() {
   const [previewingStatement, setPreviewingStatement] = useState(null);
   const [fileManagerFiles, setFileManagerFiles] = useState([]);
   const [viewingStatementPdf, setViewingStatementPdf] = useState(null);
+  const [statementPdfs, setStatementPdfs] = useState({});
 
   const { removeNotification, notifications } = useContext(NotificationContext);
 
@@ -168,6 +169,15 @@ export default function OpportunityDetail() {
       setStatements(sortedStatements);
       setDebt(debtRes.data.debt || []);
       setCommissions(commissionsRes.data.commissions || []);
+      
+      // Load PDF URLs for statements
+      if (sortedStatements.length > 0) {
+        const pdfRecords = await base44.entities.StatementPdf.list();
+        const pdfMap = {};
+        pdfRecords.forEach(record => {
+          pdfMap[record.salesforce_statement_id] = record.pdf_url;
+        });
+        setStatementPdfs(pdfMap);
     } catch (error) {
       console.error('Load related records error:', error);
     } finally {
@@ -807,11 +817,11 @@ export default function OpportunityDetail() {
                             <p className="text-xs text-slate-500">{stmt.csbs__Account_No__c}</p>
                           </div>
                           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                             {stmt.csbs__PDF_URL__c && (
+                             {statementPdfs[stmt.Id] && (
                                <Button
                                  variant="ghost"
                                  size="sm"
-                                 onClick={() => window.open(stmt.csbs__PDF_URL__c, '_blank')}
+                                 onClick={() => window.open(statementPdfs[stmt.Id], '_blank')}
                                  className="h-8 px-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
                                  title="View PDF"
                                >

@@ -11,7 +11,6 @@ Deno.serve(async (req) => {
     // Prepare statement data for Salesforce
     const sfData = {
       csbs__Opportunity__c: opportunityId,
-      csbs__PDF_URL__c: statementData.fileUrl,
       csbs__Account_No__c: statementData.accountNo,
       csbs__Account_Title__c: statementData.accountTitle,
       csbs__Company__c: statementData.company,
@@ -63,9 +62,13 @@ Deno.serve(async (req) => {
 
     const result = await response.json();
     
-    // Clean up temp file from localStorage if it was used
-    if (statementData.tempFileUrl) {
-      // This will be cleaned up on frontend after success
+    // Store PDF URL in Base44 if provided
+    if (statementData.fileUrl) {
+      const base44 = createClientFromRequest(req);
+      await base44.asServiceRole.entities.StatementPdf.create({
+        salesforce_statement_id: result.id,
+        pdf_url: statementData.fileUrl
+      });
     }
     
     return Response.json({ success: true, id: result.id });
