@@ -94,9 +94,37 @@ Deno.serve(async (req) => {
       </html>
     `;
 
-    console.log('Creating EmailMessage in Salesforce...');
+    console.log('Sending email via Salesforce SendEmail action...');
 
-    // Create Email Activity in Salesforce
+    // Use Salesforce's SendEmail action to actually send the email
+    const sendEmailResponse = await fetch(`${instanceUrl}/services/data/v59.0/actions/standard/emailSimple`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        inputs: [{
+          emailAddresses: [recipientEmail],
+          emailSubject: subject,
+          emailBody: emailHTML,
+          useSignature: false
+        }]
+      })
+    });
+
+    const sendEmailData = await sendEmailResponse.json();
+    console.log('Send email response status:', sendEmailResponse.status);
+    console.log('Send email response:', JSON.stringify(sendEmailData));
+
+    if (!sendEmailResponse.ok) {
+      const errorMsg = sendEmailData.errors?.[0]?.message || JSON.stringify(sendEmailData);
+      console.error('Email send error:', errorMsg);
+      throw new Error(`Failed to send email: ${errorMsg}`);
+    }
+
+    // Also log as activity in Salesforce
+    console.log('Logging email activity in Salesforce...');
     const activityResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/EmailMessage`, {
       method: 'POST',
       headers: {
@@ -107,20 +135,15 @@ Deno.serve(async (req) => {
         ToAddress: recipientEmail,
         Subject: subject,
         HtmlBody: emailHTML,
-        TextBody: 'Please view this email in HTML format to see the offer proposal.',
+        TextBody: 'Offer proposal email sent',
         RelatedToId: opportunityId,
         FromName: senderName || 'OnTrak Capital',
         Status: '3'
       })
     });
 
-    console.log('Salesforce response:', activityResponse.status);
-
     if (!activityResponse.ok) {
-      const errorData = await activityResponse.json();
-      const errorMsg = errorData[0]?.message || JSON.stringify(errorData);
-      console.error('Salesforce error:', errorMsg);
-      throw new Error(`Salesforce error: ${errorMsg}`);
+      console.warn('Warning: Could not log email activity, but email was sent');
     }
 
     console.log('Email sent successfully');
