@@ -415,8 +415,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      {doc.FileExtension?.toLowerCase() === 'pdf' && (
-                        (() => {
+                      {doc.FileExtension?.toLowerCase() === 'pdf' && (() => {
                           const matchingStatement = statements.find(stmt => stmt.csbs__Source_File_ID__c === file.ContentDocumentId);
                           return matchingStatement ? (
                             <Button 
@@ -428,21 +427,9 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                             >
                               <Zap className="w-4 h-4" />
                             </Button>
-                          ) : (
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => {
-                                onParseFile?.(file);
-                              }}
-                              title="Parse with AI"
-                              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                            >
-                              <Sparkles className="w-4 h-4" />
-                            </Button>
-                          );
+                          ) : null;
                         })()
-                      )}
+                      }
                       <Button 
                         variant="ghost" 
                         size="sm"
