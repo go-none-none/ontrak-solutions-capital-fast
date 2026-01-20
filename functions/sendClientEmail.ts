@@ -1,3 +1,5 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
@@ -11,14 +13,21 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
-    const { recipientEmail, recipientName, subject, message, senderName, token, instanceUrl, offers, opportunityId } = body;
+    const { recipientEmail, recipientName, subject, message, senderName, instanceUrl, offers, opportunityId } = body;
 
-    if (!recipientEmail || !subject || !message || !token || !instanceUrl || !offers || !opportunityId) {
+    if (!recipientEmail || !subject || !message || !instanceUrl || !offers || !opportunityId) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     console.log('Starting to send email to:', recipientEmail);
+
+    // Get fresh Salesforce token via connector
+    const token = await base44.asServiceRole.connectors.getAccessToken("salesforce");
+    if (!token) {
+      return Response.json({ error: 'Salesforce connector not authorized' }, { status: 401 });
+    }
 
     // Build offers table for email
     const offersHTML = offers.map((offer, idx) => `
@@ -88,7 +97,7 @@ Deno.serve(async (req) => {
     console.log('Creating EmailMessage in Salesforce...');
 
     // Create Email Activity in Salesforce
-    const activityResponse = await fetch(`${instanceUrl}/services/data/v57.0/sobjects/EmailMessage`, {
+    const activityResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/EmailMessage`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
