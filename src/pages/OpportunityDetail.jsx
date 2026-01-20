@@ -62,6 +62,7 @@ export default function OpportunityDetail() {
   const [editingOffer, setEditingOffer] = useState(null);
   const [showNewCommission, setShowNewCommission] = useState(false);
   const [editingCommission, setEditingCommission] = useState(null);
+  const [editingDebt, setEditingDebt] = useState(null);
   const [deletingRecord, setDeletingRecord] = useState(null);
   const [previewingStatement, setPreviewingStatement] = useState(null);
   const [fileManagerFiles, setFileManagerFiles] = useState([]);
@@ -941,27 +942,34 @@ export default function OpportunityDetail() {
                     No debt records found
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    {debt.map(d => (
-                      <div key={d.Id} className="bg-white rounded-xl p-4 shadow-sm">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <p className="font-semibold text-slate-900">{d.csbs__Lender__c || d.csbs__Creditor__r?.Name || 'Unknown'}</p>
-                            <p className="text-xs text-slate-500">{d.Name}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {d.csbs__Open_Position__c && <Badge className="bg-orange-600">Open</Badge>}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              disabled={deletingRecord === d.Id}
-                              onClick={() => handleDeleteRecord('csbs__Debt__c', d.Id, d.Name)}
-                              className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            >
-                              Delete
-                            </Button>
-                          </div>
-                        </div>
+                   <div className="space-y-3">
+                     {debt.map(d => (
+                       <div 
+                         key={d.Id} 
+                         className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                         onClick={() => setEditingDebt(d)}
+                       >
+                         <div className="flex items-start justify-between mb-3">
+                           <div 
+                             className="flex-1 cursor-pointer"
+                             onClick={() => setEditingDebt(d)}
+                           >
+                             <p className="font-semibold text-slate-900">{d.csbs__Lender__c || d.csbs__Creditor__r?.Name || 'Unknown'}</p>
+                             <p className="text-xs text-slate-500">{d.Name}</p>
+                           </div>
+                           <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                             {d.csbs__Open_Position__c && <Badge className="bg-orange-600">Open</Badge>}
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               disabled={deletingRecord === d.Id}
+                               onClick={() => handleDeleteRecord('csbs__Debt__c', d.Id, d.Name)}
+                               className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                             >
+                               Delete
+                             </Button>
+                           </div>
+                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm">
                           <div>
                             <p className="text-slate-500 text-xs">Balance</p>
@@ -1558,6 +1566,21 @@ export default function OpportunityDetail() {
           const urlParams = new URLSearchParams(window.location.search);
           const oppId = urlParams.get('id');
           loadRelatedRecords(session, oppId);
+        }}
+      />
+
+      {/* Edit Debt Modal */}
+      <NewDebtModal
+        isOpen={!!editingDebt}
+        onClose={() => setEditingDebt(null)}
+        opportunityId={opportunity.Id}
+        session={session}
+        debt={editingDebt}
+        onSuccess={() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const oppId = urlParams.get('id');
+          loadRelatedRecords(session, oppId);
+          setEditingDebt(null);
         }}
       />
 
