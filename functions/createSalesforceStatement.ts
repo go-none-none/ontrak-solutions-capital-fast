@@ -11,6 +11,7 @@ Deno.serve(async (req) => {
     // Prepare statement data for Salesforce
     const sfData = {
       csbs__Opportunity__c: opportunityId,
+      csbs__PDF_URL__c: statementData.fileUrl,
       csbs__Account_No__c: statementData.accountNo,
       csbs__Account_Title__c: statementData.accountTitle,
       csbs__Company__c: statementData.company,

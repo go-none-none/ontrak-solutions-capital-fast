@@ -807,13 +807,13 @@ export default function OpportunityDetail() {
                             <p className="text-xs text-slate-500">{stmt.csbs__Account_No__c}</p>
                           </div>
                           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                             {stmt.csbs__Source_File_ID__c && (
+                             {stmt.csbs__PDF_URL__c && (
                                <Button
                                  variant="ghost"
                                  size="sm"
-                                 onClick={() => setViewingStatementPdf(stmt)}
+                                 onClick={() => window.open(stmt.csbs__PDF_URL__c, '_blank')}
                                  className="h-8 px-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                                 title="View original PDF"
+                                 title="View PDF"
                                >
                                  <Eye className="w-4 h-4" />
                                </Button>
