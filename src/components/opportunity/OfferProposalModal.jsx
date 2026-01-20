@@ -221,58 +221,75 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
           </div>
         )}
 
-        {/* Step 2: Email Details */}
+        {/* Step 2: PDF & Email Details */}
         {step === 2 && (
           <div className="space-y-4">
-            <h3 className="font-semibold text-slate-900">Email Details</h3>
+            <h3 className="font-semibold text-slate-900">PDF & Email Details</h3>
             
-            <div>
-              <Label htmlFor="to">*To</Label>
-              <Input
-                id="to"
-                type="email"
-                value={emailData.to}
-                onChange={(e) => setEmailData({ ...emailData, to: e.target.value })}
-                placeholder="recipient@example.com"
-              />
-            </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="cc">CC</Label>
+                <Label htmlFor="linkLabel">*PDF Link Label</Label>
                 <Input
-                  id="cc"
-                  type="email"
-                  value={emailData.cc}
-                  onChange={(e) => setEmailData({ ...emailData, cc: e.target.value })}
-                  placeholder="cc@example.com"
+                  id="linkLabel"
+                  value={pdfData.linkLabel}
+                  onChange={(e) => setPdfData({ ...pdfData, linkLabel: e.target.value })}
                 />
               </div>
               <div>
-                <Label htmlFor="bcc">BCC</Label>
+                <Label htmlFor="fileName">*PDF File Name</Label>
                 <Input
-                  id="bcc"
-                  type="email"
-                  value={emailData.bcc}
-                  onChange={(e) => setEmailData({ ...emailData, bcc: e.target.value })}
-                  placeholder="bcc@example.com"
+                  id="fileName"
+                  value={pdfData.fileName}
+                  onChange={(e) => setPdfData({ ...pdfData, fileName: e.target.value })}
                 />
               </div>
             </div>
 
-            <div>
-              <Label htmlFor="subject">*Subject</Label>
-              <Input
-                id="subject"
-                value={emailData.subject}
-                onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
-              />
-            </div>
+            <div className="border-t pt-4">
+              <h4 className="font-medium text-slate-900 mb-4">Email Recipients</h4>
+              
+              <div>
+                <Label htmlFor="to">*To</Label>
+                <Input
+                  id="to"
+                  type="email"
+                  value={emailData.to}
+                  onChange={(e) => setEmailData({ ...emailData, to: e.target.value })}
+                  placeholder="recipient@example.com"
+                />
+              </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-sm text-blue-800">
-                <strong>Note:</strong> You'll customize the email body in the next step.
-              </p>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                  <Label htmlFor="cc">CC</Label>
+                  <Input
+                    id="cc"
+                    type="email"
+                    value={emailData.cc}
+                    onChange={(e) => setEmailData({ ...emailData, cc: e.target.value })}
+                    placeholder="cc@example.com"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="bcc">BCC</Label>
+                  <Input
+                    id="bcc"
+                    type="email"
+                    value={emailData.bcc}
+                    onChange={(e) => setEmailData({ ...emailData, bcc: e.target.value })}
+                    placeholder="bcc@example.com"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <Label htmlFor="subject">*Subject</Label>
+                <Input
+                  id="subject"
+                  value={emailData.subject}
+                  onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
+                />
+              </div>
             </div>
           </div>
         )}
