@@ -273,6 +273,13 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
           token: session.token,
           instanceUrl: session.instanceUrl
         });
+        
+        // Clean up temp file from localStorage if it was used
+        if (formData.tempFileUrl) {
+          const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${opportunityId}`) || '[]');
+          const filtered = tempFiles.filter(tf => tf.url !== formData.tempFileUrl);
+          localStorage.setItem(`temp_files_${opportunityId}`, JSON.stringify(filtered));
+        }
       }
 
       onSuccess();

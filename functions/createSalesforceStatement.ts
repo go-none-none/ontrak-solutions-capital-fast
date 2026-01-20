@@ -8,9 +8,72 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
+    // Upload temp file to Salesforce if present
+    let sourceFileId = statementData.csbs__Source_File_ID__c;
+    if (statementData.tempFileUrl) {
+      try {
+        // Fetch the file from temp URL
+        const fileResponse = await fetch(statementData.tempFileUrl);
+        const fileBlob = await fileResponse.blob();
+        const arrayBuffer = await fileBlob.arrayBuffer();
+        const base64Data = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+
+        // Create ContentVersion
+        const cvResponse = await fetch(
+          `${instanceUrl}/services/data/v59.0/sobjects/ContentVersion`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              Title: 'Bank Statement',
+              PathOnClient: 'statement.pdf',
+              VersionData: base64Data
+            })
+          }
+        );
+
+        if (cvResponse.ok) {
+          const cvResult = await cvResponse.json();
+
+          // Get ContentDocumentId
+          const cdQuery = `SELECT ContentDocumentId FROM ContentVersion WHERE Id = '${cvResult.id}'`;
+          const cdResponse = await fetch(
+            `${instanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(cdQuery)}`,
+            { headers: { 'Authorization': `Bearer ${token}` } }
+          );
+
+          const cdData = await cdResponse.json();
+          sourceFileId = cdData.records[0].ContentDocumentId;
+
+          // Link to opportunity
+          await fetch(
+            `${instanceUrl}/services/data/v59.0/sobjects/ContentDocumentLink`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                ContentDocumentId: sourceFileId,
+                LinkedEntityId: opportunityId,
+                ShareType: 'V'
+              })
+            }
+          );
+        }
+      } catch (uploadError) {
+        console.error('Failed to upload temp file to Salesforce:', uploadError);
+      }
+    }
+
     // Prepare statement data for Salesforce
     const sfData = {
       csbs__Opportunity__c: opportunityId,
+      csbs__Source_File_ID__c: sourceFileId,
       csbs__Account_No__c: statementData.accountNo,
       csbs__Account_Title__c: statementData.accountTitle,
       csbs__Company__c: statementData.company,
@@ -61,6 +124,12 @@ Deno.serve(async (req) => {
     }
 
     const result = await response.json();
+    
+    // Clean up temp file from localStorage if it was used
+    if (statementData.tempFileUrl) {
+      // This will be cleaned up on frontend after success
+    }
+    
     return Response.json({ success: true, id: result.id });
   } catch (error) {
     console.error('Create statement error:', error);
