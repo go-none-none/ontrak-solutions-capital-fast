@@ -62,21 +62,21 @@ Deno.serve(async (req) => {
     doc.text(cleanMessageLines, 20, yPosition);
     yPosition += cleanMessageLines.length * 5 + 8;
 
-    // Next Steps box
-    doc.setFillColor(240, 249, 255);
-    doc.setDrawColor(8, 112, 142);
+    // Time Sensitive Urgency box
+    doc.setFillColor(255, 245, 238);
+    doc.setDrawColor(220, 38, 38);
     doc.setLineWidth(0.5);
-    doc.rect(20, yPosition, 170, 22, 'FD');
-    doc.setTextColor(8, 112, 142);
+    doc.rect(20, yPosition, 170, 28, 'FD');
+    doc.setTextColor(220, 38, 38);
     doc.setFontSize(10);
     doc.setFont(undefined, 'bold');
-    doc.text('✓ NEXT STEPS', 25, yPosition + 6);
+    doc.text('⏰ TIME SENSITIVE - FUNDING AVAILABLE TODAY', 25, yPosition + 6);
     doc.setTextColor(15, 23, 42);
     doc.setFont(undefined, 'normal');
-    doc.setFontSize(10);
-    const nextStepsText = doc.splitTextToSize('Review the offers below and let us know which one works best for you. We\'re ready to fund within 24-48 hours!', 160);
-    doc.text(nextStepsText, 25, yPosition + 13);
-    yPosition += 28;
+    doc.setFontSize(9);
+    const urgencyText = doc.splitTextToSize('These offers expire within 24-48 hours. We can process funding TODAY once you select your preferred offer. Act now to secure your funding.', 160);
+    doc.text(urgencyText, 25, yPosition + 13);
+    yPosition += 32;
 
     // Your Offers title
     doc.setTextColor(15, 23, 42);
