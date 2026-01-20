@@ -1661,6 +1661,20 @@ export default function OpportunityDetail() {
         onClose={() => setViewingStatementPdf(null)}
       />
 
+      {/* Offer Proposal Modal */}
+      <OfferProposalModal
+        isOpen={showOfferProposal}
+        onClose={() => setShowOfferProposal(false)}
+        offers={offers}
+        contactEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
+        opportunity={opportunity}
+        session={session}
+        onSuccess={() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const oppId = urlParams.get('id');
+          loadRelatedRecords(session, oppId);
+        }}
+      />
 
       </div>
       );
