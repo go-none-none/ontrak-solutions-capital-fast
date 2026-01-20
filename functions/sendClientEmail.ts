@@ -164,61 +164,6 @@ Deno.serve(async (req) => {
     doc.text(`© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.`, 20, yPosition);
 
     const pdfBytes = doc.output('arraybuffer');
-    const base64PDF = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
-
-    // Upload PDF to Salesforce
-    console.log('Uploading PDF to Salesforce...');
-    const uploadResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/ContentVersion`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        Title: pdfFileName,
-        PathOnClient: `/${pdfFileName}.pdf`,
-        VersionData: base64PDF,
-        IsMajorVersion: true
-      })
-    });
-
-    const uploadData = await uploadResponse.json();
-    if (!uploadResponse.ok) {
-      console.warn('Could not upload PDF:', JSON.stringify(uploadData));
-    }
-
-    let pdfLink = '';
-    if (uploadResponse.ok && uploadData.id) {
-      // Get content document ID
-      const contentVersionId = uploadData.id;
-      const getResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/ContentVersion/${contentVersionId}?fields=ContentDocumentId`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (getResponse.ok) {
-        const contentData = await getResponse.json();
-        const contentDocId = contentData.ContentDocumentId;
-
-        // Link to opportunity
-        await fetch(`${instanceUrl}/services/data/v59.0/sobjects/ContentDocumentLink`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            ContentDocumentId: contentDocId,
-            LinkedEntityId: opportunityId,
-            ShareType: 'V'
-          })
-        }).catch(err => console.warn('Could not link PDF:', err.message));
-
-        pdfLink = `${instanceUrl}/sfc/servlet.shepherd/version/download/${contentVersionId}`;
-      }
-    }
 
     // Build email from template
     const offersRows = offers.map((offer, idx) => `
