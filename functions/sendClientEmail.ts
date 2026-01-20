@@ -183,7 +183,8 @@ Deno.serve(async (req) => {
 
               <!-- Header -->
               <tr>
-                  <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
+                  <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 30px 30px 20px 30px; text-align: center;">
+                      <img src="https://ontrak.co/logo.png" alt="OnTrak Capital" style="height: 40px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;" />
                       <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Your Offer Proposal</h1>
                   </td>
               </tr>
