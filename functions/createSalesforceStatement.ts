@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     const sfData = {
       csbs__Opportunity__c: opportunityId,
       csbs__Account_No__c: statementData.accountNo,
-      csbs__Account_Title__c: statementData.accountTitle,
+      Name: statementData.accountTitle || statementData.accountNo || 'Bank Statement',
       csbs__Company__c: statementData.company,
       csbs__Bank_Name__c: statementData.bankName,
       csbs__Starting_Date__c: statementData.startingDate,
@@ -33,7 +33,8 @@ Deno.serve(async (req) => {
       csbs__NSFs__c: statementData.nsfs,
       csbs__Negative_Days__c: statementData.negativeDays,
       csbs__Fraud_Reasons__c: statementData.fraudReasons,
-      csbs__Notes__c: statementData.notes
+      csbs__Notes__c: statementData.notes,
+      csbs__Source_File_ID__c: statementData.csbs__Source_File_ID__c
     };
 
     // Remove undefined/null values
