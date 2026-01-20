@@ -10,8 +10,7 @@ Deno.serve(async (req) => {
 
     const sfData = {
       csbs__Account_No__c: statementData.accountNo,
-      csbs__Account_Title__c: statementData.accountTitle,
-      csbs__Company__c: statementData.company,
+      Name: statementData.accountTitle || statementData.accountNo,
       csbs__Bank_Name__c: statementData.bankName,
       csbs__Starting_Date__c: statementData.startingDate,
       csbs__Starting_Balance__c: statementData.startingBalance,

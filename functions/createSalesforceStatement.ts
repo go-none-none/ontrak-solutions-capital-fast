@@ -13,7 +13,6 @@ Deno.serve(async (req) => {
       csbs__Opportunity__c: opportunityId,
       csbs__Account_No__c: statementData.accountNo,
       Name: statementData.accountTitle || statementData.accountNo || 'Bank Statement',
-      csbs__Company__c: statementData.company,
       csbs__Bank_Name__c: statementData.bankName,
       csbs__Starting_Date__c: statementData.startingDate,
       csbs__Starting_Balance__c: statementData.startingBalance,
