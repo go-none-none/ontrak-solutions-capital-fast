@@ -22,6 +22,8 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
     setError(null);
     
     try {
+      console.log('Loading PDF for file:', file.ContentDocumentId);
+      
       // Direct fetch to avoid base44 auth check
       const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
         method: 'POST',
@@ -35,11 +37,16 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
         })
       });
 
+      console.log('Response status:', response.status);
+
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response error:', errorText);
         throw new Error('Failed to fetch file content');
       }
 
       const data = await response.json();
+      console.log('Data received, has file:', !!data.file, 'file length:', data.file?.length);
 
       if (!data || !data.file) {
         throw new Error('No file content received');
@@ -55,7 +62,10 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
       }
       
       const blob = new Blob([bytes], { type: 'application/pdf' });
+      console.log('Blob created, size:', blob.size, 'type:', blob.type);
+      
       const url = URL.createObjectURL(blob);
+      console.log('Blob URL created:', url);
       
       setPdfData(url);
     } catch (error) {
