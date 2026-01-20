@@ -164,7 +164,7 @@ Deno.serve(async (req) => {
     doc.text(`© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.`, 20, yPosition);
 
     const pdfBytes = doc.output('arraybuffer');
-    const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
+    const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
 
     const emailHTML = `<!DOCTYPE html>
     <html lang="en">
