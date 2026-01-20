@@ -1,5 +1,6 @@
-import { jsPDF } from 'npm:jspdf@4.0.0';
+import { jsPDF } from 'npm:jspdf@2.5.2';
 import 'npm:jspdf-autotable@3.5.31';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 const SENDGRID_API_KEY = Deno.env.get("SENDGRID_API_KEY");
 const SENDER_EMAIL = "funding@ontrak.co";
@@ -163,18 +164,7 @@ Deno.serve(async (req) => {
     doc.setFontSize(9);
     doc.text(`© ${new Date().getFullYear()} OnTrak Capital. All rights reserved.`, 20, yPosition);
 
-    const pdfBytes = doc.output('arraybuffer');
-
-    // Build email from template
-    const offersRows = offers.map((offer, idx) => `
-      <tr>
-        <td style="padding: 12px; border: 1px solid #e5e7eb;">Offer ${idx + 1}</td>
-        <td style="padding: 12px; border: 1px solid #e5e7eb;">${offer.csbs__Lender__c || 'Unknown'}</td>
-        <td style="padding: 12px; border: 1px solid #e5e7eb;">$${Number(offer.csbs__Funded__c).toLocaleString()}</td>
-        <td style="padding: 12px; border: 1px solid #e5e7eb;">$${Number(offer.csbs__Payment_Amount__c).toLocaleString()} ${offer.csbs__Payment_Frequency__c}</td>
-        <td style="padding: 12px; border: 1px solid #e5e7eb;">${offer.csbs__Term__c} mo</td>
-      </tr>
-    `).join('');
+    const pdfBase64 = doc.output('dataurlstring').split(',')[1];
 
     const emailHTML = `<!DOCTYPE html>
     <html lang="en">
@@ -208,34 +198,13 @@ Deno.serve(async (req) => {
                       <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%); border-left: 4px solid #08708E; border-radius: 8px; margin: 30px 0;">
                           <tr>
                               <td style="padding: 20px;">
-                                  <p style="color: #08708E; font-size: 14px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">✓ Next Steps</p>
-                                  <p style="color: #0f172a; font-size: 15px; margin: 0;">Review the offers below and let us know which one works best for you. We're ready to fund within 24-48 hours!</p>
+                                  <p style="color: #08708E; font-size: 14px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">⏰ Time Sensitive</p>
+                                  <p style="color: #0f172a; font-size: 15px; margin: 0;"><strong>This is urgent!</strong> Review the attached offer proposal immediately. Most offers expire within 24-48 hours, and we can fund the same day once you select your preferred option. Don't miss this opportunity—respond today to move forward.</p>
                               </td>
                           </tr>
                       </table>
 
-                      <!-- Offers Table -->
-                      <table width="100%" cellpadding="0" cellspacing="0" style="margin: 30px 0;">
-                          <tr>
-                              <td>
-                                  <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">Your Offers</p>
-                              </td>
-                          </tr>
-                          <tr>
-                              <td>
-                                  <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
-                                      <tr style="background-color: #f0f0f0;">
-                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Offer</th>
-                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Lender</th>
-                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Funded Amount</th>
-                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Payment Amount</th>
-                                          <th style="padding: 12px; text-align: left; font-weight: bold; font-size: 13px; border: 1px solid #e5e7eb; color: #0f172a;">Term</th>
-                                      </tr>
-                                      ${offersRows}
-                                  </table>
-                              </td>
-                          </tr>
-                      </table>
+
 
 
 
@@ -273,7 +242,7 @@ Deno.serve(async (req) => {
     </body>
     </html>`;
 
-    // Send email via SendGrid
+    // Send email via SendGrid with PDF attachment
     console.log('Sending email via SendGrid...');
     const sendResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
       method: 'POST',
@@ -290,6 +259,12 @@ Deno.serve(async (req) => {
         content: [{
           type: 'text/html',
           value: emailHTML
+        }],
+        attachments: [{
+          content: pdfBase64,
+          type: 'application/pdf',
+          filename: 'Offer_Proposal.pdf',
+          disposition: 'attachment'
         }]
       })
     });
