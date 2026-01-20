@@ -26,16 +26,17 @@ Deno.serve(async (req) => {
     }
 
     console.log('Starting to send email to:', recipientEmail);
+    console.log('Subject:', subject);
 
     // Clean message - strip HTML tags if present
     const cleanMessage = message.replace(/<[^>]*>/g, '').trim() || 'Please review the offers below.';
 
-    // Generate PDF with professional styling matching email template
+    // Generate PDF with professional styling
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     let yPosition = 0;
 
-    // Header with gradient effect (using color blocks)
+    // Header with gradient effect
     doc.setFillColor(8, 112, 142);
     doc.rect(0, 0, pageWidth, 50, 'F');
     doc.setTextColor(255, 255, 255);
@@ -169,81 +170,77 @@ Deno.serve(async (req) => {
     const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
 
     const emailHTML = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Offer Proposal</title>
-    </head>
-    <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f8fafc;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; padding: 40px 20px;">
-    <tr>
-      <td align="center">
-          <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Offer Proposal</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f8fafc;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; padding: 40px 20px;">
+<tr>
+  <td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
 
-              <!-- Header -->
-              <tr>
-                  <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 30px 30px 20px 30px; text-align: center;">
-                      <img src="https://ontrak.co/logo.png" alt="OnTrak Capital" style="height: 40px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;" />
-                      <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Your Offer Proposal</h1>
-                  </td>
-              </tr>
+          <!-- Header -->
+          <tr>
+              <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 30px 30px 20px 30px; text-align: center;">
+                  <img src="https://ontrak.co/logo.png" alt="OnTrak Capital" style="height: 40px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;" />
+                  <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Your Offer Proposal</h1>
+              </td>
+          </tr>
 
-              <!-- Body Content -->
-              <tr>
-                  <td style="padding: 40px 30px;">
-                      <p style="color: #0f172a; font-size: 18px; margin: 0 0 20px 0; font-weight: 600;">Hi ${recipientName || 'Valued Customer'},</p>
+          <!-- Body Content -->
+          <tr>
+              <td style="padding: 40px 30px;">
+                  <p style="color: #0f172a; font-size: 18px; margin: 0 0 20px 0; font-weight: 600;">Hi ${recipientName || 'Valued Customer'},</p>
 
-                      <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                          ${cleanMessage}
-                      </p>
+                  <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                      ${cleanMessage}
+                  </p>
 
-                      <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #fff5ee 0%, #fee2e2 100%); border-left: 4px solid #dc2626; border-radius: 8px; margin: 30px 0; border-collapse: collapse;">
-                          <tr>
-                              <td style="padding: 20px;">
-                                  <p style="color: #dc2626; font-size: 14px; font-weight: 700; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">⏰ TIME SENSITIVE - FUNDING AVAILABLE TODAY</p>
-                                  <p style="color: #0f172a; font-size: 14px; line-height: 1.6; margin: 0;"><strong>Act immediately!</strong> These offers expire within 24-48 hours. We can process your funding and get money to you TODAY once you select your preferred option. Don't delay—respond now to move forward.</p>
-                              </td>
-                          </tr>
-                      </table>
+                  <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #fff5ee 0%, #fee2e2 100%); border-left: 4px solid #dc2626; border-radius: 8px; margin: 30px 0; border-collapse: collapse;">
+                      <tr>
+                          <td style="padding: 20px;">
+                              <p style="color: #dc2626; font-size: 14px; font-weight: 700; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">⏰ TIME SENSITIVE - FUNDING AVAILABLE TODAY</p>
+                              <p style="color: #0f172a; font-size: 14px; line-height: 1.6; margin: 0;"><strong>Act immediately!</strong> These offers expire within 24-48 hours. We can process your funding and get money to you TODAY once you select your preferred option. Don't delay—respond now to move forward.</p>
+                          </td>
+                      </tr>
+                  </table>
 
+                  <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
 
+                  <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 20px 0;">
+                      <tr>
+                          <td style="padding: 20px; background-color: #f0f9ff; border-radius: 12px;">
+                              <p style="color: #0f172a; font-size: 15px; font-weight: 600; margin: 0 0 10px 0;">❓ Questions?</p>
+                              <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
+                                  I'm here to help! Feel free to reach out if you need any clarification on these offers.
+                              </p>
+                          </td>
+                      </tr>
+                  </table>
+              </td>
+          </tr>
 
+          <!-- Footer -->
+          <tr>
+              <td style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                  <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Best regards,</p>
+                  <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">${senderName || 'OnTrak Capital'}</p>
+                  <p style="color: #64748b; font-size: 14px; margin: 0 0 15px 0;">Funding Specialist</p>
+                  <p style="color: #94a3b8; font-size: 12px; margin: 15px 0 0 0; line-height: 1.6;">
+                      © ${new Date().getFullYear()} OnTrak Capital. All rights reserved.
+                  </p>
+              </td>
+          </tr>
 
-
-                      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
-
-                      <table width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 20px 0;">
-                          <tr>
-                              <td style="padding: 20px; background-color: #f0f9ff; border-radius: 12px;">
-                                  <p style="color: #0f172a; font-size: 15px; font-weight: 600; margin: 0 0 10px 0;">❓ Questions?</p>
-                                  <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0;">
-                                      I'm here to help! Feel free to reach out if you need any clarification on these offers.
-                                  </p>
-                              </td>
-                          </tr>
-                      </table>
-                  </td>
-              </tr>
-
-              <!-- Footer -->
-              <tr>
-                  <td style="background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
-                      <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Best regards,</p>
-                      <p style="color: #0f172a; font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">${senderName || 'OnTrak Capital'}</p>
-                      <p style="color: #64748b; font-size: 14px; margin: 0 0 15px 0;">Funding Specialist</p>
-                      <p style="color: #94a3b8; font-size: 12px; margin: 15px 0 0 0; line-height: 1.6;">
-                          © ${new Date().getFullYear()} OnTrak Capital. All rights reserved.
-                      </p>
-                  </td>
-              </tr>
-
-          </table>
-      </td>
-    </tr>
-    </table>
-    </body>
-    </html>`;
+      </table>
+  </td>
+</tr>
+</table>
+</body>
+</html>`;
 
     // Send email via SendGrid with PDF attachment
     console.log('Sending email via SendGrid...');
@@ -336,7 +333,7 @@ Deno.serve(async (req) => {
       }).catch(err => console.warn('Could not log activity:', err.message));
     }
 
-    console.log('Email sent successfully via SendGrid');
+    console.log('Email sent successfully');
     return Response.json({ success: true });
   } catch (error) {
     console.error('Error:', error.message);
