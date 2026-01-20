@@ -87,13 +87,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
     }
 
     if (step === 2) {
-        // Validate PDF fields
-        if (!pdfData.linkLabel.trim() || !pdfData.fileName.trim()) {
-          alert('Please fill in both PDF Link Label and File Name');
-          return;
-        }
-
-        // Auto-generate email body based on selected offers
+    // Auto-generate email body based on selected offers
         const selected = offers.filter(o => selectedOffers.includes(o.Id));
         let bodyContent = 'Review the offers below:';
 
