@@ -196,7 +196,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-4 pt-4 border-t border-slate-200 space-y-3 max-h-96 overflow-y-auto"
+            className="mt-4 pt-4 border-t border-slate-200 grid grid-cols-3 gap-4 auto-rows-max"
           >
             {loadingData && (
               <div className="flex justify-center py-4">
@@ -206,7 +206,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
 
             {/* Contacts */}
             {contactRoles && contactRoles.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-1">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Contacts</p>
                 <div className="space-y-1 text-xs">
                   {contactRoles.map(role => (
@@ -223,9 +223,9 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
 
             {/* Key Info */}
             {fullData && (fullData.Amount || fullData.CloseDate || fullData.Probability) && (
-              <div className="space-y-2">
+              <div className="space-y-2 col-span-1">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Key Info</p>
-                <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="space-y-1 text-xs">
                   {fullData.Amount && <div><span className="text-slate-500">Amount:</span> {formatCurrency(fullData.Amount)}</div>}
                   {fullData.CloseDate && <div><span className="text-slate-500">Close:</span> {formatDate(fullData.CloseDate)}</div>}
                   {fullData.Probability && <div><span className="text-slate-500">Prob:</span> {fullData.Probability}%</div>}
@@ -235,9 +235,9 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
 
             {/* Opp Info */}
             {fullData && (fullData.Type || fullData.LeadSource || fullData.csbs__ISO__c || fullData.csbs__Line_of_Credit__c) && (
-              <div className="space-y-2 border-t pt-2">
+              <div className="space-y-2 col-span-1">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Opp Info</p>
-                <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="space-y-1 text-xs">
                   {fullData.Type && <div><span className="text-slate-500">Type:</span> {fullData.Type}</div>}
                   {fullData.LeadSource && <div><span className="text-slate-500">Source:</span> {fullData.LeadSource}</div>}
                   {fullData.csbs__ISO__c && <div><span className="text-slate-500">ISO:</span> {fullData.csbs__ISO__c}</div>}
@@ -248,12 +248,12 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
 
             {/* Qualifying Info */}
             {fullData && (fullData.csbs__Amount_Requested__c || fullData.csbs__Months_In_Business__c || fullData.csbs__Estimated_Monthly_Revenue__c) && (
-              <div className="space-y-2 border-t pt-2">
+              <div className="space-y-2 col-span-1">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Qualifying</p>
-                <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="space-y-1 text-xs">
                   {fullData.csbs__Amount_Requested__c && <div><span className="text-slate-500">Req:</span> {formatCurrency(fullData.csbs__Amount_Requested__c)}</div>}
                   {fullData.csbs__Months_In_Business__c && <div><span className="text-slate-500">Months:</span> {fullData.csbs__Months_In_Business__c}</div>}
-                  {fullData.csbs__Use_of_Proceeds__c && <div className="col-span-2"><span className="text-slate-500">Use:</span> {fullData.csbs__Use_of_Proceeds__c}</div>}
+                  {fullData.csbs__Use_of_Proceeds__c && <div><span className="text-slate-500">Use:</span> {fullData.csbs__Use_of_Proceeds__c}</div>}
                   {fullData.csbs__Estimated_Monthly_Revenue__c && <div><span className="text-slate-500">Revenue:</span> {formatCurrency(fullData.csbs__Estimated_Monthly_Revenue__c)}</div>}
                   {fullData.csbs__Number_of_Terminals__c && <div><span className="text-slate-500">Terminals:</span> {fullData.csbs__Number_of_Terminals__c}</div>}
                   {fullData.csbs__Open_Loan_Balances__c && <div><span className="text-slate-500">Balances:</span> {formatCurrency(fullData.csbs__Open_Loan_Balances__c)}</div>}
@@ -265,9 +265,9 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
 
             {/* Financial Info */}
             {(opportunity.csbs__Avg_Gross_Monthly_Sales__c || opportunity.csbs__Avg_Daily_Balance__c) && (
-              <div className="space-y-2 border-t pt-2">
+              <div className="space-y-2 col-span-1">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Financial</p>
-                <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="space-y-1 text-xs">
                   {opportunity.csbs__Avg_Gross_Monthly_Sales__c && <div><span className="text-slate-500">Sales:</span> {formatCurrency(opportunity.csbs__Avg_Gross_Monthly_Sales__c)}</div>}
                   {opportunity.csbs__Avg_Bank_Deposits__c && <div><span className="text-slate-500">Deposits:</span> {formatCurrency(opportunity.csbs__Avg_Bank_Deposits__c)}</div>}
                   {opportunity.csbs__Avg_Daily_Balance__c && <div><span className="text-slate-500">Bal:</span> {formatCurrency(opportunity.csbs__Avg_Daily_Balance__c)}</div>}
@@ -278,7 +278,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
 
             {/* Open Balances */}
             {fullData && (fullData.Lender_Name_1__c || fullData.Lender_Name_2__c || fullData.Lender_Name_3__c) && (
-              <div className="space-y-2 border-t pt-2">
+              <div className="space-y-2 col-span-1">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Open Balances</p>
                 <div className="space-y-1 text-xs">
                   {fullData.Lender_Name_1__c && <div><span className="text-slate-500">{fullData.Lender_Name_1__c}:</span> {formatCurrency(fullData.Open_Balance_Amount_1__c)}</div>}
@@ -290,9 +290,9 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
 
             {/* Funded Terms */}
             {fullData && (fullData.csbs__Funded__c || fullData.csbs__Payment_Amount__c || fullData.csbs__Term__c) && (
-              <div className="space-y-2 border-t pt-2">
+              <div className="space-y-2 col-span-1">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Funded Terms</p>
-                <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="space-y-1 text-xs">
                   {fullData.csbs__Funded_Date__c && <div><span className="text-slate-500">Date:</span> {formatDate(fullData.csbs__Funded_Date__c)}</div>}
                   {fullData.csbs__Funded__c && <div><span className="text-slate-500">Funded:</span> {formatCurrency(fullData.csbs__Funded__c)}</div>}
                   {fullData.csbs__Lender__c && <div><span className="text-slate-500">Lender:</span> {fullData.csbs__Lender__c}</div>}
@@ -309,9 +309,9 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
 
             {/* More Financial Details */}
             {fullData && (fullData.csbs__Avg_Gross_Monthly_Sales__c || fullData.csbs__Avg_Credit_Card_Volume__c || fullData.csbs__Avg_NSFs__c) && (
-              <div className="space-y-2 border-t pt-2">
+              <div className="space-y-2 col-span-1">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Banking Activity</p>
-                <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="space-y-1 text-xs">
                   {fullData.csbs__Avg_Gross_Monthly_Sales__c && <div><span className="text-slate-500">Sales:</span> {formatCurrency(fullData.csbs__Avg_Gross_Monthly_Sales__c)}</div>}
                   {fullData.csbs__Avg_Credit_Card_Volume__c && <div><span className="text-slate-500">CC Vol:</span> {formatCurrency(fullData.csbs__Avg_Credit_Card_Volume__c)}</div>}
                   {fullData.csbs__Avg_Daily_Balance__c && <div><span className="text-slate-500">Avg Bal:</span> {formatCurrency(fullData.csbs__Avg_Daily_Balance__c)}</div>}
