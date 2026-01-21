@@ -60,129 +60,131 @@ export default function StatementAnalysisDashboard({ statements }) {
   const isHealthy = healthScore >= 70;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-hidden">
       {/* Hero Stats - Key Metrics */}
-      <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 shadow-lg text-white">
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <p className="text-orange-100 text-sm font-medium mb-1">Account Health Score</p>
+      <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-4 sm:p-6 shadow-lg text-white overflow-hidden">
+        <div className="flex items-start justify-between mb-4 sm:mb-6 gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="text-orange-100 text-xs sm:text-sm font-medium mb-1">Account Health Score</p>
             <div className="flex items-end gap-2">
-              <p className="text-5xl font-bold">{healthScore}%</p>
-              <p className="text-orange-100 mb-2">{isHealthy ? 'Healthy' : 'Needs Attention'}</p>
+              <p className="text-3xl sm:text-5xl font-bold">{healthScore}%</p>
+              <p className="text-orange-100 mb-1 sm:mb-2 text-xs sm:text-base">{isHealthy ? 'Healthy' : 'Needs Attention'}</p>
             </div>
           </div>
-          <div className={`p-3 rounded-xl ${isHealthy ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
-            {isHealthy ? <TrendingUp className="w-8 h-8" /> : <AlertTriangle className="w-8 h-8" />}
+          <div className={`p-2 sm:p-3 rounded-xl flex-shrink-0 ${isHealthy ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
+            {isHealthy ? <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8" /> : <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8" />}
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-            <p className="text-orange-100 text-xs mb-1">Periods</p>
-            <p className="text-2xl font-bold">{stats.totalStatements}</p>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3 min-w-0">
+            <p className="text-orange-100 text-xs mb-1 truncate">Periods</p>
+            <p className="text-lg sm:text-2xl font-bold truncate">{stats.totalStatements}</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-            <p className="text-orange-100 text-xs mb-1">Avg Balance</p>
-            <p className="text-lg font-bold">{formatCurrency(stats.avgDailyBalance)}</p>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3 min-w-0">
+            <p className="text-orange-100 text-xs mb-1 truncate">Avg Balance</p>
+            <p className="text-sm sm:text-lg font-bold truncate">{formatCurrency(stats.avgDailyBalance)}</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-            <p className="text-orange-100 text-xs mb-1">Total Deposits</p>
-            <p className="text-lg font-bold">{formatCurrency(stats.totalDeposits)}</p>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2 sm:p-3 min-w-0">
+            <p className="text-orange-100 text-xs mb-1 truncate">Total Deposits</p>
+            <p className="text-sm sm:text-lg font-bold truncate">{formatCurrency(stats.totalDeposits)}</p>
           </div>
         </div>
       </div>
 
       {/* Summary Cards Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow border border-slate-200">
-          <div className="flex items-center justify-between mb-3">
-            <div className="p-2 bg-green-100 rounded-xl">
-              <TrendingUp className="w-5 h-5 text-green-600" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white rounded-2xl p-3 sm:p-5 shadow-md hover:shadow-lg transition-shadow border border-slate-200 min-w-0">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <div className="p-1.5 sm:p-2 bg-green-100 rounded-xl flex-shrink-0">
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
             </div>
-            <span className="text-xs text-green-600 font-semibold">+{stats.avgDepositCount.toFixed(0)}/mo</span>
+            <span className="text-xs text-green-600 font-semibold truncate ml-1">+{stats.avgDepositCount.toFixed(0)}/mo</span>
           </div>
-          <p className="text-sm text-slate-600 mb-1">Avg Deposits</p>
-          <p className="text-2xl font-bold text-slate-900">{formatCurrency(stats.avgDeposits)}</p>
+          <p className="text-xs sm:text-sm text-slate-600 mb-1 truncate">Avg Deposits</p>
+          <p className="text-lg sm:text-2xl font-bold text-slate-900 truncate">{formatCurrency(stats.avgDeposits)}</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow border border-slate-200">
-          <div className="flex items-center justify-between mb-3">
-            <div className="p-2 bg-red-100 rounded-xl">
-              <TrendingDown className="w-5 h-5 text-red-600" />
+        <div className="bg-white rounded-2xl p-3 sm:p-5 shadow-md hover:shadow-lg transition-shadow border border-slate-200 min-w-0">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <div className="p-1.5 sm:p-2 bg-red-100 rounded-xl flex-shrink-0">
+              <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
             </div>
-            <span className="text-xs text-red-600 font-semibold">-{stats.avgWithdrawalCount.toFixed(0)}/mo</span>
+            <span className="text-xs text-red-600 font-semibold truncate ml-1">-{stats.avgWithdrawalCount.toFixed(0)}/mo</span>
           </div>
-          <p className="text-sm text-slate-600 mb-1">Avg Withdrawals</p>
-          <p className="text-2xl font-bold text-slate-900">{formatCurrency(stats.avgWithdrawals)}</p>
+          <p className="text-xs sm:text-sm text-slate-600 mb-1 truncate">Avg Withdrawals</p>
+          <p className="text-lg sm:text-2xl font-bold text-slate-900 truncate">{formatCurrency(stats.avgWithdrawals)}</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow border border-slate-200">
-          <div className="flex items-center justify-between mb-3">
-            <div className="p-2 bg-purple-100 rounded-xl">
-              <AlertTriangle className="w-5 h-5 text-purple-600" />
+        <div className="bg-white rounded-2xl p-3 sm:p-5 shadow-md hover:shadow-lg transition-shadow border border-slate-200 min-w-0">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <div className="p-1.5 sm:p-2 bg-purple-100 rounded-xl flex-shrink-0">
+              <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
             </div>
-            <span className="text-xs text-purple-600 font-semibold">{stats.totalNsfs} total</span>
+            <span className="text-xs text-purple-600 font-semibold truncate ml-1">{stats.totalNsfs} total</span>
           </div>
-          <p className="text-sm text-slate-600 mb-1">Avg NSFs</p>
-          <p className="text-2xl font-bold text-slate-900">{stats.avgNsfs.toFixed(1)}</p>
+          <p className="text-xs sm:text-sm text-slate-600 mb-1 truncate">Avg NSFs</p>
+          <p className="text-lg sm:text-2xl font-bold text-slate-900">{stats.avgNsfs.toFixed(1)}</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow border border-slate-200">
-          <div className="flex items-center justify-between mb-3">
-            <div className="p-2 bg-amber-100 rounded-xl">
-              <Calendar className="w-5 h-5 text-amber-600" />
+        <div className="bg-white rounded-2xl p-3 sm:p-5 shadow-md hover:shadow-lg transition-shadow border border-slate-200 min-w-0">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <div className="p-1.5 sm:p-2 bg-amber-100 rounded-xl flex-shrink-0">
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" />
             </div>
-            <span className="text-xs text-amber-600 font-semibold">{stats.totalNegativeDays} total</span>
+            <span className="text-xs text-amber-600 font-semibold truncate ml-1">{stats.totalNegativeDays} total</span>
           </div>
-          <p className="text-sm text-slate-600 mb-1">Avg Negative Days</p>
-          <p className="text-2xl font-bold text-slate-900">{stats.avgNegativeDays.toFixed(1)}</p>
+          <p className="text-xs sm:text-sm text-slate-600 mb-1 truncate">Avg Negative Days</p>
+          <p className="text-lg sm:text-2xl font-bold text-slate-900">{stats.avgNegativeDays.toFixed(1)}</p>
         </div>
       </div>
 
       {/* Comprehensive Banking Activity */}
-      <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+      <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md border border-slate-200 overflow-hidden">
         <div className="flex items-center gap-2 mb-4">
-          <Activity className="w-5 h-5 text-orange-600" />
-          <h3 className="text-lg font-semibold text-slate-900">Banking Activity Summary</h3>
+          <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900">Banking Activity Summary</h3>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <CreditCard className="w-4 h-4 text-blue-600" />
-              <p className="text-xs text-blue-700 font-medium">Total Transactions</p>
+              <CreditCard className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600 flex-shrink-0" />
+              <p className="text-xs text-blue-700 font-medium truncate">Total Transactions</p>
             </div>
-            <p className="text-2xl font-bold text-blue-900">{stats.totalTransactions.toFixed(0)}</p>
+            <p className="text-xl sm:text-2xl font-bold text-blue-900 truncate">{stats.totalTransactions.toFixed(0)}</p>
           </div>
-          <div className="p-4 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl border border-emerald-200">
+          <div className="p-3 sm:p-4 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl border border-emerald-200 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <DollarSign className="w-4 h-4 text-emerald-600" />
-              <p className="text-xs text-emerald-700 font-medium">Total Deposits</p>
+              <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600 flex-shrink-0" />
+              <p className="text-xs text-emerald-700 font-medium truncate">Total Deposits</p>
             </div>
-            <p className="text-2xl font-bold text-emerald-900">{formatCurrency(stats.totalDeposits)}</p>
+            <p className="text-xl sm:text-2xl font-bold text-emerald-900 truncate">{formatCurrency(stats.totalDeposits)}</p>
           </div>
-          <div className="p-4 bg-gradient-to-br from-rose-50 to-rose-100 rounded-xl border border-rose-200">
+          <div className="p-3 sm:p-4 bg-gradient-to-br from-rose-50 to-rose-100 rounded-xl border border-rose-200 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingDown className="w-4 h-4 text-rose-600" />
-              <p className="text-xs text-rose-700 font-medium">Total Withdrawals</p>
+              <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4 text-rose-600 flex-shrink-0" />
+              <p className="text-xs text-rose-700 font-medium truncate">Total Withdrawals</p>
             </div>
-            <p className="text-2xl font-bold text-rose-900">{formatCurrency(stats.totalWithdrawals)}</p>
+            <p className="text-xl sm:text-2xl font-bold text-rose-900 truncate">{formatCurrency(stats.totalWithdrawals)}</p>
           </div>
-          <div className="p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl border border-indigo-200">
+          <div className="p-3 sm:p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl border border-indigo-200 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <BarChart3 className="w-4 h-4 text-indigo-600" />
-              <p className="text-xs text-indigo-700 font-medium">Net Cash Flow</p>
+              <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-600 flex-shrink-0" />
+              <p className="text-xs text-indigo-700 font-medium truncate">Net Cash Flow</p>
             </div>
-            <p className="text-2xl font-bold text-indigo-900">{formatCurrency(stats.totalDeposits - stats.totalWithdrawals)}</p>
+            <p className="text-xl sm:text-2xl font-bold text-indigo-900 truncate">{formatCurrency(stats.totalDeposits - stats.totalWithdrawals)}</p>
           </div>
         </div>
       </div>
 
       {/* Balance Trend */}
-      <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+      <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md border border-slate-200 overflow-hidden">
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="w-5 h-5 text-orange-600" />
-          <h3 className="text-lg font-semibold text-slate-900">Daily Balance Trend</h3>
+          <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900">Daily Balance Trend</h3>
         </div>
-        <ResponsiveContainer width="100%" height={280}>
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-[300px]">
+            <ResponsiveContainer width="100%" height={280}>
           <LineChart data={timelineData}>
             <defs>
               <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
@@ -210,15 +212,19 @@ export default function StatementAnalysisDashboard({ statements }) {
             />
           </LineChart>
         </ResponsiveContainer>
+          </div>
+        </div>
       </div>
 
       {/* Deposits vs Withdrawals */}
-      <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+      <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md border border-slate-200 overflow-hidden">
         <div className="flex items-center gap-2 mb-4">
-          <BarChart3 className="w-5 h-5 text-orange-600" />
-          <h3 className="text-lg font-semibold text-slate-900">Deposits vs Withdrawals</h3>
+          <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900">Deposits vs Withdrawals</h3>
         </div>
-        <ResponsiveContainer width="100%" height={280}>
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-[300px]">
+            <ResponsiveContainer width="100%" height={280}>
           <BarChart data={timelineData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
             <XAxis dataKey="name" style={{ fontSize: '12px' }} stroke="#64748b" />
@@ -232,16 +238,20 @@ export default function StatementAnalysisDashboard({ statements }) {
             <Bar dataKey="withdrawals" fill="#ef4444" name="Withdrawals" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
+          </div>
+        </div>
       </div>
 
       {/* Risk Analysis */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+      <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md border border-slate-200 overflow-hidden">
           <div className="flex items-center gap-2 mb-4">
-            <AlertTriangle className="w-5 h-5 text-orange-600" />
-            <h3 className="text-lg font-semibold text-slate-900">Account Health Distribution</h3>
+            <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900 truncate">Account Health Distribution</h3>
           </div>
-          <ResponsiveContainer width="100%" height={240}>
+          <div className="w-full overflow-x-auto">
+            <div className="min-w-[200px]">
+              <ResponsiveContainer width="100%" height={240}>
             <PieChart>
               <Pie
                 data={riskData}
@@ -260,12 +270,14 @@ export default function StatementAnalysisDashboard({ statements }) {
               <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} />
             </PieChart>
           </ResponsiveContainer>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md border border-slate-200 overflow-hidden">
           <div className="flex items-center gap-2 mb-4">
-            <Activity className="w-5 h-5 text-orange-600" />
-            <h3 className="text-lg font-semibold text-slate-900">Risk Metrics</h3>
+            <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+            <h3 className="text-base sm:text-lg font-semibold text-slate-900">Risk Metrics</h3>
           </div>
           <div className="space-y-4">
             <div className="p-4 bg-red-50 rounded-xl border border-red-200">
@@ -305,12 +317,14 @@ export default function StatementAnalysisDashboard({ statements }) {
       </div>
 
       {/* Risk Indicators Over Time */}
-      <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+      <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-md border border-slate-200 overflow-hidden">
         <div className="flex items-center gap-2 mb-4">
-          <AlertTriangle className="w-5 h-5 text-orange-600" />
-          <h3 className="text-lg font-semibold text-slate-900">Risk Indicators Over Time</h3>
+          <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
+          <h3 className="text-base sm:text-lg font-semibold text-slate-900">Risk Indicators Over Time</h3>
         </div>
-        <ResponsiveContainer width="100%" height={240}>
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-[300px]">
+            <ResponsiveContainer width="100%" height={240}>
           <BarChart data={timelineData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
             <XAxis dataKey="name" style={{ fontSize: '12px' }} stroke="#64748b" />
@@ -321,6 +335,8 @@ export default function StatementAnalysisDashboard({ statements }) {
             <Bar dataKey="negativeDays" fill="#f59e0b" name="Negative Days" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
+          </div>
+        </div>
       </div>
     </div>
   );
