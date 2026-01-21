@@ -258,67 +258,73 @@ export default function LenderDetail() {
               )}
 
               {/* Lending Criteria */}
-              {(lender.csbs__Minimum_Credit_Score__c || lender.csbs__Maximum_Negative_Days__c || lender.csbs__Minimum_Monthly_Deposit_Count__c || lender.csbs__Maximum_NSFs__c || lender.csbs__Minimum_Monthly_Deposit_Amount__c || lender.csbs__Minimum_Average_Daily_Balance__c || lender.csbs__Minimum_Months_in_Business__c || lender.csbs__Maximum_Offer_Amount__c || lender.csbs__Net_Offer_Percentage__c) && (
-                <div>
-                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Lending Criteria</h2>
-                  <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                    {lender.csbs__Minimum_Credit_Score__c && (
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Lending Criteria</h2>
+                {isEditing ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Minimum Credit Score</p>
-                        <p className="font-medium">{lender.csbs__Minimum_Credit_Score__c}</p>
+                        <Label>Minimum Credit Score</Label>
+                        <Input type="number" value={editData.csbs__Minimum_Credit_Score__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Minimum_Credit_Score__c: e.target.value })} />
                       </div>
-                    )}
-                    {lender.csbs__Maximum_Negative_Days__c && (
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Maximum Negative Days</p>
-                        <p className="font-medium">{lender.csbs__Maximum_Negative_Days__c}</p>
+                        <Label>Maximum Negative Days</Label>
+                        <Input type="number" value={editData.csbs__Maximum_Negative_Days__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Maximum_Negative_Days__c: e.target.value })} />
                       </div>
-                    )}
-                    {lender.csbs__Minimum_Monthly_Deposit_Count__c && (
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Min Monthly Deposits</p>
-                        <p className="font-medium">{lender.csbs__Minimum_Monthly_Deposit_Count__c}</p>
+                        <Label>Min Monthly Deposits</Label>
+                        <Input type="number" value={editData.csbs__Minimum_Monthly_Deposit_Count__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Minimum_Monthly_Deposit_Count__c: e.target.value })} />
                       </div>
-                    )}
-                    {lender.csbs__Maximum_NSFs__c && (
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Maximum NSFs</p>
-                        <p className="font-medium">{lender.csbs__Maximum_NSFs__c}</p>
+                        <Label>Maximum NSFs</Label>
+                        <Input type="number" value={editData.csbs__Maximum_NSFs__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Maximum_NSFs__c: e.target.value })} />
                       </div>
-                    )}
-                    {lender.csbs__Minimum_Monthly_Deposit_Amount__c && (
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Min Monthly Deposit Amount</p>
-                        <p className="font-medium">${Number(lender.csbs__Minimum_Monthly_Deposit_Amount__c).toLocaleString()}</p>
+                        <Label>Min Monthly Deposit Amount</Label>
+                        <Input type="number" value={editData.csbs__Minimum_Monthly_Deposit_Amount__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Minimum_Monthly_Deposit_Amount__c: e.target.value })} />
                       </div>
-                    )}
-                    {lender.csbs__Minimum_Average_Daily_Balance__c && (
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Min Avg Daily Balance</p>
-                        <p className="font-medium">${Number(lender.csbs__Minimum_Average_Daily_Balance__c).toLocaleString()}</p>
+                        <Label>Min Avg Daily Balance</Label>
+                        <Input type="number" value={editData.csbs__Minimum_Average_Daily_Balance__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Minimum_Average_Daily_Balance__c: e.target.value })} />
                       </div>
-                    )}
-                    {lender.csbs__Minimum_Months_in_Business__c && (
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Min Months in Business</p>
-                        <p className="font-medium">{lender.csbs__Minimum_Months_in_Business__c}</p>
+                        <Label>Min Months in Business</Label>
+                        <Input type="number" value={editData.csbs__Minimum_Months_in_Business__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Minimum_Months_in_Business__c: e.target.value })} />
                       </div>
-                    )}
-                    {lender.csbs__Maximum_Offer_Amount__c && (
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Maximum Offer Amount</p>
-                        <p className="font-medium">${Number(lender.csbs__Maximum_Offer_Amount__c).toLocaleString()}</p>
+                        <Label>Maximum Offer Amount</Label>
+                        <Input type="number" value={editData.csbs__Maximum_Offer_Amount__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Maximum_Offer_Amount__c: e.target.value })} />
                       </div>
-                    )}
-                    {lender.csbs__Net_Offer_Percentage__c && (
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Net Offer %</p>
-                        <p className="font-medium">{lender.csbs__Net_Offer_Percentage__c}%</p>
+                        <Label>Net Offer %</Label>
+                        <Input type="number" step="0.01" value={editData.csbs__Net_Offer_Percentage__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Net_Offer_Percentage__c: e.target.value })} />
                       </div>
-                    )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Restricted States</Label>
+                        <MultiSelect options={US_STATES} value={editData.csbs__Restricted_States__c || []} onChange={(value) => setEditData({ ...editData, csbs__Restricted_States__c: value })} placeholder="Select states..." />
+                      </div>
+                      <div>
+                        <Label>Restricted Industries</Label>
+                        <MultiSelect options={INDUSTRIES} value={editData.csbs__Restricted_Industries__c || []} onChange={(value) => setEditData({ ...editData, csbs__Restricted_Industries__c: value })} placeholder="Select industries..." />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                    {lender.csbs__Minimum_Credit_Score__c && (<div><p className="text-slate-500 text-xs mb-1">Minimum Credit Score</p><p className="font-medium">{lender.csbs__Minimum_Credit_Score__c}</p></div>)}
+                    {lender.csbs__Maximum_Negative_Days__c && (<div><p className="text-slate-500 text-xs mb-1">Maximum Negative Days</p><p className="font-medium">{lender.csbs__Maximum_Negative_Days__c}</p></div>)}
+                    {lender.csbs__Minimum_Monthly_Deposit_Count__c && (<div><p className="text-slate-500 text-xs mb-1">Min Monthly Deposits</p><p className="font-medium">{lender.csbs__Minimum_Monthly_Deposit_Count__c}</p></div>)}
+                    {lender.csbs__Maximum_NSFs__c && (<div><p className="text-slate-500 text-xs mb-1">Maximum NSFs</p><p className="font-medium">{lender.csbs__Maximum_NSFs__c}</p></div>)}
+                    {lender.csbs__Minimum_Monthly_Deposit_Amount__c && (<div><p className="text-slate-500 text-xs mb-1">Min Monthly Deposit Amount</p><p className="font-medium">${Number(lender.csbs__Minimum_Monthly_Deposit_Amount__c).toLocaleString()}</p></div>)}
+                    {lender.csbs__Minimum_Average_Daily_Balance__c && (<div><p className="text-slate-500 text-xs mb-1">Min Avg Daily Balance</p><p className="font-medium">${Number(lender.csbs__Minimum_Average_Daily_Balance__c).toLocaleString()}</p></div>)}
+                    {lender.csbs__Minimum_Months_in_Business__c && (<div><p className="text-slate-500 text-xs mb-1">Min Months in Business</p><p className="font-medium">{lender.csbs__Minimum_Months_in_Business__c}</p></div>)}
+                    {lender.csbs__Maximum_Offer_Amount__c && (<div><p className="text-slate-500 text-xs mb-1">Maximum Offer Amount</p><p className="font-medium">${Number(lender.csbs__Maximum_Offer_Amount__c).toLocaleString()}</p></div>)}
+                    {lender.csbs__Net_Offer_Percentage__c && (<div><p className="text-slate-500 text-xs mb-1">Net Offer %</p><p className="font-medium">{lender.csbs__Net_Offer_Percentage__c}%</p></div>)}
+                  </div>
+                )}
+              </div>
 
               {/* Additional Info */}
               {(lender.Description || lender.NumberOfEmployees) && (
