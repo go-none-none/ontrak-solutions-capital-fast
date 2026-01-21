@@ -10,9 +10,6 @@ export default function UniversalSearch({ session }) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState('all');
-  const [accountCategories, setAccountCategories] = useState([]);
-  const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const searchRef = useRef(null);
 
   useEffect(() => {
