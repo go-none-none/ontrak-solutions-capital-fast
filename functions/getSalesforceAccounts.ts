@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
     }
 
     const response = await fetch(
-      `${instanceUrl}/services/data/v57.0/query?q=SELECT+Id,Name,Type,Industry+FROM+Account+LIMIT+100`,
+      `${instanceUrl}/services/data/v57.0/query?q=SELECT+Id,Name,Type,Industry,RecordTypeId,RecordType.Name+FROM+Account+LIMIT+100`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
