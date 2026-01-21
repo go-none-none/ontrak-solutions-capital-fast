@@ -351,36 +351,40 @@ export default function LenderDetail() {
 
           {/* Sidebar */}
           <div className="bg-white rounded-xl shadow-sm p-6">
-            <h3 className="font-semibold text-slate-900 mb-4">Account Details</h3>
-            <div className="space-y-4 text-sm">
-              {lender.csbs__Active__c && (
-                <div>
-                  <p className="text-slate-500 text-xs mb-1">Status</p>
-                  <p className="font-medium">Active</p>
-                </div>
-              )}
-              {lender.csbs__Trading_Center__c && (
-                <div>
-                  <p className="text-slate-500 text-xs mb-1">Type</p>
-                  <p className="font-medium">Trading Center</p>
-                </div>
-              )}
-              {lender.csbs__Leads_from_API__c && (
-                <div className="flex items-center gap-2">
-                  <input type="checkbox" checked={true} disabled className="w-4 h-4" />
-                  <p className="font-medium text-xs">Leads from API</p>
-                </div>
-              )}
-              {lender.csbs__Leads_to_API__c && (
-                <div className="flex items-center gap-2">
-                  <input type="checkbox" checked={true} disabled className="w-4 h-4" />
-                  <p className="font-medium text-xs">Leads to API</p>
-                </div>
-              )}
-              {lender.csbs__Application_Industry__c && (
-                <div className="flex items-center gap-2">
-                  <input type="checkbox" checked={true} disabled className="w-4 h-4" />
-                  <p className="font-medium text-xs">Application Industry</p>
+            <h3 className="font-semibold text-slate-900 mb-4">Account Settings</h3>
+            <div className="space-y-4">
+              {isEditing ? (
+                <>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="active" checked={editData.csbs__Active__c || false} onCheckedChange={(checked) => setEditData({ ...editData, csbs__Active__c: checked })} />
+                      <Label htmlFor="active" className="cursor-pointer text-sm">Active Lender</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="trading" checked={editData.csbs__Trading_Center__c || false} onCheckedChange={(checked) => setEditData({ ...editData, csbs__Trading_Center__c: checked })} />
+                      <Label htmlFor="trading" className="cursor-pointer text-sm">Trading Center</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="leadsFromApi" checked={editData.csbs__Leads_from_API__c || false} onCheckedChange={(checked) => setEditData({ ...editData, csbs__Leads_from_API__c: checked })} />
+                      <Label htmlFor="leadsFromApi" className="cursor-pointer text-sm">Leads from API</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="leadsToApi" checked={editData.csbs__Leads_to_API__c || false} onCheckedChange={(checked) => setEditData({ ...editData, csbs__Leads_to_API__c: checked })} />
+                      <Label htmlFor="leadsToApi" className="cursor-pointer text-sm">Leads to API</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="appIndustry" checked={editData.csbs__Application_Industry__c || false} onCheckedChange={(checked) => setEditData({ ...editData, csbs__Application_Industry__c: checked })} />
+                      <Label htmlFor="appIndustry" className="cursor-pointer text-sm">Application Industry</Label>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-3 text-sm">
+                  {lender.csbs__Active__c && <div className="flex items-center gap-2"><input type="checkbox" checked={true} disabled className="w-4 h-4" /><p>Active Lender</p></div>}
+                  {lender.csbs__Trading_Center__c && <div className="flex items-center gap-2"><input type="checkbox" checked={true} disabled className="w-4 h-4" /><p>Trading Center</p></div>}
+                  {lender.csbs__Leads_from_API__c && <div className="flex items-center gap-2"><input type="checkbox" checked={true} disabled className="w-4 h-4" /><p>Leads from API</p></div>}
+                  {lender.csbs__Leads_to_API__c && <div className="flex items-center gap-2"><input type="checkbox" checked={true} disabled className="w-4 h-4" /><p>Leads to API</p></div>}
+                  {lender.csbs__Application_Industry__c && <div className="flex items-center gap-2"><input type="checkbox" checked={true} disabled className="w-4 h-4" /><p>Application Industry</p></div>}
                 </div>
               )}
             </div>
