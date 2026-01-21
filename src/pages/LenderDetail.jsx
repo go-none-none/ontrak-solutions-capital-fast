@@ -150,8 +150,24 @@ export default function LenderDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold text-slate-900 truncate">{lender.Name}</h1>
-              {lender.Industry && <p className="text-sm text-slate-600">{lender.Industry}</p>}
+              <h1 className="text-2xl font-bold text-slate-900 truncate">{isEditing ? editData.Name : lender.Name}</h1>
+              {(isEditing ? editData.Industry : lender.Industry) && <p className="text-sm text-slate-600">{isEditing ? editData.Industry : lender.Industry}</p>}
+            </div>
+            <div className="flex items-center gap-2">
+              {isEditing ? (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => { setIsEditing(false); setEditData(lender); }} disabled={saving}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                  <Button size="sm" onClick={handleSave} disabled={saving} className="bg-orange-600 hover:bg-orange-700">
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  </Button>
+                </>
+              ) : (
+                <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                  Edit
+                </Button>
+              )}
             </div>
           </div>
         </div>
