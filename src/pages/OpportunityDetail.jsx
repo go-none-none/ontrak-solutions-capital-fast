@@ -506,7 +506,7 @@ export default function OpportunityDetail() {
         {!opportunity.StageName?.includes('Declined') ? (
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
             <h3 className="text-sm font-semibold text-slate-700 mb-4">Opportunity Stage</h3>
-            <div className="flex justify-between items-start mb-3 gap-0.5 sm:gap-1 overflow-x-auto">
+            <div className="flex justify-between items-start mb-3 gap-0.5 sm:gap-1 flex-wrap">
               {[
                 { label: 'App In', name: 'Application In' },
                 { label: 'Underwriting', name: 'Underwriting' },
