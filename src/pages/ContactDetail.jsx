@@ -318,6 +318,7 @@ export default function ContactDetail() {
               recordType={opportunities.length > 0 ? "Opportunity" : "Contact"}
               session={session}
               smsColor="bg-[#08708E]"
+              emailColor="bg-[#08708E]"
               firstName={contact.FirstName}
             />
 
