@@ -60,7 +60,6 @@ export default function UniversalSearch({ session }) {
         if (leadsRes.data?.leads) {
           leadsRes.data.leads
             .filter(l => l.Name?.toLowerCase().includes(searchLower) || l.Company?.toLowerCase().includes(searchLower))
-            .slice(0, 8)
             .forEach(lead => {
               allResults.push({
                 id: lead.Id,
@@ -79,7 +78,6 @@ export default function UniversalSearch({ session }) {
         if (oppsRes.data?.opportunities) {
           oppsRes.data.opportunities
             .filter(o => o.Name?.toLowerCase().includes(searchLower) || o.Account?.Name?.toLowerCase().includes(searchLower))
-            .slice(0, 8)
             .forEach(opp => {
               allResults.push({
                 id: opp.Id,
@@ -98,7 +96,6 @@ export default function UniversalSearch({ session }) {
         if (contactsRes.data?.contacts) {
           contactsRes.data.contacts
             .filter(c => c.Name?.toLowerCase().includes(searchLower) || c.AccountId?.toLowerCase().includes(searchLower))
-            .slice(0, 8)
             .forEach(contact => {
               allResults.push({
                 id: contact.Id,
@@ -117,7 +114,6 @@ export default function UniversalSearch({ session }) {
         if (lendersRes.data?.lenders) {
           lendersRes.data.lenders
             .filter(l => l.Name?.toLowerCase().includes(searchLower))
-            .slice(0, 8)
             .forEach(lender => {
               allResults.push({
                 id: lender.Id,
