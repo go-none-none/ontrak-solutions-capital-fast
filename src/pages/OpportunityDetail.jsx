@@ -900,10 +900,10 @@ export default function OpportunityDetail() {
                              {stmt.csbs__Reconciled__c && <Badge className="bg-green-600">Reconciled</Badge>}
                            </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                           <div>
                             <p className="text-slate-500 text-xs">Period</p>
-                            <p className="font-medium">{formatDate(stmt.csbs__Starting_Date__c)} - {formatDate(stmt.csbs__Ending_Date__c)}</p>
+                            <p className="font-medium text-xs sm:text-sm">{formatDate(stmt.csbs__Starting_Date__c)} - {formatDate(stmt.csbs__Ending_Date__c)}</p>
                           </div>
                           <div>
                             <p className="text-slate-500 text-xs">Avg Daily Balance</p>
