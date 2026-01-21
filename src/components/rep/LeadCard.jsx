@@ -201,26 +201,6 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
               </div>
               )}
 
-            {lead.AnnualRevenue && (
-              <div>
-                <p className="text-xs text-slate-500 font-semibold mb-1">Annual Revenue</p>
-                <p className="text-sm font-semibold text-slate-900">{formatCurrency(lead.AnnualRevenue)}</p>
-              </div>
-            )}
-            
-            {lead.Call_Disposition__c && (
-              <div>
-                <p className="text-xs text-slate-500 font-semibold mb-1">Call Disposition</p>
-                <Badge className="bg-green-600 text-white">{lead.Call_Disposition__c}</Badge>
-              </div>
-            )}
-
-            {lead.Description && (
-              <div>
-                <p className="text-xs text-slate-500 font-semibold mb-1">Notes</p>
-                <p className="text-sm text-slate-600 line-clamp-2">{lead.Description}</p>
-              </div>
-            )}
           </motion.div>
         )}
       </motion.div>
