@@ -27,10 +27,13 @@ export default function RepPortal() {
   const [leads, setLeads] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
   const [tasks, setTasks] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [globalSearchTerm, setGlobalSearchTerm] = useState('');
+  const [leadsSearchTerm, setLeadsSearchTerm] = useState('');
+  const [oppsSearchTerm, setOppsSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('leads'); // 'leads', 'opportunities', 'tasks', or 'dispositions'
   const [stageFilter, setStageFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [quickViewRecord, setQuickViewRecord] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loadingTasks, setLoadingTasks] = useState(true);
@@ -108,7 +111,8 @@ export default function RepPortal() {
       const state = JSON.parse(savedState);
       setActiveTab(state.activeTab || 'leads');
       setStageFilter(state.stageFilter || null);
-      setSearchTerm(state.searchTerm || '');
+      setLeadsSearchTerm(state.leadsSearchTerm || '');
+      setOppsSearchTerm(state.oppsSearchTerm || '');
       setCurrentPage(state.currentPage || 1);
       setTaskFilter(state.taskFilter || 'all');
     }
@@ -225,7 +229,8 @@ export default function RepPortal() {
     const state = {
       activeTab,
       stageFilter,
-      searchTerm,
+      leadsSearchTerm,
+      oppsSearchTerm,
       currentPage,
       taskFilter
     };
@@ -417,57 +422,45 @@ export default function RepPortal() {
 
   const handleStageClick = (stageName) => {
     setStageFilter(stageName);
-    setSearchTerm('');
     setCurrentPage(1);
   };
 
+  // Global search results
+  const globalLeadResults = applySearchFilter(leads, globalSearchTerm);
+  const globalOppResults = applySearchFilter(opportunities, globalSearchTerm);
+
+  // Tab-specific searches
   const filteredLeads = leads.filter(lead => {
-    let searchMatch = true;
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      searchMatch = lead.Name?.toLowerCase().includes(term) ||
-        lead.Company?.toLowerCase().includes(term) ||
-        lead.Email?.toLowerCase().includes(term) ||
-        lead.Phone?.toLowerCase().includes(term) ||
-        lead.MobilePhone?.toLowerCase().includes(term);
-    }
-    // Only apply stage filter when NOT searching
-    const stageMatch = !searchTerm && (!stageFilter || lead.Status === stageFilter);
+    const searchMatch = !leadsSearchTerm || lead.Name?.toLowerCase().includes(leadsSearchTerm.toLowerCase()) ||
+      lead.Company?.toLowerCase().includes(leadsSearchTerm.toLowerCase()) ||
+      lead.Email?.toLowerCase().includes(leadsSearchTerm.toLowerCase()) ||
+      lead.Phone?.toLowerCase().includes(leadsSearchTerm.toLowerCase()) ||
+      lead.MobilePhone?.toLowerCase().includes(leadsSearchTerm.toLowerCase());
+    const stageMatch = !stageFilter || lead.Status === stageFilter;
     return searchMatch && stageMatch;
   });
 
   const filteredOpportunities = opportunities.filter(opp => {
-    let searchMatch = true;
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      searchMatch = opp.Name?.toLowerCase().includes(term) ||
-        opp.Account?.Name?.toLowerCase().includes(term);
-    }
-
-    // Only apply stage filter when NOT searching
+    const searchMatch = !oppsSearchTerm || opp.Name?.toLowerCase().includes(oppsSearchTerm.toLowerCase()) ||
+      opp.Account?.Name?.toLowerCase().includes(oppsSearchTerm.toLowerCase());
     let stageMatch = true;
-    if (!searchTerm && stageFilter) {
+    if (stageFilter) {
       if (stageFilter === 'Declined') {
         stageMatch = opp.StageName && opp.StageName.includes('Declined');
       } else {
         stageMatch = opp.StageName === stageFilter;
       }
     }
-
     return searchMatch && stageMatch;
   });
 
-  // Apply universal search override
-  const displayLeads = searchTerm ? applySearchFilter(leads, searchTerm) : filteredLeads;
-  const displayOpportunities = searchTerm ? applySearchFilter(opportunities, searchTerm) : filteredOpportunities;
-
   // Pagination
-  const totalLeadPages = Math.ceil(displayLeads.length / itemsPerPage);
-  const totalOppPages = Math.ceil(displayOpportunities.length / itemsPerPage);
+  const totalLeadPages = Math.ceil(filteredLeads.length / itemsPerPage);
+  const totalOppPages = Math.ceil(filteredOpportunities.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
   const endIdx = startIdx + itemsPerPage;
-  const paginatedLeads = displayLeads.slice(startIdx, endIdx);
-  const paginatedOpportunities = displayOpportunities.slice(startIdx, endIdx);
+  const paginatedLeads = filteredLeads.slice(startIdx, endIdx);
+  const paginatedOpportunities = filteredOpportunities.slice(startIdx, endIdx);
 
   if (loading) {
     return (
@@ -522,8 +515,11 @@ export default function RepPortal() {
         userName={session.name}
         showCreateTask={true}
         onCreateTaskClick={() => setShowCreateTask(true)}
-        searchTerm={searchTerm}
-        onSearchChange={(term) => { setSearchTerm(term); setCurrentPage(1); }}
+        globalSearchTerm={globalSearchTerm}
+        onGlobalSearchChange={setGlobalSearchTerm}
+        globalLeadResults={globalLeadResults}
+        globalOppResults={globalOppResults}
+        onQuickView={setQuickViewRecord}
       />
 
 
@@ -579,7 +575,7 @@ export default function RepPortal() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            onClick={() => { setActiveTab('leads'); setStageFilter(null); setCurrentPage(1); setSearchTerm(''); }}
+            onClick={() => { setActiveTab('leads'); setStageFilter(null); setCurrentPage(1); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
               activeTab === 'leads' ? 'ring-2 ring-rose-500 shadow-md' : 'hover:shadow-md'
             }`}
@@ -599,7 +595,7 @@ export default function RepPortal() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            onClick={() => { setActiveTab('opportunities'); setStageFilter(null); setCurrentPage(1); setSearchTerm(''); }}
+            onClick={() => { setActiveTab('opportunities'); setStageFilter(null); setCurrentPage(1); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
               activeTab === 'opportunities' ? 'ring-2 ring-orange-500 shadow-md' : 'hover:shadow-md'
             }`}
@@ -629,7 +625,7 @@ export default function RepPortal() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            onClick={() => { setActiveTab('dispositions'); setDispositionFilter([]); setCurrentPage(1); setSearchTerm(''); }}
+            onClick={() => { setActiveTab('dispositions'); setDispositionFilter([]); setCurrentPage(1); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
               activeTab === 'dispositions' ? 'ring-2 ring-sky-500 shadow-md' : 'hover:shadow-md'
             }`}
@@ -718,19 +714,39 @@ export default function RepPortal() {
                     <p className="text-slate-600">No leads found</p>
                   </div>
                 ) : (
-                  paginatedLeads.map(lead => (
-                    <LeadCard 
-                      key={lead.Id} 
-                      lead={lead} 
-                      session={session}
-                    />
-                  ))
-                )}
+                   paginatedLeads.map(lead => (
+                     <div key={lead.Id} className="flex gap-2">
+                       <div className="flex-1">
+                         <LeadCard 
+                           lead={lead} 
+                           session={session}
+                         />
+                       </div>
+                       <div className="flex gap-2 items-center">
+                         <Button
+                           size="sm"
+                           variant="outline"
+                           onClick={() => setQuickViewRecord({ ...lead, type: 'lead' })}
+                           className="text-xs"
+                         >
+                           Quick View
+                         </Button>
+                         <Button
+                           size="sm"
+                           onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)}
+                           className="text-xs bg-blue-600 hover:bg-blue-700"
+                         >
+                           Open
+                         </Button>
+                       </div>
+                     </div>
+                   ))
+                 )}
               </div>
               {totalLeadPages > 1 && (
                 <div className="flex items-center justify-between mt-6 pt-6 border-t">
                   <p className="text-sm text-slate-600">
-                    Showing {startIdx + 1}-{Math.min(endIdx, displayLeads.length)} of {displayLeads.length}
+                    Showing {startIdx + 1}-{Math.min(endIdx, filteredLeads.length)} of {filteredLeads.length}
                   </p>
                   <div className="flex gap-2">
                     <Button
@@ -780,14 +796,23 @@ export default function RepPortal() {
             </div>
             )}
 
-            {(activeTab === 'opportunities' || searchTerm) && (
-            <div className="space-y-4">
-            {stageFilter && !searchTerm && (
-            <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
-            <Button variant="ghost" size="sm" onClick={() => { setStageFilter(null); setCurrentPage(1); }}>Clear Filter</Button>
-            </div>
-            )}
+            {activeTab === 'opportunities' && (
+              <div className="space-y-4">
+                <div className="mb-4">
+                  <Input
+                    placeholder="Search opportunities..."
+                    value={oppsSearchTerm}
+                    onChange={(e) => { setOppsSearchTerm(e.target.value); setCurrentPage(1); }}
+                    className="w-full"
+                    autoComplete="off"
+                  />
+                </div>
+                {stageFilter && (
+                  <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
+                    <Button variant="ghost" size="sm" onClick={() => { setStageFilter(null); setCurrentPage(1); }}>Clear Filter</Button>
+                  </div>
+                )}
             <div className="space-y-3">
             {displayOpportunities.length === 0 ? (
                   <div className="text-center py-12">
@@ -795,20 +820,40 @@ export default function RepPortal() {
                     <p className="text-slate-600">No opportunities found</p>
                   </div>
                 ) : (
-                  paginatedOpportunities.map(opp => (
-                    <OpportunityCard 
-                      key={opp.Id}
-                      opportunity={opp} 
-                      session={session}
-                      onUpdate={() => loadData(session)}
-                    />
-                  ))
-                  )}
+                   paginatedOpportunities.map(opp => (
+                     <div key={opp.Id} className="flex gap-2">
+                       <div className="flex-1">
+                         <OpportunityCard 
+                           opportunity={opp} 
+                           session={session}
+                           onUpdate={() => loadData(session)}
+                         />
+                       </div>
+                       <div className="flex gap-2 items-center">
+                         <Button
+                           size="sm"
+                           variant="outline"
+                           onClick={() => setQuickViewRecord({ ...opp, type: 'opportunity' })}
+                           className="text-xs"
+                         >
+                           Quick View
+                         </Button>
+                         <Button
+                           size="sm"
+                           onClick={() => navigate(createPageUrl('OpportunityDetail') + `?id=${opp.Id}`)}
+                           className="text-xs bg-orange-600 hover:bg-orange-700"
+                         >
+                           Open
+                         </Button>
+                       </div>
+                     </div>
+                   ))
+                   )}
               </div>
               {totalOppPages > 1 && (
               <div className="flex items-center justify-between mt-6 pt-6 border-t">
               <p className="text-sm text-slate-600">
-              Showing {startIdx + 1}-{Math.min(endIdx, displayOpportunities.length)} of {displayOpportunities.length}
+              Showing {startIdx + 1}-{Math.min(endIdx, filteredOpportunities.length)} of {filteredOpportunities.length}
               </p>
                   <div className="flex gap-2">
                     <Button
@@ -1179,6 +1224,90 @@ export default function RepPortal() {
         </div>
         </>
         )}
+        </div>
+        </div>
+
+        {/* Quick View Modal */}
+        {quickViewRecord && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900">
+                {quickViewRecord.type === 'lead' ? quickViewRecord.Name : quickViewRecord.Name}
+              </h2>
+              <button onClick={() => setQuickViewRecord(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+            <div className="p-6 space-y-4">
+              {quickViewRecord.type === 'lead' ? (
+                <>
+                  <div>
+                    <p className="text-xs text-slate-500">Company</p>
+                    <p className="font-medium">{quickViewRecord.Company || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Email</p>
+                    <p className="font-medium">{quickViewRecord.Email || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Phone</p>
+                    <p className="font-medium">{quickViewRecord.MobilePhone || quickViewRecord.Phone || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Status</p>
+                    <p className="font-medium">{quickViewRecord.Status || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Monthly Revenue</p>
+                    <p className="font-medium">${quickViewRecord.monthly_revenue?.toLocaleString() || '-'}</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <p className="text-xs text-slate-500">Account</p>
+                    <p className="font-medium">{quickViewRecord.Account?.Name || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Stage</p>
+                    <p className="font-medium">{quickViewRecord.StageName || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Amount</p>
+                    <p className="font-bold text-orange-600">${quickViewRecord.Amount?.toLocaleString() || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Probability</p>
+                    <p className="font-medium">{quickViewRecord.Probability}%</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Close Date</p>
+                    <p className="font-medium">{quickViewRecord.CloseDate ? new Date(quickViewRecord.CloseDate).toLocaleDateString() : '-'}</p>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="p-6 border-t flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setQuickViewRecord(null)}
+              >
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  if (quickViewRecord.type === 'lead') {
+                    navigate(createPageUrl('LeadDetail') + `?id=${quickViewRecord.Id}`);
+                  } else {
+                    navigate(createPageUrl('OpportunityDetail') + `?id=${quickViewRecord.Id}`);
+                  }
+                  setQuickViewRecord(null);
+                }}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                Open Full Details
+              </Button>
+            </div>
+          </div>
         </div>
         )}
 
