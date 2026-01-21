@@ -503,7 +503,7 @@ export default function OpportunityDetail() {
         {!opportunity.StageName?.includes('Declined') ? (
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <h3 className="text-sm font-semibold text-slate-700 mb-4">Opportunity Stage</h3>
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center mb-3 gap-1">
               {[
                 { label: 'App In', name: 'Application In' },
                 { label: 'Underwriting', name: 'Underwriting' },
@@ -522,11 +522,11 @@ export default function OpportunityDetail() {
                     key={idx}
                     onClick={() => handleStatusChange(stage.name)}
                     disabled={updatingStatus}
-                    className={`flex flex-col items-center flex-1 transition-all ${
+                    className={`flex flex-col items-center flex-1 min-w-0 transition-all ${
                       updatingStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'
                     }`}
                   >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                    <div className={`w-7 h-7 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-semibold transition-all ${
                       isFunded
                         ? 'bg-green-600 text-white shadow-lg'
                         : isActive
@@ -534,19 +534,19 @@ export default function OpportunityDetail() {
                         : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
                     }`}>
                       {isFunded ? (
-                        <CheckCircle2 className="w-5 h-5" />
+                        <CheckCircle2 className="w-3 h-3 md:w-5 md:h-5" />
                       ) : idx < currentStageIndex ? (
-                        <CheckCircle2 className="w-5 h-5" />
+                        <CheckCircle2 className="w-3 h-3 md:w-5 md:h-5" />
                       ) : (
                         idx + 1
                       )}
                     </div>
-                    <span className="text-xs text-slate-600 mt-2 text-center">{stage.label}</span>
+                    <span className="text-[9px] md:text-xs text-slate-600 mt-1 md:mt-2 text-center leading-tight">{stage.label}</span>
                   </button>
                 );
               })}
             </div>
-            <div className="flex gap-1 mb-4">
+            <div className="flex gap-0.5 md:gap-1 mb-4">
               {[0,1,2,3,4,5].map((idx) => {
                 const stages = ['Application In', 'Underwriting', 'Approved', 'Contracts Out', 'Contracts In', 'Closed - Funded'];
                 const currentStageIndex = stages.findIndex(s => s === opportunity.StageName);
@@ -640,27 +640,25 @@ export default function OpportunityDetail() {
           {/* Main Column */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="details" className="space-y-6">
-              <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-                <TabsList className="bg-white p-1 rounded-lg shadow-sm inline-flex md:grid md:grid-cols-6 min-w-full md:min-w-0">
-                  <TabsTrigger value="details" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Details</TabsTrigger>
-                  <TabsTrigger value="submissions" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Submissions</TabsTrigger>
-                  <TabsTrigger value="offers" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Offers</TabsTrigger>
-                  <TabsTrigger value="statements" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Statements</TabsTrigger>
-                  <TabsTrigger value="debt" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Debt</TabsTrigger>
-                  <TabsTrigger value="commissions" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Commissions</TabsTrigger>
-                </TabsList>
-              </div>
+              <TabsList className="bg-white p-1 rounded-lg shadow-sm grid grid-cols-3 md:grid-cols-6 gap-1 w-full">
+                <TabsTrigger value="details" className="text-xs md:text-sm px-2 md:px-4">Details</TabsTrigger>
+                <TabsTrigger value="submissions" className="text-xs md:text-sm px-2 md:px-4">Submissions</TabsTrigger>
+                <TabsTrigger value="offers" className="text-xs md:text-sm px-2 md:px-4">Offers</TabsTrigger>
+                <TabsTrigger value="statements" className="text-xs md:text-sm px-2 md:px-4">Statements</TabsTrigger>
+                <TabsTrigger value="debt" className="text-xs md:text-sm px-2 md:px-4">Debt</TabsTrigger>
+                <TabsTrigger value="commissions" className="text-xs md:text-sm px-2 md:px-4">Commissions</TabsTrigger>
+              </TabsList>
 
               {/* Submissions Tab */}
               <TabsContent value="submissions" className="space-y-4">
-                <div className="flex justify-end mb-3">
-                  <Button
-                    onClick={() => setShowSubmitModal(true)}
-                    className="bg-orange-600 hover:bg-orange-700"
-                  >
-                    Submit
-                  </Button>
-                </div>
+               <div className="flex justify-end mb-3">
+                 <Button
+                   onClick={() => setShowSubmitModal(true)}
+                   className="bg-orange-600 hover:bg-orange-700 text-sm w-full sm:w-auto"
+                 >
+                   Submit
+                 </Button>
+               </div>
                 {loadingRelated ? (
                   <div className="bg-white rounded-xl p-8 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
@@ -731,20 +729,21 @@ export default function OpportunityDetail() {
 
               {/* Offers Tab */}
               <TabsContent value="offers" className="space-y-4">
-                <div className="flex justify-end gap-3 mb-3">
-                  <Button
-                    onClick={() => setShowOfferProposal(true)}
-                    variant="outline"
-                  >
-                    Offer Proposal
-                  </Button>
-                  <Button
-                    onClick={() => setShowNewOffer(true)}
-                    className="bg-orange-600 hover:bg-orange-700"
-                  >
-                    + New Offer
-                  </Button>
-                </div>
+               <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 mb-3">
+                 <Button
+                   onClick={() => setShowOfferProposal(true)}
+                   variant="outline"
+                   className="text-sm w-full sm:w-auto"
+                 >
+                   Offer Proposal
+                 </Button>
+                 <Button
+                   onClick={() => setShowNewOffer(true)}
+                   className="bg-orange-600 hover:bg-orange-700 text-sm w-full sm:w-auto"
+                 >
+                   + New Offer
+                 </Button>
+               </div>
                 {loadingRelated ? (
                   <div className="bg-white rounded-xl p-8 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
@@ -825,14 +824,14 @@ export default function OpportunityDetail() {
 
               {/* Statements Tab */}
               <TabsContent value="statements" className="space-y-4">
-                <div className="flex justify-end mb-3">
-                  <Button
-                    onClick={() => setShowNewStatement(true)}
-                    className="bg-orange-600 hover:bg-orange-700"
-                  >
-                    + New Statement
-                  </Button>
-                </div>
+               <div className="flex justify-end mb-3">
+                 <Button
+                   onClick={() => setShowNewStatement(true)}
+                   className="bg-orange-600 hover:bg-orange-700 text-sm w-full sm:w-auto"
+                 >
+                   + New Statement
+                 </Button>
+               </div>
                 {loadingRelated ? (
                   <div className="bg-white rounded-xl p-8 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
@@ -928,14 +927,14 @@ export default function OpportunityDetail() {
 
                     {/* Debt Tab */}
               <TabsContent value="debt" className="space-y-4">
-                <div className="flex justify-end mb-3">
-                  <Button
-                    onClick={() => setShowNewDebt(true)}
-                    className="bg-orange-600 hover:bg-orange-700"
-                  >
-                    + New Debt
-                  </Button>
-                </div>
+               <div className="flex justify-end mb-3">
+                 <Button
+                   onClick={() => setShowNewDebt(true)}
+                   className="bg-orange-600 hover:bg-orange-700 text-sm w-full sm:w-auto"
+                 >
+                   + New Debt
+                 </Button>
+               </div>
                 {loadingRelated ? (
                   <div className="bg-white rounded-xl p-8 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
@@ -1003,14 +1002,14 @@ export default function OpportunityDetail() {
 
               {/* Commissions Tab */}
               <TabsContent value="commissions" className="space-y-4">
-                <div className="flex justify-end mb-3">
-                  <Button
-                    onClick={() => setShowNewCommission(true)}
-                    className="bg-orange-600 hover:bg-orange-700"
-                  >
-                    + New Commission
-                  </Button>
-                </div>
+               <div className="flex justify-end mb-3">
+                 <Button
+                   onClick={() => setShowNewCommission(true)}
+                   className="bg-orange-600 hover:bg-orange-700 text-sm w-full sm:w-auto"
+                 >
+                   + New Commission
+                 </Button>
+               </div>
                 {loadingRelated ? (
                   <div className="bg-white rounded-xl p-8 text-center">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto text-orange-600" />
