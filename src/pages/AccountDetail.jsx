@@ -356,6 +356,75 @@ export default function AccountDetail() {
                     <p className="text-slate-600">{account?.csbs__Application_Industry__c || '-'}</p>
                   )}
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Employees</label>
+                  {isEditing ? (
+                    <Input
+                      type="number"
+                      value={editData.NumberOfEmployees || ''}
+                      onChange={(e) => setEditData({ ...editData, NumberOfEmployees: e.target.value })}
+                      placeholder="Number of Employees"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.NumberOfEmployees || '-'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Account Number</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.AccountNumber || ''}
+                      onChange={(e) => setEditData({ ...editData, AccountNumber: e.target.value })}
+                      placeholder="Account Number"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.AccountNumber || '-'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Annual Revenue</label>
+                  {isEditing ? (
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={editData.AnnualRevenue || ''}
+                      onChange={(e) => setEditData({ ...editData, AnnualRevenue: e.target.value })}
+                      placeholder="Annual Revenue"
+                    />
+                  ) : (
+                    <p className="text-slate-600">${Number(account?.AnnualRevenue || 0).toLocaleString()}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Account Site</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.Site || ''}
+                      onChange={(e) => setEditData({ ...editData, Site: e.target.value })}
+                      placeholder="Account Site"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.Site || '-'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                  {isEditing ? (
+                    <Textarea
+                      value={editData.Description || ''}
+                      onChange={(e) => setEditData({ ...editData, Description: e.target.value })}
+                      placeholder="Description"
+                      rows={3}
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.Description || '-'}</p>
+                  )}
+                </div>
               </div>
             </div>
 
