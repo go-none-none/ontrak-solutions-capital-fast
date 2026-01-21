@@ -55,7 +55,6 @@ export default function UniversalSearch({ session }) {
 
         const searchLower = searchTerm.toLowerCase();
         const allResults = [];
-        const categories = new Set();
 
         // Filter leads
         if (leadsRes.data?.leads) {
