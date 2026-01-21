@@ -30,6 +30,7 @@ export default function RepPortal() {
   const [globalSearchTerm, setGlobalSearchTerm] = useState('');
   const [leadsSearchTerm, setLeadsSearchTerm] = useState('');
   const [oppsSearchTerm, setOppsSearchTerm] = useState('');
+  const [dispositionSearchTerm, setDispositionSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('leads'); // 'leads', 'opportunities', 'tasks', or 'dispositions'
   const [stageFilter, setStageFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -235,7 +236,7 @@ export default function RepPortal() {
       taskFilter
     };
     sessionStorage.setItem('repPortalState', JSON.stringify(state));
-  }, [activeTab, stageFilter, searchTerm, currentPage, taskFilter]);
+  }, [activeTab, stageFilter, leadsSearchTerm, oppsSearchTerm, currentPage, taskFilter]);
 
   const checkSession = () => {
     const sessionData = sessionStorage.getItem('sfSession');
@@ -653,16 +654,25 @@ export default function RepPortal() {
             </div>
           )}
 
-          {(activeTab === 'leads' || searchTerm) && (
+          {activeTab === 'leads' && (
             <div className="space-y-4">
-              {stageFilter && !searchTerm && (
+              <div className="mb-4">
+                <Input
+                  placeholder="Search leads..."
+                  value={leadsSearchTerm}
+                  onChange={(e) => { setLeadsSearchTerm(e.target.value); setCurrentPage(1); }}
+                  className="w-full"
+                  autoComplete="off"
+                />
+              </div>
+              {stageFilter && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
                   <Button variant="ghost" size="sm" onClick={() => { setStageFilter(null); setCurrentPage(1); }}>Clear Filter</Button>
                 </div>
               )}
               <div className="space-y-3">
-                {displayLeads.length === 0 ? (
+                {paginatedLeads.length === 0 ? (
                   <div className="text-center py-12">
                     <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                     <p className="text-slate-600">No leads found</p>
@@ -953,8 +963,8 @@ export default function RepPortal() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
                 <Input
                   placeholder="Search by lead name, company, or phone..."
-                  value={searchTerm}
-                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                  value={dispositionSearchTerm}
+                  onChange={(e) => { setDispositionSearchTerm(e.target.value); setCurrentPage(1); }}
                   className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base mb-4"
                 />
               </div>
@@ -1038,8 +1048,8 @@ export default function RepPortal() {
                   });
                 }
 
-                if (searchTerm) {
-                  const term = searchTerm.toLowerCase();
+                if (dispositionSearchTerm) {
+                  const term = dispositionSearchTerm.toLowerCase();
                   filteredLeads = filteredLeads.filter(lead =>
                     lead.Name?.toLowerCase().includes(term) ||
                     lead.Company?.toLowerCase().includes(term) ||
