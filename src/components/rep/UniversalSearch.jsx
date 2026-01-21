@@ -29,7 +29,7 @@ export default function UniversalSearch({ session }) {
       return;
     }
 
-    const timer = setTimeout(async () => {
+    const performSearch = async () => {
       setLoading(true);
       try {
         const [leadsRes, oppsRes, contactsRes, accountsRes] = await Promise.all([
@@ -154,8 +154,9 @@ export default function UniversalSearch({ session }) {
       } finally {
         setLoading(false);
       }
-    }, 300);
+    };
 
+    const timer = setTimeout(performSearch, 300);
     return () => clearTimeout(timer);
   }, [searchTerm, session]);
 
