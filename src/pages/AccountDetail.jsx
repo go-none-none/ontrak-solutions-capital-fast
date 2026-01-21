@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Save, X, ArrowLeft } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
+import { MultiSelect } from '@/components/ui/multi-select';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
