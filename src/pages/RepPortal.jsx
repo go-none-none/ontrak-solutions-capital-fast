@@ -42,6 +42,7 @@ export default function RepPortal() {
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [loadingContacts, setLoadingContacts] = useState(true);
+  const [selectedLeadForDisposition, setSelectedLeadForDisposition] = useState(null);
   const lastPollTime = useRef(new Date());
   const itemsPerPage = 100;
 
@@ -999,7 +1000,7 @@ export default function RepPortal() {
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               className="bg-white rounded-xl border-2 border-slate-200 p-4 hover:border-slate-300 hover:shadow-md transition-all cursor-pointer"
-                              onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)}
+                              onClick={() => setSelectedLeadForDisposition(lead)}
                             >
                               <div className="mb-3">
                                 <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate hover:text-[#08708E]">
@@ -1118,7 +1119,16 @@ export default function RepPortal() {
         onClose={() => setSelectedTask(null)}
         session={session}
         onUpdate={() => loadData(session, true)}
-        />
+      />
+
+      {/* Lead Disposition Modal */}
+      <RecordDetailsModal
+        record={selectedLeadForDisposition}
+        isOpen={!!selectedLeadForDisposition}
+        onClose={() => setSelectedLeadForDisposition(null)}
+        recordType="Lead"
+        session={session}
+      />
         </div>
         );
         }
