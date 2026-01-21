@@ -368,9 +368,10 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 border border-slate-100"
+                className="p-3 rounded-lg hover:bg-slate-50 border border-slate-100"
               >
-                <div className="flex items-center gap-3 flex-1 min-w-0">
+                {/* Top Section: Checkbox, Icon, and File Name */}
+                <div className="flex items-center gap-3 mb-3">
                   <Checkbox
                     checked={selectedFiles.includes(file.ContentDocumentId)}
                     onCheckedChange={() => toggleFileSelection(file.ContentDocumentId)}
@@ -378,14 +379,14 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                   <div className="w-10 h-10 rounded-lg bg-[#08708E]/10 flex items-center justify-center flex-shrink-0">
                     <Icon className="w-5 h-5 text-orange-600" />
                   </div>
-                  <div className="flex-1 min-w-0 max-w-md">
+                  <div className="flex-1 min-w-0">
                     {renamingId === file.ContentDocumentId ? (
                       <input
                         type="text"
                         value={newTitle}
                         onChange={(e) => setNewTitle(e.target.value)}
                         autoFocus
-                        className="w-full px-2 py-1 border border-slate-300 rounded text-sm font-medium mb-1"
+                        className="w-full px-2 py-1 border border-slate-300 rounded text-sm font-medium"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') submitRename(file.ContentDocumentId, doc.Title);
                           if (e.key === 'Escape') {
@@ -395,16 +396,19 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                         }}
                       />
                     ) : (
-                      <p className="font-medium text-slate-900 text-sm leading-relaxed break-all" title={`${doc.Title}.${doc.FileExtension}`}>
+                      <p className="font-medium text-slate-900 text-sm" title={`${doc.Title}.${doc.FileExtension}`}>
                         {doc.Title}.{doc.FileExtension}
                       </p>
                     )}
-                    <p className="text-xs text-slate-500 mt-1">
-                      {formatFileSize(doc.ContentSize)} • {formatDate(doc.CreatedDate)}
-                    </p>
                   </div>
                 </div>
-                <div className="flex gap-1 flex-shrink-0">
+                
+                {/* Bottom Section: File Info and Actions */}
+                <div className="flex items-center justify-between gap-2 pl-14">
+                  <p className="text-xs text-slate-500">
+                    {formatFileSize(doc.ContentSize)} • {formatDate(doc.CreatedDate)}
+                  </p>
+                  <div className="flex gap-1 flex-shrink-0">
                   {renamingId === file.ContentDocumentId ? (
                     <>
                       <Button 
@@ -491,6 +495,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                       </Button>
                     </>
                     )}
+                  </div>
                 </div>
               </motion.div>
             );
