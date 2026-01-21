@@ -20,8 +20,13 @@ export default function LenderDetail() {
     }
     const parsedSession = JSON.parse(sessionData);
     setSession(parsedSession);
-    loadLender();
   }, []);
+
+  useEffect(() => {
+    if (session) {
+      loadLender();
+    }
+  }, [session]);
 
   const loadLender = async () => {
     setLoading(true);
