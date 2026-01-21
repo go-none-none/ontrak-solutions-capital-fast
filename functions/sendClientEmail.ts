@@ -165,7 +165,7 @@ Deno.serve(async (req) => {
       <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
           <tr>
               <td style="background: linear-gradient(135deg, #08708E 0%, #065a72 50%, #1e293b 100%); padding: 40px 30px; text-align: center;">
-                  <img src="https://ontrak.co/logo.png" alt="OnTrak Capital" style="height: 40px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;" />
+                  <img src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png" alt="OnTrak Capital" style="height: 40px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto;" />
                   <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0; line-height: 1.3;">Your Offer Proposal</h1>
               </td>
           </tr>
