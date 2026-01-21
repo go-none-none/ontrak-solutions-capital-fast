@@ -631,51 +631,7 @@ export default function LeadDetail() {
 
           {/* Sidebar */}
            <div className="space-y-6">
-            {/* Communication Card - Email & SMS */}
-            <CommunicationCard
-              recipientEmail={lead.Email}
-              recipientName={lead.Name}
-              phoneNumber={lead.MobilePhone || lead.Phone}
-              recordId={lead.Id}
-              recordType="Lead"
-              session={session}
-              smsColor="bg-[#08708E]"
-              firstName={lead.FirstName}
-            />
-
-            {/* Contact Information */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-900 mb-4">Contact Information</h3>
-              <div className="space-y-3">
-                <div>
-                  <p className="font-medium text-slate-900">{lead.Name}</p>
-                  <p className="text-xs text-slate-500 mb-2">{lead.Title || 'Contact'}</p>
-                </div>
-                {lead.Email && (
-                  <a href={`mailto:${lead.Email}`} className="text-sm text-[#08708E] hover:underline block">
-                    {lead.Email}
-                  </a>
-                )}
-                {lead.Phone && (
-                  <a href={`tel:${lead.Phone}`} className="text-sm text-[#08708E] hover:underline block">
-                    {lead.Phone}
-                  </a>
-                )}
-                {lead.MobilePhone && (
-                  <a href={`tel:${lead.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block">
-                    Mobile: {lead.MobilePhone}
-                  </a>
-                )}
-              </div>
-            </div>
-
-            {/* Activity Timeline */}
-            <ActivityPanel
-              recordId={lead.Id}
-              recordType="Lead"
-              session={session}
-            />
-
+            {/* Quick Info & Contact Information Combined */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h3 className="font-semibold text-slate-900 mb-4">Quick Info</h3>
               <div className="space-y-3 text-sm">
@@ -819,8 +775,48 @@ export default function LeadDetail() {
                     </div>
                   )}
                 </div>
+                <div className="border-t pt-4 mt-4">
+                  <h4 className="font-semibold text-slate-900 mb-3">Contact</h4>
+                  <div className="space-y-2">
+                    {lead.Email && (
+                      <a href={`mailto:${lead.Email}`} className="text-sm text-[#08708E] hover:underline block">
+                        {lead.Email}
+                      </a>
+                    )}
+                    {lead.Phone && (
+                      <a href={`tel:${lead.Phone}`} className="text-sm text-[#08708E] hover:underline block">
+                        {lead.Phone}
+                      </a>
+                    )}
+                    {lead.MobilePhone && (
+                      <a href={`tel:${lead.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block">
+                        Mobile: {lead.MobilePhone}
+                      </a>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
+
+            {/* Communication Card - Email & SMS */}
+            <CommunicationCard
+              recipientEmail={lead.Email}
+              recipientName={lead.Name}
+              phoneNumber={lead.MobilePhone || lead.Phone}
+              recordId={lead.Id}
+              recordType="Lead"
+              session={session}
+              smsColor="bg-[#08708E]"
+              emailColor="bg-[#08708E]"
+              firstName={lead.FirstName}
+            />
+
+            {/* Activity Timeline */}
+            <ActivityPanel
+              recordId={lead.Id}
+              recordType="Lead"
+              session={session}
+            />
 
 
           </div>
