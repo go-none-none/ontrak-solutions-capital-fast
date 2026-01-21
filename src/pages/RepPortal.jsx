@@ -600,9 +600,8 @@ export default function RepPortal() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          {!searchTerm && (
-            <>
-              {/* Pipeline */}
+        <>
+          {/* Pipeline */}
               {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
                 <PipelineView 
                   leads={leads} 
@@ -1186,7 +1185,6 @@ export default function RepPortal() {
         )}
         </div>
         </>
-        )}
 
         {/* Quick View Modal */}
         {quickViewRecord && (
