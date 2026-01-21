@@ -955,135 +955,142 @@ export default function RepPortal() {
               </div>
             </div>
 
-            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-              <table className="w-full min-w-full">
-                <thead className="bg-slate-100 border-b-2 border-slate-300">
-                  <tr>
-                    <th className="text-left px-2 py-3 text-xs font-bold text-slate-900 w-[45%]">Lead</th>
-                    <th className="text-left px-2 py-3 text-xs font-bold text-slate-900 w-[55%]">Disposition</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(() => {
-                    let filteredLeads = leads;
-                    
-                    // Apply disposition filters
-                    if (dispositionFilter.length > 0) {
-                      filteredLeads = leads.filter(l => {
-                        if (dispositionFilter.includes('set') && l.Call_Disposition__c) return true;
-                        if (dispositionFilter.includes('unset') && !l.Call_Disposition__c) return true;
-                        if (dispositionFilter.includes(l.Call_Disposition__c)) return true;
-                        return false;
-                      });
-                    }
+            <div className="space-y-3">
+              {(() => {
+                let filteredLeads = leads;
+                
+                // Apply disposition filters
+                if (dispositionFilter.length > 0) {
+                  filteredLeads = leads.filter(l => {
+                    if (dispositionFilter.includes('set') && l.Call_Disposition__c) return true;
+                    if (dispositionFilter.includes('unset') && !l.Call_Disposition__c) return true;
+                    if (dispositionFilter.includes(l.Call_Disposition__c)) return true;
+                    return false;
+                  });
+                }
 
-                    if (searchTerm) {
-                      const term = searchTerm.toLowerCase();
-                      filteredLeads = filteredLeads.filter(lead =>
-                        lead.Name?.toLowerCase().includes(term) ||
-                        lead.Company?.toLowerCase().includes(term) ||
-                        lead.Phone?.toLowerCase().includes(term)
-                      );
-                    }
+                if (searchTerm) {
+                  const term = searchTerm.toLowerCase();
+                  filteredLeads = filteredLeads.filter(lead =>
+                    lead.Name?.toLowerCase().includes(term) ||
+                    lead.Company?.toLowerCase().includes(term) ||
+                    lead.Phone?.toLowerCase().includes(term)
+                  );
+                }
 
-                    const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
-                    const startIdx = (currentPage - 1) * itemsPerPage;
-                    const endIdx = startIdx + itemsPerPage;
-                    const paginatedLeads = filteredLeads.slice(startIdx, endIdx);
+                const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
+                const startIdx = (currentPage - 1) * itemsPerPage;
+                const endIdx = startIdx + itemsPerPage;
+                const paginatedLeads = filteredLeads.slice(startIdx, endIdx);
 
-                    return (
+                return (
+                  <>
+                    {filteredLeads.length === 0 ? (
+                      <div className="text-center py-12">
+                        <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                        <p className="text-slate-600">No leads found</p>
+                      </div>
+                    ) : (
                       <>
-                        {paginatedLeads.map(lead => (
-                          <tr key={lead.Id} className="border-b border-slate-200 hover:bg-blue-50 transition-colors">
-                            <td className="px-2 py-3">
-                              <button
-                                onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)}
-                                className="font-semibold text-[#08708E] hover:underline text-left text-xs block w-full truncate"
-                              >
-                                {lead.Name || '-'}
-                              </button>
-                              <div className="text-[9px] text-slate-500 mt-0.5 space-y-0.5">
-                                {lead.Company && <div className="truncate">{lead.Company}</div>}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {paginatedLeads.map(lead => (
+                            <motion.div
+                              key={lead.Id}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="bg-white rounded-xl border-2 border-slate-200 p-4 hover:border-slate-300 hover:shadow-md transition-all cursor-pointer"
+                              onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)}
+                            >
+                              <div className="mb-3">
+                                <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate hover:text-[#08708E]">
+                                  {lead.Name || '-'}
+                                </h3>
+                                {lead.Company && (
+                                  <p className="text-xs sm:text-sm text-slate-600 truncate mt-1">{lead.Company}</p>
+                                )}
+                              </div>
+                              
+                              <div className="space-y-2 mb-3 pb-3 border-b border-slate-100">
                                 {lead.MobilePhone && (
-                                  <a href={`tel:${lead.MobilePhone}`} className="text-[#08708E] hover:underline block truncate">
+                                  <a 
+                                    href={`tel:${lead.MobilePhone}`} 
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="text-xs text-[#08708E] hover:underline block"
+                                  >
                                     {lead.MobilePhone}
                                   </a>
                                 )}
-                                <div className="text-slate-400 truncate">{lead.Status}</div>
+                                <div className="text-xs text-slate-500">{lead.Status}</div>
                               </div>
-                            </td>
-                            <td className="px-2 py-3">
-                              <div className="flex flex-col gap-1.5 max-w-full">
-                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-semibold truncate block text-center ${
+
+                              <div className="flex items-center justify-center">
+                                <span className={`px-3 py-2 rounded-lg text-xs sm:text-sm font-bold text-center w-full ${
                                   lead.Call_Disposition__c 
                                     ? getDispositionColor(lead.Call_Disposition__c)
-                                    : 'bg-gray-300 text-gray-800'
+                                    : 'bg-gray-200 text-gray-700'
                                 }`}>
-                                  {lead.Call_Disposition__c || 'Not set'}
+                                  {lead.Call_Disposition__c || 'Not Set'}
                                 </span>
-                                <Select
-                                  value={lead.Call_Disposition__c || ''}
-                                  onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
-                                  disabled={updatingDisposition === lead.Id}
-                                >
-                                  <SelectTrigger className="w-full h-6 text-[9px]">
-                                    <SelectValue>
-                                      {updatingDisposition === lead.Id ? '...' : 'Change'}
-                                    </SelectValue>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {dispositionOptions.map(option => (
-                                      <SelectItem key={option} value={option} className="text-xs">
-                                        {option}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
                               </div>
-                            </td>
-                          </tr>
-                        ))}
-                        {filteredLeads.length === 0 && (
-                          <tr>
-                            <td colSpan={6} className="px-4 py-12 text-center text-slate-500">
-                              No leads found
-                            </td>
-                          </tr>
-                        )}
+                            </motion.div>
+                          ))}
+                        </div>
+                        
                         {totalPages > 1 && (
-                          <tr>
-                            <td colSpan={6} className="px-4 py-4">
-                              <div className="flex items-center justify-between">
-                                <p className="text-sm text-slate-600">
-                                  Showing {startIdx + 1}-{Math.min(endIdx, filteredLeads.length)} of {filteredLeads.length}
-                                </p>
-                                <div className="flex gap-2">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                    disabled={currentPage === 1}
-                                  >
-                                    Previous
-                                  </Button>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                    disabled={currentPage === totalPages}
-                                  >
-                                    Next
-                                  </Button>
-                                </div>
+                          <div className="flex items-center justify-between mt-6 pt-6 border-t">
+                            <p className="text-sm text-slate-600">
+                              Showing {startIdx + 1}-{Math.min(endIdx, filteredLeads.length)} of {filteredLeads.length}
+                            </p>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                              >
+                                Previous
+                              </Button>
+                              <div className="flex items-center gap-1">
+                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                  let pageNum;
+                                  if (totalPages <= 5) {
+                                    pageNum = i + 1;
+                                  } else if (currentPage <= 3) {
+                                    pageNum = i + 1;
+                                  } else if (currentPage >= totalPages - 2) {
+                                    pageNum = totalPages - 4 + i;
+                                  } else {
+                                    pageNum = currentPage - 2 + i;
+                                  }
+                                  return (
+                                    <Button
+                                      key={pageNum}
+                                      variant={currentPage === pageNum ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => setCurrentPage(pageNum)}
+                                      className="w-10"
+                                    >
+                                      {pageNum}
+                                    </Button>
+                                  );
+                                })}
                               </div>
-                            </td>
-                          </tr>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                              >
+                                Next
+                              </Button>
+                            </div>
+                          </div>
                         )}
                       </>
-                    );
-                  })()}
-                </tbody>
-              </table>
+                    )}
+                  </>
+                );
+              })()}
             </div>
           </div>
         )}
