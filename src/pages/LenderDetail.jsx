@@ -146,26 +146,62 @@ export default function LenderDetail() {
               )}
 
               {/* Lending Criteria */}
-              {(lender.csbs__Min_Loan_Amount__c || lender.csbs__Max_Loan_Amount__c || lender.csbs__Product_Types__c) && (
+              {(lender.csbs__Minimum_Credit_Score__c || lender.csbs__Maximum_Negative_Days__c || lender.csbs__Minimum_Monthly_Deposit_Count__c || lender.csbs__Maximum_NSFs__c || lender.csbs__Minimum_Monthly_Deposit_Amount__c || lender.csbs__Minimum_Average_Daily_Balance__c || lender.csbs__Minimum_Months_in_Business__c || lender.csbs__Maximum_Offer_Amount__c || lender.csbs__Net_Offer_Percentage__c) && (
                 <div>
                   <h2 className="text-lg font-semibold text-slate-900 mb-4">Lending Criteria</h2>
                   <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                    {lender.csbs__Min_Loan_Amount__c && (
+                    {lender.csbs__Minimum_Credit_Score__c && (
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Min Loan Amount</p>
-                        <p className="font-medium">${Number(lender.csbs__Min_Loan_Amount__c).toLocaleString()}</p>
+                        <p className="text-slate-500 text-xs mb-1">Minimum Credit Score</p>
+                        <p className="font-medium">{lender.csbs__Minimum_Credit_Score__c}</p>
                       </div>
                     )}
-                    {lender.csbs__Max_Loan_Amount__c && (
+                    {lender.csbs__Maximum_Negative_Days__c && (
                       <div>
-                        <p className="text-slate-500 text-xs mb-1">Max Loan Amount</p>
-                        <p className="font-medium">${Number(lender.csbs__Max_Loan_Amount__c).toLocaleString()}</p>
+                        <p className="text-slate-500 text-xs mb-1">Maximum Negative Days</p>
+                        <p className="font-medium">{lender.csbs__Maximum_Negative_Days__c}</p>
                       </div>
                     )}
-                    {lender.csbs__Product_Types__c && (
-                      <div className="sm:col-span-2">
-                        <p className="text-slate-500 text-xs mb-1">Product Types</p>
-                        <p className="font-medium">{lender.csbs__Product_Types__c}</p>
+                    {lender.csbs__Minimum_Monthly_Deposit_Count__c && (
+                      <div>
+                        <p className="text-slate-500 text-xs mb-1">Min Monthly Deposits</p>
+                        <p className="font-medium">{lender.csbs__Minimum_Monthly_Deposit_Count__c}</p>
+                      </div>
+                    )}
+                    {lender.csbs__Maximum_NSFs__c && (
+                      <div>
+                        <p className="text-slate-500 text-xs mb-1">Maximum NSFs</p>
+                        <p className="font-medium">{lender.csbs__Maximum_NSFs__c}</p>
+                      </div>
+                    )}
+                    {lender.csbs__Minimum_Monthly_Deposit_Amount__c && (
+                      <div>
+                        <p className="text-slate-500 text-xs mb-1">Min Monthly Deposit Amount</p>
+                        <p className="font-medium">${Number(lender.csbs__Minimum_Monthly_Deposit_Amount__c).toLocaleString()}</p>
+                      </div>
+                    )}
+                    {lender.csbs__Minimum_Average_Daily_Balance__c && (
+                      <div>
+                        <p className="text-slate-500 text-xs mb-1">Min Avg Daily Balance</p>
+                        <p className="font-medium">${Number(lender.csbs__Minimum_Average_Daily_Balance__c).toLocaleString()}</p>
+                      </div>
+                    )}
+                    {lender.csbs__Minimum_Months_in_Business__c && (
+                      <div>
+                        <p className="text-slate-500 text-xs mb-1">Min Months in Business</p>
+                        <p className="font-medium">{lender.csbs__Minimum_Months_in_Business__c}</p>
+                      </div>
+                    )}
+                    {lender.csbs__Maximum_Offer_Amount__c && (
+                      <div>
+                        <p className="text-slate-500 text-xs mb-1">Maximum Offer Amount</p>
+                        <p className="font-medium">${Number(lender.csbs__Maximum_Offer_Amount__c).toLocaleString()}</p>
+                      </div>
+                    )}
+                    {lender.csbs__Net_Offer_Percentage__c && (
+                      <div>
+                        <p className="text-slate-500 text-xs mb-1">Net Offer %</p>
+                        <p className="font-medium">{lender.csbs__Net_Offer_Percentage__c}%</p>
                       </div>
                     )}
                   </div>
