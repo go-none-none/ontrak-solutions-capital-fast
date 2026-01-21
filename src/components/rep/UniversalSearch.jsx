@@ -224,17 +224,22 @@ export default function UniversalSearch({ session }) {
                     <Icon className="w-3.5 h-3.5 flex-shrink-0 text-slate-400" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-slate-900 truncate">{result.name}</p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className={`px-1.5 py-0 rounded text-[10px] font-semibold ${result.color}`}>
+                      <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${result.color}`}>
                           {result.type}
                         </span>
+                        {result.recordType && result.category === 'Account' && (
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${result.color}`}>
+                            {result.recordType}
+                          </span>
+                        )}
                         {result.subtitle && (
                           <span className="text-[11px] text-slate-500 truncate">{result.subtitle}</span>
                         )}
                       </div>
                     </div>
                   </button>
-                );
+                  );
               })}
             </div>
           ) : (
