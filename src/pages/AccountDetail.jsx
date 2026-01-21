@@ -67,6 +67,7 @@ export default function AccountDetail() {
   useEffect(() => {
     if (session) {
       loadAccount();
+      loadRecordTypes();
     }
   }, [session]);
 
