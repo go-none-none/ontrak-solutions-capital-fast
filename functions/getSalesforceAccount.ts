@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    const query = `SELECT Id, Name, Phone, BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry, Type, Industry, Website, Description, CreatedDate, LastModifiedDate FROM Account WHERE Id = '${accountId}'`;
+    const query = `SELECT Id, Name, Phone, Email__c, Fax, Phone_Additional__c, Website, BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry, Type, Industry, NumberOfEmployees, Description, CreatedDate, LastModifiedDate, RecordTypeId, RecordType.Name, csbs__Active__c, csbs__Trading_Center__c, csbs__Leads_from_API__c, csbs__Leads_to_API__c, csbs__Application_Industry__c, csbs__Minimum_Credit_Score__c, csbs__Maximum_Negative_Days__c, csbs__Minimum_Monthly_Deposit_Count__c, csbs__Maximum_NSFs__c, csbs__Minimum_Monthly_Deposit_Amount__c, csbs__Minimum_Average_Daily_Balance__c, csbs__Minimum_Months_in_Business__c, csbs__Maximum_Offer_Amount__c, csbs__Net_Offer_Percentage__c, csbs__Restricted_States__c, csbs__Restricted_Industries__c, csbs__Entity_Type__c, Business_Start_Date__c, Franchise__c FROM Account WHERE Id = '${accountId}'`;
 
     console.log('Querying Salesforce:', query);
 
