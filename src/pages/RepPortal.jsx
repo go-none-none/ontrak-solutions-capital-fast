@@ -36,7 +36,7 @@ export default function RepPortal() {
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [taskFilter, setTaskFilter] = useState('all');
   const [selectedTask, setSelectedTask] = useState(null);
-  const [dispositionFilter, setDispositionFilter] = useState('all');
+  const [dispositionFilter, setDispositionFilter] = useState([]);
   const [dispositionOptions, setDispositionOptions] = useState([]);
   const [updatingDisposition, setUpdatingDisposition] = useState(null);
   const [showCreateTask, setShowCreateTask] = useState(false);
@@ -537,7 +537,7 @@ export default function RepPortal() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            onClick={() => { setActiveTab('dispositions'); setDispositionFilter('all'); setCurrentPage(1); }}
+            onClick={() => { setActiveTab('dispositions'); setDispositionFilter([]); setCurrentPage(1); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
               activeTab === 'dispositions' ? 'ring-2 ring-sky-500 shadow-md' : 'hover:shadow-md'
             }`}
@@ -889,42 +889,69 @@ export default function RepPortal() {
                   className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base mb-4"
                 />
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-wrap gap-2">
-                <Button
-                  variant={dispositionFilter === 'all' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => { setDispositionFilter('all'); setCurrentPage(1); }}
-                  className={`text-xs sm:text-sm ${dispositionFilter === 'all' ? 'bg-orange-600' : ''}`}
-                >
-                  All ({leads.length})
-                </Button>
-                <Button
-                  variant={dispositionFilter === 'set' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => { setDispositionFilter('set'); setCurrentPage(1); }}
-                  className={`text-xs sm:text-sm ${dispositionFilter === 'set' ? 'bg-green-600' : ''}`}
-                >
-                  Set ({leads.filter(l => l.Call_Disposition__c).length})
-                </Button>
-                <Button
-                  variant={dispositionFilter === 'unset' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => { setDispositionFilter('unset'); setCurrentPage(1); }}
-                  className={`text-xs sm:text-sm col-span-2 sm:col-span-1 ${dispositionFilter === 'unset' ? 'bg-red-600' : ''}`}
-                >
-                  Not Set ({leads.filter(l => !l.Call_Disposition__c).length})
-                </Button>
-                {dispositionOptions.map(option => (
+              <div className="space-y-3">
+                <div className="flex flex-wrap gap-2">
                   <Button
-                    key={option}
-                    variant={dispositionFilter === option ? 'default' : 'outline'}
+                    variant={dispositionFilter.length === 0 ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => { setDispositionFilter(option); setCurrentPage(1); }}
-                    className={`text-xs sm:text-sm truncate ${dispositionFilter === option ? 'bg-blue-600' : ''}`}
+                    onClick={() => { setDispositionFilter([]); setCurrentPage(1); }}
+                    className={`text-xs sm:text-sm ${dispositionFilter.length === 0 ? 'bg-slate-600' : ''}`}
                   >
-                    <span className="truncate">{option} ({leads.filter(l => l.Call_Disposition__c === option).length})</span>
+                    Clear All
                   </Button>
-                ))}
+                  <Button
+                    variant={dispositionFilter.includes('set') ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => { 
+                      setDispositionFilter(prev => 
+                        prev.includes('set') 
+                          ? prev.filter(f => f !== 'set')
+                          : [...prev, 'set']
+                      ); 
+                      setCurrentPage(1); 
+                    }}
+                    className={`text-xs sm:text-sm ${dispositionFilter.includes('set') ? 'bg-green-600' : ''}`}
+                  >
+                    Set ({leads.filter(l => l.Call_Disposition__c).length})
+                  </Button>
+                  <Button
+                    variant={dispositionFilter.includes('unset') ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => { 
+                      setDispositionFilter(prev => 
+                        prev.includes('unset') 
+                          ? prev.filter(f => f !== 'unset')
+                          : [...prev, 'unset']
+                      ); 
+                      setCurrentPage(1); 
+                    }}
+                    className={`text-xs sm:text-sm ${dispositionFilter.includes('unset') ? 'bg-red-600' : ''}`}
+                  >
+                    Not Set ({leads.filter(l => !l.Call_Disposition__c).length})
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                  {dispositionOptions.map(option => (
+                    <Button
+                      key={option}
+                      variant={dispositionFilter.includes(option) ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => { 
+                        setDispositionFilter(prev => 
+                          prev.includes(option) 
+                            ? prev.filter(f => f !== option)
+                            : [...prev, option]
+                        ); 
+                        setCurrentPage(1); 
+                      }}
+                      className={`text-xs sm:text-sm truncate ${dispositionFilter.includes(option) ? 'bg-blue-600' : ''}`}
+                    >
+                      <span className="truncate">{option}</span>
+                      <span className="ml-1 opacity-75">({leads.filter(l => l.Call_Disposition__c === option).length})</span>
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -939,12 +966,15 @@ export default function RepPortal() {
                 <tbody>
                   {(() => {
                     let filteredLeads = leads;
-                    if (dispositionFilter === 'set') {
-                      filteredLeads = leads.filter(l => l.Call_Disposition__c);
-                    } else if (dispositionFilter === 'unset') {
-                      filteredLeads = leads.filter(l => !l.Call_Disposition__c);
-                    } else if (dispositionFilter !== 'all') {
-                      filteredLeads = leads.filter(l => l.Call_Disposition__c === dispositionFilter);
+                    
+                    // Apply disposition filters
+                    if (dispositionFilter.length > 0) {
+                      filteredLeads = leads.filter(l => {
+                        if (dispositionFilter.includes('set') && l.Call_Disposition__c) return true;
+                        if (dispositionFilter.includes('unset') && !l.Call_Disposition__c) return true;
+                        if (dispositionFilter.includes(l.Call_Disposition__c)) return true;
+                        return false;
+                      });
                     }
 
                     if (searchTerm) {
