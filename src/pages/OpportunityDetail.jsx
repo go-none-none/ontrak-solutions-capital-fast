@@ -640,16 +640,35 @@ export default function OpportunityDetail() {
           {/* Main Column */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="details" className="space-y-6">
-              <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-                <TabsList className="bg-white p-1 rounded-lg shadow-sm inline-flex min-w-full">
-                  <TabsTrigger value="details" className="text-xs md:text-sm px-2 md:px-4 flex-1 min-w-0">Details</TabsTrigger>
-                  <TabsTrigger value="submissions" className="text-xs md:text-sm px-2 md:px-4 flex-1 min-w-0">Submissions</TabsTrigger>
-                  <TabsTrigger value="offers" className="text-xs md:text-sm px-2 md:px-4 flex-1 min-w-0">Offers</TabsTrigger>
-                  <TabsTrigger value="statements" className="text-xs md:text-sm px-2 md:px-4 flex-1 min-w-0">Statements</TabsTrigger>
-                  <TabsTrigger value="debt" className="text-xs md:text-sm px-2 md:px-4 flex-1 min-w-0">Debt</TabsTrigger>
-                  <TabsTrigger value="commissions" className="text-xs md:text-sm px-2 md:px-4 flex-1 min-w-0">Commissions</TabsTrigger>
-                </TabsList>
+              {/* Mobile Dropdown */}
+              <div className="md:hidden">
+                <Select defaultValue="details" onValueChange={(value) => {
+                  const trigger = document.querySelector(`[data-state][value="${value}"]`);
+                  if (trigger) trigger.click();
+                }}>
+                  <SelectTrigger className="w-full bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="details">Details</SelectItem>
+                    <SelectItem value="submissions">Submissions</SelectItem>
+                    <SelectItem value="offers">Offers</SelectItem>
+                    <SelectItem value="statements">Statements</SelectItem>
+                    <SelectItem value="debt">Debt</SelectItem>
+                    <SelectItem value="commissions">Commissions</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+
+              {/* Desktop Tabs */}
+              <TabsList className="hidden md:grid bg-white p-1 rounded-lg shadow-sm grid-cols-6 gap-1">
+                <TabsTrigger value="details" className="text-sm px-4">Details</TabsTrigger>
+                <TabsTrigger value="submissions" className="text-sm px-4">Submissions</TabsTrigger>
+                <TabsTrigger value="offers" className="text-sm px-4">Offers</TabsTrigger>
+                <TabsTrigger value="statements" className="text-sm px-4">Statements</TabsTrigger>
+                <TabsTrigger value="debt" className="text-sm px-4">Debt</TabsTrigger>
+                <TabsTrigger value="commissions" className="text-sm px-4">Commissions</TabsTrigger>
+              </TabsList>
 
               {/* Submissions Tab */}
               <TabsContent value="submissions" className="space-y-4">
