@@ -395,7 +395,9 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                         }}
                       />
                     ) : (
-                      <p className="font-medium text-slate-900 truncate">{doc.Title}</p>
+                      <p className="font-medium text-slate-900 text-xs break-words" title={`${doc.Title}.${doc.FileExtension}`}>
+                        {doc.Title}.{doc.FileExtension}
+                      </p>
                     )}
                     <p className="text-xs text-slate-500">
                       {formatFileSize(doc.ContentSize)} • {formatDate(doc.CreatedDate)}
