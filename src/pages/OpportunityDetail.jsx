@@ -69,6 +69,7 @@ export default function OpportunityDetail() {
   const [viewingStatementPdf, setViewingStatementPdf] = useState(null);
   const [statementPdfs, setStatementPdfs] = useState({});
   const [showOfferProposal, setShowOfferProposal] = useState(false);
+  const [activeTab, setActiveTab] = useState('details');
 
   const openPdfViewer = async (url) => {
     const proxyUrl = `/api/apps/6932157da76cc7fc545d1203/functions/proxyPdf?url=${encodeURIComponent(url)}`;
@@ -639,15 +640,33 @@ export default function OpportunityDetail() {
         <div className="grid lg:grid-cols-3 gap-6 max-w-full">
           {/* Main Column */}
           <div className="lg:col-span-2 min-w-0 overflow-x-hidden">
-            <Tabs defaultValue="details" className="space-y-6">
-              <div className="bg-white p-3 rounded-xl shadow-md border-2 border-slate-300">
-                <TabsList className="bg-slate-100 p-1 rounded-lg grid grid-cols-3 md:grid-cols-6 gap-1 w-full">
-                  <TabsTrigger value="details" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Details</TabsTrigger>
-                  <TabsTrigger value="submissions" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Submissions</TabsTrigger>
-                  <TabsTrigger value="offers" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Offers</TabsTrigger>
-                  <TabsTrigger value="statements" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Statements</TabsTrigger>
-                  <TabsTrigger value="debt" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Debt</TabsTrigger>
-                  <TabsTrigger value="commissions" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Commissions</TabsTrigger>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+              {/* Mobile Dropdown */}
+              <div className="md:hidden">
+                <Select value={activeTab} onValueChange={setActiveTab}>
+                  <SelectTrigger className="w-full bg-white border-2 border-slate-300 shadow-md h-12">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="details">Details</SelectItem>
+                    <SelectItem value="submissions">Submissions</SelectItem>
+                    <SelectItem value="offers">Offers</SelectItem>
+                    <SelectItem value="statements">Statements</SelectItem>
+                    <SelectItem value="debt">Debt</SelectItem>
+                    <SelectItem value="commissions">Commissions</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Desktop Tabs */}
+              <div className="hidden md:block bg-white p-3 rounded-xl shadow-md border-2 border-slate-300">
+                <TabsList className="bg-slate-100 p-1 rounded-lg grid grid-cols-6 gap-1 w-full">
+                  <TabsTrigger value="details" className="text-sm px-4 whitespace-nowrap">Details</TabsTrigger>
+                  <TabsTrigger value="submissions" className="text-sm px-4 whitespace-nowrap">Submissions</TabsTrigger>
+                  <TabsTrigger value="offers" className="text-sm px-4 whitespace-nowrap">Offers</TabsTrigger>
+                  <TabsTrigger value="statements" className="text-sm px-4 whitespace-nowrap">Statements</TabsTrigger>
+                  <TabsTrigger value="debt" className="text-sm px-4 whitespace-nowrap">Debt</TabsTrigger>
+                  <TabsTrigger value="commissions" className="text-sm px-4 whitespace-nowrap">Commissions</TabsTrigger>
                 </TabsList>
               </div>
 
