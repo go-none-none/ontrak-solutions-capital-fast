@@ -292,7 +292,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             {fullData && (fullData.csbs__Funded__c || fullData.csbs__Payment_Amount__c || fullData.csbs__Term__c) && (
               <div className="space-y-2 border-t pt-2">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Funded Terms</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-3 gap-2 text-xs">
                   {fullData.csbs__Funded_Date__c && <div><span className="text-slate-500">Date:</span> {formatDate(fullData.csbs__Funded_Date__c)}</div>}
                   {fullData.csbs__Funded__c && <div><span className="text-slate-500">Funded:</span> {formatCurrency(fullData.csbs__Funded__c)}</div>}
                   {fullData.csbs__Lender__c && <div><span className="text-slate-500">Lender:</span> {fullData.csbs__Lender__c}</div>}
