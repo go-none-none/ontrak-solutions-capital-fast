@@ -640,14 +640,16 @@ export default function OpportunityDetail() {
           {/* Main Column */}
           <div className="lg:col-span-2 min-w-0 overflow-x-hidden">
             <Tabs defaultValue="details" className="space-y-6">
-              <TabsList className="bg-white p-1 rounded-lg shadow-sm grid grid-cols-2 md:grid-cols-6 gap-1">
-                <TabsTrigger value="details" className="text-xs md:text-sm px-1 md:px-4">Details</TabsTrigger>
-                <TabsTrigger value="submissions" className="text-xs md:text-sm px-1 md:px-4">Submissions</TabsTrigger>
-                <TabsTrigger value="offers" className="text-xs md:text-sm px-1 md:px-4">Offers</TabsTrigger>
-                <TabsTrigger value="statements" className="text-xs md:text-sm px-1 md:px-4">Statements</TabsTrigger>
-                <TabsTrigger value="debt" className="text-xs md:text-sm px-1 md:px-4">Debt</TabsTrigger>
-                <TabsTrigger value="commissions" className="text-xs md:text-sm px-1 md:px-4">Commissions</TabsTrigger>
-              </TabsList>
+              <div className="bg-white p-2 rounded-xl shadow-sm border border-slate-200">
+                <TabsList className="bg-slate-100 p-1 rounded-lg grid grid-cols-2 md:grid-cols-6 gap-1 w-full">
+                  <TabsTrigger value="details" className="text-xs md:text-sm px-1 md:px-4">Details</TabsTrigger>
+                  <TabsTrigger value="submissions" className="text-xs md:text-sm px-1 md:px-4">Submissions</TabsTrigger>
+                  <TabsTrigger value="offers" className="text-xs md:text-sm px-1 md:px-4">Offers</TabsTrigger>
+                  <TabsTrigger value="statements" className="text-xs md:text-sm px-1 md:px-4">Statements</TabsTrigger>
+                  <TabsTrigger value="debt" className="text-xs md:text-sm px-1 md:px-4">Debt</TabsTrigger>
+                  <TabsTrigger value="commissions" className="text-xs md:text-sm px-1 md:px-4">Commissions</TabsTrigger>
+                </TabsList>
+              </div>
 
               {/* Submissions Tab */}
               <TabsContent value="submissions" className="space-y-4">
