@@ -161,13 +161,21 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
 
     setLoading(true);
     try {
+      // Filter out empty string values - Salesforce doesn't like empty strings for numeric fields
+      const cleanedData = Object.entries(formData).reduce((acc, [key, value]) => {
+        if (value !== '' && value !== null && value !== undefined) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
       if (offer) {
         // Update existing offer
-        console.log('Updating offer:', offer.Id, 'with data:', formData);
+        console.log('Updating offer:', offer.Id, 'with cleaned data:', cleanedData);
         await base44.functions.invoke('updateSalesforceRecord', {
           objectType: 'csbs__Offer__c',
           recordId: offer.Id,
-          data: formData,
+          data: cleanedData,
           token: session.token,
           instanceUrl: session.instanceUrl
         });
@@ -177,7 +185,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
         await base44.functions.invoke('createSalesforceOffer', {
           opportunityId,
           submissionId: selectedSubmission,
-          offerData: formData,
+          offerData: cleanedData,
           token: session.token,
           instanceUrl: session.instanceUrl
         });
