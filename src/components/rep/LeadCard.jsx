@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, Building2, Calendar, DollarSign } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Phone, Mail, Building2, Calendar, DollarSign, Eye, ArrowRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function LeadCard({ lead, session }) {
+export default function LeadCard({ lead, session, onQuickView }) {
   const navigate = useNavigate();
 
   const stages = [
@@ -38,8 +39,16 @@ export default function LeadCard({ lead, session }) {
     }).format(amount);
   };
 
-  const handleClick = () => {
+  const handleFullView = (e) => {
+    e.stopPropagation();
     navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`);
+  };
+
+  const handleQuickView = (e) => {
+    e.stopPropagation();
+    if (onQuickView) {
+      onQuickView(lead);
+    }
   };
 
   const currentStage = getCurrentStageIndex();
@@ -55,8 +64,7 @@ export default function LeadCard({ lead, session }) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      onClick={handleClick}
-      className="border border-slate-200 rounded-xl p-5 bg-white transition-all cursor-pointer hover:shadow-lg hover:border-[#08708E]"
+      className="border border-slate-200 rounded-xl p-5 bg-white transition-all hover:shadow-lg hover:border-[#08708E]"
     >
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
@@ -122,7 +130,7 @@ export default function LeadCard({ lead, session }) {
           </div>
         )}
 
-        <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="flex items-center justify-between text-xs text-slate-500 mb-4">
           <div className="flex items-center gap-1">
             <Calendar className="w-3 h-3" />
             <span>Updated {formatDate(lead.LastModifiedDate)}</span>
@@ -130,6 +138,26 @@ export default function LeadCard({ lead, session }) {
           {lead.LeadSource && (
             <span className="px-2 py-1 bg-slate-100 rounded">{lead.LeadSource}</span>
           )}
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleQuickView}
+            className="flex-1 text-xs"
+          >
+            <Eye className="w-3 h-3 mr-1" />
+            Quick View
+          </Button>
+          <Button
+            size="sm"
+            onClick={handleFullView}
+            className="flex-1 bg-[#08708E] hover:bg-[#065a72] text-xs"
+          >
+            Full View
+            <ArrowRight className="w-3 h-3 ml-1" />
+          </Button>
         </div>
       </motion.div>
   );
