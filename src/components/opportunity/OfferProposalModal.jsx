@@ -116,8 +116,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
     try {
       const selected = offers.filter(o => selectedOffers.includes(o.Id));
 
-      // Send email with SendGrid
-      const authData = btoa(JSON.stringify({ token: session.token, instanceUrl: session.instanceUrl }));
+      // Send email with session data included in payload
       console.log('Sending proposal with session:', { hasToken: !!session.token, hasInstanceUrl: !!session.instanceUrl });
       
       const response = await base44.functions.invoke('sendClientEmail', {
@@ -127,11 +126,9 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         message: emailData.body,
         senderName: session.name || 'OnTrak Capital',
         offers: selected,
-        opportunityId: opportunity.Id
-      }, {
-        headers: {
-          'Authorization': `Bearer ${authData}`
-        }
+        opportunityId: opportunity.Id,
+        sessionToken: session.token,
+        sessionInstanceUrl: session.instanceUrl
       });
 
       console.log('Send proposal response:', response.data);
