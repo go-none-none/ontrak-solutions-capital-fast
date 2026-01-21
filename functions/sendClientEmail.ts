@@ -31,9 +31,12 @@ Deno.serve(async (req) => {
             const parsed = JSON.parse(atob(sessionData));
             sessionToken = parsed.token;
             sessionInstanceUrl = parsed.instanceUrl;
+            console.log('Session parsed successfully:', { hasToken: !!sessionToken, hasInstanceUrl: !!sessionInstanceUrl });
           } catch (e) {
-            // If parsing fails, continue without session
+            console.error('Failed to parse session from auth header:', e.message);
           }
+        } else {
+          console.log('No authorization header or invalid format');
         }
 
         // Generate PDF
