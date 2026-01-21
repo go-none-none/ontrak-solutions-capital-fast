@@ -102,6 +102,7 @@ export default function AccountDetail() {
     try {
       const dataToSend = {
         ...editData,
+        RecordTypeId: recordTypeId,
         csbs__Restricted_States__c: Array.isArray(editData.csbs__Restricted_States__c)
           ? editData.csbs__Restricted_States__c.join(';')
           : editData.csbs__Restricted_States__c || '',
