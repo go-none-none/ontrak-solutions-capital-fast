@@ -750,6 +750,73 @@ export default function AccountDetail() {
               </div>
             )}
 
+            {/* Additional Information Section */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">Additional Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Type of Business</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.csbs__Type_of_Business__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__Type_of_Business__c: e.target.value })}
+                      placeholder="Type of Business"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__Type_of_Business__c || '-'}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Product/Service Sold</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.csbs__Product_Service_Sold__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__Product_Service_Sold__c: e.target.value })}
+                      placeholder="Product/Service Sold"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__Product_Service_Sold__c || '-'}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Federal Tax ID</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.csbs__Federal_Tax_ID_Unencrypted__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__Federal_Tax_ID_Unencrypted__c: e.target.value })}
+                      placeholder="Federal Tax ID"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__Federal_Tax_ID_Unencrypted__c || '-'}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">SIC Code</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.Sic || ''}
+                      onChange={(e) => setEditData({ ...editData, Sic: e.target.value })}
+                      placeholder="SIC Code"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.Sic || '-'}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">NAICS Code</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.csbs__NAICS_Code__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__NAICS_Code__c: e.target.value })}
+                      placeholder="NAICS Code"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__NAICS_Code__c || '-'}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
             {/* Merchant Criteria Section */}
             {isMerchant && (
               <div className="bg-white rounded-lg shadow p-6">
