@@ -301,43 +301,231 @@ export default function MerchantDetail() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label>Industry</Label>
+                        <Label>Application Industry</Label>
                         <select value={editData.Industry || ''} onChange={(e) => setEditData({ ...editData, Industry: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
-                          <option value="">Select Industry</option>
+                          <option value="">--None--</option>
                           {INDUSTRIES.map(ind => <option key={ind} value={ind}>{ind}</option>)}
                         </select>
                       </div>
                       <div>
+                        <Label>Business Start Date</Label>
+                        <Input id="startDate" type="date" value={editData.Business_Start_Date__c || ''} onChange={(e) => setEditData({ ...editData, Business_Start_Date__c: e.target.value })} />
+                      </div>
+                      <div>
                         <Label>Entity Type</Label>
                         <select value={editData.csbs__Entity_Type__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Entity_Type__c: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
-                          <option value="">Select Type</option>
+                          <option value="">--None--</option>
                           {ENTITY_TYPES.map(et => <option key={et} value={et}>{et}</option>)}
                         </select>
                       </div>
                       <div>
-                        <Label>Occupancy Type</Label>
+                        <Label>Franchise</Label>
+                        <select value={editData.Franchise__c || ''} onChange={(e) => setEditData({ ...editData, Franchise__c: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
+                          <option value="">--None--</option>
+                          <option value="Yes">Yes</option>
+                          <option value="No">No</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label>Type of Business</Label>
+                        <Input id="typeOfBusiness" value={editData.Type_of_Business__c || ''} onChange={(e) => setEditData({ ...editData, Type_of_Business__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Home-Based Business</Label>
+                        <select value={editData.Home_Based_Business__c || ''} onChange={(e) => setEditData({ ...editData, Home_Based_Business__c: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
+                          <option value="">--None--</option>
+                          <option value="Yes">Yes</option>
+                          <option value="No">No</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label>Product/Service Sold</Label>
+                        <Input id="productService" value={editData.Product_Service_Sold__c || ''} onChange={(e) => setEditData({ ...editData, Product_Service_Sold__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Number of Locations</Label>
+                        <Input id="numLocations" type="number" value={editData.Number_of_Locations__c || ''} onChange={(e) => setEditData({ ...editData, Number_of_Locations__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Federal Tax ID</Label>
+                        <Input id="fedTaxId" value={editData.Federal_Tax_ID__c || ''} onChange={(e) => setEditData({ ...editData, Federal_Tax_ID__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>State of Incorporation</Label>
+                        <select value={editData.State_of_Incorporation__c || ''} onChange={(e) => setEditData({ ...editData, State_of_Incorporation__c: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
+                          <option value="">--None--</option>
+                          {US_STATES.map(state => <option key={state} value={state}>{state}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <Label>Open Tax Lien Payment Plan</Label>
+                        <select value={editData.Open_Tax_Lien_Payment_Plan__c || ''} onChange={(e) => setEditData({ ...editData, Open_Tax_Lien_Payment_Plan__c: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
+                          <option value="">--None--</option>
+                          <option value="Yes">Yes</option>
+                          <option value="No">No</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label>Open Tax Liens Balance</Label>
+                        <select value={editData.Open_Tax_Liens_Balance__c || ''} onChange={(e) => setEditData({ ...editData, Open_Tax_Liens_Balance__c: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
+                          <option value="">--None--</option>
+                          {TAX_LIEN_BALANCE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <Label>Seasonal Business</Label>
+                        <select value={editData.Seasonal_Business__c || ''} onChange={(e) => setEditData({ ...editData, Seasonal_Business__c: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
+                          <option value="">--None--</option>
+                          <option value="Yes">Yes</option>
+                          <option value="No">No</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label>E-Commerce</Label>
+                        <select value={editData.E_Commerce__c || ''} onChange={(e) => setEditData({ ...editData, E_Commerce__c: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
+                          <option value="">--None--</option>
+                          <option value="Yes">Yes</option>
+                          <option value="No">No</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label>Business Location Occupancy</Label>
                         <select value={editData.csbs__Occupancy_Type__c || ''} onChange={(e) => setEditData({ ...editData, csbs__Occupancy_Type__c: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
-                          <option value="">Select Type</option>
+                          <option value="">--None--</option>
                           {OCCUPANCY_TYPES.map(ot => <option key={ot} value={ot}>{ot}</option>)}
                         </select>
                       </div>
                       <div>
-                        <Label>Annual Revenue</Label>
-                        <Input type="number" value={editData.AnnualRevenue || ''} onChange={(e) => setEditData({ ...editData, AnnualRevenue: e.target.value })} />
+                        <Label>Business Location Monthly Payment</Label>
+                        <Input id="monthlyPayment" type="number" value={editData.Business_Location_Monthly_Payment__c || ''} onChange={(e) => setEditData({ ...editData, Business_Location_Monthly_Payment__c: e.target.value })} />
                       </div>
                       <div>
-                        <Label>Employees</Label>
-                        <Input type="number" value={editData.NumberOfEmployees || ''} onChange={(e) => setEditData({ ...editData, NumberOfEmployees: e.target.value })} />
+                        <Label>Landlord/Mortgagee Name</Label>
+                        <Input id="landlordName" value={editData.Landlord_Mortgagee_Name__c || ''} onChange={(e) => setEditData({ ...editData, Landlord_Mortgagee_Name__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Landlord/Mortgagee Phone</Label>
+                        <Input id="landlordPhone" value={editData.Landlord_Mortgagee_Phone__c || ''} onChange={(e) => setEditData({ ...editData, Landlord_Mortgagee_Phone__c: e.target.value })} />
                       </div>
                     </div>
                   </div>
                 ) : (
                   <div className="grid sm:grid-cols-2 gap-4 text-sm">
                     {merchant.Industry && (<div><p className="text-slate-500 text-xs mb-1">Industry</p><p className="font-medium">{merchant.Industry}</p></div>)}
+                    {merchant.Business_Start_Date__c && (<div><p className="text-slate-500 text-xs mb-1">Business Start Date</p><p className="font-medium">{merchant.Business_Start_Date__c}</p></div>)}
                     {merchant.csbs__Entity_Type__c && (<div><p className="text-slate-500 text-xs mb-1">Entity Type</p><p className="font-medium">{merchant.csbs__Entity_Type__c}</p></div>)}
-                    {merchant.csbs__Occupancy_Type__c && (<div><p className="text-slate-500 text-xs mb-1">Occupancy Type</p><p className="font-medium">{merchant.csbs__Occupancy_Type__c}</p></div>)}
-                    {merchant.AnnualRevenue && (<div><p className="text-slate-500 text-xs mb-1">Annual Revenue</p><p className="font-medium">${Number(merchant.AnnualRevenue).toLocaleString()}</p></div>)}
-                    {merchant.NumberOfEmployees && (<div><p className="text-slate-500 text-xs mb-1">Employees</p><p className="font-medium">{merchant.NumberOfEmployees}</p></div>)}
+                    {merchant.Franchise__c && (<div><p className="text-slate-500 text-xs mb-1">Franchise</p><p className="font-medium">{merchant.Franchise__c}</p></div>)}
+                    {merchant.Type_of_Business__c && (<div><p className="text-slate-500 text-xs mb-1">Type of Business</p><p className="font-medium">{merchant.Type_of_Business__c}</p></div>)}
+                    {merchant.Home_Based_Business__c && (<div><p className="text-slate-500 text-xs mb-1">Home-Based Business</p><p className="font-medium">{merchant.Home_Based_Business__c}</p></div>)}
+                    {merchant.Product_Service_Sold__c && (<div><p className="text-slate-500 text-xs mb-1">Product/Service Sold</p><p className="font-medium">{merchant.Product_Service_Sold__c}</p></div>)}
+                    {merchant.Number_of_Locations__c && (<div><p className="text-slate-500 text-xs mb-1">Number of Locations</p><p className="font-medium">{merchant.Number_of_Locations__c}</p></div>)}
+                    {merchant.Federal_Tax_ID__c && (<div><p className="text-slate-500 text-xs mb-1">Federal Tax ID</p><p className="font-medium">{merchant.Federal_Tax_ID__c}</p></div>)}
+                    {merchant.State_of_Incorporation__c && (<div><p className="text-slate-500 text-xs mb-1">State of Incorporation</p><p className="font-medium">{merchant.State_of_Incorporation__c}</p></div>)}
+                    {merchant.Open_Tax_Lien_Payment_Plan__c && (<div><p className="text-slate-500 text-xs mb-1">Open Tax Lien Payment Plan</p><p className="font-medium">{merchant.Open_Tax_Lien_Payment_Plan__c}</p></div>)}
+                    {merchant.Open_Tax_Liens_Balance__c && (<div><p className="text-slate-500 text-xs mb-1">Open Tax Liens Balance</p><p className="font-medium">{merchant.Open_Tax_Liens_Balance__c}</p></div>)}
+                    {merchant.Seasonal_Business__c && (<div><p className="text-slate-500 text-xs mb-1">Seasonal Business</p><p className="font-medium">{merchant.Seasonal_Business__c}</p></div>)}
+                    {merchant.E_Commerce__c && (<div><p className="text-slate-500 text-xs mb-1">E-Commerce</p><p className="font-medium">{merchant.E_Commerce__c}</p></div>)}
+                    {merchant.Business_Location_Monthly_Payment__c && (<div><p className="text-slate-500 text-xs mb-1">Business Location Monthly Payment</p><p className="font-medium">${Number(merchant.Business_Location_Monthly_Payment__c).toLocaleString()}</p></div>)}
+                    {merchant.Landlord_Mortgagee_Name__c && (<div><p className="text-slate-500 text-xs mb-1">Landlord/Mortgagee Name</p><p className="font-medium">{merchant.Landlord_Mortgagee_Name__c}</p></div>)}
+                    {merchant.Landlord_Mortgagee_Phone__c && (<div><p className="text-slate-500 text-xs mb-1">Landlord/Mortgagee Phone</p><p className="font-medium">{merchant.Landlord_Mortgagee_Phone__c}</p></div>)}
+                  </div>
+                )}
+              </div>
+
+              {/* Business References */}
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Business References</h2>
+                {isEditing ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Business Trade Reference 1</Label>
+                        <Input id="ref1" value={editData.Business_Trade_Reference_1__c || ''} onChange={(e) => setEditData({ ...editData, Business_Trade_Reference_1__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Business Trade Reference 1 Phone</Label>
+                        <Input id="ref1Phone" value={editData.Business_Trade_Reference_1_Phone__c || ''} onChange={(e) => setEditData({ ...editData, Business_Trade_Reference_1_Phone__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Business Trade Reference 2</Label>
+                        <Input id="ref2" value={editData.Business_Trade_Reference_2__c || ''} onChange={(e) => setEditData({ ...editData, Business_Trade_Reference_2__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Business Trade Reference 2 Phone</Label>
+                        <Input id="ref2Phone" value={editData.Business_Trade_Reference_2_Phone__c || ''} onChange={(e) => setEditData({ ...editData, Business_Trade_Reference_2_Phone__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Business Trade Reference 3</Label>
+                        <Input id="ref3" value={editData.Business_Trade_Reference_3__c || ''} onChange={(e) => setEditData({ ...editData, Business_Trade_Reference_3__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Business Trade Reference 3 Phone</Label>
+                        <Input id="ref3Phone" value={editData.Business_Trade_Reference_3_Phone__c || ''} onChange={(e) => setEditData({ ...editData, Business_Trade_Reference_3_Phone__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Business Trade Reference Contact/Acct #1</Label>
+                        <Input id="refAcct1" value={editData.Business_Trade_Reference_Contact_Acct_1__c || ''} onChange={(e) => setEditData({ ...editData, Business_Trade_Reference_Contact_Acct_1__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Business Trade Reference Contact/Acct #2</Label>
+                        <Input id="refAcct2" value={editData.Business_Trade_Reference_Contact_Acct_2__c || ''} onChange={(e) => setEditData({ ...editData, Business_Trade_Reference_Contact_Acct_2__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>Business Trade Reference Contact/Acct #3</Label>
+                        <Input id="refAcct3" value={editData.Business_Trade_Reference_Contact_Acct_3__c || ''} onChange={(e) => setEditData({ ...editData, Business_Trade_Reference_Contact_Acct_3__c: e.target.value })} />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                    {merchant.Business_Trade_Reference_1__c && (<div><p className="text-slate-500 text-xs mb-1">Business Trade Reference 1</p><p className="font-medium">{merchant.Business_Trade_Reference_1__c}</p></div>)}
+                    {merchant.Business_Trade_Reference_1_Phone__c && (<div><p className="text-slate-500 text-xs mb-1">Reference 1 Phone</p><p className="font-medium">{merchant.Business_Trade_Reference_1_Phone__c}</p></div>)}
+                    {merchant.Business_Trade_Reference_2__c && (<div><p className="text-slate-500 text-xs mb-1">Business Trade Reference 2</p><p className="font-medium">{merchant.Business_Trade_Reference_2__c}</p></div>)}
+                    {merchant.Business_Trade_Reference_2_Phone__c && (<div><p className="text-slate-500 text-xs mb-1">Reference 2 Phone</p><p className="font-medium">{merchant.Business_Trade_Reference_2_Phone__c}</p></div>)}
+                    {merchant.Business_Trade_Reference_3__c && (<div><p className="text-slate-500 text-xs mb-1">Business Trade Reference 3</p><p className="font-medium">{merchant.Business_Trade_Reference_3__c}</p></div>)}
+                    {merchant.Business_Trade_Reference_3_Phone__c && (<div><p className="text-slate-500 text-xs mb-1">Reference 3 Phone</p><p className="font-medium">{merchant.Business_Trade_Reference_3_Phone__c}</p></div>)}
+                    {merchant.Business_Trade_Reference_Contact_Acct_1__c && (<div><p className="text-slate-500 text-xs mb-1">Reference Contact/Acct #1</p><p className="font-medium">{merchant.Business_Trade_Reference_Contact_Acct_1__c}</p></div>)}
+                    {merchant.Business_Trade_Reference_Contact_Acct_2__c && (<div><p className="text-slate-500 text-xs mb-1">Reference Contact/Acct #2</p><p className="font-medium">{merchant.Business_Trade_Reference_Contact_Acct_2__c}</p></div>)}
+                    {merchant.Business_Trade_Reference_Contact_Acct_3__c && (<div><p className="text-slate-500 text-xs mb-1">Reference Contact/Acct #3</p><p className="font-medium">{merchant.Business_Trade_Reference_Contact_Acct_3__c}</p></div>)}
+                  </div>
+                )}
+              </div>
+
+              {/* Marketing */}
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Marketing</h2>
+                {isEditing ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>UTM Source</Label>
+                        <Input id="utmSource" value={editData.UTM_Source__c || ''} onChange={(e) => setEditData({ ...editData, UTM_Source__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>UTM Campaign</Label>
+                        <Input id="utmCampaign" value={editData.UTM_Campaign__c || ''} onChange={(e) => setEditData({ ...editData, UTM_Campaign__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>UTM Content</Label>
+                        <Input id="utmContent" value={editData.UTM_Content__c || ''} onChange={(e) => setEditData({ ...editData, UTM_Content__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>UTM Term</Label>
+                        <Input id="utmTerm" value={editData.UTM_Term__c || ''} onChange={(e) => setEditData({ ...editData, UTM_Term__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label>UTM Medium</Label>
+                        <Input id="utmMedium" value={editData.UTM_Medium__c || ''} onChange={(e) => setEditData({ ...editData, UTM_Medium__c: e.target.value })} />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                    {merchant.UTM_Source__c && (<div><p className="text-slate-500 text-xs mb-1">UTM Source</p><p className="font-medium">{merchant.UTM_Source__c}</p></div>)}
+                    {merchant.UTM_Campaign__c && (<div><p className="text-slate-500 text-xs mb-1">UTM Campaign</p><p className="font-medium">{merchant.UTM_Campaign__c}</p></div>)}
+                    {merchant.UTM_Content__c && (<div><p className="text-slate-500 text-xs mb-1">UTM Content</p><p className="font-medium">{merchant.UTM_Content__c}</p></div>)}
+                    {merchant.UTM_Term__c && (<div><p className="text-slate-500 text-xs mb-1">UTM Term</p><p className="font-medium">{merchant.UTM_Term__c}</p></div>)}
+                    {merchant.UTM_Medium__c && (<div><p className="text-slate-500 text-xs mb-1">UTM Medium</p><p className="font-medium">{merchant.UTM_Medium__c}</p></div>)}
                   </div>
                 )}
               </div>
