@@ -249,27 +249,56 @@ export default function StatementAnalysisDashboard({ statements }) {
             <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
             <h3 className="text-base sm:text-lg font-semibold text-slate-900 truncate">Account Health Distribution</h3>
           </div>
-          <div className="w-full overflow-x-auto">
-            <div className="min-w-[200px]">
-              <ResponsiveContainer width="100%" height={240}>
-            <PieChart>
-              <Pie
-                data={riskData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, value }) => `${name} (${value})`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {riskData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} />
-            </PieChart>
-          </ResponsiveContainer>
+          <div className="space-y-4">
+            <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span className="text-sm font-medium text-green-900">Healthy</span>
+                </div>
+                <span className="text-2xl font-bold text-green-900">{riskData[0]?.value || 0}</span>
+              </div>
+              <div className="w-full bg-green-200 rounded-full h-3">
+                <div 
+                  className="bg-green-500 h-3 rounded-full transition-all duration-500" 
+                  style={{ width: `${((riskData[0]?.value || 0) / stats.totalStatements) * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-green-700 mt-1">{(((riskData[0]?.value || 0) / stats.totalStatements) * 100).toFixed(0)}% of periods</p>
+            </div>
+
+            <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                  <span className="text-sm font-medium text-amber-900">Moderate Risk</span>
+                </div>
+                <span className="text-2xl font-bold text-amber-900">{riskData[1]?.value || 0}</span>
+              </div>
+              <div className="w-full bg-amber-200 rounded-full h-3">
+                <div 
+                  className="bg-amber-500 h-3 rounded-full transition-all duration-500" 
+                  style={{ width: `${((riskData[1]?.value || 0) / stats.totalStatements) * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-amber-700 mt-1">{(((riskData[1]?.value || 0) / stats.totalStatements) * 100).toFixed(0)}% of periods</p>
+            </div>
+
+            <div className="p-4 bg-red-50 rounded-xl border border-red-200">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <span className="text-sm font-medium text-red-900">High Risk</span>
+                </div>
+                <span className="text-2xl font-bold text-red-900">{riskData[2]?.value || 0}</span>
+              </div>
+              <div className="w-full bg-red-200 rounded-full h-3">
+                <div 
+                  className="bg-red-500 h-3 rounded-full transition-all duration-500" 
+                  style={{ width: `${((riskData[2]?.value || 0) / stats.totalStatements) * 100}%` }}
+                />
+              </div>
+              <p className="text-xs text-red-700 mt-1">{(((riskData[2]?.value || 0) / stats.totalStatements) * 100).toFixed(0)}% of periods</p>
             </div>
           </div>
         </div>
