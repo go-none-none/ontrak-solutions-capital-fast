@@ -676,56 +676,86 @@ export default function AccountDetail() {
 
             {/* Account Information Section - Lender Only Fields */}
             {isLender && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-lg font-semibold text-slate-900 mb-4">Lender Settings</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="active"
-                      checked={editData.csbs__Active__c || false}
-                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Active__c: checked })}
-                      disabled={!isEditing}
-                    />
-                    <label htmlFor="active" className="text-sm font-medium text-slate-700 cursor-pointer">Active Lender</label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="trading"
-                      checked={editData.csbs__Trading_Center__c || false}
-                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Trading_Center__c: checked })}
-                      disabled={!isEditing}
-                    />
-                    <label htmlFor="trading" className="text-sm font-medium text-slate-700 cursor-pointer">Trading Center</label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="leadsFromApi"
-                      checked={editData.csbs__Leads_from_API__c || false}
-                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Leads_from_API__c: checked })}
-                      disabled={!isEditing}
-                    />
-                    <label htmlFor="leadsFromApi" className="text-sm font-medium text-slate-700 cursor-pointer">Leads from API</label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="leadsToApi"
-                      checked={editData.csbs__Leads_to_API__c || false}
-                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Leads_to_API__c: checked })}
-                      disabled={!isEditing}
-                    />
-                    <label htmlFor="leadsToApi" className="text-sm font-medium text-slate-700 cursor-pointer">Leads to API</label>
-                  </div>
-                  <div className="flex items-center space-x-2 md:col-span-2">
-                    <Checkbox
-                      id="appIndustry"
-                      checked={editData.csbs__Application_Industry__c || false}
-                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Application_Industry__c: checked })}
-                      disabled={!isEditing}
-                    />
-                    <label htmlFor="appIndustry" className="text-sm font-medium text-slate-700 cursor-pointer">Application Industry</label>
-                  </div>
-                </div>
-              </div>
+            <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Lender Settings</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="active"
+                checked={editData.csbs__Active__c || false}
+                onCheckedChange={(checked) => setEditData({ ...editData, csbs__Active__c: checked })}
+                disabled={!isEditing}
+              />
+              <label htmlFor="active" className="text-sm font-medium text-slate-700 cursor-pointer">Active Lender</label>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Tier</label>
+              {isEditing ? (
+                <Input
+                  value={editData.csbs__Tier__c || ''}
+                  onChange={(e) => setEditData({ ...editData, csbs__Tier__c: e.target.value })}
+                  placeholder="Tier"
+                />
+              ) : (
+                <p className="text-slate-600">{account?.csbs__Tier__c || '-'}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Tier Position</label>
+              {isEditing ? (
+                <Input
+                  value={editData.csbs__Tier_Position__c || ''}
+                  onChange={(e) => setEditData({ ...editData, csbs__Tier_Position__c: e.target.value })}
+                  placeholder="Tier Position"
+                />
+              ) : (
+                <p className="text-slate-600">{account?.csbs__Tier_Position__c || '-'}</p>
+              )}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="priority"
+                checked={editData.csbs__Priority_Lender__c || false}
+                onCheckedChange={(checked) => setEditData({ ...editData, csbs__Priority_Lender__c: checked })}
+                disabled={!isEditing}
+              />
+              <label htmlFor="priority" className="text-sm font-medium text-slate-700 cursor-pointer">Priority Lender</label>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Emails to CC</label>
+              {isEditing ? (
+                <Input
+                  value={editData.csbs__Emails_to_CC__c || ''}
+                  onChange={(e) => setEditData({ ...editData, csbs__Emails_to_CC__c: e.target.value })}
+                  placeholder="Emails to CC"
+                />
+              ) : (
+                <p className="text-slate-600">{account?.csbs__Emails_to_CC__c || '-'}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Emails to BCC</label>
+              {isEditing ? (
+                <Input
+                  value={editData.csbs__Emails_to_BCC__c || ''}
+                  onChange={(e) => setEditData({ ...editData, csbs__Emails_to_BCC__c: e.target.value })}
+                  placeholder="Emails to BCC"
+                />
+              ) : (
+                <p className="text-slate-600">{account?.csbs__Emails_to_BCC__c || '-'}</p>
+              )}
+            </div>
+            <div className="flex items-center space-x-2 md:col-span-2">
+              <Checkbox
+                id="appIndustry"
+                checked={editData.csbs__Application_Industry__c || false}
+                onCheckedChange={(checked) => setEditData({ ...editData, csbs__Application_Industry__c: checked })}
+                disabled={!isEditing}
+              />
+              <label htmlFor="appIndustry" className="text-sm font-medium text-slate-700 cursor-pointer">Application Industry</label>
+            </div>
+            </div>
+            </div>
             )}
 
             {/* Lender Criteria Section */}
