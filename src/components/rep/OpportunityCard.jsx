@@ -280,7 +280,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
 
             {/* Open Balances */}
             {fullData && (fullData.Lender_Name_1__c || fullData.Lender_Name_2__c || fullData.Lender_Name_3__c) && (
-              <div className="space-y-2 border-t pt-3 mt-3">
+              <div className="space-y-2 border-t pt-3 mt-3 mt-4">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Open Balances</p>
                 <div className="space-y-1 text-xs">
                   {fullData.Lender_Name_1__c && <div><span className="text-slate-500">{fullData.Lender_Name_1__c}:</span> {formatCurrency(fullData.Open_Balance_Amount_1__c)}</div>}
