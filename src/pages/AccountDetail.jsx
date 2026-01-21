@@ -832,19 +832,6 @@ export default function AccountDetail() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Net Offer %</label>
-                    {isEditing ? (
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={editData.csbs__Net_Offer_Percentage__c || ''}
-                        onChange={(e) => setEditData({ ...editData, csbs__Net_Offer_Percentage__c: e.target.value })}
-                      />
-                    ) : (
-                      <p className="text-slate-600">{account?.csbs__Net_Offer_Percentage__c || '-'}</p>
-                    )}
-                  </div>
-                  <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Restricted States</label>
                     {isEditing ? (
                       <MultiSelect
