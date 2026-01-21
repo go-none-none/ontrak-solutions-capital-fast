@@ -925,6 +925,18 @@ export default function AccountDetail() {
                     <p className="text-slate-600">{account?.csbs__NAICS_Code__c || '-'}</p>
                   )}
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">UC Code</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.csbs__UC_Code__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__UC_Code__c: e.target.value })}
+                      placeholder="UC Code"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__UC_Code__c || '-'}</p>
+                  )}
+                </div>
               </div>
             </div>
 
