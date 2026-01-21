@@ -167,9 +167,7 @@ export default function UniversalSearch({ session }) {
 
   const handleResultClick = (result) => {
     if (result.path) {
-      navigate(createPageUrl(result.path) + `?id=${result.id}`);
-      setSearchTerm('');
-      setShowDropdown(false);
+      window.location.href = createPageUrl(result.path) + `?id=${result.id}`;
     }
   };
 
