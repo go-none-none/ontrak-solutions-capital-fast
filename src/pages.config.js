@@ -19,6 +19,7 @@ import IndustryRetail from './pages/IndustryRetail';
 import IndustryTransportation from './pages/IndustryTransportation';
 import LeadDetail from './pages/LeadDetail';
 import LenderDetail from './pages/LenderDetail';
+import MerchantDetail from './pages/MerchantDetail';
 import MissingDocs from './pages/MissingDocs';
 import OpportunityDetail from './pages/OpportunityDetail';
 import OwnerContact from './pages/OwnerContact';
@@ -31,7 +32,6 @@ import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
-import MerchantDetail from './pages/MerchantDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -57,6 +57,7 @@ export const PAGES = {
     "IndustryTransportation": IndustryTransportation,
     "LeadDetail": LeadDetail,
     "LenderDetail": LenderDetail,
+    "MerchantDetail": MerchantDetail,
     "MissingDocs": MissingDocs,
     "OpportunityDetail": OpportunityDetail,
     "OwnerContact": OwnerContact,
@@ -69,7 +70,6 @@ export const PAGES = {
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
-    "MerchantDetail": MerchantDetail,
 }
 
 export const pagesConfig = {

@@ -34,6 +34,10 @@ const TAX_LIEN_BALANCE_OPTIONS = ['None', 'Under $5,000', '$5,000 - $25,000', '$
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+const BUSINESS_TYPES = ['Retail', 'Service', 'Wholesale', 'Manufacturing', 'Online', 'Other'];
+
+const COUNTRIES = ['United States', 'Canada', 'Mexico', 'Other'];
+
 export default function MerchantDetail() {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
