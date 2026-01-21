@@ -639,13 +639,13 @@ export default function OpportunityDetail() {
           {/* Main Column */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="details" className="space-y-6">
-              <TabsList className="bg-white p-1 rounded-lg shadow-sm">
-                <TabsTrigger value="details">Details</TabsTrigger>
-                <TabsTrigger value="submissions">Submissions</TabsTrigger>
-                <TabsTrigger value="offers">Offers</TabsTrigger>
-                <TabsTrigger value="statements">Statements</TabsTrigger>
-                <TabsTrigger value="debt">Debt</TabsTrigger>
-                <TabsTrigger value="commissions">Commissions</TabsTrigger>
+              <TabsList className="bg-white p-1 rounded-lg shadow-sm overflow-x-auto flex md:grid md:grid-cols-6">
+                <TabsTrigger value="details" className="whitespace-nowrap min-w-[80px] md:min-w-0">Details</TabsTrigger>
+                <TabsTrigger value="submissions" className="whitespace-nowrap min-w-[100px] md:min-w-0">Submissions</TabsTrigger>
+                <TabsTrigger value="offers" className="whitespace-nowrap min-w-[80px] md:min-w-0">Offers</TabsTrigger>
+                <TabsTrigger value="statements" className="whitespace-nowrap min-w-[100px] md:min-w-0">Statements</TabsTrigger>
+                <TabsTrigger value="debt" className="whitespace-nowrap min-w-[70px] md:min-w-0">Debt</TabsTrigger>
+                <TabsTrigger value="commissions" className="whitespace-nowrap min-w-[110px] md:min-w-0">Commissions</TabsTrigger>
               </TabsList>
 
               {/* Submissions Tab */}
