@@ -71,7 +71,7 @@ export default function AccountDetail() {
       }
 
       const response = await base44.functions.invoke('getSalesforceAccount', {
-        recordId: accountId,
+        accountId: accountId,
         token: session?.token,
         instanceUrl: session?.instanceUrl
       });
