@@ -122,7 +122,7 @@ export default function UniversalSearch({ session }) {
                 type: 'Lender',
                 color: 'bg-green-100 text-green-800',
                 icon: Building2,
-                path: null,
+                path: 'LenderDetail',
                 record: lender
               });
             });
