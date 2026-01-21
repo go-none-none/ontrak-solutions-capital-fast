@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Loader2, Contact, Briefcase, Building2, X, User } from 'lucide-react';
+import { Search, Loader2, Contact, Briefcase, Building2, X, User, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -10,6 +10,9 @@ export default function UniversalSearch({ session }) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [accountCategories, setAccountCategories] = useState([]);
+  const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const searchRef = useRef(null);
 
   useEffect(() => {
