@@ -955,12 +955,12 @@ export default function RepPortal() {
               </div>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+              <table className="w-full min-w-full">
                 <thead className="bg-slate-100 border-b-2 border-slate-300">
                   <tr>
-                    <th className="text-left px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-bold text-slate-900">Lead</th>
-                    <th className="text-left px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-bold text-slate-900">Disposition</th>
+                    <th className="text-left px-2 py-3 text-xs font-bold text-slate-900 w-[45%]">Lead</th>
+                    <th className="text-left px-2 py-3 text-xs font-bold text-slate-900 w-[55%]">Disposition</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -995,26 +995,26 @@ export default function RepPortal() {
                       <>
                         {paginatedLeads.map(lead => (
                           <tr key={lead.Id} className="border-b border-slate-200 hover:bg-blue-50 transition-colors">
-                            <td className="px-2 sm:px-4 py-3 sm:py-4 w-1/2">
+                            <td className="px-2 py-3">
                               <button
                                 onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)}
-                                className="font-semibold text-[#08708E] hover:underline text-left text-xs sm:text-sm block w-full"
+                                className="font-semibold text-[#08708E] hover:underline text-left text-xs block w-full truncate"
                               >
                                 {lead.Name || '-'}
                               </button>
-                              <div className="text-[10px] text-slate-500 mt-0.5 space-y-0.5">
+                              <div className="text-[9px] text-slate-500 mt-0.5 space-y-0.5">
                                 {lead.Company && <div className="truncate">{lead.Company}</div>}
                                 {lead.MobilePhone && (
-                                  <a href={`tel:${lead.MobilePhone}`} className="text-[#08708E] hover:underline block">
+                                  <a href={`tel:${lead.MobilePhone}`} className="text-[#08708E] hover:underline block truncate">
                                     {lead.MobilePhone}
                                   </a>
                                 )}
-                                <div className="text-slate-400">{lead.Status}</div>
+                                <div className="text-slate-400 truncate">{lead.Status}</div>
                               </div>
                             </td>
-                            <td className="px-2 sm:px-4 py-3 sm:py-4 w-1/2">
-                              <div className="flex flex-col gap-1.5">
-                                <span className={`px-2 py-1 rounded-lg text-[10px] sm:text-xs font-semibold truncate block text-center ${
+                            <td className="px-2 py-3">
+                              <div className="flex flex-col gap-1.5 max-w-full">
+                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-semibold truncate block text-center ${
                                   lead.Call_Disposition__c 
                                     ? getDispositionColor(lead.Call_Disposition__c)
                                     : 'bg-gray-300 text-gray-800'
@@ -1026,14 +1026,14 @@ export default function RepPortal() {
                                   onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
                                   disabled={updatingDisposition === lead.Id}
                                 >
-                                  <SelectTrigger className="w-full h-7 sm:h-8 text-[10px] sm:text-xs">
+                                  <SelectTrigger className="w-full h-6 text-[9px]">
                                     <SelectValue>
-                                      {updatingDisposition === lead.Id ? 'Updating...' : 'Change'}
+                                      {updatingDisposition === lead.Id ? '...' : 'Change'}
                                     </SelectValue>
                                   </SelectTrigger>
                                   <SelectContent>
                                     {dispositionOptions.map(option => (
-                                      <SelectItem key={option} value={option}>
+                                      <SelectItem key={option} value={option} className="text-xs">
                                         {option}
                                       </SelectItem>
                                     ))}
