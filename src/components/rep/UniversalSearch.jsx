@@ -154,9 +154,8 @@ export default function UniversalSearch({ session }) {
       } finally {
         setLoading(false);
       }
-    };
+    }, 300);
 
-    const timer = setTimeout(search, 300);
     return () => clearTimeout(timer);
   }, [searchTerm, session]);
 
