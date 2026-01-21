@@ -169,331 +169,90 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-4 pt-4 border-t border-slate-200 space-y-3"
+            className="mt-4 pt-4 border-t border-slate-200 space-y-3 max-h-96 overflow-y-auto"
           >
             {/* Key Info */}
-            <div className="space-y-2">
-              <p className="text-xs font-semibold text-slate-700 uppercase">Key Info</p>
-              <div className="grid grid-cols-2 gap-3">
-                {opportunity.Amount && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Amount</p>
-                    <p className="text-sm font-semibold text-orange-600">{formatCurrency(opportunity.Amount)}</p>
-                  </div>
-                )}
-                {opportunity.CloseDate && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Close Date</p>
-                    <p className="text-sm text-slate-900">{formatDate(opportunity.CloseDate)}</p>
-                  </div>
-                )}
-                {opportunity.Probability && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Probability</p>
-                    <p className="text-sm text-slate-900">{opportunity.Probability}%</p>
-                  </div>
-                )}
+            {(opportunity.Amount || opportunity.CloseDate || opportunity.Probability) && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Key Info</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {opportunity.Amount && <div><span className="text-slate-500">Amount:</span> {formatCurrency(opportunity.Amount)}</div>}
+                  {opportunity.CloseDate && <div><span className="text-slate-500">Close:</span> {formatDate(opportunity.CloseDate)}</div>}
+                  {opportunity.Probability && <div><span className="text-slate-500">Prob:</span> {opportunity.Probability}%</div>}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Opp Info */}
-            <div className="space-y-2 border-t pt-3">
-              <p className="text-xs font-semibold text-slate-700 uppercase">Opp Info</p>
-              <div className="grid grid-cols-2 gap-3">
-                {opportunity.Type && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Type</p>
-                    <p className="text-sm text-slate-900">{opportunity.Type}</p>
-                  </div>
-                )}
-                {opportunity.LeadSource && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Lead Source</p>
-                    <p className="text-sm text-slate-900">{opportunity.LeadSource}</p>
-                  </div>
-                )}
-                {opportunity.csbs__ISO__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">ISO</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__ISO__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Line_of_Credit__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Line of Credit</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Line_of_Credit__c}</p>
-                  </div>
-                )}
+            {(opportunity.Type || opportunity.LeadSource || opportunity.csbs__ISO__c || opportunity.csbs__Line_of_Credit__c) && (
+              <div className="space-y-2 border-t pt-2">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Opp Info</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {opportunity.Type && <div><span className="text-slate-500">Type:</span> {opportunity.Type}</div>}
+                  {opportunity.LeadSource && <div><span className="text-slate-500">Source:</span> {opportunity.LeadSource}</div>}
+                  {opportunity.csbs__ISO__c && <div><span className="text-slate-500">ISO:</span> {opportunity.csbs__ISO__c}</div>}
+                  {opportunity.csbs__Line_of_Credit__c && <div><span className="text-slate-500">LOC:</span> {opportunity.csbs__Line_of_Credit__c}</div>}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Qualifying Info */}
-            <div className="space-y-2 border-t pt-3">
-              <p className="text-xs font-semibold text-slate-700 uppercase">Qualifying</p>
-              <div className="grid grid-cols-2 gap-3">
-                {opportunity.csbs__Amount_Requested__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Amount Requested</p>
-                    <p className="text-sm font-semibold text-orange-600">{formatCurrency(opportunity.csbs__Amount_Requested__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Months_In_Business__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Months in Business</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Months_In_Business__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Use_of_Proceeds__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Use of Proceeds</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Use_of_Proceeds__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Estimated_Monthly_Revenue__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Monthly Revenue</p>
-                    <p className="text-sm font-semibold text-slate-900">{formatCurrency(opportunity.csbs__Estimated_Monthly_Revenue__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Number_of_Terminals__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Terminals</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Number_of_Terminals__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Open_Loan_Balances__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Open Balances</p>
-                    <p className="text-sm font-semibold text-slate-900">{formatCurrency(opportunity.csbs__Open_Loan_Balances__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Current_Credit_Card_Processor__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">CC Processor</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Current_Credit_Card_Processor__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Open_Bankruptcies__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Open Bankruptcies</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Open_Bankruptcies__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Number_of_Open_Positions__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Open Positions</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Number_of_Open_Positions__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Judgements_Liens__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Judgements/Liens</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Judgements_Liens__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Estimated_Monthly_MCA_Amount__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Est. Monthly MCA</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Estimated_Monthly_MCA_Amount__c)}</p>
-                  </div>
-                )}
+            {(opportunity.csbs__Amount_Requested__c || opportunity.csbs__Months_In_Business__c || opportunity.csbs__Estimated_Monthly_Revenue__c) && (
+              <div className="space-y-2 border-t pt-2">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Qualifying</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {opportunity.csbs__Amount_Requested__c && <div><span className="text-slate-500">Req:</span> {formatCurrency(opportunity.csbs__Amount_Requested__c)}</div>}
+                  {opportunity.csbs__Months_In_Business__c && <div><span className="text-slate-500">Months:</span> {opportunity.csbs__Months_In_Business__c}</div>}
+                  {opportunity.csbs__Use_of_Proceeds__c && <div className="col-span-2"><span className="text-slate-500">Use:</span> {opportunity.csbs__Use_of_Proceeds__c}</div>}
+                  {opportunity.csbs__Estimated_Monthly_Revenue__c && <div><span className="text-slate-500">Revenue:</span> {formatCurrency(opportunity.csbs__Estimated_Monthly_Revenue__c)}</div>}
+                  {opportunity.csbs__Number_of_Terminals__c && <div><span className="text-slate-500">Terminals:</span> {opportunity.csbs__Number_of_Terminals__c}</div>}
+                  {opportunity.csbs__Open_Loan_Balances__c && <div><span className="text-slate-500">Balances:</span> {formatCurrency(opportunity.csbs__Open_Loan_Balances__c)}</div>}
+                  {opportunity.csbs__Open_Bankruptcies__c && <div><span className="text-slate-500">Bankruptcies:</span> {opportunity.csbs__Open_Bankruptcies__c}</div>}
+                  {opportunity.csbs__Number_of_Open_Positions__c && <div><span className="text-slate-500">Positions:</span> {opportunity.csbs__Number_of_Open_Positions__c}</div>}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Financial Info */}
-            <div className="space-y-2 border-t pt-3">
-              <p className="text-xs font-semibold text-slate-700 uppercase">Financial</p>
-              <div className="grid grid-cols-2 gap-3">
-                {opportunity.csbs__Avg_Gross_Monthly_Sales__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Avg Monthly Sales</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Avg_Gross_Monthly_Sales__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Avg_Bank_Deposits__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Avg Deposits</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Avg_Bank_Deposits__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Avg_Bank_Deposits_Number__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Deposit Count</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Avg_Bank_Deposits_Number__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Avg_Credit_Card_Volume__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">CC Volume</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Avg_Credit_Card_Volume__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Avg_Daily_Balance__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Avg Daily Balance</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Avg_Daily_Balance__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Avg_Credit_Card_Batches__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">CC Batches</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Avg_Credit_Card_Batches__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Avg_NSFs__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Avg NSFs</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Avg_NSFs__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Avg_Negative_Days__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Negative Days</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Avg_Negative_Days__c}</p>
-                  </div>
-                )}
+            {(opportunity.csbs__Avg_Gross_Monthly_Sales__c || opportunity.csbs__Avg_Daily_Balance__c) && (
+              <div className="space-y-2 border-t pt-2">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Financial</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {opportunity.csbs__Avg_Gross_Monthly_Sales__c && <div><span className="text-slate-500">Sales:</span> {formatCurrency(opportunity.csbs__Avg_Gross_Monthly_Sales__c)}</div>}
+                  {opportunity.csbs__Avg_Bank_Deposits__c && <div><span className="text-slate-500">Deposits:</span> {formatCurrency(opportunity.csbs__Avg_Bank_Deposits__c)}</div>}
+                  {opportunity.csbs__Avg_Daily_Balance__c && <div><span className="text-slate-500">Bal:</span> {formatCurrency(opportunity.csbs__Avg_Daily_Balance__c)}</div>}
+                  {opportunity.csbs__Avg_NSFs__c && <div><span className="text-slate-500">NSFs:</span> {opportunity.csbs__Avg_NSFs__c}</div>}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Open Balances */}
-            <div className="space-y-2 border-t pt-3">
-              <p className="text-xs font-semibold text-slate-700 uppercase">Open Balances</p>
-              <div className="grid grid-cols-2 gap-3">
-                {opportunity.Lender_Name_1__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">{opportunity.Lender_Name_1__c}</p>
-                    <p className="text-sm font-semibold text-slate-900">{formatCurrency(opportunity.Open_Balance_Amount_1__c)}</p>
-                  </div>
-                )}
-                {opportunity.Lender_Name_2__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">{opportunity.Lender_Name_2__c}</p>
-                    <p className="text-sm font-semibold text-slate-900">{formatCurrency(opportunity.Open_Balance_Amount_2__c)}</p>
-                  </div>
-                )}
-                {opportunity.Lender_Name_3__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">{opportunity.Lender_Name_3__c}</p>
-                    <p className="text-sm font-semibold text-slate-900">{formatCurrency(opportunity.Open_Balance_Amount_3__c)}</p>
-                  </div>
-                )}
+            {(opportunity.Lender_Name_1__c || opportunity.Lender_Name_2__c || opportunity.Lender_Name_3__c) && (
+              <div className="space-y-2 border-t pt-2">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Open Balances</p>
+                <div className="space-y-1 text-xs">
+                  {opportunity.Lender_Name_1__c && <div><span className="text-slate-500">{opportunity.Lender_Name_1__c}:</span> {formatCurrency(opportunity.Open_Balance_Amount_1__c)}</div>}
+                  {opportunity.Lender_Name_2__c && <div><span className="text-slate-500">{opportunity.Lender_Name_2__c}:</span> {formatCurrency(opportunity.Open_Balance_Amount_2__c)}</div>}
+                  {opportunity.Lender_Name_3__c && <div><span className="text-slate-500">{opportunity.Lender_Name_3__c}:</span> {formatCurrency(opportunity.Open_Balance_Amount_3__c)}</div>}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Funded Terms */}
-            <div className="space-y-2 border-t pt-3">
-              <p className="text-xs font-semibold text-slate-700 uppercase">Funded Terms</p>
-              <div className="grid grid-cols-2 gap-3">
-                {opportunity.csbs__Funded_Date__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Funded Date</p>
-                    <p className="text-sm text-slate-900">{formatDate(opportunity.csbs__Funded_Date__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Funded__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Funded Amount</p>
-                    <p className="text-sm font-semibold text-green-600">{formatCurrency(opportunity.csbs__Funded__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Lender__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Lender</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Lender__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Payment_Amount__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Payment</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Payment_Amount__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Term__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Term</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Term__c} mo</p>
-                  </div>
-                )}
-                {opportunity.csbs__Factor_Rate__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Factor Rate</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Factor_Rate__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Buy_Rate__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Buy Rate</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Buy_Rate__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Product__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Product</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Product__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Net_Funded__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Net Funded</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Net_Funded__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Payment_Frequency__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Frequency</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Payment_Frequency__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Payback__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Payback</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Payback__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Payment_Method__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Payment Method</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Payment_Method__c}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Holdback_Percentage__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Holdback %</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Holdback_Percentage__c}%</p>
-                  </div>
-                )}
-                {opportunity.csbs__Commission_Amount__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Commission $</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Commission_Amount__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Commission_Percentage__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Commission %</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Commission_Percentage__c}%</p>
-                  </div>
-                )}
-                {opportunity.csbs__Origination_Fee_Amount__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Orig. Fee $</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Origination_Fee_Amount__c)}</p>
-                  </div>
-                )}
-                {opportunity.csbs__Origination_Fee_Percentage__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Orig. Fee %</p>
-                    <p className="text-sm text-slate-900">{opportunity.csbs__Origination_Fee_Percentage__c}%</p>
-                  </div>
-                )}
-                {opportunity.csbs__Payoff__c && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Payoff</p>
-                    <p className="text-sm text-slate-900">{formatCurrency(opportunity.csbs__Payoff__c)}</p>
-                  </div>
-                )}
+            {(opportunity.csbs__Funded__c || opportunity.csbs__Payment_Amount__c || opportunity.csbs__Term__c) && (
+              <div className="space-y-2 border-t pt-2">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Funded Terms</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {opportunity.csbs__Funded_Date__c && <div><span className="text-slate-500">Date:</span> {formatDate(opportunity.csbs__Funded_Date__c)}</div>}
+                  {opportunity.csbs__Funded__c && <div><span className="text-slate-500">Funded:</span> {formatCurrency(opportunity.csbs__Funded__c)}</div>}
+                  {opportunity.csbs__Lender__c && <div><span className="text-slate-500">Lender:</span> {opportunity.csbs__Lender__c}</div>}
+                  {opportunity.csbs__Payment_Amount__c && <div><span className="text-slate-500">Payment:</span> {formatCurrency(opportunity.csbs__Payment_Amount__c)}</div>}
+                  {opportunity.csbs__Term__c && <div><span className="text-slate-500">Term:</span> {opportunity.csbs__Term__c}mo</div>}
+                  {opportunity.csbs__Factor_Rate__c && <div><span className="text-slate-500">Factor:</span> {opportunity.csbs__Factor_Rate__c}</div>}
+                  {opportunity.csbs__Payment_Frequency__c && <div><span className="text-slate-500">Freq:</span> {opportunity.csbs__Payment_Frequency__c}</div>}
+                </div>
               </div>
-            </div>
+            )}
           </motion.div>
         )}
     </motion.div>
