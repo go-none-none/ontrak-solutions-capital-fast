@@ -889,12 +889,12 @@ export default function RepPortal() {
                   className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base mb-4"
                 />
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-wrap gap-2">
                 <Button
                   variant={dispositionFilter === 'all' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => { setDispositionFilter('all'); setCurrentPage(1); }}
-                  className={dispositionFilter === 'all' ? 'bg-orange-600' : ''}
+                  className={`text-xs sm:text-sm ${dispositionFilter === 'all' ? 'bg-orange-600' : ''}`}
                 >
                   All ({leads.length})
                 </Button>
@@ -902,7 +902,7 @@ export default function RepPortal() {
                   variant={dispositionFilter === 'set' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => { setDispositionFilter('set'); setCurrentPage(1); }}
-                  className={dispositionFilter === 'set' ? 'bg-green-600' : ''}
+                  className={`text-xs sm:text-sm ${dispositionFilter === 'set' ? 'bg-green-600' : ''}`}
                 >
                   Set ({leads.filter(l => l.Call_Disposition__c).length})
                 </Button>
@@ -910,7 +910,7 @@ export default function RepPortal() {
                   variant={dispositionFilter === 'unset' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => { setDispositionFilter('unset'); setCurrentPage(1); }}
-                  className={dispositionFilter === 'unset' ? 'bg-red-600' : ''}
+                  className={`text-xs sm:text-sm col-span-2 sm:col-span-1 ${dispositionFilter === 'unset' ? 'bg-red-600' : ''}`}
                 >
                   Not Set ({leads.filter(l => !l.Call_Disposition__c).length})
                 </Button>
@@ -920,9 +920,9 @@ export default function RepPortal() {
                     variant={dispositionFilter === option ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => { setDispositionFilter(option); setCurrentPage(1); }}
-                    className={dispositionFilter === option ? 'bg-blue-600' : ''}
+                    className={`text-xs sm:text-sm truncate ${dispositionFilter === option ? 'bg-blue-600' : ''}`}
                   >
-                    {option} ({leads.filter(l => l.Call_Disposition__c === option).length})
+                    <span className="truncate">{option} ({leads.filter(l => l.Call_Disposition__c === option).length})</span>
                   </Button>
                 ))}
               </div>

@@ -640,25 +640,13 @@ export default function OpportunityDetail() {
           {/* Main Column */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="details" className="space-y-6">
-              <TabsList className="bg-white p-1 rounded-lg shadow-sm grid grid-cols-3 md:grid-cols-6 gap-1 w-full">
-                <TabsTrigger value="details" className="text-[10px] md:text-sm px-1 md:px-4 min-w-0">
-                  <span className="md:hidden">Info</span>
-                  <span className="hidden md:inline">Details</span>
-                </TabsTrigger>
-                <TabsTrigger value="submissions" className="text-[10px] md:text-sm px-1 md:px-4 min-w-0">
-                  <span className="md:hidden">Subs</span>
-                  <span className="hidden md:inline">Submissions</span>
-                </TabsTrigger>
-                <TabsTrigger value="offers" className="text-[10px] md:text-sm px-1 md:px-4 min-w-0">Offers</TabsTrigger>
-                <TabsTrigger value="statements" className="text-[10px] md:text-sm px-1 md:px-4 min-w-0">
-                  <span className="md:hidden">Stmts</span>
-                  <span className="hidden md:inline">Statements</span>
-                </TabsTrigger>
-                <TabsTrigger value="debt" className="text-[10px] md:text-sm px-1 md:px-4 min-w-0">Debt</TabsTrigger>
-                <TabsTrigger value="commissions" className="text-[10px] md:text-sm px-1 md:px-4 min-w-0">
-                  <span className="md:hidden">Comm</span>
-                  <span className="hidden md:inline">Commissions</span>
-                </TabsTrigger>
+              <TabsList className="bg-white p-1 rounded-lg shadow-sm grid grid-cols-3 md:grid-cols-6 gap-1">
+                <TabsTrigger value="details" className="text-xs md:text-sm px-2 md:px-4">Details</TabsTrigger>
+                <TabsTrigger value="submissions" className="text-xs md:text-sm px-2 md:px-4">Submissions</TabsTrigger>
+                <TabsTrigger value="offers" className="text-xs md:text-sm px-2 md:px-4">Offers</TabsTrigger>
+                <TabsTrigger value="statements" className="text-xs md:text-sm px-2 md:px-4">Statements</TabsTrigger>
+                <TabsTrigger value="debt" className="text-xs md:text-sm px-2 md:px-4">Debt</TabsTrigger>
+                <TabsTrigger value="commissions" className="text-xs md:text-sm px-2 md:px-4">Commissions</TabsTrigger>
               </TabsList>
 
               {/* Submissions Tab */}
