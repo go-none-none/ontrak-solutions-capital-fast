@@ -43,6 +43,8 @@ export default function RepPortal() {
   const [contacts, setContacts] = useState([]);
   const [loadingContacts, setLoadingContacts] = useState(true);
   const [selectedLeadForDisposition, setSelectedLeadForDisposition] = useState(null);
+  const [selectedRecordForQuickView, setSelectedRecordForQuickView] = useState(null);
+  const [quickViewType, setQuickViewType] = useState(null);
   const lastPollTime = useRef(new Date());
   const itemsPerPage = 100;
 
@@ -78,6 +80,11 @@ export default function RepPortal() {
     } else if (recordType === 'contact') {
       navigate(createPageUrl('ContactDetail') + `?id=${recordId}&openEmail=true`);
     }
+  };
+
+  const handleQuickView = (record, type) => {
+    setSelectedRecordForQuickView(record);
+    setQuickViewType(type);
   };
 
   useEffect(() => {
@@ -673,6 +680,7 @@ export default function RepPortal() {
                       key={lead.Id} 
                       lead={lead} 
                       session={session}
+                      onQuickView={(lead) => handleQuickView(lead, 'lead')}
                     />
                   ))
                 )}
@@ -751,6 +759,7 @@ export default function RepPortal() {
                       opportunity={opp} 
                       session={session}
                       onUpdate={() => loadData(session)}
+                      onQuickView={(opp) => handleQuickView(opp, 'opportunity')}
                     />
                   ))
                   )}
@@ -1154,6 +1163,18 @@ export default function RepPortal() {
           setSelectedLeadForDisposition(null);
           navigate(createPageUrl('LeadDetail') + `?id=${selectedLeadForDisposition?.Id}`);
         }}
+      />
+
+      {/* Quick View Modal */}
+      <RecordDetailsModal
+        record={selectedRecordForQuickView}
+        isOpen={!!selectedRecordForQuickView}
+        onClose={() => {
+          setSelectedRecordForQuickView(null);
+          setQuickViewType(null);
+        }}
+        type={quickViewType}
+        session={session}
       />
         </div>
         );
