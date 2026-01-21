@@ -164,7 +164,7 @@ Deno.serve(async (req) => {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            Title: 'Offer_Proposal.pdf',
+            Title: 'Offer_Proposal',
             PathOnClient: 'Offer_Proposal.pdf',
             VersionData: pdfBase64
           })
