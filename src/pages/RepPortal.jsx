@@ -502,21 +502,6 @@ export default function RepPortal() {
         onCreateTaskClick={() => setShowCreateTask(true)}
       />
 
-      {/* Universal Search */}
-      {(activeTab === 'leads' || activeTab === 'opportunities' || activeTab === 'dispositions') && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
-            <Input
-              placeholder="Search all leads, opportunities, and contacts..."
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-              className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base w-full"
-            />
-          </div>
-        </div>
-      )}
-
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
