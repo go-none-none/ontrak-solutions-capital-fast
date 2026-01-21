@@ -203,6 +203,24 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
                 <Loader2 className="w-4 h-4 animate-spin text-orange-600" />
               </div>
             )}
+
+            {/* Contacts */}
+            {contactRoles && contactRoles.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Contacts</p>
+                <div className="space-y-1 text-xs">
+                  {contactRoles.map(role => (
+                    <div key={role.Id} className="border-b pb-1 last:border-b-0">
+                      <p className="font-medium text-orange-600">{role.Contact?.Name}</p>
+                      {role.Role && <p className="text-slate-500">{role.Role}</p>}
+                      {role.Contact?.Email && <p className="text-slate-600">{role.Contact.Email}</p>}
+                      {role.Contact?.Phone && <p className="text-slate-600">{role.Contact.Phone}</p>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Key Info */}
             {fullData && (fullData.Amount || fullData.CloseDate || fullData.Probability) && (
               <div className="space-y-2">
