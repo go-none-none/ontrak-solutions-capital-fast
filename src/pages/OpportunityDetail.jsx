@@ -71,6 +71,7 @@ export default function OpportunityDetail() {
   const [statementPdfs, setStatementPdfs] = useState({});
   const [showOfferProposal, setShowOfferProposal] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
+  const [showCreateLender, setShowCreateLender] = useState(false);
 
   const openPdfViewer = async (url) => {
     const proxyUrl = `/api/apps/6932157da76cc7fc545d1203/functions/proxyPdf?url=${encodeURIComponent(url)}`;
