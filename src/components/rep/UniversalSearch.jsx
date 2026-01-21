@@ -164,9 +164,7 @@ export default function UniversalSearch({ session }) {
     }
   };
 
-  const filteredResults = selectedFilter === 'all' 
-    ? results 
-    : results.filter(r => (r.category === 'Account' && r.type === selectedFilter) || r.category !== 'Account');
+
 
   const handleClear = () => {
     setSearchTerm('');
