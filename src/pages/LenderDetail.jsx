@@ -85,6 +85,7 @@ export default function LenderDetail() {
         showCreateTask={false}
         showBackButton={true}
         onBackClick={() => navigate(-1)}
+        session={session}
       />
 
       {/* Detail Header */}

@@ -18,6 +18,7 @@ import IndustryRestaurants from './pages/IndustryRestaurants';
 import IndustryRetail from './pages/IndustryRetail';
 import IndustryTransportation from './pages/IndustryTransportation';
 import LeadDetail from './pages/LeadDetail';
+import LenderDetail from './pages/LenderDetail';
 import MissingDocs from './pages/MissingDocs';
 import OpportunityDetail from './pages/OpportunityDetail';
 import OwnerContact from './pages/OwnerContact';
@@ -30,7 +31,6 @@ import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
-import LenderDetail from './pages/LenderDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -55,6 +55,7 @@ export const PAGES = {
     "IndustryRetail": IndustryRetail,
     "IndustryTransportation": IndustryTransportation,
     "LeadDetail": LeadDetail,
+    "LenderDetail": LenderDetail,
     "MissingDocs": MissingDocs,
     "OpportunityDetail": OpportunityDetail,
     "OwnerContact": OwnerContact,
@@ -67,7 +68,6 @@ export const PAGES = {
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
-    "LenderDetail": LenderDetail,
 }
 
 export const pagesConfig = {
