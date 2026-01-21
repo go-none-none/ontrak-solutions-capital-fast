@@ -17,6 +17,7 @@ export default function CommunicationCard({
         recordType, 
         session,
         smsColor = 'bg-blue-600',
+        emailColor = 'bg-orange-600',
         firstName = ''
       }) {
         const [emailData, setEmailData] = useState({ subject: '', message: '' });
@@ -222,7 +223,7 @@ export default function CommunicationCard({
           {hasEmail && (
             <TabsTrigger 
               value="email" 
-              className="flex-1 rounded-none data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-orange-600"
+              className={`flex-1 rounded-none data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:${emailColor.replace('bg-', 'border-')}`}
             >
               <Mail className="w-4 h-4 mr-2" />
               Email
@@ -266,7 +267,7 @@ export default function CommunicationCard({
             <Button 
               onClick={handleSendEmail} 
               disabled={sending} 
-              className="w-full bg-orange-600 hover:bg-orange-700"
+              className={`w-full ${emailColor} hover:${emailColor.replace('600', '700')}`}
             >
               {sending ? (
                 <>
