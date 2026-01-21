@@ -80,6 +80,22 @@ export default function RepPortal() {
     }
   };
 
+  // Apply search filter across all tabs
+  const applySearchFilter = (records, searchTerm) => {
+    if (!searchTerm) return records;
+    const term = searchTerm.toLowerCase();
+    return records.filter(record => {
+      const name = record.Name || record.Account?.Name || '';
+      const company = record.Company || '';
+      const email = record.Email || '';
+      const phone = (record.Phone || record.MobilePhone || '').toLowerCase();
+      return name.toLowerCase().includes(term) || 
+             company.toLowerCase().includes(term) || 
+             email.toLowerCase().includes(term) || 
+             phone.includes(term);
+    });
+  };
+
   useEffect(() => {
     checkSession();
     
@@ -441,13 +457,17 @@ export default function RepPortal() {
     return searchMatch && stageMatch;
   });
 
+  // Apply universal search override
+  const displayLeads = searchTerm ? applySearchFilter(leads, searchTerm) : filteredLeads;
+  const displayOpportunities = searchTerm ? applySearchFilter(opportunities, searchTerm) : filteredOpportunities;
+
   // Pagination
-  const totalLeadPages = Math.ceil(filteredLeads.length / itemsPerPage);
-  const totalOppPages = Math.ceil(filteredOpportunities.length / itemsPerPage);
+  const totalLeadPages = Math.ceil(displayLeads.length / itemsPerPage);
+  const totalOppPages = Math.ceil(displayOpportunities.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
   const endIdx = startIdx + itemsPerPage;
-  const paginatedLeads = filteredLeads.slice(startIdx, endIdx);
-  const paginatedOpportunities = filteredOpportunities.slice(startIdx, endIdx);
+  const paginatedLeads = displayLeads.slice(startIdx, endIdx);
+  const paginatedOpportunities = displayOpportunities.slice(startIdx, endIdx);
 
   if (loading) {
     return (
@@ -502,30 +522,11 @@ export default function RepPortal() {
         userName={session.name}
         showCreateTask={true}
         onCreateTaskClick={() => setShowCreateTask(true)}
+        searchTerm={searchTerm}
+        onSearchChange={(term) => { setSearchTerm(term); setCurrentPage(1); }}
       />
 
-      {/* Universal Search */}
-      {(activeTab === 'leads' || activeTab === 'opportunities' || activeTab === 'dispositions') && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
-            <Input
-              placeholder="Search all leads, opportunities, and contacts..."
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-              className="pl-9 sm:pl-10 pr-10 h-10 sm:h-12 text-sm sm:text-base w-full"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+
 
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
@@ -657,14 +658,14 @@ export default function RepPortal() {
 
           {activeTab === 'leads' && (
             <div className="space-y-4">
-              {stageFilter && (
+              {stageFilter && !searchTerm && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
                   <Button variant="ghost" size="sm" onClick={() => { setStageFilter(null); setCurrentPage(1); }}>Clear Filter</Button>
                 </div>
               )}
               <div className="space-y-3">
-                {filteredLeads.length === 0 ? (
+                {displayLeads.length === 0 ? (
                   <div className="text-center py-12">
                     <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                     <p className="text-slate-600">No leads found</p>
@@ -682,7 +683,7 @@ export default function RepPortal() {
               {totalLeadPages > 1 && (
                 <div className="flex items-center justify-between mt-6 pt-6 border-t">
                   <p className="text-sm text-slate-600">
-                    Showing {startIdx + 1}-{Math.min(endIdx, filteredLeads.length)} of {filteredLeads.length}
+                    Showing {startIdx + 1}-{Math.min(endIdx, displayLeads.length)} of {displayLeads.length}
                   </p>
                   <div className="flex gap-2">
                     <Button
@@ -734,14 +735,14 @@ export default function RepPortal() {
 
             {activeTab === 'opportunities' && (
             <div className="space-y-4">
-              {stageFilter && (
-                <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
-                  <Button variant="ghost" size="sm" onClick={() => { setStageFilter(null); setCurrentPage(1); }}>Clear Filter</Button>
-                </div>
-              )}
-              <div className="space-y-3">
-                {filteredOpportunities.length === 0 ? (
+            {stageFilter && !searchTerm && (
+            <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
+            <Button variant="ghost" size="sm" onClick={() => { setStageFilter(null); setCurrentPage(1); }}>Clear Filter</Button>
+            </div>
+            )}
+            <div className="space-y-3">
+            {displayOpportunities.length === 0 ? (
                   <div className="text-center py-12">
                     <TrendingUp className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                     <p className="text-slate-600">No opportunities found</p>
@@ -758,10 +759,10 @@ export default function RepPortal() {
                   )}
               </div>
               {totalOppPages > 1 && (
-                <div className="flex items-center justify-between mt-6 pt-6 border-t">
-                  <p className="text-sm text-slate-600">
-                    Showing {startIdx + 1}-{Math.min(endIdx, filteredOpportunities.length)} of {filteredOpportunities.length}
-                  </p>
+              <div className="flex items-center justify-between mt-6 pt-6 border-t">
+              <p className="text-sm text-slate-600">
+              Showing {startIdx + 1}-{Math.min(endIdx, displayOpportunities.length)} of {displayOpportunities.length}
+              </p>
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
