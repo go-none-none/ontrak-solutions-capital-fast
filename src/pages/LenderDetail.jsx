@@ -71,11 +71,44 @@ export default function LenderDetail() {
       });
 
       setLender(response.data.record);
+      setEditData(response.data.record);
     } catch (error) {
       console.error('Load error:', error);
       setLender(null);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      // Convert arrays to semicolon-separated strings
+      const dataToSend = {
+        ...editData,
+        csbs__Restricted_States__c: Array.isArray(editData.csbs__Restricted_States__c)
+          ? editData.csbs__Restricted_States__c.join(';')
+          : editData.csbs__Restricted_States__c || '',
+        csbs__Restricted_Industries__c: Array.isArray(editData.csbs__Restricted_Industries__c)
+          ? editData.csbs__Restricted_Industries__c.join(';')
+          : editData.csbs__Restricted_Industries__c || ''
+      };
+
+      await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Account',
+        recordId: lender.Id,
+        data: dataToSend,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+
+      setLender(editData);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('Failed to save: ' + (error.response?.data?.error || error.message));
+    } finally {
+      setSaving(false);
     }
   };
 
