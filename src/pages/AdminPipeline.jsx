@@ -636,12 +636,12 @@ export default function AdminPipeline() {
 
         {/* Reps Pipeline Table */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <table className="w-full min-w-[1200px]">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <table className="w-full min-w-[800px] md:min-w-[1200px]">
               <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th 
-                    className="text-left px-6 py-4 text-sm font-semibold text-slate-700 min-w-[250px] cursor-pointer hover:bg-slate-100 transition-colors"
+               <tr>
+                 <th 
+                   className="text-left px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-semibold text-slate-700 min-w-[180px] md:min-w-[250px] cursor-pointer hover:bg-slate-100 transition-colors sticky left-0 bg-slate-50 z-10"
                     onClick={() => {
                       setTableSort(prev => ({
                         column: 'name',
@@ -659,7 +659,7 @@ export default function AdminPipeline() {
                   {stages.map((stage, idx) => (
                     <th 
                       key={idx} 
-                      className="text-center px-3 py-4 text-xs font-semibold text-slate-700 cursor-pointer hover:bg-slate-100 transition-colors"
+                      className="text-center px-2 md:px-3 py-2 md:py-4 text-[10px] md:text-xs font-semibold text-slate-700 cursor-pointer hover:bg-slate-100 transition-colors"
                       onClick={() => {
                         setTableSort(prev => ({
                           column: stage.name,
@@ -675,7 +675,7 @@ export default function AdminPipeline() {
                       </div>
                     </th>
                   ))}
-                  <th className="text-right px-6 py-4 text-sm font-semibold text-slate-700 min-w-[140px]">
+                  <th className="text-right px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-semibold text-slate-700 min-w-[100px] md:min-w-[140px]">
                     {activeView === 'opportunities' ? 'Pipeline' : activeView === 'tasks' ? 'Tasks' : 'Total'}
                   </th>
                 </tr>
@@ -699,14 +699,14 @@ export default function AdminPipeline() {
                         className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer"
                         onClick={() => setExpandedRep(isExpanded ? null : rep.userId)}
                       >
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
+                        <td className="px-3 md:px-6 py-3 md:py-4 sticky left-0 bg-white z-10">
+                          <div className="flex items-center gap-2 md:gap-3">
                             <button className="text-slate-400 hover:text-slate-600 flex-shrink-0">
-                              {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                              {isExpanded ? <ChevronDown className="w-4 md:w-5 h-4 md:h-5" /> : <ChevronRight className="w-4 md:w-5 h-4 md:h-5" />}
                             </button>
-                            <div>
-                              <p className="font-medium text-slate-900">{rep.name}</p>
-                              <p className="text-xs text-slate-500">{rep.email}</p>
+                            <div className="min-w-0">
+                              <p className="font-medium text-slate-900 text-xs md:text-sm truncate">{rep.name}</p>
+                              <p className="text-[10px] md:text-xs text-slate-500 truncate">{rep.email}</p>
                             </div>
                           </div>
                         </td>
@@ -717,7 +717,7 @@ export default function AdminPipeline() {
                           return (
                             <td 
                               key={idx} 
-                              className="px-3 py-4 text-center cursor-pointer hover:bg-slate-100 transition-colors"
+                              className="px-2 md:px-3 py-2 md:py-4 text-center cursor-pointer hover:bg-slate-100 transition-colors"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if (count > 0) {
@@ -731,22 +731,22 @@ export default function AdminPipeline() {
                                 }
                               }}
                             >
-                              <div className="flex flex-col items-center gap-1">
-                                <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ${count > 0 ? stage.color : 'bg-slate-200'} text-white font-semibold text-sm transition-all ${isActiveFilter ? 'ring-2 ring-offset-2 ring-slate-900' : ''}`}>
+                              <div className="flex flex-col items-center gap-0.5 md:gap-1">
+                                <span className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-md md:rounded-lg ${count > 0 ? stage.color : 'bg-slate-200'} text-white font-semibold text-xs md:text-sm transition-all ${isActiveFilter ? 'ring-1 md:ring-2 ring-offset-1 md:ring-offset-2 ring-slate-900' : ''}`}>
                                   {count}
                                 </span>
                                 {activeView === 'opportunities' && amount > 0 && (
-                                  <span className="text-xs text-slate-600 whitespace-nowrap">{formatCurrency(amount)}</span>
+                                  <span className="text-[10px] md:text-xs text-slate-600 whitespace-nowrap">{formatCurrency(amount)}</span>
                                 )}
                               </div>
                             </td>
                           );
                         })}
-                        <td className="px-6 py-4 text-right">
+                        <td className="px-3 md:px-6 py-3 md:py-4 text-right">
                           <div className="flex flex-col items-end">
-                            <span className="font-bold text-slate-900 text-lg">{totalCount}</span>
+                            <span className="font-bold text-slate-900 text-sm md:text-lg">{totalCount}</span>
                             {activeView === 'opportunities' && pipelineValue > 0 && (
-                              <span className="text-sm text-[#08708E] font-semibold whitespace-nowrap">{formatCurrency(pipelineValue)}</span>
+                              <span className="text-xs md:text-sm text-[#08708E] font-semibold whitespace-nowrap">{formatCurrency(pipelineValue)}</span>
                             )}
                           </div>
                         </td>

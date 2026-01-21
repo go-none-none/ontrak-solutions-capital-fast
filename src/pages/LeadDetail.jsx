@@ -334,17 +334,18 @@ export default function LeadDetail() {
       {/* Detail Header */}
       <div className="bg-white border-b border-slate-200 shadow-sm sticky top-[73px] z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-slate-900">{lead.Name}</h1>
-              <p className="text-sm text-slate-600">{lead.Company}</p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-2xl font-bold text-slate-900 truncate">{lead.Name}</h1>
+              <p className="text-xs sm:text-sm text-slate-600 truncate">{lead.Company}</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap flex-shrink-0 w-full sm:w-auto">
               {session?.isAdmin && (
                 <Button 
                   onClick={() => setShowHistory(true)} 
                   variant="outline"
                   size="sm"
+                  className="flex-1 sm:flex-initial text-xs sm:text-sm"
                 >
                   History
                 </Button>
@@ -353,10 +354,11 @@ export default function LeadDetail() {
                 <Button 
                   onClick={handleConvertLead} 
                   disabled={converting}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-initial text-xs sm:text-sm"
                 >
-                  {converting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ArrowRight className="w-4 h-4 mr-2" />}
-                  Convert to Opportunity
+                  {converting ? <Loader2 className="w-4 h-4 animate-spin sm:mr-2" /> : <ArrowRight className="w-4 h-4 sm:mr-2" />}
+                  <span className="hidden sm:inline">Convert to Opportunity</span>
+                  <span className="sm:hidden">Convert</span>
                 </Button>
               )}
             </div>

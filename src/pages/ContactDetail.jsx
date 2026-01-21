@@ -130,16 +130,17 @@ export default function ContactDetail() {
       {/* Detail Header */}
       <div className="bg-white border-b border-slate-200 shadow-sm sticky top-[73px] z-40">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">{contact.Name}</h1>
-              {contact.Title && <p className="text-sm text-slate-600">{contact.Title}</p>}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-2xl font-bold text-slate-900 truncate">{contact.Name}</h1>
+              {contact.Title && <p className="text-xs sm:text-sm text-slate-600 truncate">{contact.Title}</p>}
             </div>
             {session?.isAdmin && (
               <Button 
                 onClick={() => setShowHistory(true)} 
                 variant="outline"
                 size="sm"
+                className="text-xs sm:text-sm flex-shrink-0"
               >
                 History
               </Button>

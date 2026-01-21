@@ -474,22 +474,23 @@ export default function OpportunityDetail() {
       {/* Detail Header */}
       <div className="bg-white border-b border-slate-200 shadow-sm sticky top-[73px] z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <h1 className="text-2xl font-bold text-slate-900">{opportunity.Name}</h1>
-                      <p className="text-sm text-slate-600">{opportunity.Account?.Name}</p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <h1 className="text-lg sm:text-2xl font-bold text-slate-900 truncate">{opportunity.Name}</h1>
+                      <p className="text-xs sm:text-sm text-slate-600 truncate">{opportunity.Account?.Name}</p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       {session?.isAdmin && (
                         <Button 
                           onClick={() => setShowHistory(true)} 
                           variant="outline"
                           size="sm"
+                          className="text-xs sm:text-sm"
                         >
                           History
                         </Button>
                       )}
-                      <Badge className={stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}>
+                      <Badge className={`${stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'} text-xs sm:text-sm whitespace-nowrap`}>
                         {opportunity.StageName}
                       </Badge>
                     </div>
@@ -639,14 +640,16 @@ export default function OpportunityDetail() {
           {/* Main Column */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="details" className="space-y-6">
-              <TabsList className="bg-white p-1 rounded-lg shadow-sm overflow-x-auto flex md:grid md:grid-cols-6">
-                <TabsTrigger value="details" className="whitespace-nowrap min-w-[80px] md:min-w-0">Details</TabsTrigger>
-                <TabsTrigger value="submissions" className="whitespace-nowrap min-w-[100px] md:min-w-0">Submissions</TabsTrigger>
-                <TabsTrigger value="offers" className="whitespace-nowrap min-w-[80px] md:min-w-0">Offers</TabsTrigger>
-                <TabsTrigger value="statements" className="whitespace-nowrap min-w-[100px] md:min-w-0">Statements</TabsTrigger>
-                <TabsTrigger value="debt" className="whitespace-nowrap min-w-[70px] md:min-w-0">Debt</TabsTrigger>
-                <TabsTrigger value="commissions" className="whitespace-nowrap min-w-[110px] md:min-w-0">Commissions</TabsTrigger>
-              </TabsList>
+              <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+                <TabsList className="bg-white p-1 rounded-lg shadow-sm inline-flex md:grid md:grid-cols-6 min-w-full md:min-w-0">
+                  <TabsTrigger value="details" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Details</TabsTrigger>
+                  <TabsTrigger value="submissions" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Submissions</TabsTrigger>
+                  <TabsTrigger value="offers" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Offers</TabsTrigger>
+                  <TabsTrigger value="statements" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Statements</TabsTrigger>
+                  <TabsTrigger value="debt" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Debt</TabsTrigger>
+                  <TabsTrigger value="commissions" className="whitespace-nowrap text-xs md:text-sm px-3 md:px-4">Commissions</TabsTrigger>
+                </TabsList>
+              </div>
 
               {/* Submissions Tab */}
               <TabsContent value="submissions" className="space-y-4">
