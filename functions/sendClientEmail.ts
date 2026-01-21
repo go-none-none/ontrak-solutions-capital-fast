@@ -119,7 +119,7 @@ Deno.serve(async (req) => {
     doc.setTextColor(220, 38, 38);
     doc.setFontSize(10);
     doc.setFont(undefined, 'bold');
-    doc.text('⏰ TIME SENSITIVE - ACT NOW FOR SAME-DAY FUNDING', 25, yPosition + 6);
+    doc.text('TIME SENSITIVE - ACT NOW FOR SAME-DAY FUNDING', 25, yPosition + 6);
     doc.setTextColor(15, 23, 42);
     doc.setFont(undefined, 'normal');
     doc.setFontSize(9);
