@@ -528,9 +528,54 @@ export default function RepPortal() {
 
 
 
-      {/* Stats */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+      {/* Search Results Dropdown or Stats */}
+      {searchTerm ? (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="bg-white rounded-2xl shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">Search Results</h3>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {displayLeads.length === 0 && displayOpportunities.length === 0 ? (
+                <p className="text-center py-8 text-slate-600">No results found</p>
+              ) : (
+                <>
+                  {displayLeads.map(lead => (
+                    <button
+                      key={lead.Id}
+                      onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)}
+                      className="w-full text-left p-3 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-slate-900">{lead.Name}</p>
+                          <p className="text-xs text-slate-600">{lead.Company}</p>
+                        </div>
+                        <Badge className="bg-blue-100 text-blue-800">Lead</Badge>
+                      </div>
+                    </button>
+                  ))}
+                  {displayOpportunities.map(opp => (
+                    <button
+                      key={opp.Id}
+                      onClick={() => navigate(createPageUrl('OpportunityDetail') + `?id=${opp.Id}`)}
+                      className="w-full text-left p-3 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-slate-900">{opp.Name}</p>
+                          <p className="text-xs text-slate-600">{opp.Account?.Name}</p>
+                        </div>
+                        <Badge className="bg-orange-100 text-orange-800">Opportunity</Badge>
+                      </div>
+                    </button>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -601,10 +646,12 @@ export default function RepPortal() {
             </div>
           </motion.div>
           </div>
+          </div>
+          )}
 
-
-
-        {/* Pipeline */}
+          {!searchTerm && (
+          <>
+          {/* Pipeline */}
         {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
           <PipelineView 
             leads={leads} 
