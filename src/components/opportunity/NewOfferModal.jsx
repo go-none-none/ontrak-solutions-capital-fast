@@ -164,14 +164,14 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
       if (offer) {
         // Update existing offer
         console.log('Updating offer:', offer.Id, 'with data:', formData);
-        const response = await base44.functions.invoke('updateSalesforceRecord', {
+        await base44.functions.invoke('updateSalesforceRecord', {
           objectType: 'csbs__Offer__c',
           recordId: offer.Id,
           data: formData,
           token: session.token,
           instanceUrl: session.instanceUrl
         });
-        console.log('Update response:', response);
+        console.log('Update completed, refreshing data...');
       } else {
         // Create new offer
         await base44.functions.invoke('createSalesforceOffer', {
@@ -183,12 +183,18 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
         });
       }
 
-      await onSuccess();
+      // Wait for success callback to complete before closing
+      if (onSuccess) {
+        await onSuccess();
+      }
+      
+      // Small delay to ensure data is refreshed
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       onClose();
     } catch (error) {
       console.error('Save offer error:', error);
       alert(`Failed to ${offer ? 'update' : 'create'} offer: ${error.message}`);
-    } finally {
       setLoading(false);
     }
   };
