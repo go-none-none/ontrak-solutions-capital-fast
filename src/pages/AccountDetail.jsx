@@ -26,6 +26,8 @@ export default function AccountDetail() {
   const [saving, setSaving] = useState(false);
   const [recordTypeId, setRecordTypeId] = useState(null);
   const [recordTypeName, setRecordTypeName] = useState('');
+  const [recordTypes, setRecordTypes] = useState([]);
+  const [loadingRecordTypes, setLoadingRecordTypes] = useState(false);
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
