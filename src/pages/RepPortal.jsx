@@ -928,15 +928,15 @@ export default function RepPortal() {
               </div>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+              <table className="w-full min-w-[640px]">
                 <thead className="bg-slate-100 border-b-2 border-slate-300">
                   <tr>
-                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Lead Name</th>
-                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Phone</th>
-                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Company</th>
-                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Status</th>
-                    <th className="text-left px-4 py-4 text-sm font-bold text-slate-900">Disposition</th>
+                    <th className="text-left px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-bold text-slate-900">Lead Name</th>
+                    <th className="text-left px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-bold text-slate-900 hidden sm:table-cell">Phone</th>
+                    <th className="text-left px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-bold text-slate-900 hidden md:table-cell">Company</th>
+                    <th className="text-left px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-bold text-slate-900 hidden lg:table-cell">Status</th>
+                    <th className="text-left px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm font-bold text-slate-900">Disposition</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -968,15 +968,22 @@ export default function RepPortal() {
                       <>
                         {paginatedLeads.map(lead => (
                           <tr key={lead.Id} className="border-b border-slate-200 hover:bg-blue-50 transition-colors">
-                            <td className="px-4 py-4">
+                            <td className="px-2 sm:px-4 py-3 sm:py-4">
                               <button
                                 onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)}
-                                className="font-semibold text-[#08708E] hover:underline text-left"
+                                className="font-semibold text-[#08708E] hover:underline text-left text-xs sm:text-sm"
                               >
                                 {lead.Name || '-'}
                               </button>
+                              <div className="sm:hidden text-[10px] text-slate-500 mt-0.5">
+                                {lead.MobilePhone && (
+                                  <a href={`tel:${lead.MobilePhone}`} className="text-[#08708E] hover:underline">
+                                    {lead.MobilePhone}
+                                  </a>
+                                )}
+                              </div>
                             </td>
-                            <td className="px-4 py-4 text-sm whitespace-nowrap">
+                            <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm whitespace-nowrap hidden sm:table-cell">
                               {lead.MobilePhone ? (
                                 <a href={`tel:${lead.MobilePhone}`} className="text-[#08708E] hover:underline font-medium">
                                   {lead.MobilePhone}
@@ -985,11 +992,11 @@ export default function RepPortal() {
                                 <span className="text-slate-400">-</span>
                               )}
                             </td>
-                            <td className="px-4 py-4 text-sm text-slate-700">{lead.Company || '-'}</td>
-                            <td className="px-4 py-4 text-xs text-slate-700 font-medium">{lead.Status}</td>
-                            <td className="px-4 py-4">
-                              <div className="flex items-center justify-between gap-2">
-                                <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${
+                            <td className="px-2 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm text-slate-700 hidden md:table-cell">{lead.Company || '-'}</td>
+                            <td className="px-2 sm:px-4 py-3 sm:py-4 text-[10px] sm:text-xs text-slate-700 font-medium hidden lg:table-cell">{lead.Status}</td>
+                            <td className="px-2 sm:px-4 py-3 sm:py-4">
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-1 sm:gap-2">
+                                <span className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold max-w-full truncate ${
                                   lead.Call_Disposition__c 
                                     ? getDispositionColor(lead.Call_Disposition__c)
                                     : 'bg-gray-300 text-gray-800'
@@ -1001,9 +1008,9 @@ export default function RepPortal() {
                                   onValueChange={(value) => handleDispositionUpdate(lead.Id, value)}
                                   disabled={updatingDisposition === lead.Id}
                                 >
-                                  <SelectTrigger className="w-20 h-8 text-xs">
+                                  <SelectTrigger className="w-16 sm:w-20 h-7 sm:h-8 text-[10px] sm:text-xs flex-shrink-0">
                                     <SelectValue>
-                                      {updatingDisposition === lead.Id ? 'Updating...' : 'Change'}
+                                      {updatingDisposition === lead.Id ? '...' : 'Change'}
                                     </SelectValue>
                                   </SelectTrigger>
                                   <SelectContent>
