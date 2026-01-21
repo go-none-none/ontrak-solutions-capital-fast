@@ -262,17 +262,48 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             )}
 
             {/* Funded Terms */}
-            {(opportunity.csbs__Funded__c || opportunity.csbs__Payment_Amount__c || opportunity.csbs__Term__c) && (
+            {fullData && (fullData.csbs__Funded__c || fullData.csbs__Payment_Amount__c || fullData.csbs__Term__c) && (
               <div className="space-y-2 border-t pt-2">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Funded Terms</p>
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  {opportunity.csbs__Funded_Date__c && <div><span className="text-slate-500">Date:</span> {formatDate(opportunity.csbs__Funded_Date__c)}</div>}
-                  {opportunity.csbs__Funded__c && <div><span className="text-slate-500">Funded:</span> {formatCurrency(opportunity.csbs__Funded__c)}</div>}
-                  {opportunity.csbs__Lender__c && <div><span className="text-slate-500">Lender:</span> {opportunity.csbs__Lender__c}</div>}
-                  {opportunity.csbs__Payment_Amount__c && <div><span className="text-slate-500">Payment:</span> {formatCurrency(opportunity.csbs__Payment_Amount__c)}</div>}
-                  {opportunity.csbs__Term__c && <div><span className="text-slate-500">Term:</span> {opportunity.csbs__Term__c}mo</div>}
-                  {opportunity.csbs__Factor_Rate__c && <div><span className="text-slate-500">Factor:</span> {opportunity.csbs__Factor_Rate__c}</div>}
-                  {opportunity.csbs__Payment_Frequency__c && <div><span className="text-slate-500">Freq:</span> {opportunity.csbs__Payment_Frequency__c}</div>}
+                  {fullData.csbs__Funded_Date__c && <div><span className="text-slate-500">Date:</span> {formatDate(fullData.csbs__Funded_Date__c)}</div>}
+                  {fullData.csbs__Funded__c && <div><span className="text-slate-500">Funded:</span> {formatCurrency(fullData.csbs__Funded__c)}</div>}
+                  {fullData.csbs__Lender__c && <div><span className="text-slate-500">Lender:</span> {fullData.csbs__Lender__c}</div>}
+                  {fullData.csbs__Payment_Amount__c && <div><span className="text-slate-500">Payment:</span> {formatCurrency(fullData.csbs__Payment_Amount__c)}</div>}
+                  {fullData.csbs__Term__c && <div><span className="text-slate-500">Term:</span> {fullData.csbs__Term__c}mo</div>}
+                  {fullData.csbs__Factor_Rate__c && <div><span className="text-slate-500">Factor:</span> {fullData.csbs__Factor_Rate__c}</div>}
+                  {fullData.csbs__Payment_Frequency__c && <div><span className="text-slate-500">Freq:</span> {fullData.csbs__Payment_Frequency__c}</div>}
+                  {fullData.csbs__Net_Funded__c && <div><span className="text-slate-500">Net:</span> {formatCurrency(fullData.csbs__Net_Funded__c)}</div>}
+                  {fullData.csbs__Payback__c && <div><span className="text-slate-500">Payback:</span> {formatCurrency(fullData.csbs__Payback__c)}</div>}
+                  {fullData.csbs__Commission_Amount__c && <div><span className="text-slate-500">Commission:</span> {formatCurrency(fullData.csbs__Commission_Amount__c)}</div>}
+                </div>
+              </div>
+            )}
+
+            {/* More Financial Details */}
+            {fullData && (fullData.csbs__Avg_Gross_Monthly_Sales__c || fullData.csbs__Avg_Credit_Card_Volume__c || fullData.csbs__Avg_NSFs__c) && (
+              <div className="space-y-2 border-t pt-2">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Banking Activity</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {fullData.csbs__Avg_Gross_Monthly_Sales__c && <div><span className="text-slate-500">Sales:</span> {formatCurrency(fullData.csbs__Avg_Gross_Monthly_Sales__c)}</div>}
+                  {fullData.csbs__Avg_Credit_Card_Volume__c && <div><span className="text-slate-500">CC Vol:</span> {formatCurrency(fullData.csbs__Avg_Credit_Card_Volume__c)}</div>}
+                  {fullData.csbs__Avg_Daily_Balance__c && <div><span className="text-slate-500">Avg Bal:</span> {formatCurrency(fullData.csbs__Avg_Daily_Balance__c)}</div>}
+                  {fullData.csbs__Avg_NSFs__c && <div><span className="text-slate-500">NSFs:</span> {fullData.csbs__Avg_NSFs__c}</div>}
+                  {fullData.csbs__Avg_Negative_Days__c && <div><span className="text-slate-500">Neg Days:</span> {fullData.csbs__Avg_Negative_Days__c}</div>}
+                  {fullData.csbs__Avg_Bank_Deposits_Number__c && <div><span className="text-slate-500">Deposits:</span> {fullData.csbs__Avg_Bank_Deposits_Number__c}</div>}
+                </div>
+              </div>
+            )}
+
+            {/* Renewal/Additional Info */}
+            {fullData && (fullData.csbs__Renewal_Status__c || fullData.csbs__Previous_Funding__c) && (
+              <div className="space-y-2 border-t pt-2">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Additional</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {fullData.csbs__Renewal_Status__c && <div><span className="text-slate-500">Renewal:</span> {fullData.csbs__Renewal_Status__c}</div>}
+                  {fullData.csbs__Previous_Funding__c && <div><span className="text-slate-500">Prev Fund:</span> {formatCurrency(fullData.csbs__Previous_Funding__c)}</div>}
+                  {fullData.csbs__Open_Bankruptcies__c && <div><span className="text-slate-500">Bankruptcies:</span> {fullData.csbs__Open_Bankruptcies__c}</div>}
+                  {fullData.csbs__Judgements_Liens__c && <div><span className="text-slate-500">Liens:</span> {fullData.csbs__Judgements_Liens__c}</div>}
                 </div>
               </div>
             )}
