@@ -856,9 +856,11 @@ export default function RepPortal() {
               )}
             </div>
             )}
+            </div>
+            </div>
 
-        {activeTab === 'tasks' && (
-          <div>
+            {activeTab === 'tasks' && (
+            <div>
             <div className="space-y-3">
               {(() => {
                 let filteredTasks = tasks?.tasks || [];
@@ -947,7 +949,7 @@ export default function RepPortal() {
         )}
 
         {activeTab === 'dispositions' && (
-          <div>
+        <div>
             <div className="mb-4 sm:mb-6">
               <div className="relative flex-1 mb-4">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
