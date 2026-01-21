@@ -83,6 +83,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
     setStep(1);
     setRecordType('');
     setSelectedSubmission('');
+    setLoading(false);
     setFormData({
       csbs__Funded__c: '',
       csbs__Product__c: '',
@@ -207,8 +208,13 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
     }
   };
 
+  const handleClose = () => {
+    setLoading(false);
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{offer ? 'Edit Offer' : 'New Offer'}</DialogTitle>
@@ -229,7 +235,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
               </Select>
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={onClose}>Cancel</Button>
+              <Button variant="outline" onClick={handleClose}>Cancel</Button>
               <Button onClick={() => setStep(2)} disabled={!recordType}>Next</Button>
             </div>
           </div>
@@ -478,7 +484,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
 
                 <div className="flex justify-end gap-2">
                   {!offer && <Button variant="outline" onClick={() => setStep(2)}>Back</Button>}
-                  <Button variant="outline" onClick={onClose}>Cancel</Button>
+                  <Button variant="outline" onClick={handleClose}>Cancel</Button>
                   <Button onClick={handleSubmit} disabled={loading}>
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
                   </Button>
