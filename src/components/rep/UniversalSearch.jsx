@@ -119,16 +119,16 @@ export default function UniversalSearch({ session }) {
         accountsRes.data.accounts
         .filter(a => a.Name?.toLowerCase().includes(searchLower))
         .forEach(account => {
-        // Check RecordTypeName for lender/merchant categorization
-        const recordType = account.RecordTypeName?.toLowerCase() || '';
+        // Check RecordType for lender/merchant categorization
+        const recordTypeName = account.RecordType?.Name?.toLowerCase() || '';
         let accountCategory = 'Account';
         let color = 'bg-slate-100 text-slate-800';
         let icon = Building2;
 
-        if (recordType.includes('lender')) {
+        if (recordTypeName.includes('lender')) {
           accountCategory = 'Lender';
           color = 'bg-emerald-100 text-emerald-800';
-        } else if (recordType.includes('merchant')) {
+        } else if (recordTypeName.includes('merchant')) {
           accountCategory = 'Merchant';
           color = 'bg-violet-100 text-violet-800';
         }
@@ -136,12 +136,13 @@ export default function UniversalSearch({ session }) {
         allResults.push({
           id: account.Id,
           name: account.Name,
-          subtitle: account.Industry || accountCategory,
+          subtitle: account.Industry,
           type: accountCategory,
           category: 'Account',
           color: color,
           icon: icon,
           path: 'AccountDetail',
+          recordType: recordTypeName.charAt(0).toUpperCase() + recordTypeName.slice(1),
           record: account
         });
         });
