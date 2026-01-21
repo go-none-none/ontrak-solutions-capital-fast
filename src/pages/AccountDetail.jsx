@@ -269,6 +269,19 @@ export default function AccountDetail() {
                 </div>
 
                 <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Additional Phone</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.csbs__Additional_Phone__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__Additional_Phone__c: e.target.value })}
+                      placeholder="Additional Phone"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__Additional_Phone__c || '-'}</p>
+                  )}
+                </div>
+
+                <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Account Source</label>
                   {isEditing ? (
                     <select
