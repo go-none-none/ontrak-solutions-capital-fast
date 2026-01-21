@@ -479,6 +479,24 @@ export default function AccountDetail() {
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h3 className="font-semibold text-slate-900 mb-4">Account Settings</h3>
             <div className="space-y-4">
+              {/* Record Type */}
+              <div className="pb-4 border-b border-slate-200">
+                <Label className="text-xs uppercase tracking-wide text-slate-500 mb-2 block">Record Type</Label>
+                {isEditing ? (
+                  <select 
+                    value={editData.RecordTypeId || ''} 
+                    onChange={(e) => handleRecordTypeChange(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+                  >
+                    <option value="">Select Record Type</option>
+                    {recordTypes.map(rt => (
+                      <option key={rt.id} value={rt.id}>{rt.name}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <p className="text-sm font-medium text-slate-900">{account.RecordType?.Name || 'Unknown'}</p>
+                )}
+              </div>
               {isEditing ? (
                 <>
                   <div className="space-y-3">
