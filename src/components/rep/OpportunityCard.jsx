@@ -10,18 +10,27 @@ import { base44 } from '@/api/base44Client';
 export default function OpportunityCard({ opportunity, session, onUpdate, isExpanded, onToggleExpand }) {
   const navigate = useNavigate();
   const [fullData, setFullData] = useState(null);
+  const [contactRoles, setContactRoles] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
 
   useEffect(() => {
     if (isExpanded && !fullData && session) {
       setLoadingData(true);
-      base44.functions.invoke('getSalesforceRecord', {
-        recordId: opportunity.Id,
-        recordType: 'Opportunity',
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      }).then(res => {
-        setFullData(res.data.record);
+      Promise.all([
+        base44.functions.invoke('getSalesforceRecord', {
+          recordId: opportunity.Id,
+          recordType: 'Opportunity',
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforceContactRoles', {
+          recordId: opportunity.Id,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
+      ]).then(([oppRes, contactRes]) => {
+        setFullData(oppRes.data.record);
+        setContactRoles(contactRes.data.contactRoles || []);
         setLoadingData(false);
       }).catch(() => setLoadingData(false));
     }
