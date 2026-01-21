@@ -143,7 +143,6 @@ export default function UniversalSearch({ session }) {
             });
         }
 
-        setAccountCategories(Array.from(categories).sort());
         setResults(allResults);
         setShowDropdown(true);
       } catch (error) {
