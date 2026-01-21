@@ -640,17 +640,15 @@ export default function OpportunityDetail() {
           {/* Main Column */}
           <div className="lg:col-span-2 min-w-0 overflow-x-hidden">
             <Tabs defaultValue="details" className="space-y-6">
-              <div className="bg-white p-3 rounded-xl shadow-md border-2 border-slate-300 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <TabsList className="bg-slate-100 p-1 rounded-lg grid grid-cols-2 md:grid-cols-6 gap-1 w-full min-w-max">
-                    <TabsTrigger value="details" className="text-xs md:text-sm px-1 md:px-4">Details</TabsTrigger>
-                    <TabsTrigger value="submissions" className="text-xs md:text-sm px-1 md:px-4">Submissions</TabsTrigger>
-                    <TabsTrigger value="offers" className="text-xs md:text-sm px-1 md:px-4">Offers</TabsTrigger>
-                    <TabsTrigger value="statements" className="text-xs md:text-sm px-1 md:px-4">Statements</TabsTrigger>
-                    <TabsTrigger value="debt" className="text-xs md:text-sm px-1 md:px-4">Debt</TabsTrigger>
-                    <TabsTrigger value="commissions" className="text-xs md:text-sm px-1 md:px-4">Commissions</TabsTrigger>
-                  </TabsList>
-                </div>
+              <div className="bg-white p-3 rounded-xl shadow-md border-2 border-slate-300">
+                <TabsList className="bg-slate-100 p-1 rounded-lg grid grid-cols-3 md:grid-cols-6 gap-1 w-full">
+                  <TabsTrigger value="details" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Details</TabsTrigger>
+                  <TabsTrigger value="submissions" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Submissions</TabsTrigger>
+                  <TabsTrigger value="offers" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Offers</TabsTrigger>
+                  <TabsTrigger value="statements" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Statements</TabsTrigger>
+                  <TabsTrigger value="debt" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Debt</TabsTrigger>
+                  <TabsTrigger value="commissions" className="text-[10px] md:text-sm px-2 md:px-4 whitespace-nowrap">Commissions</TabsTrigger>
+                </TabsList>
               </div>
 
               {/* Submissions Tab */}
