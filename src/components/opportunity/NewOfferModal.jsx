@@ -161,17 +161,10 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
 
     setLoading(true);
     try {
-      // Filter out empty values and convert numeric strings to numbers
+      // Filter out empty string values - Salesforce doesn't like empty strings for numeric fields
       const cleanedData = Object.entries(formData).reduce((acc, [key, value]) => {
         if (value !== '' && value !== null && value !== undefined) {
-          // Convert numeric fields to proper numbers
-          if (typeof value === 'string' && value.trim() !== '' && !isNaN(value)) {
-            acc[key] = Number(value);
-          } else if (typeof value === 'boolean') {
-            acc[key] = value;
-          } else if (value !== '') {
-            acc[key] = value;
-          }
+          acc[key] = value;
         }
         return acc;
       }, {});
