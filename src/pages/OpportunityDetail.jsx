@@ -26,6 +26,7 @@ import NewCommissionModal from '../components/opportunity/NewCommissionModal';
 import StatementAnalysisDashboard from '../components/opportunity/StatementAnalysisDashboard';
 import StatementPdfViewer from '../components/opportunity/StatementPdfViewer';
 import OfferProposalModal from '../components/opportunity/OfferProposalModal';
+import CreateLenderModal from '../components/opportunity/CreateLenderModal';
 
 export default function OpportunityDetail() {
   const navigate = useNavigate();
@@ -672,7 +673,14 @@ export default function OpportunityDetail() {
 
               {/* Submissions Tab */}
               <TabsContent value="submissions" className="space-y-4">
-               <div className="flex justify-end mb-3">
+               <div className="flex justify-end gap-2 mb-3">
+                 <Button
+                   onClick={() => setShowCreateLender(true)}
+                   variant="outline"
+                   className="text-sm w-full sm:w-auto"
+                 >
+                   Add Lender
+                 </Button>
                  <Button
                    onClick={() => setShowSubmitModal(true)}
                    className="bg-orange-600 hover:bg-orange-700 text-sm w-full sm:w-auto"
@@ -1719,6 +1727,16 @@ export default function OpportunityDetail() {
           const urlParams = new URLSearchParams(window.location.search);
           const oppId = urlParams.get('id');
           loadRelatedRecords(session, oppId);
+        }}
+      />
+
+      {/* Create Lender Modal */}
+      <CreateLenderModal
+        isOpen={showCreateLender}
+        onClose={() => setShowCreateLender(false)}
+        session={session}
+        onSuccess={() => {
+          setShowCreateLender(false);
         }}
       />
 
