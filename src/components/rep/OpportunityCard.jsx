@@ -189,6 +189,11 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             exit={{ opacity: 0, height: 0 }}
             className="mt-4 pt-4 border-t border-slate-200 space-y-3 max-h-96 overflow-y-auto"
           >
+            {loadingData && (
+              <div className="flex justify-center py-4">
+                <Loader2 className="w-4 h-4 animate-spin text-orange-600" />
+              </div>
+            )}
             {/* Key Info */}
             {(opportunity.Amount || opportunity.CloseDate || opportunity.Probability) && (
               <div className="space-y-2">
