@@ -167,39 +167,67 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
             exit={{ opacity: 0, height: 0 }}
             className="mt-4 pt-4 border-t border-slate-200 space-y-3"
           >
-            <div className="grid grid-cols-2 gap-3">
-              {lead.Industry && (
+            {/* Quick Info */}
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-slate-700 uppercase">Quick Info</p>
+              {lead.AnnualRevenue && (
                 <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Industry</p>
-                  <p className="text-sm text-slate-900">{lead.Industry}</p>
+                  <p className="text-xs text-slate-500 mb-0.5">Annual Revenue</p>
+                  <p className="text-sm font-semibold text-[#08708E]">{formatCurrency(lead.AnnualRevenue)}</p>
                 </div>
               )}
-              {lead.Rating && (
-                <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Rating</p>
-                  <Badge className="bg-blue-100 text-blue-800">{lead.Rating}</Badge>
-                </div>
-              )}
-              {lead.Title && (
-                <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Title</p>
-                  <p className="text-sm text-slate-900">{lead.Title}</p>
-                </div>
-              )}
-              {lead.Website && (
-                <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Website</p>
-                  <p className="text-sm text-slate-900 truncate">{lead.Website}</p>
-                </div>
-              )}
-              </div>
+            </div>
 
-              {lead.Description && (
+            {/* Contact & Basic */}
+            {(lead.Title || lead.Industry || lead.Website) && (
+              <div className="space-y-2 border-t pt-3">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Contact & Basic</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {lead.Title && (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-0.5">Title</p>
+                      <p className="text-sm text-slate-900">{lead.Title}</p>
+                    </div>
+                  )}
+                  {lead.Industry && (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-0.5">Industry</p>
+                      <p className="text-sm text-slate-900">{lead.Industry}</p>
+                    </div>
+                  )}
+                  {lead.Website && (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-0.5">Website</p>
+                      <p className="text-sm text-slate-900 truncate text-ellipsis">{lead.Website}</p>
+                    </div>
+                  )}
+                  {lead.Rating && (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-0.5">Rating</p>
+                      <Badge className="bg-blue-100 text-blue-800 text-xs">{lead.Rating}</Badge>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Business Info */}
+            {lead.Call_Disposition__c && (
+              <div className="space-y-2 border-t pt-3">
+                <p className="text-xs font-semibold text-slate-700 uppercase">Business</p>
+                <div>
+                  <p className="text-xs text-slate-500 mb-0.5">Call Disposition</p>
+                  <Badge className="bg-green-600 text-white text-xs">{lead.Call_Disposition__c}</Badge>
+                </div>
+              </div>
+            )}
+
+            {lead.Description && (
               <div className="border-t pt-3">
                 <p className="text-xs text-slate-500 font-semibold mb-1">Notes</p>
                 <p className="text-sm text-slate-900 line-clamp-3">{lead.Description}</p>
               </div>
-              )}
+            )}
 
           </motion.div>
         )}
