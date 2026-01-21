@@ -32,6 +32,7 @@ import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
+import AccountDetail from './pages/AccountDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -70,6 +71,7 @@ export const PAGES = {
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
+    "AccountDetail": AccountDetail,
 }
 
 export const pagesConfig = {
