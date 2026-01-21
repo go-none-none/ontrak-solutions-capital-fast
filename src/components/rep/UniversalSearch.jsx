@@ -198,42 +198,7 @@ export default function UniversalSearch({ session }) {
           )}
         </div>
 
-        {accountCategories.length > 0 && (
-          <div className="relative">
-            <button
-              onClick={() => setShowCategoryFilter(!showCategoryFilter)}
-              className="px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 flex items-center gap-1.5 text-xs font-medium text-slate-700 bg-white"
-            >
-              <span>Type</span>
-              <ChevronDown className="w-3.5 h-3.5" />
-            </button>
-            {showCategoryFilter && (
-              <div className="absolute top-full right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 min-w-[140px]">
-                <button
-                  onClick={() => {
-                    setSelectedFilter('all');
-                    setShowCategoryFilter(false);
-                  }}
-                  className={`block w-full px-3 py-2 text-left text-xs hover:bg-slate-50 ${selectedFilter === 'all' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-700'}`}
-                >
-                  All Accounts
-                </button>
-                {accountCategories.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => {
-                      setSelectedFilter(cat);
-                      setShowCategoryFilter(false);
-                    }}
-                    className={`block w-full px-3 py-2 text-left text-xs hover:bg-slate-50 border-t border-slate-100 ${selectedFilter === cat ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-700'}`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+
       </div>
 
       {showDropdown && (filteredResults.length > 0 || searchTerm) && (
