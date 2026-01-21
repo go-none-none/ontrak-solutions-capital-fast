@@ -214,23 +214,47 @@ export default function LenderDetail() {
               </div>
 
               {/* Address */}
-              {(lender.BillingStreet || lender.BillingCity) && (
+              {isEditing ? (
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Address</h2>
-                  <div className="flex gap-3 text-slate-600">
-                    <MapPin className="w-5 h-5 flex-shrink-0 text-slate-400 mt-0.5" />
-                    <div className="text-sm">
-                      {lender.BillingStreet && <p>{lender.BillingStreet}</p>}
-                      {(lender.BillingCity || lender.BillingState || lender.BillingPostalCode) && (
-                        <p>
-                          {[lender.BillingCity, lender.BillingState, lender.BillingPostalCode]
-                            .filter(Boolean)
-                            .join(', ')}
-                        </p>
-                      )}
+                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Billing Address</h2>
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="billingStreet">Street</Label>
+                      <Textarea id="billingStreet" value={editData.BillingStreet || ''} onChange={(e) => setEditData({ ...editData, BillingStreet: e.target.value })} rows={2} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="billingCity">City</Label>
+                        <Input id="billingCity" value={editData.BillingCity || ''} onChange={(e) => setEditData({ ...editData, BillingCity: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label htmlFor="billingState">State</Label>
+                        <Input id="billingState" value={editData.BillingState || ''} onChange={(e) => setEditData({ ...editData, BillingState: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label htmlFor="billingZip">Zip</Label>
+                        <Input id="billingZip" value={editData.BillingPostalCode || ''} onChange={(e) => setEditData({ ...editData, BillingPostalCode: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label htmlFor="billingCountry">Country</Label>
+                        <Input id="billingCountry" value={editData.BillingCountry || ''} onChange={(e) => setEditData({ ...editData, BillingCountry: e.target.value })} />
+                      </div>
                     </div>
                   </div>
                 </div>
+              ) : (
+                (lender.BillingStreet || lender.BillingCity) && (
+                  <div>
+                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Address</h2>
+                    <div className="space-y-2 text-sm text-slate-600">
+                      {lender.BillingStreet && <p>{lender.BillingStreet}</p>}
+                      {(lender.BillingCity || lender.BillingState || lender.BillingPostalCode) && (
+                        <p>{[lender.BillingCity, lender.BillingState, lender.BillingPostalCode].filter(Boolean).join(', ')}</p>
+                      )}
+                      {lender.BillingCountry && <p>{lender.BillingCountry}</p>}
+                    </div>
+                  </div>
+                )
               )}
 
               {/* Lending Criteria */}
