@@ -1,13 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Calendar, Building2, TrendingUp, Eye, ArrowRight } from 'lucide-react';
+import { DollarSign, Calendar, Building2, TrendingUp, Eye, ArrowRight, Loader2 } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
 
 export default function OpportunityCard({ opportunity, session, onUpdate, isExpanded, onToggleExpand }) {
   const navigate = useNavigate();
+  const [fullData, setFullData] = useState(null);
+  const [loadingData, setLoadingData] = useState(false);
+
+  useEffect(() => {
+    if (isExpanded && !fullData && session) {
+      setLoadingData(true);
+      base44.functions.invoke('getSalesforceRecord', {
+        recordId: opportunity.Id,
+        recordType: 'Opportunity',
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      }).then(res => {
+        setFullData(res.data.record);
+        setLoadingData(false);
+      }).catch(() => setLoadingData(false));
+    }
+  }, [isExpanded, opportunity.Id, session, fullData]);
 
   const stages = [
     { label: 'App In', name: 'Application In' },
