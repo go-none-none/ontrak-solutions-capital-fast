@@ -119,7 +119,6 @@ export default function UniversalSearch({ session }) {
             .filter(a => a.Name?.toLowerCase().includes(searchLower))
             .forEach(account => {
               const accountType = account.Type || 'Other';
-              categories.add(accountType);
               
               const typeColorMap = {
                 'Lender': { color: 'bg-green-100 text-green-800', icon: Building2 },
