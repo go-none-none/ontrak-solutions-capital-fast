@@ -168,8 +168,10 @@ Deno.serve(async (req) => {
     const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
 
     // Upload PDF to Salesforce
+    let pdfUploaded = false;
     if (sessionToken && sessionInstanceUrl) {
       try {
+        console.log('Uploading PDF to Salesforce for opportunity:', opportunityId);
         const uploadResponse = await fetch(`${sessionInstanceUrl}/services/data/v59.0/sobjects/ContentVersion`, {
           method: 'POST',
           headers: {
@@ -183,37 +185,61 @@ Deno.serve(async (req) => {
           })
         });
 
-        if (uploadResponse.ok) {
-          const cvResult = await uploadResponse.json();
-
-          // Get ContentDocumentId
-          const cdQuery = `SELECT ContentDocumentId FROM ContentVersion WHERE Id = '${cvResult.id}'`;
-          const cdResponse = await fetch(
-            `${sessionInstanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(cdQuery)}`,
-            { headers: { 'Authorization': `Bearer ${sessionToken}` } }
-          );
-
-          const cdData = await cdResponse.json();
-          const contentDocumentId = cdData.records[0].ContentDocumentId;
-
-          // Link to opportunity
-          await fetch(`${sessionInstanceUrl}/services/data/v59.0/sobjects/ContentDocumentLink`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${sessionToken}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              ContentDocumentId: contentDocumentId,
-              LinkedEntityId: opportunityId,
-              ShareType: 'V'
-            })
-          });
+        if (!uploadResponse.ok) {
+          const errorText = await uploadResponse.text();
+          console.error('ContentVersion upload failed:', uploadResponse.status, errorText);
+          throw new Error(`Upload failed: ${errorText}`);
         }
+
+        const cvResult = await uploadResponse.json();
+        console.log('ContentVersion created:', cvResult.id);
+
+        // Get ContentDocumentId
+        const cdQuery = `SELECT ContentDocumentId FROM ContentVersion WHERE Id = '${cvResult.id}'`;
+        const cdResponse = await fetch(
+          `${sessionInstanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(cdQuery)}`,
+          { headers: { 'Authorization': `Bearer ${sessionToken}` } }
+        );
+
+        if (!cdResponse.ok) {
+          const errorText = await cdResponse.text();
+          console.error('ContentDocument query failed:', cdResponse.status, errorText);
+          throw new Error(`Query failed: ${errorText}`);
+        }
+
+        const cdData = await cdResponse.json();
+        const contentDocumentId = cdData.records[0].ContentDocumentId;
+        console.log('ContentDocumentId:', contentDocumentId);
+
+        // Link to opportunity
+        const linkResponse = await fetch(`${sessionInstanceUrl}/services/data/v59.0/sobjects/ContentDocumentLink`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${sessionToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ContentDocumentId: contentDocumentId,
+            LinkedEntityId: opportunityId,
+            ShareType: 'V'
+          })
+        });
+
+        if (!linkResponse.ok) {
+          const errorText = await linkResponse.text();
+          console.error('ContentDocumentLink creation failed:', linkResponse.status, errorText);
+          throw new Error(`Link failed: ${errorText}`);
+        }
+
+        console.log('PDF successfully attached to opportunity:', opportunityId);
+        pdfUploaded = true;
       } catch (uploadError) {
         console.error('Failed to upload PDF to Salesforce:', uploadError);
+        console.error('Full error:', uploadError.message);
         // Continue with email even if upload fails
       }
+    } else {
+      console.log('No session token or instance URL - skipping Salesforce upload');
     }
 
     const emailHTML = `<!DOCTYPE html>
@@ -296,7 +322,7 @@ Deno.serve(async (req) => {
       throw new Error(`SendGrid error: ${JSON.stringify(errorData)}`);
     }
 
-    return Response.json({ success: true });
+    return Response.json({ success: true, pdfUploaded });
   } catch (error) {
     console.error('Error:', error.message);
     return Response.json({ error: error.message }, { status: 500 });
