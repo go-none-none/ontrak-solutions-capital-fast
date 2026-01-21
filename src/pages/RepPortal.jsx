@@ -556,6 +556,25 @@ export default function RepPortal() {
           </motion.div>
           </div>
 
+        {/* Universal Search Box */}
+        {(activeTab === 'leads' || activeTab === 'opportunities' || activeTab === 'dispositions') && (
+          <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 sm:mt-6">
+            <div className="relative flex-1 mb-4 sm:mb-6">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+              <Input
+                placeholder={
+                  activeTab === 'leads' ? 'Search leads by name, company, email, or phone...' :
+                  activeTab === 'opportunities' ? 'Search opportunities by name or account...' :
+                  'Search by lead name, company, or phone...'
+                }
+                value={searchTerm}
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base w-full"
+              />
+            </div>
+          </div>
+        )}
+
         {/* Pipeline */}
         {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
           <PipelineView 
@@ -566,34 +585,8 @@ export default function RepPortal() {
           />
         )}
 
-        {/* Search & Content */}
+        {/* Content */}
         <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 sm:mt-6">
-          {activeTab === 'leads' && (
-            <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
-                <Input
-                  placeholder="Search..."
-                  value={searchTerm}
-                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                  className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base"
-                />
-              </div>
-            </div>
-          )}
-          {activeTab === 'opportunities' && (
-            <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
-                <Input
-                  placeholder="Search..."
-                  value={searchTerm}
-                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                  className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base"
-                />
-              </div>
-            </div>
-          )}
 
           {activeTab === 'tasks' && (
             <div className="mb-4 sm:mb-6">
@@ -635,7 +628,7 @@ export default function RepPortal() {
           )}
 
           {activeTab === 'leads' && (
-            <div>
+            <div className="space-y-4">
               {stageFilter && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
@@ -712,7 +705,7 @@ export default function RepPortal() {
             )}
 
             {activeTab === 'opportunities' && (
-            <div>
+            <div className="space-y-4">
               {stageFilter && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <span className="text-sm text-blue-900">Filtering by: <strong>{stageFilter}</strong></span>
@@ -1126,7 +1119,7 @@ export default function RepPortal() {
         record={selectedLeadForDisposition}
         isOpen={!!selectedLeadForDisposition}
         onClose={() => setSelectedLeadForDisposition(null)}
-        recordType="Lead"
+        type="lead"
         session={session}
       />
         </div>
