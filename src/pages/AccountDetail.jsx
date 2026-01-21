@@ -674,6 +674,60 @@ export default function AccountDetail() {
               </div>
             </div>
 
+            {/* Account Information Section - Lender Only Fields */}
+            {isLender && (
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Lender Settings</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="active"
+                      checked={editData.csbs__Active__c || false}
+                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Active__c: checked })}
+                      disabled={!isEditing}
+                    />
+                    <label htmlFor="active" className="text-sm font-medium text-slate-700 cursor-pointer">Active Lender</label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="trading"
+                      checked={editData.csbs__Trading_Center__c || false}
+                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Trading_Center__c: checked })}
+                      disabled={!isEditing}
+                    />
+                    <label htmlFor="trading" className="text-sm font-medium text-slate-700 cursor-pointer">Trading Center</label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="leadsFromApi"
+                      checked={editData.csbs__Leads_from_API__c || false}
+                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Leads_from_API__c: checked })}
+                      disabled={!isEditing}
+                    />
+                    <label htmlFor="leadsFromApi" className="text-sm font-medium text-slate-700 cursor-pointer">Leads from API</label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="leadsToApi"
+                      checked={editData.csbs__Leads_to_API__c || false}
+                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Leads_to_API__c: checked })}
+                      disabled={!isEditing}
+                    />
+                    <label htmlFor="leadsToApi" className="text-sm font-medium text-slate-700 cursor-pointer">Leads to API</label>
+                  </div>
+                  <div className="flex items-center space-x-2 md:col-span-2">
+                    <Checkbox
+                      id="appIndustry"
+                      checked={editData.csbs__Application_Industry__c || false}
+                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Application_Industry__c: checked })}
+                      disabled={!isEditing}
+                    />
+                    <label htmlFor="appIndustry" className="text-sm font-medium text-slate-700 cursor-pointer">Application Industry</label>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Lender Criteria Section */}
             {isLender && (
               <div className="bg-white rounded-lg shadow p-6">
@@ -686,7 +740,6 @@ export default function AccountDetail() {
                         type="number"
                         value={editData.csbs__Minimum_Credit_Score__c || ''}
                         onChange={(e) => setEditData({ ...editData, csbs__Minimum_Credit_Score__c: e.target.value })}
-                        placeholder="Score"
                       />
                     ) : (
                       <p className="text-slate-600">{account?.csbs__Minimum_Credit_Score__c || '-'}</p>
@@ -699,7 +752,6 @@ export default function AccountDetail() {
                         type="number"
                         value={editData.csbs__Maximum_Negative_Days__c || ''}
                         onChange={(e) => setEditData({ ...editData, csbs__Maximum_Negative_Days__c: e.target.value })}
-                        placeholder="Days"
                       />
                     ) : (
                       <p className="text-slate-600">{account?.csbs__Maximum_Negative_Days__c || '-'}</p>
@@ -712,7 +764,6 @@ export default function AccountDetail() {
                         type="number"
                         value={editData.csbs__Minimum_Monthly_Deposit_Count__c || ''}
                         onChange={(e) => setEditData({ ...editData, csbs__Minimum_Monthly_Deposit_Count__c: e.target.value })}
-                        placeholder="Count"
                       />
                     ) : (
                       <p className="text-slate-600">{account?.csbs__Minimum_Monthly_Deposit_Count__c || '-'}</p>
@@ -725,7 +776,6 @@ export default function AccountDetail() {
                         type="number"
                         value={editData.csbs__Maximum_NSFs__c || ''}
                         onChange={(e) => setEditData({ ...editData, csbs__Maximum_NSFs__c: e.target.value })}
-                        placeholder="NSFs"
                       />
                     ) : (
                       <p className="text-slate-600">{account?.csbs__Maximum_NSFs__c || '-'}</p>
@@ -736,13 +786,11 @@ export default function AccountDetail() {
                     {isEditing ? (
                       <Input
                         type="number"
-                        step="0.01"
                         value={editData.csbs__Minimum_Monthly_Deposit_Amount__c || ''}
                         onChange={(e) => setEditData({ ...editData, csbs__Minimum_Monthly_Deposit_Amount__c: e.target.value })}
-                        placeholder="Amount"
                       />
                     ) : (
-                      <p className="text-slate-600">${Number(account?.csbs__Minimum_Monthly_Deposit_Amount__c || 0).toLocaleString()}</p>
+                      <p className="text-slate-600">{account?.csbs__Minimum_Monthly_Deposit_Amount__c || '-'}</p>
                     )}
                   </div>
                   <div>
@@ -750,13 +798,11 @@ export default function AccountDetail() {
                     {isEditing ? (
                       <Input
                         type="number"
-                        step="0.01"
                         value={editData.csbs__Minimum_Average_Daily_Balance__c || ''}
                         onChange={(e) => setEditData({ ...editData, csbs__Minimum_Average_Daily_Balance__c: e.target.value })}
-                        placeholder="Balance"
                       />
                     ) : (
-                      <p className="text-slate-600">${Number(account?.csbs__Minimum_Average_Daily_Balance__c || 0).toLocaleString()}</p>
+                      <p className="text-slate-600">{account?.csbs__Minimum_Average_Daily_Balance__c || '-'}</p>
                     )}
                   </div>
                   <div>
@@ -766,7 +812,6 @@ export default function AccountDetail() {
                         type="number"
                         value={editData.csbs__Minimum_Months_in_Business__c || ''}
                         onChange={(e) => setEditData({ ...editData, csbs__Minimum_Months_in_Business__c: e.target.value })}
-                        placeholder="Months"
                       />
                     ) : (
                       <p className="text-slate-600">{account?.csbs__Minimum_Months_in_Business__c || '-'}</p>
@@ -777,13 +822,11 @@ export default function AccountDetail() {
                     {isEditing ? (
                       <Input
                         type="number"
-                        step="0.01"
                         value={editData.csbs__Maximum_Offer_Amount__c || ''}
                         onChange={(e) => setEditData({ ...editData, csbs__Maximum_Offer_Amount__c: e.target.value })}
-                        placeholder="Amount"
                       />
                     ) : (
-                      <p className="text-slate-600">${Number(account?.csbs__Maximum_Offer_Amount__c || 0).toLocaleString()}</p>
+                      <p className="text-slate-600">{account?.csbs__Maximum_Offer_Amount__c || '-'}</p>
                     )}
                   </div>
                   <div>
@@ -792,27 +835,22 @@ export default function AccountDetail() {
                       <Input
                         type="number"
                         step="0.01"
-                        value={editData.csbs__Net_Offer__c || ''}
-                        onChange={(e) => setEditData({ ...editData, csbs__Net_Offer__c: e.target.value })}
-                        placeholder="Percentage"
+                        value={editData.csbs__Net_Offer_Percentage__c || ''}
+                        onChange={(e) => setEditData({ ...editData, csbs__Net_Offer_Percentage__c: e.target.value })}
                       />
                     ) : (
-                      <p className="text-slate-600">{account?.csbs__Net_Offer__c || '-'}%</p>
+                      <p className="text-slate-600">{account?.csbs__Net_Offer_Percentage__c || '-'}</p>
                     )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Restricted States</label>
                     {isEditing ? (
-                      <select
-                        multiple
-                        value={Array.isArray(editData.csbs__Restricted_States__c) ? editData.csbs__Restricted_States__c : (editData.csbs__Restricted_States__c ? editData.csbs__Restricted_States__c.split(';') : [])}
-                        onChange={(e) => setEditData({ ...editData, csbs__Restricted_States__c: Array.from(e.target.selectedOptions, option => option.value) })}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-md h-32"
-                      >
-                        {US_STATES.map(state => (
-                          <option key={state} value={state}>{state}</option>
-                        ))}
-                      </select>
+                      <MultiSelect
+                        options={US_STATES}
+                        value={Array.isArray(editData.csbs__Restricted_States__c) ? editData.csbs__Restricted_States__c : (editData.csbs__Restricted_States__c ? editData.csbs__Restricted_States__c.split(';').filter(s => s) : [])}
+                        onChange={(value) => setEditData({ ...editData, csbs__Restricted_States__c: value })}
+                        placeholder="Select states..."
+                      />
                     ) : (
                       <p className="text-slate-600">{account?.csbs__Restricted_States__c || '-'}</p>
                     )}
@@ -820,16 +858,12 @@ export default function AccountDetail() {
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Restricted Industries</label>
                     {isEditing ? (
-                      <select
-                        multiple
-                        value={Array.isArray(editData.csbs__Restricted_Industries__c) ? editData.csbs__Restricted_Industries__c : (editData.csbs__Restricted_Industries__c ? editData.csbs__Restricted_Industries__c.split(';') : [])}
-                        onChange={(e) => setEditData({ ...editData, csbs__Restricted_Industries__c: Array.from(e.target.selectedOptions, option => option.value) })}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-md h-32"
-                      >
-                        {INDUSTRIES.map(ind => (
-                          <option key={ind} value={ind}>{ind}</option>
-                        ))}
-                      </select>
+                      <MultiSelect
+                        options={INDUSTRIES}
+                        value={Array.isArray(editData.csbs__Restricted_Industries__c) ? editData.csbs__Restricted_Industries__c : (editData.csbs__Restricted_Industries__c ? editData.csbs__Restricted_Industries__c.split(';').filter(i => i) : [])}
+                        onChange={(value) => setEditData({ ...editData, csbs__Restricted_Industries__c: value })}
+                        placeholder="Select industries..."
+                      />
                     ) : (
                       <p className="text-slate-600">{account?.csbs__Restricted_Industries__c || '-'}</p>
                     )}
