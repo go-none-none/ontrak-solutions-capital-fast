@@ -77,7 +77,7 @@ export default function AccountDetail() {
       });
 
       const accountRecord = response.data.account;
-      const isMerchantType = accountRecord.RecordTypeName?.toLowerCase().includes('merchant');
+      const isMerchantType = accountRecord.RecordType?.Name?.toLowerCase().includes('merchant');
       setIsMerchant(isMerchantType);
       setAccount(accountRecord);
       setEditData(accountRecord);
