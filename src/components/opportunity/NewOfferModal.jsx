@@ -72,9 +72,10 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
           csbs__Draw_Fee_Amount__c: offer.csbs__Draw_Fee_Amount__c || '',
           csbs__Notes__c: offer.csbs__Notes__c || ''
         });
+      } else {
+        // Reset form when opening for new offer
+        resetForm();
       }
-    } else {
-      resetForm();
     }
   }, [isOpen, offer]);
 
