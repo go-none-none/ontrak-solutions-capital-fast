@@ -108,6 +108,35 @@ export default function AccountDetail() {
     }
   };
 
+  const handleRecordTypeChange = (newRecordTypeId) => {
+    setSelectedRecordType(newRecordTypeId);
+    setShowRecordTypeDialog(true);
+  };
+
+  const confirmRecordTypeChange = async () => {
+    setSaving(true);
+    try {
+      const newRecordTypeName = recordTypes.find(rt => rt.id === selectedRecordType)?.name || '';
+      
+      await base44.functions.invoke('updateSalesforceRecord', {
+        objectType: 'Account',
+        recordId: account.Id,
+        data: { RecordTypeId: selectedRecordType },
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+
+      // Reload account to get updated fields
+      await loadAccount();
+      setShowRecordTypeDialog(false);
+    } catch (error) {
+      console.error('RecordType change error:', error);
+      alert('Failed to change record type: ' + (error.response?.data?.error || error.message));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
