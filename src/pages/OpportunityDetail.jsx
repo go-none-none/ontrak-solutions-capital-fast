@@ -1328,7 +1328,7 @@ export default function OpportunityDetail() {
 
           {/* Sidebar */}
            <div className="space-y-6">
-            {/* Quick Stats */}
+            {/* Key Info & Contact Information Combined */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h3 className="font-semibold text-slate-900 mb-4">Key Info</h3>
               <div className="space-y-3 text-sm">
@@ -1389,11 +1389,39 @@ export default function OpportunityDetail() {
                     </div>
                   )}
                 </div>
+                {contactRoles.length > 0 && (
+                  <div className="border-t pt-4 mt-4">
+                    <h4 className="font-semibold text-slate-900 mb-3">Contacts</h4>
+                    <div className="space-y-3">
+                      {contactRoles.map(role => (
+                        <div key={role.Id} className="border-b border-slate-100 pb-3 last:border-0">
+                          <p className="font-medium text-slate-900">{role.Contact?.Name}</p>
+                          {role.Role && <p className="text-xs text-slate-500 mb-2">{role.Role}</p>}
+                          {role.Contact?.Email && (
+                            <a href={`mailto:${role.Contact.Email}`} className="text-sm text-orange-600 hover:underline block">
+                              {role.Contact.Email}
+                            </a>
+                          )}
+                          {role.Contact?.Phone && (
+                            <a href={`tel:${role.Contact.Phone}`} className="text-sm text-orange-600 hover:underline block">
+                              {role.Contact.Phone}
+                            </a>
+                          )}
+                          {role.Contact?.MobilePhone && (
+                            <a href={`tel:${role.Contact.MobilePhone}`} className="text-sm text-orange-600 hover:underline block">
+                              Mobile: {role.Contact.MobilePhone}
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              </div>
+            </div>
 
-              {/* Communication Card - Email & SMS */}
-              <CommunicationCard
+            {/* Communication Card - Email & SMS */}
+            <CommunicationCard
               recipientEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
               recipientName={contactRoles[0]?.Contact?.Name || opportunity.Account?.Name}
               phoneNumber={contactRoles[0]?.Contact?.MobilePhone || contactRoles[0]?.Contact?.Phone}
@@ -1402,37 +1430,7 @@ export default function OpportunityDetail() {
               session={session}
               smsColor="bg-orange-600"
               firstName={contactRoles[0]?.Contact?.FirstName || opportunity.Account?.Name?.split(' ')[0]}
-              />
-
-              {/* Contact Roles */}
-              {contactRoles.length > 0 && (
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-900 mb-4">Contact Information</h3>
-                <div className="space-y-4">
-                  {contactRoles.map(role => (
-                    <div key={role.Id} className="border-b border-slate-100 pb-3 last:border-0">
-                      <p className="font-medium text-slate-900">{role.Contact?.Name}</p>
-                      {role.Role && <p className="text-xs text-slate-500 mb-2">{role.Role}</p>}
-                      {role.Contact?.Email && (
-                        <a href={`mailto:${role.Contact.Email}`} className="text-sm text-orange-600 hover:underline block">
-                          {role.Contact.Email}
-                        </a>
-                      )}
-                      {role.Contact?.Phone && (
-                        <a href={`tel:${role.Contact.Phone}`} className="text-sm text-orange-600 hover:underline block">
-                          {role.Contact.Phone}
-                        </a>
-                      )}
-                      {role.Contact?.MobilePhone && (
-                        <a href={`tel:${role.Contact.MobilePhone}`} className="text-sm text-orange-600 hover:underline block">
-                          Mobile: {role.Contact.MobilePhone}
-                        </a>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              )}
+            />
 
               {/* Activity Timeline */}
               <ActivityPanel
