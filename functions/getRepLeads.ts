@@ -11,8 +11,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing credentials' }, { status: 401 });
     }
 
-    // Query all leads with priority ordering - using standard fields only
-    const query = `SELECT Id, Name, Company, Phone, MobilePhone, Email, Status, LeadSource, CreatedDate, LastModifiedDate, Industry, Website, Street, City, State, PostalCode, Country, Title, Rating, OwnerId, Owner.Name, Owner.Email, Owner.Phone, Call_Disposition__c FROM Lead WHERE OwnerId = '${userId}' AND IsConverted = false ORDER BY LastModifiedDate DESC`;
+    // Query all leads with priority ordering - including custom fields for expanded view
+    const query = `SELECT Id, Name, Company, Phone, MobilePhone, Email, Status, LeadSource, CreatedDate, LastModifiedDate, Industry, Website, Street, City, State, PostalCode, Country, Title, Rating, OwnerId, Owner.Name, Owner.Email, Owner.Phone, Call_Disposition__c, csbs__Credit_Score__c, csbs__Time_In_Business__c, csbs__Entity_Type__c, AnnualRevenue, Description, Funding_Amount_Requested__c, Estimated_Monthly_Revenue__c, Use_of_Proceeds__c FROM Lead WHERE OwnerId = '${userId}' AND IsConverted = false ORDER BY LastModifiedDate DESC`;
 
     console.log('getRepLeads - Looking for leads with OwnerId:', userId);
     console.log('getRepLeads - Query:', query);
