@@ -125,6 +125,7 @@ export default function ContactDetail() {
         showCreateTask={false}
         showBackButton={true}
         onBackClick={() => navigate(-1)}
+        session={session}
       />
 
       {/* Detail Header */}
