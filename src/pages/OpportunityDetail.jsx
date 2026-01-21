@@ -1395,7 +1395,12 @@ export default function OpportunityDetail() {
                     <div className="space-y-3">
                       {contactRoles.map(role => (
                         <div key={role.Id} className="border-b border-slate-100 pb-3 last:border-0">
-                          <p className="font-medium text-slate-900">{role.Contact?.Name}</p>
+                          <button
+                            onClick={() => navigate(createPageUrl('ContactDetail') + `?id=${role.Contact?.Id}`)}
+                            className="font-medium text-orange-600 hover:underline text-left"
+                          >
+                            {role.Contact?.Name}
+                          </button>
                           {role.Role && <p className="text-xs text-slate-500 mb-2">{role.Role}</p>}
                           {role.Contact?.Email && (
                             <a href={`mailto:${role.Contact.Email}`} className="text-sm text-orange-600 hover:underline block">
