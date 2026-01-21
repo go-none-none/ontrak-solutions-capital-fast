@@ -196,7 +196,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-4 pt-4 border-t border-slate-200 space-y-3 max-h-96 overflow-y-auto"
+            className="mt-4 pt-4 border-t border-slate-200"
           >
             {loadingData && (
               <div className="flex justify-center py-4">
@@ -204,24 +204,25 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
               </div>
             )}
 
-            {/* Contacts */}
-            {contactRoles && contactRoles.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-slate-700 uppercase">Contacts</p>
-                <div className="space-y-1 text-xs">
-                  {contactRoles.map(role => (
-                    <div key={role.Id} className="border-b pb-1 last:border-b-0">
-                      <p className="font-medium text-orange-600">{role.Contact?.Name}</p>
-                      {role.Role && <p className="text-slate-500">{role.Role}</p>}
-                      {role.Contact?.Email && <p className="text-slate-600">{role.Contact.Email}</p>}
-                      {role.Contact?.Phone && <p className="text-slate-600">{role.Contact.Phone}</p>}
-                    </div>
-                  ))}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Contacts */}
+              {contactRoles && contactRoles.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-slate-700 uppercase">Contacts</p>
+                  <div className="space-y-1 text-xs">
+                    {contactRoles.map(role => (
+                      <div key={role.Id} className="border-b pb-1 last:border-b-0">
+                        <p className="font-medium text-orange-600">{role.Contact?.Name}</p>
+                        {role.Role && <p className="text-slate-500">{role.Role}</p>}
+                        {role.Contact?.Email && <p className="text-slate-600">{role.Contact.Email}</p>}
+                        {role.Contact?.Phone && <p className="text-slate-600">{role.Contact.Phone}</p>}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Key Info */}
+              {/* Key Info */}
             {fullData && (fullData.Amount || fullData.CloseDate || fullData.Probability) && (
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Key Info</p>
