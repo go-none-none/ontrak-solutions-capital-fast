@@ -72,6 +72,7 @@ export default function OpportunityDetail() {
   const [showOfferProposal, setShowOfferProposal] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
   const [showCreateLender, setShowCreateLender] = useState(false);
+  const communicationCardRef = React.useRef(null);
 
   const openPdfViewer = async (url) => {
     const proxyUrl = `/api/apps/6932157da76cc7fc545d1203/functions/proxyPdf?url=${encodeURIComponent(url)}`;
@@ -1403,9 +1404,12 @@ export default function OpportunityDetail() {
                           </button>
                           {role.Role && <p className="text-xs text-slate-500 mb-2">{role.Role}</p>}
                           {role.Contact?.Email && (
-                            <a href={`mailto:${role.Contact.Email}`} className="text-sm text-orange-600 hover:underline block">
+                            <button 
+                              onClick={() => communicationCardRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                              className="text-sm text-orange-600 hover:underline block text-left"
+                            >
                               {role.Contact.Email}
-                            </a>
+                            </button>
                           )}
                           {role.Contact?.Phone && (
                             <a href={`tel:${role.Contact.Phone}`} className="text-sm text-orange-600 hover:underline block">
@@ -1426,16 +1430,18 @@ export default function OpportunityDetail() {
             </div>
 
             {/* Communication Card - Email & SMS */}
-            <CommunicationCard
-              recipientEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
-              recipientName={contactRoles[0]?.Contact?.Name || opportunity.Account?.Name}
-              phoneNumber={contactRoles[0]?.Contact?.MobilePhone || contactRoles[0]?.Contact?.Phone}
-              recordId={opportunity.Id}
-              recordType="Opportunity"
-              session={session}
-              smsColor="bg-orange-600"
-              firstName={contactRoles[0]?.Contact?.FirstName || opportunity.Account?.Name?.split(' ')[0]}
-            />
+            <div ref={communicationCardRef}>
+              <CommunicationCard
+                recipientEmail={contactRoles[0]?.Contact?.Email || opportunity.Account?.Email__c}
+                recipientName={contactRoles[0]?.Contact?.Name || opportunity.Account?.Name}
+                phoneNumber={contactRoles[0]?.Contact?.MobilePhone || contactRoles[0]?.Contact?.Phone}
+                recordId={opportunity.Id}
+                recordType="Opportunity"
+                session={session}
+                smsColor="bg-orange-600"
+                firstName={contactRoles[0]?.Contact?.FirstName || opportunity.Account?.Name?.split(' ')[0]}
+              />
+            </div>
 
               {/* Activity Timeline */}
               <ActivityPanel
