@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Loader2, Contact, Briefcase, Building2, DollarSign, User } from 'lucide-react';
+import { Search, Loader2, Contact, Briefcase, Building2, X, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -60,7 +60,7 @@ export default function UniversalSearch({ session }) {
         if (leadsRes.data?.leads) {
           leadsRes.data.leads
             .filter(l => l.Name?.toLowerCase().includes(searchLower) || l.Company?.toLowerCase().includes(searchLower))
-            .slice(0, 3)
+            .slice(0, 8)
             .forEach(lead => {
               allResults.push({
                 id: lead.Id,
@@ -79,7 +79,7 @@ export default function UniversalSearch({ session }) {
         if (oppsRes.data?.opportunities) {
           oppsRes.data.opportunities
             .filter(o => o.Name?.toLowerCase().includes(searchLower) || o.Account?.Name?.toLowerCase().includes(searchLower))
-            .slice(0, 3)
+            .slice(0, 8)
             .forEach(opp => {
               allResults.push({
                 id: opp.Id,
@@ -98,7 +98,7 @@ export default function UniversalSearch({ session }) {
         if (contactsRes.data?.contacts) {
           contactsRes.data.contacts
             .filter(c => c.Name?.toLowerCase().includes(searchLower) || c.AccountId?.toLowerCase().includes(searchLower))
-            .slice(0, 3)
+            .slice(0, 8)
             .forEach(contact => {
               allResults.push({
                 id: contact.Id,
@@ -117,7 +117,7 @@ export default function UniversalSearch({ session }) {
         if (lendersRes.data?.lenders) {
           lendersRes.data.lenders
             .filter(l => l.Name?.toLowerCase().includes(searchLower))
-            .slice(0, 3)
+            .slice(0, 8)
             .forEach(lender => {
               allResults.push({
                 id: lender.Id,
@@ -163,15 +163,27 @@ export default function UniversalSearch({ session }) {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onFocus={() => searchTerm && setShowDropdown(true)}
-          className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
         />
-        {loading && (
+        {loading ? (
           <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 animate-spin" />
+        ) : searchTerm && (
+          <button
+            onClick={() => {
+              setSearchTerm('');
+              setResults([]);
+              setShowDropdown(false);
+            }}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+            title="Clear search"
+          >
+            <X className="w-4 h-4" />
+          </button>
         )}
       </div>
 
       {showDropdown && (results.length > 0 || searchTerm) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-[500px] overflow-y-auto">
           {loading && results.length === 0 ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
