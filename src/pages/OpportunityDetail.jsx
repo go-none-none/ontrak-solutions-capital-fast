@@ -473,6 +473,7 @@ export default function OpportunityDetail() {
         showBackButton={true}
         onBackClick={() => navigate(-1)}
         isAdminPortal={window.location.pathname.includes('AdminPipeline') || sessionStorage.getItem('fromAdminPortal') === 'true'}
+        session={session}
       />
 
       {/* Detail Header */}
