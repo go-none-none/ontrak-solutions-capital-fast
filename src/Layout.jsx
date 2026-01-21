@@ -6,7 +6,7 @@ import { NotificationProvider } from './components/context/NotificationContext';
 
 export default function Layout({ children, currentPageName }) {
   const { pathname } = useLocation();
-  const isRepPortal = currentPageName === 'RepPortal' || currentPageName === 'LeadDetail' || currentPageName === 'OpportunityDetail' || currentPageName === 'AdminPipeline' || currentPageName === 'ContactDetail' || currentPageName === 'LenderDetail' || currentPageName === 'MerchantDetail';
+  const isRepPortal = currentPageName === 'RepPortal' || currentPageName === 'LeadDetail' || currentPageName === 'OpportunityDetail' || currentPageName === 'AdminPipeline' || currentPageName === 'ContactDetail' || currentPageName === 'AccountDetail';
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
