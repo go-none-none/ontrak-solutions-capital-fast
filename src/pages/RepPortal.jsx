@@ -513,8 +513,16 @@ export default function RepPortal() {
               placeholder="Search all leads, opportunities, and contacts..."
               value={searchTerm}
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-              className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base w-full"
+              className="pl-9 sm:pl-10 pr-10 h-10 sm:h-12 text-sm sm:text-base w-full"
             />
+            {searchTerm && (
+              <button
+                onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                ✕
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -525,7 +533,7 @@ export default function RepPortal() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            onClick={() => { setActiveTab('leads'); setStageFilter(null); setCurrentPage(1); }}
+            onClick={() => { setActiveTab('leads'); setStageFilter(null); setCurrentPage(1); setSearchTerm(''); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
               activeTab === 'leads' ? 'ring-2 ring-rose-500 shadow-md' : 'hover:shadow-md'
             }`}
@@ -545,7 +553,7 @@ export default function RepPortal() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            onClick={() => { setActiveTab('opportunities'); setStageFilter(null); setCurrentPage(1); }}
+            onClick={() => { setActiveTab('opportunities'); setStageFilter(null); setCurrentPage(1); setSearchTerm(''); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
               activeTab === 'opportunities' ? 'ring-2 ring-orange-500 shadow-md' : 'hover:shadow-md'
             }`}
@@ -575,7 +583,7 @@ export default function RepPortal() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            onClick={() => { setActiveTab('dispositions'); setDispositionFilter([]); setCurrentPage(1); }}
+            onClick={() => { setActiveTab('dispositions'); setDispositionFilter([]); setCurrentPage(1); setSearchTerm(''); }}
             className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
               activeTab === 'dispositions' ? 'ring-2 ring-sky-500 shadow-md' : 'hover:shadow-md'
             }`}
