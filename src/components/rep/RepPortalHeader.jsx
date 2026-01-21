@@ -6,6 +6,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import NotificationBell from './NotificationBell';
 
+import { Badge } from "@/components/ui/badge";
+
 export default function RepPortalHeader({ 
   isAdmin, 
   refreshing, 
@@ -17,8 +19,11 @@ export default function RepPortalHeader({
   showBackButton = false,
   onBackClick = null,
   isAdminPortal = false,
-  searchTerm = '',
-  onSearchChange = null
+  globalSearchTerm = '',
+  onGlobalSearchChange = null,
+  globalLeadResults = [],
+  globalOppResults = [],
+  onQuickView = null
 }) {
   const navigate = useNavigate();
 
@@ -40,24 +45,61 @@ export default function RepPortalHeader({
             {userName && <p className="text-xs sm:text-sm text-slate-600 truncate">Welcome back, {userName}</p>}
           </div>
 
-          {/* Search Bar - Centered */}
-          {onSearchChange && (
+          {/* Global Search Bar - Centered */}
+          {onGlobalSearchChange && (
             <div className="relative flex-1 max-w-md mx-auto hidden sm:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
-                placeholder="Search all leads, opportunities, and contacts..."
-                value={searchTerm}
-                onChange={(e) => onSearchChange(e.target.value)}
+                placeholder="Search all records..."
+                value={globalSearchTerm}
+                onChange={(e) => onGlobalSearchChange(e.target.value)}
                 className="pl-9 pr-10 h-10 text-sm w-full"
                 autoComplete="off"
               />
-              {searchTerm && (
+              {globalSearchTerm && (
                 <button
-                  onClick={() => onSearchChange('')}
+                  onClick={() => onGlobalSearchChange('')}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
                 >
                   ✕
                 </button>
+              )}
+              {/* Dropdown Results */}
+              {globalSearchTerm && (globalLeadResults.length > 0 || globalOppResults.length > 0) && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
+                  {globalLeadResults.map(lead => (
+                    <button
+                      key={lead.Id}
+                      onClick={() => {
+                        onGlobalSearchChange('');
+                        onQuickView?.({ ...lead, type: 'lead' });
+                      }}
+                      className="w-full text-left p-3 hover:bg-slate-50 border-b last:border-b-0 flex items-center justify-between"
+                    >
+                      <div>
+                        <p className="font-semibold text-sm text-slate-900">{lead.Name}</p>
+                        <p className="text-xs text-slate-600">{lead.Company}</p>
+                      </div>
+                      <Badge className="bg-blue-100 text-blue-800 text-xs">Lead</Badge>
+                    </button>
+                  ))}
+                  {globalOppResults.map(opp => (
+                    <button
+                      key={opp.Id}
+                      onClick={() => {
+                        onGlobalSearchChange('');
+                        onQuickView?.({ ...opp, type: 'opportunity' });
+                      }}
+                      className="w-full text-left p-3 hover:bg-slate-50 border-b last:border-b-0 flex items-center justify-between"
+                    >
+                      <div>
+                        <p className="font-semibold text-sm text-slate-900">{opp.Name}</p>
+                        <p className="text-xs text-slate-600">{opp.Account?.Name}</p>
+                      </div>
+                      <Badge className="bg-orange-100 text-orange-800 text-xs">Opp</Badge>
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
           )}
@@ -134,20 +176,20 @@ export default function RepPortalHeader({
           </div>
         </div>
 
-        {/* Mobile Search Bar */}
-        {onSearchChange && (
+        {/* Mobile Global Search Bar */}
+        {onGlobalSearchChange && (
           <div className="relative w-full mt-3 sm:hidden">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Search all records..."
+              value={globalSearchTerm}
+              onChange={(e) => onGlobalSearchChange(e.target.value)}
               className="pl-9 pr-10 h-10 text-sm w-full"
               autoComplete="off"
             />
-            {searchTerm && (
+            {globalSearchTerm && (
               <button
-                onClick={() => onSearchChange('')}
+                onClick={() => onGlobalSearchChange('')}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
               >
                 ✕
