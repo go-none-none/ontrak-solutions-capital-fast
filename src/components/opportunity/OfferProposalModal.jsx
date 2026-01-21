@@ -118,7 +118,9 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
 
       // Send email with SendGrid
       const authData = btoa(JSON.stringify({ token: session.token, instanceUrl: session.instanceUrl }));
-      await base44.functions.invoke('sendClientEmail', {
+      console.log('Sending proposal with session:', { hasToken: !!session.token, hasInstanceUrl: !!session.instanceUrl });
+      
+      const response = await base44.functions.invoke('sendClientEmail', {
         recipientEmail: emailData.to,
         recipientName: opportunity.Account?.Name || 'Valued Customer',
         subject: emailData.subject,
@@ -131,6 +133,12 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
           'Authorization': `Bearer ${authData}`
         }
       });
+
+      console.log('Send proposal response:', response.data);
+
+      if (!response.data.pdfUploaded) {
+        console.warn('PDF was not uploaded to Salesforce');
+      }
 
       setSent(true);
       setTimeout(() => {
