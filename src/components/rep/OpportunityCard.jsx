@@ -250,13 +250,13 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             )}
 
             {/* Open Balances */}
-            {(opportunity.Lender_Name_1__c || opportunity.Lender_Name_2__c || opportunity.Lender_Name_3__c) && (
+            {fullData && (fullData.Lender_Name_1__c || fullData.Lender_Name_2__c || fullData.Lender_Name_3__c) && (
               <div className="space-y-2 border-t pt-2">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Open Balances</p>
                 <div className="space-y-1 text-xs">
-                  {opportunity.Lender_Name_1__c && <div><span className="text-slate-500">{opportunity.Lender_Name_1__c}:</span> {formatCurrency(opportunity.Open_Balance_Amount_1__c)}</div>}
-                  {opportunity.Lender_Name_2__c && <div><span className="text-slate-500">{opportunity.Lender_Name_2__c}:</span> {formatCurrency(opportunity.Open_Balance_Amount_2__c)}</div>}
-                  {opportunity.Lender_Name_3__c && <div><span className="text-slate-500">{opportunity.Lender_Name_3__c}:</span> {formatCurrency(opportunity.Open_Balance_Amount_3__c)}</div>}
+                  {fullData.Lender_Name_1__c && <div><span className="text-slate-500">{fullData.Lender_Name_1__c}:</span> {formatCurrency(fullData.Open_Balance_Amount_1__c)}</div>}
+                  {fullData.Lender_Name_2__c && <div><span className="text-slate-500">{fullData.Lender_Name_2__c}:</span> {formatCurrency(fullData.Open_Balance_Amount_2__c)}</div>}
+                  {fullData.Lender_Name_3__c && <div><span className="text-slate-500">{fullData.Lender_Name_3__c}:</span> {formatCurrency(fullData.Open_Balance_Amount_3__c)}</div>}
                 </div>
               </div>
             )}
