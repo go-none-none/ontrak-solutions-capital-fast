@@ -4,6 +4,7 @@ import { Home, Shield, RefreshCw, LogOut, Plus, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import NotificationBell from './NotificationBell';
+import UniversalSearch from './UniversalSearch';
 
 export default function RepPortalHeader({ 
   isAdmin, 
@@ -15,7 +16,8 @@ export default function RepPortalHeader({
   onCreateTaskClick,
   showBackButton = false,
   onBackClick = null,
-  isAdminPortal = false
+  isAdminPortal = false,
+  session = null
 }) {
   const navigate = useNavigate();
 
@@ -35,6 +37,9 @@ export default function RepPortalHeader({
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Rep Portal</h1>
             {userName && <p className="text-xs sm:text-sm text-slate-600 truncate">Welcome back, {userName}</p>}
           </div>
+          
+          {session && <UniversalSearch session={session} />}
+          
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             {showBackButton && (
               <Button 
