@@ -2,11 +2,13 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Mail, Phone, DollarSign, Calendar, Building } from 'lucide-react';
+import { ExternalLink, Mail, Phone, DollarSign, Calendar, Building, ArrowRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import ActivityPanel from './ActivityPanel';
 
-export default function RecordDetailsModal({ record, type, isOpen, onClose, expandable = false, onExpand }) {
+export default function RecordDetailsModal({ record, type, isOpen, onClose, expandable = false, onExpand, session }) {
+  const navigate = useNavigate();
   if (!record) return null;
 
   const formatCurrency = (amount) => {
@@ -45,8 +47,17 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold flex items-center justify-between">
-            <span>{isLead ? record.Name : record.Name}</span>
+          <DialogTitle className="text-xl font-bold flex items-center justify-between gap-2">
+            <button 
+              onClick={() => {
+                onClose();
+                navigate(createPageUrl('LeadDetail') + `?id=${record.Id}`);
+              }}
+              className="text-[#08708E] hover:underline flex items-center gap-1 group"
+            >
+              <span className="group-hover:font-semibold">{isLead ? record.Name : record.Name}</span>
+              <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </button>
             <Badge className={statusColors[isLead ? record.Status : record.StageName] || 'bg-slate-100 text-slate-800'}>
               {isLead ? record.Status : record.StageName}
             </Badge>
@@ -211,79 +222,98 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
             </div>
           </div>
 
+          {/* Call Disposition (for leads) */}
+          {isLead && record.Call_Disposition__c && (
+           <div className="border-t pt-4">
+             <h3 className="font-semibold text-slate-900 mb-3">Call Disposition</h3>
+             <Badge className="bg-blue-600 text-white">{record.Call_Disposition__c}</Badge>
+           </div>
+          )}
+
           {/* Additional Details */}
           <div className="border-t pt-4">
-            <h3 className="font-semibold text-slate-900 mb-3">Additional Information</h3>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              {isLead ? (
-                <>
-                  {record.LeadSource && (
-                    <div>
-                      <p className="text-slate-500 text-xs">Lead Source</p>
-                      <p className="font-medium text-slate-900">{record.LeadSource}</p>
-                    </div>
-                  )}
-                  {record.Industry && (
-                    <div>
-                      <p className="text-slate-500 text-xs">Industry</p>
-                      <p className="font-medium text-slate-900">{record.Industry}</p>
-                    </div>
-                  )}
-                  {record.Rating && (
-                    <div>
-                      <p className="text-slate-500 text-xs">Rating</p>
-                      <p className="font-medium text-slate-900">{record.Rating}</p>
-                    </div>
-                  )}
-                  {record.Use_of_Proceeds__c && (
-                    <div className="col-span-2">
-                      <p className="text-slate-500 text-xs">Use of Funds</p>
-                      <p className="font-medium text-slate-900">{record.Use_of_Proceeds__c}</p>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  {record.Probability != null && (
-                    <div>
-                      <p className="text-slate-500 text-xs">Probability</p>
-                      <p className="font-medium text-slate-900">{record.Probability}%</p>
-                    </div>
-                  )}
-                  {record.Amount_Requested__c && (
-                    <div>
-                      <p className="text-slate-500 text-xs">Amount Requested</p>
-                      <p className="font-medium text-slate-900">{formatCurrency(record.Amount_Requested__c)}</p>
-                    </div>
-                  )}
-                  {record.Estimated_Monthly_Revenue__c && (
-                    <div>
-                      <p className="text-slate-500 text-xs">Monthly Revenue</p>
-                      <p className="font-medium text-slate-900">{formatCurrency(record.Estimated_Monthly_Revenue__c)}</p>
-                    </div>
-                  )}
-                  {record.Type && (
-                    <div>
-                      <p className="text-slate-500 text-xs">Type</p>
-                      <p className="font-medium text-slate-900">{record.Type}</p>
-                    </div>
-                  )}
-                  {record.LeadSource && (
-                    <div>
-                      <p className="text-slate-500 text-xs">Lead Source</p>
-                      <p className="font-medium text-slate-900">{record.LeadSource}</p>
-                    </div>
-                  )}
-                  {record.Use_of_Proceeds__c && (
-                    <div className="col-span-2">
-                      <p className="text-slate-500 text-xs">Use of Funds</p>
-                      <p className="font-medium text-slate-900">{record.Use_of_Proceeds__c}</p>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+           <h3 className="font-semibold text-slate-900 mb-3">Additional Information</h3>
+           <div className="grid grid-cols-2 gap-3 text-sm">
+             {isLead ? (
+               <>
+                 {record.LeadSource && (
+                   <div>
+                     <p className="text-slate-500 text-xs">Lead Source</p>
+                     <p className="font-medium text-slate-900">{record.LeadSource}</p>
+                   </div>
+                 )}
+                 {record.Industry && (
+                   <div>
+                     <p className="text-slate-500 text-xs">Industry</p>
+                     <p className="font-medium text-slate-900">{record.Industry}</p>
+                   </div>
+                 )}
+                 {record.Rating && (
+                   <div>
+                     <p className="text-slate-500 text-xs">Rating</p>
+                     <p className="font-medium text-slate-900">{record.Rating}</p>
+                   </div>
+                 )}
+                 {record.Use_of_Proceeds__c && (
+                   <div className="col-span-2">
+                     <p className="text-slate-500 text-xs">Use of Funds</p>
+                     <p className="font-medium text-slate-900">{record.Use_of_Proceeds__c}</p>
+                   </div>
+                 )}
+               </>
+             ) : (
+               <>
+                 {record.Probability != null && (
+                   <div>
+                     <p className="text-slate-500 text-xs">Probability</p>
+                     <p className="font-medium text-slate-900">{record.Probability}%</p>
+                   </div>
+                 )}
+                 {record.Amount_Requested__c && (
+                   <div>
+                     <p className="text-slate-500 text-xs">Amount Requested</p>
+                     <p className="font-medium text-slate-900">{formatCurrency(record.Amount_Requested__c)}</p>
+                   </div>
+                 )}
+                 {record.Estimated_Monthly_Revenue__c && (
+                   <div>
+                     <p className="text-slate-500 text-xs">Monthly Revenue</p>
+                     <p className="font-medium text-slate-900">{formatCurrency(record.Estimated_Monthly_Revenue__c)}</p>
+                   </div>
+                 )}
+                 {record.Type && (
+                   <div>
+                     <p className="text-slate-500 text-xs">Type</p>
+                     <p className="font-medium text-slate-900">{record.Type}</p>
+                   </div>
+                 )}
+                 {record.LeadSource && (
+                   <div>
+                     <p className="text-slate-500 text-xs">Lead Source</p>
+                     <p className="font-medium text-slate-900">{record.LeadSource}</p>
+                   </div>
+                 )}
+                 {record.Use_of_Proceeds__c && (
+                   <div className="col-span-2">
+                     <p className="text-slate-500 text-xs">Use of Funds</p>
+                     <p className="font-medium text-slate-900">{record.Use_of_Proceeds__c}</p>
+                   </div>
+                 )}
+               </>
+             )}
+           </div>
           </div>
+
+          {/* Activity Timeline */}
+          {isLead && session && (
+           <div className="border-t pt-4">
+             <ActivityPanel
+               recordId={record.Id}
+               recordType="Lead"
+               session={session}
+             />
+           </div>
+          )}
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4 border-t">

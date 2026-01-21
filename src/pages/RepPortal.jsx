@@ -1150,6 +1150,11 @@ export default function RepPortal() {
         onClose={() => setSelectedLeadForDisposition(null)}
         type="lead"
         session={session}
+        expandable={true}
+        onExpand={() => {
+          setSelectedLeadForDisposition(null);
+          navigate(createPageUrl('LeadDetail') + `?id=${selectedLeadForDisposition?.Id}`);
+        }}
       />
         </div>
         );
