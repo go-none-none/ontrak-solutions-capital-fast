@@ -182,42 +182,81 @@ export default function UniversalSearch({ session }) {
 
   return (
     <div ref={searchRef} className="relative flex-1 max-w-lg mx-4">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input
-          type="text"
-          placeholder="Search leads, opps, contacts..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => searchTerm && setShowDropdown(true)}
-          className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-        />
-        {loading ? (
-          <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 animate-spin" />
-        ) : searchTerm && (
-          <button
-            onClick={handleClear}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
-            title="Clear search"
-          >
-            <X className="w-4 h-4" />
-          </button>
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search leads, opps, contacts, accounts..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onFocus={() => searchTerm && setShowDropdown(true)}
+            className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          />
+          {loading ? (
+            <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 animate-spin" />
+          ) : searchTerm && (
+            <button
+              onClick={handleClear}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+              title="Clear search"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {accountCategories.length > 0 && (
+          <div className="relative">
+            <button
+              onClick={() => setShowCategoryFilter(!showCategoryFilter)}
+              className="px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 flex items-center gap-1.5 text-xs font-medium text-slate-700 bg-white"
+            >
+              <span>Type</span>
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+            {showCategoryFilter && (
+              <div className="absolute top-full right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 min-w-[140px]">
+                <button
+                  onClick={() => {
+                    setSelectedFilter('all');
+                    setShowCategoryFilter(false);
+                  }}
+                  className={`block w-full px-3 py-2 text-left text-xs hover:bg-slate-50 ${selectedFilter === 'all' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-700'}`}
+                >
+                  All Accounts
+                </button>
+                {accountCategories.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => {
+                      setSelectedFilter(cat);
+                      setShowCategoryFilter(false);
+                    }}
+                    className={`block w-full px-3 py-2 text-left text-xs hover:bg-slate-50 border-t border-slate-100 ${selectedFilter === cat ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-700'}`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         )}
       </div>
 
-      {showDropdown && (results.length > 0 || searchTerm) && (
+      {showDropdown && (filteredResults.length > 0 || searchTerm) && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-[600px] overflow-y-auto">
-          {loading && results.length === 0 ? (
+          {loading && filteredResults.length === 0 ? (
             <div className="flex items-center justify-center py-6">
               <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
             </div>
-          ) : results.length > 0 ? (
+          ) : filteredResults.length > 0 ? (
             <div className="divide-y divide-slate-100">
-              {results.map((result) => {
+              {filteredResults.map((result) => {
                 const Icon = result.icon;
                 return (
                   <button
-                    key={`${result.type}-${result.id}`}
+                    key={`${result.category}-${result.type}-${result.id}`}
                     onClick={() => handleResultClick(result)}
                     className="w-full px-3 py-2 hover:bg-slate-50 flex items-center gap-2 transition-colors text-left"
                   >
