@@ -183,29 +183,32 @@ export default function LenderDetail() {
               <div>
                 <h2 className="text-lg font-semibold text-slate-900 mb-4">Contact Information</h2>
                 <div className="space-y-3">
-                  {lender.Phone && (
-                    <div className="flex items-center gap-3">
-                      <Phone className="w-5 h-5 text-slate-400" />
-                      <a href={`tel:${lender.Phone}`} className="text-orange-600 hover:underline">
-                        {lender.Phone}
-                      </a>
-                    </div>
-                  )}
-                  {lender.Website && (
-                    <div className="flex items-center gap-3">
-                      <Globe className="w-5 h-5 text-slate-400" />
-                      <a href={lender.Website} target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">
-                        {lender.Website}
-                      </a>
-                    </div>
-                  )}
-                  {lender.Email__c && (
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-5 h-5 text-slate-400" />
-                      <a href={`mailto:${lender.Email__c}`} className="text-orange-600 hover:underline">
-                        {lender.Email__c}
-                      </a>
-                    </div>
+                  {isEditing ? (
+                    <>
+                      <div>
+                        <Label htmlFor="phone">Phone</Label>
+                        <Input id="phone" value={editData.Phone || ''} onChange={(e) => setEditData({ ...editData, Phone: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" value={editData.Email__c || ''} onChange={(e) => setEditData({ ...editData, Email__c: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label htmlFor="website">Website</Label>
+                        <Input id="website" value={editData.Website || ''} onChange={(e) => setEditData({ ...editData, Website: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label htmlFor="fax">Fax</Label>
+                        <Input id="fax" value={editData.Fax || ''} onChange={(e) => setEditData({ ...editData, Fax: e.target.value })} />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {lender.Phone && <div className="flex items-center gap-3"><a href={`tel:${lender.Phone}`} className="text-orange-600">{lender.Phone}</a></div>}
+                      {lender.Email__c && <div className="flex items-center gap-3"><a href={`mailto:${lender.Email__c}`} className="text-orange-600">{lender.Email__c}</a></div>}
+                      {lender.Website && <div className="flex items-center gap-3"><a href={lender.Website} target="_blank" rel="noopener noreferrer" className="text-orange-600">{lender.Website}</a></div>}
+                      {lender.Fax && <div className="flex items-center gap-3"><span className="text-slate-600">Fax: {lender.Fax}</span></div>}
+                    </>
                   )}
                 </div>
               </div>
