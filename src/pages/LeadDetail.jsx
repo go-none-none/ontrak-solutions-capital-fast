@@ -42,6 +42,7 @@ export default function LeadDetail() {
     business: false,
     references: false
   });
+  const communicationCardRef = React.useRef(null);
 
   const bankStatementFields = [
     { label: 'Bank Statement - Month 1', field: 'Bank_Statement_Month_1__c' },
@@ -779,9 +780,12 @@ export default function LeadDetail() {
                   <h4 className="font-semibold text-slate-900 mb-3">Contact</h4>
                   <div className="space-y-2">
                     {lead.Email && (
-                      <a href={`mailto:${lead.Email}`} className="text-sm text-[#08708E] hover:underline block">
+                      <button 
+                        onClick={() => communicationCardRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                        className="text-sm text-[#08708E] hover:underline block text-left"
+                      >
                         {lead.Email}
-                      </a>
+                      </button>
                     )}
                     {lead.Phone && (
                       <a href={`tel:${lead.Phone}`} className="text-sm text-[#08708E] hover:underline block">
@@ -799,17 +803,19 @@ export default function LeadDetail() {
             </div>
 
             {/* Communication Card - Email & SMS */}
-            <CommunicationCard
-              recipientEmail={lead.Email}
-              recipientName={lead.Name}
-              phoneNumber={lead.MobilePhone || lead.Phone}
-              recordId={lead.Id}
-              recordType="Lead"
-              session={session}
-              smsColor="bg-[#08708E]"
-              emailColor="bg-[#08708E]"
-              firstName={lead.FirstName}
-            />
+            <div ref={communicationCardRef}>
+              <CommunicationCard
+                recipientEmail={lead.Email}
+                recipientName={lead.Name}
+                phoneNumber={lead.MobilePhone || lead.Phone}
+                recordId={lead.Id}
+                recordType="Lead"
+                session={session}
+                smsColor="bg-[#08708E]"
+                emailColor="bg-[#08708E]"
+                firstName={lead.FirstName}
+              />
+            </div>
 
             {/* Activity Timeline */}
             <ActivityPanel
