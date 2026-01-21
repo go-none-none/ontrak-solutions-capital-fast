@@ -115,7 +115,7 @@ export default function AccountDetail() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const accountId = urlParams.get('id');
-      
+
       if (!accountId) {
         setAccount(null);
         setLoading(false);
@@ -128,11 +128,13 @@ export default function AccountDetail() {
         instanceUrl: session?.instanceUrl
       });
 
-      const accountRecord = response.data.account;
-      setAccount(accountRecord);
-      setEditData(accountRecord);
-      setRecordTypeId(accountRecord.RecordTypeId);
-      setRecordTypeName(accountRecord.RecordType?.Name || '');
+      if (response.data?.account) {
+        const accountRecord = response.data.account;
+        setAccount(accountRecord);
+        setEditData(accountRecord);
+        setRecordTypeId(accountRecord.RecordTypeId);
+        setRecordTypeName(accountRecord.RecordType?.Name || '');
+      }
     } catch (error) {
       console.error('Load error:', error);
       setAccount(null);
