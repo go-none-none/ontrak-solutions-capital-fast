@@ -43,8 +43,7 @@ export default function RepPortal() {
   const [contacts, setContacts] = useState([]);
   const [loadingContacts, setLoadingContacts] = useState(true);
   const [selectedLeadForDisposition, setSelectedLeadForDisposition] = useState(null);
-  const [selectedRecordForQuickView, setSelectedRecordForQuickView] = useState(null);
-  const [quickViewType, setQuickViewType] = useState(null);
+  const [expandedRecordId, setExpandedRecordId] = useState(null);
   const lastPollTime = useRef(new Date());
   const itemsPerPage = 100;
 
@@ -82,9 +81,8 @@ export default function RepPortal() {
     }
   };
 
-  const handleQuickView = (record, type) => {
-    setSelectedRecordForQuickView(record);
-    setQuickViewType(type);
+  const handleToggleExpand = (recordId) => {
+    setExpandedRecordId(expandedRecordId === recordId ? null : recordId);
   };
 
   useEffect(() => {
@@ -680,7 +678,8 @@ export default function RepPortal() {
                       key={lead.Id} 
                       lead={lead} 
                       session={session}
-                      onQuickView={(lead) => handleQuickView(lead, 'lead')}
+                      isExpanded={expandedRecordId === lead.Id}
+                      onToggleExpand={handleToggleExpand}
                     />
                   ))
                 )}
@@ -759,7 +758,8 @@ export default function RepPortal() {
                       opportunity={opp} 
                       session={session}
                       onUpdate={() => loadData(session)}
-                      onQuickView={(opp) => handleQuickView(opp, 'opportunity')}
+                      isExpanded={expandedRecordId === opp.Id}
+                      onToggleExpand={handleToggleExpand}
                     />
                   ))
                   )}
@@ -1165,17 +1165,6 @@ export default function RepPortal() {
         }}
       />
 
-      {/* Quick View Modal */}
-      <RecordDetailsModal
-        record={selectedRecordForQuickView}
-        isOpen={!!selectedRecordForQuickView}
-        onClose={() => {
-          setSelectedRecordForQuickView(null);
-          setQuickViewType(null);
-        }}
-        type={quickViewType}
-        session={session}
-      />
         </div>
         );
         }
