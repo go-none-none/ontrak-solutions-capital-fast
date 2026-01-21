@@ -650,16 +650,16 @@ export default function RepPortal() {
           )}
 
           {!searchTerm && (
-          <>
-          {/* Pipeline */}
-        {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
-          <PipelineView 
-            leads={leads} 
-            opportunities={opportunities} 
-            activeTab={activeTab}
-            onStageClick={handleStageClick} 
-          />
-        )}
+            <>
+              {/* Pipeline */}
+              {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
+                <PipelineView 
+                  leads={leads} 
+                  opportunities={opportunities} 
+                  activeTab={activeTab}
+                  onStageClick={handleStageClick} 
+                />
+              )}
 
         {/* Content */}
         <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 sm:mt-6">
@@ -1177,7 +1177,7 @@ export default function RepPortal() {
         )}
         </div>
         </div>
-          </>
+        </>
         )}
 
         {/* Create Task Modal */}
