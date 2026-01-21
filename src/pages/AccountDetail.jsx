@@ -735,6 +735,24 @@ export default function AccountDetail() {
               <div className="bg-white rounded-lg shadow p-6">
                 <h2 className="text-lg font-semibold text-slate-900 mb-4">Lender Criteria</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="active"
+                      checked={editData.csbs__Active__c || false}
+                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Active__c: checked })}
+                      disabled={!isEditing}
+                    />
+                    <label htmlFor="active" className="text-sm font-medium text-slate-700 cursor-pointer">Active Lender</label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="priority"
+                      checked={editData.csbs__Priority_Lender__c || false}
+                      onCheckedChange={(checked) => setEditData({ ...editData, csbs__Priority_Lender__c: checked })}
+                      disabled={!isEditing}
+                    />
+                    <label htmlFor="priority" className="text-sm font-medium text-slate-700 cursor-pointer">Priority Lender</label>
+                  </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Minimum Credit Score</label>
                     {isEditing ? (
