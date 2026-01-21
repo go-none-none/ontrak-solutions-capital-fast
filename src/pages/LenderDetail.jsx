@@ -69,7 +69,7 @@ export default function LenderDetail() {
       <RepPortalHeader
         isAdmin={session?.isAdmin || false}
         refreshing={false}
-        onRefresh={() => loadLender(session)}
+        onRefresh={() => loadLender()}
         onLogout={() => {
           sessionStorage.removeItem('sfSession');
           window.location.reload();
