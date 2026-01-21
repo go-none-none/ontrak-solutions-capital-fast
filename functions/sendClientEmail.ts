@@ -151,6 +151,21 @@ Deno.serve(async (req) => {
     const pdfBytes = doc.output('arraybuffer');
     const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
 
+    // Upload PDF to Salesforce
+    try {
+      const base44 = createClientFromRequest(req);
+      const uploadResponse = await base44.functions.invoke('uploadSalesforceFile', {
+        fileName: 'Offer_Proposal.pdf',
+        fileData: pdfBase64,
+        recordId: opportunityId,
+        token: Deno.env.get("SALESFORCE_TOKEN"),
+        instanceUrl: Deno.env.get("SALESFORCE_INSTANCE_URL")
+      });
+    } catch (uploadError) {
+      console.error('Failed to upload PDF to Salesforce:', uploadError);
+      // Continue with email even if upload fails
+    }
+
     const emailHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -219,7 +234,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         personalizations: [{ to: [{ email: recipientEmail }] }],
-        from: { email: SENDER_EMAIL, name: senderName || 'OnTrak Capital' },
+        from: { email: SENDER_EMAIL, name: 'Funding | OnTrak Solutions' },
         subject: subject,
         content: [{ type: 'text/html', value: emailHTML }],
         attachments: [{ content: pdfBase64, type: 'application/pdf', filename: 'Offer_Proposal.pdf', disposition: 'attachment' }]
