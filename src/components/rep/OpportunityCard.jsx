@@ -225,7 +225,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             {fullData && (fullData.Amount || fullData.CloseDate || fullData.Probability) && (
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Key Info</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-3 gap-2 text-xs">
                   {fullData.Amount && <div><span className="text-slate-500">Amount:</span> {formatCurrency(fullData.Amount)}</div>}
                   {fullData.CloseDate && <div><span className="text-slate-500">Close:</span> {formatDate(fullData.CloseDate)}</div>}
                   {fullData.Probability && <div><span className="text-slate-500">Prob:</span> {fullData.Probability}%</div>}
