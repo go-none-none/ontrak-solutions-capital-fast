@@ -89,15 +89,15 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
         {/* Stage Progress Bar */}
         {!isDeclined && (
           <div className="mb-4">
-            <div className="flex justify-between items-center mb-2 gap-1">
+            <div className="flex justify-between items-start mb-2 gap-1">
               {stages.map((stage, idx) => (
                 <div key={idx} className="flex flex-col items-center flex-1 min-w-0">
-                  <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-xs font-semibold ${
+                  <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-xs font-semibold flex-shrink-0 ${
                     idx <= currentStage ? 'bg-orange-600 text-white' : 'bg-slate-200 text-slate-500'
                   }`}>
                     {idx + 1}
                   </div>
-                  <span className="text-[9px] md:text-xs text-slate-600 mt-0.5 md:mt-1 text-center leading-tight max-w-full overflow-hidden">{stage.label}</span>
+                  <span className="text-[9px] md:text-xs text-slate-600 mt-0.5 md:mt-1 text-center leading-tight h-[20px] md:h-[24px] flex items-start justify-center">{stage.label}</span>
                 </div>
               ))}
             </div>

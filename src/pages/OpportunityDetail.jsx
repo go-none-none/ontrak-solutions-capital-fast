@@ -503,7 +503,7 @@ export default function OpportunityDetail() {
         {!opportunity.StageName?.includes('Declined') ? (
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <h3 className="text-sm font-semibold text-slate-700 mb-4">Opportunity Stage</h3>
-            <div className="flex justify-between items-center mb-3 gap-1">
+            <div className="flex justify-between items-start mb-3 gap-1">
               {[
                 { label: 'App In', name: 'Application In' },
                 { label: 'Underwriting', name: 'Underwriting' },
@@ -526,7 +526,7 @@ export default function OpportunityDetail() {
                       updatingStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'
                     }`}
                   >
-                    <div className={`w-7 h-7 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-semibold transition-all ${
+                    <div className={`w-7 h-7 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-semibold transition-all flex-shrink-0 ${
                       isFunded
                         ? 'bg-green-600 text-white shadow-lg'
                         : isActive
@@ -541,7 +541,7 @@ export default function OpportunityDetail() {
                         idx + 1
                       )}
                     </div>
-                    <span className="text-[9px] md:text-xs text-slate-600 mt-1 md:mt-2 text-center leading-tight">{stage.label}</span>
+                    <span className="text-[9px] md:text-xs text-slate-600 mt-1 md:mt-2 text-center leading-tight h-[20px] md:h-[24px] flex items-start justify-center">{stage.label}</span>
                   </button>
                 );
               })}
