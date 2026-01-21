@@ -141,13 +141,12 @@ export default function UniversalSearch({ session }) {
         allResults.push({
           id: account.Id,
           name: account.Name,
-          subtitle: account.Industry,
+          subtitle: null,
           type: accountCategory,
           category: 'Account',
           color: color,
           icon: icon,
           path: 'AccountDetail',
-          recordType: recordTypeName.charAt(0).toUpperCase() + recordTypeName.slice(1),
           record: account
         });
         });
