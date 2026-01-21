@@ -542,7 +542,34 @@ export default function AccountDetail() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
+        </div>
+
+        {/* Record Type Change Dialog */}
+        <AlertDialog open={showRecordTypeDialog} onOpenChange={setShowRecordTypeDialog}>
+        <AlertDialogContent>
+         <AlertDialogHeader>
+           <AlertDialogTitle>Change Record Type?</AlertDialogTitle>
+           <AlertDialogDescription>
+             Changing the record type will reload this account with fields specific to the new type. This action cannot be undone easily. Continue?
+           </AlertDialogDescription>
+         </AlertDialogHeader>
+         <div className="my-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+           <p className="text-sm text-amber-900">
+             New Type: <strong>{recordTypes.find(rt => rt.id === selectedRecordType)?.name}</strong>
+           </p>
+         </div>
+         <div className="flex gap-2 justify-end">
+           <AlertDialogCancel disabled={saving}>Cancel</AlertDialogCancel>
+           <AlertDialogAction 
+             onClick={confirmRecordTypeChange} 
+             disabled={saving}
+             className="bg-orange-600 hover:bg-orange-700"
+           >
+             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Change'}
+           </AlertDialogAction>
+         </div>
+        </AlertDialogContent>
+        </AlertDialog>
+        </div>
+        );
+        }
