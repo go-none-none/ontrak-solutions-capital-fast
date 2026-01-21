@@ -50,6 +50,9 @@ export default function AccountDetail() {
   const [editData, setEditData] = useState({});
   const [saving, setSaving] = useState(false);
   const [isMerchant, setIsMerchant] = useState(false);
+  const [recordTypes, setRecordTypes] = useState([]);
+  const [showRecordTypeDialog, setShowRecordTypeDialog] = useState(false);
+  const [selectedRecordType, setSelectedRecordType] = useState(null);
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
