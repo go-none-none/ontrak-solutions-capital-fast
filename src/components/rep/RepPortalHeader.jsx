@@ -49,6 +49,7 @@ export default function RepPortalHeader({
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="pl-9 pr-10 h-10 text-sm w-full"
+                autoComplete="off"
               />
               {searchTerm && (
                 <button
@@ -142,6 +143,7 @@ export default function RepPortalHeader({
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
               className="pl-9 pr-10 h-10 text-sm w-full"
+              autoComplete="off"
             />
             {searchTerm && (
               <button
