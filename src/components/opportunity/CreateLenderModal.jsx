@@ -167,6 +167,30 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
                 <Label htmlFor="active" className="cursor-pointer">Active Lender</Label>
               </div>
               <div>
+                <Label htmlFor="tier">Tier</Label>
+                <Input
+                  id="tier"
+                  value={formData.csbs__Tier__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Tier__c: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="tierPos">Tier Position</Label>
+                <Input
+                  id="tierPos"
+                  value={formData.csbs__Tier_Position__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Tier_Position__c: e.target.value })}
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="priority"
+                  checked={formData.csbs__Priority_Lender__c}
+                  onCheckedChange={(checked) => setFormData({ ...formData, csbs__Priority_Lender__c: checked })}
+                />
+                <Label htmlFor="priority" className="cursor-pointer">Priority Lender</Label>
+              </div>
+              <div>
                 <Label htmlFor="phone">Phone</Label>
                 <Input
                   id="phone"
@@ -190,38 +214,30 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
                   onChange={(e) => setFormData({ ...formData, Website: e.target.value })}
                 />
               </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="trading"
-                  checked={formData.csbs__Trading_Center__c}
-                  onCheckedChange={(checked) => setFormData({ ...formData, csbs__Trading_Center__c: checked })}
-                />
-                <Label htmlFor="trading" className="cursor-pointer">Trading Center</Label>
-              </div>
               <div>
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  value={formData.Email__c}
-                  onChange={(e) => setFormData({ ...formData, Email__c: e.target.value })}
+                  value={formData.csbs__Email__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Email__c: e.target.value })}
                 />
               </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="leadsFromApi"
-                  checked={formData.csbs__Leads_from_API__c}
-                  onCheckedChange={(checked) => setFormData({ ...formData, csbs__Leads_from_API__c: checked })}
+              <div>
+                <Label htmlFor="emailsCC">Emails to CC</Label>
+                <Input
+                  id="emailsCC"
+                  value={formData.csbs__Emails_to_CC__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Emails_to_CC__c: e.target.value })}
                 />
-                <Label htmlFor="leadsFromApi" className="cursor-pointer">Leads from API</Label>
               </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="leadsToApi"
-                  checked={formData.csbs__Leads_to_API__c}
-                  onCheckedChange={(checked) => setFormData({ ...formData, csbs__Leads_to_API__c: checked })}
+              <div>
+                <Label htmlFor="emailsBCC">Emails to BCC</Label>
+                <Input
+                  id="emailsBCC"
+                  value={formData.csbs__Emails_to_BCC__c}
+                  onChange={(e) => setFormData({ ...formData, csbs__Emails_to_BCC__c: e.target.value })}
                 />
-                <Label htmlFor="leadsToApi" className="cursor-pointer">Leads to API</Label>
               </div>
               <div className="flex items-center space-x-2 col-span-2">
                 <Checkbox
