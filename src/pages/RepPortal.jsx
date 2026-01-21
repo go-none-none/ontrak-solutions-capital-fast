@@ -854,12 +854,10 @@ export default function RepPortal() {
                   </div>
                 </div>
               )}
-            </div>
-            )}
-            </div>
-            </div>
+              </div>
+              )}
 
-            {activeTab === 'tasks' && (
+              {activeTab === 'tasks' && (
             <div>
             <div className="space-y-3">
               {(() => {
@@ -1177,11 +1175,9 @@ export default function RepPortal() {
           </div>
         )}
         </div>
-        </div>
-        </>
-        )}
-        </div>
-        </div>
+      </>
+      )}
+      </div>
 
         {/* Quick View Modal */}
         {quickViewRecord && (
@@ -1265,9 +1261,9 @@ export default function RepPortal() {
             </div>
           </div>
         </div>
-        )}
+      )}
 
-        {/* Create Task Modal */}
+      {/* Create Task Modal */}
       <CreateTaskModal
         isOpen={showCreateTask}
         onClose={() => setShowCreateTask(false)}
@@ -1303,6 +1299,6 @@ export default function RepPortal() {
           navigate(createPageUrl('LeadDetail') + `?id=${selectedLeadForDisposition?.Id}`);
         }}
       />
-        </div>
-        );
-        }
+    </div>
+  );
+}
