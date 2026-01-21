@@ -167,34 +167,77 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
             exit={{ opacity: 0, height: 0 }}
             className="mt-4 pt-4 border-t border-slate-200 space-y-3"
           >
-            {lead.Rating && (
-              <div>
-                <p className="text-xs text-slate-500 font-semibold mb-1">Rating</p>
-                <Badge className="bg-blue-100 text-blue-800">{lead.Rating}</Badge>
-              </div>
-            )}
-            {lead.Industry && (
-              <div>
-                <p className="text-xs text-slate-500 font-semibold mb-1">Industry</p>
-                <p className="text-sm text-slate-900">{lead.Industry}</p>
-              </div>
-            )}
+            <div className="grid grid-cols-2 gap-3">
+              {lead.Industry && (
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold mb-1">Industry</p>
+                  <p className="text-sm text-slate-900">{lead.Industry}</p>
+                </div>
+              )}
+              {lead.Rating && (
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold mb-1">Rating</p>
+                  <Badge className="bg-blue-100 text-blue-800">{lead.Rating}</Badge>
+                </div>
+              )}
+              {lead.csbs__Credit_Score__c && (
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold mb-1">Credit Score</p>
+                  <p className="text-sm font-semibold text-slate-900">{lead.csbs__Credit_Score__c}</p>
+                </div>
+              )}
+              {lead.csbs__Time_In_Business__c && (
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold mb-1">Time in Business</p>
+                  <p className="text-sm text-slate-900">{lead.csbs__Time_In_Business__c}</p>
+                </div>
+              )}
+              {lead.csbs__Entity_Type__c && (
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold mb-1">Entity Type</p>
+                  <p className="text-sm text-slate-900">{lead.csbs__Entity_Type__c}</p>
+                </div>
+              )}
+              {lead.LeadSource && (
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold mb-1">Source</p>
+                  <p className="text-sm text-slate-900">{lead.LeadSource}</p>
+                </div>
+              )}
+            </div>
+            
             {lead.Use_of_Proceeds__c && (
               <div>
                 <p className="text-xs text-slate-500 font-semibold mb-1">Use of Funds</p>
                 <p className="text-sm text-slate-900">{lead.Use_of_Proceeds__c}</p>
               </div>
             )}
+            
             {lead.Estimated_Monthly_Revenue__c && (
               <div>
-                <p className="text-xs text-slate-500 font-semibold mb-1">Monthly Revenue</p>
-                <p className="text-sm font-semibold text-[#08708E]">${parseFloat(lead.Estimated_Monthly_Revenue__c).toLocaleString()}</p>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Estimated Monthly Revenue</p>
+                <p className="text-sm font-semibold text-[#08708E]">{formatCurrency(lead.Estimated_Monthly_Revenue__c)}</p>
               </div>
             )}
+
+            {lead.AnnualRevenue && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Annual Revenue</p>
+                <p className="text-sm font-semibold text-slate-900">{formatCurrency(lead.AnnualRevenue)}</p>
+              </div>
+            )}
+            
             {lead.Call_Disposition__c && (
               <div>
                 <p className="text-xs text-slate-500 font-semibold mb-1">Call Disposition</p>
                 <Badge className="bg-green-600 text-white">{lead.Call_Disposition__c}</Badge>
+              </div>
+            )}
+
+            {lead.Description && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Notes</p>
+                <p className="text-sm text-slate-600 line-clamp-2">{lead.Description}</p>
               </div>
             )}
           </motion.div>
