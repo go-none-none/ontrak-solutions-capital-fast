@@ -1396,7 +1396,7 @@ export default function OpportunityDetail() {
                       {contactRoles.map(role => (
                         <div key={role.Id} className="border-b border-slate-100 pb-3 last:border-0">
                           <button
-                            onClick={() => navigate(createPageUrl('ContactDetail') + `?id=${role.Contact?.Id}`)}
+                            onClick={() => navigate(createPageUrl('ContactDetail') + `?id=${role.ContactId}`)}
                             className="font-medium text-orange-600 hover:underline text-left"
                           >
                             {role.Contact?.Name}
