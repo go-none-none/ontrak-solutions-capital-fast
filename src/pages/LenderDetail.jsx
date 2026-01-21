@@ -235,28 +235,34 @@ export default function LenderDetail() {
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h3 className="font-semibold text-slate-900 mb-4">Account Details</h3>
             <div className="space-y-4 text-sm">
-              {lender.Type && (
+              {lender.csbs__Active__c && (
                 <div>
-                  <p className="text-slate-500 text-xs mb-1">Account Type</p>
-                  <p className="font-medium">{lender.Type}</p>
+                  <p className="text-slate-500 text-xs mb-1">Status</p>
+                  <p className="font-medium">Active</p>
                 </div>
               )}
-              {lender.Industry && (
+              {lender.csbs__Trading_Center__c && (
                 <div>
-                  <p className="text-slate-500 text-xs mb-1">Industry</p>
-                  <p className="font-medium">{lender.Industry}</p>
+                  <p className="text-slate-500 text-xs mb-1">Type</p>
+                  <p className="font-medium">Trading Center</p>
                 </div>
               )}
-              {lender.AnnualRevenue && (
-                <div>
-                  <p className="text-slate-500 text-xs mb-1">Annual Revenue</p>
-                  <p className="font-medium">${Number(lender.AnnualRevenue).toLocaleString()}</p>
+              {lender.csbs__Leads_from_API__c && (
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" checked={true} disabled className="w-4 h-4" />
+                  <p className="font-medium text-xs">Leads from API</p>
                 </div>
               )}
-              {lender.BillingCountry && (
-                <div>
-                  <p className="text-slate-500 text-xs mb-1">Country</p>
-                  <p className="font-medium">{lender.BillingCountry}</p>
+              {lender.csbs__Leads_to_API__c && (
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" checked={true} disabled className="w-4 h-4" />
+                  <p className="font-medium text-xs">Leads to API</p>
+                </div>
+              )}
+              {lender.csbs__Application_Industry__c && (
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" checked={true} disabled className="w-4 h-4" />
+                  <p className="font-medium text-xs">Application Industry</p>
                 </div>
               )}
             </div>
