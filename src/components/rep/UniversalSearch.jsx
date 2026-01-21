@@ -142,7 +142,7 @@ export default function UniversalSearch({ session }) {
                 category: 'Account',
                 color: typeConfig.color,
                 icon: typeConfig.icon,
-                path: accountType === 'Lender' ? 'LenderDetail' : null,
+                path: accountType === 'Lender' ? 'LenderDetail' : accountType === 'Merchant' ? 'MerchantDetail' : null,
                 record: account
               });
             });
