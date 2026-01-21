@@ -656,7 +656,7 @@ export default function RepPortal() {
             </div>
           )}
 
-          {activeTab === 'leads' && (
+          {(activeTab === 'leads' || searchTerm) && (
             <div className="space-y-4">
               {stageFilter && !searchTerm && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
@@ -733,7 +733,7 @@ export default function RepPortal() {
             </div>
             )}
 
-            {activeTab === 'opportunities' && (
+            {(activeTab === 'opportunities' || searchTerm) && (
             <div className="space-y-4">
             {stageFilter && !searchTerm && (
             <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
