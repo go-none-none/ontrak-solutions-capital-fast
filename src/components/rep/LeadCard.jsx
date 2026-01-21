@@ -6,7 +6,7 @@ import { Phone, Mail, Building2, Calendar, DollarSign, Eye, ArrowRight } from 'l
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function LeadCard({ lead, session, onQuickView }) {
+export default function LeadCard({ lead, session, onQuickView, isExpanded, onToggleExpand }) {
   const navigate = useNavigate();
 
   const stages = [
@@ -46,8 +46,8 @@ export default function LeadCard({ lead, session, onQuickView }) {
 
   const handleQuickView = (e) => {
     e.stopPropagation();
-    if (onQuickView) {
-      onQuickView(lead);
+    if (onToggleExpand) {
+      onToggleExpand(lead.Id);
     }
   };
 
@@ -148,7 +148,7 @@ export default function LeadCard({ lead, session, onQuickView }) {
             className="flex-1 text-xs"
           >
             <Eye className="w-3 h-3 mr-1" />
-            Quick View
+            {isExpanded ? 'Collapse' : 'Quick View'}
           </Button>
           <Button
             size="sm"
@@ -159,6 +159,46 @@ export default function LeadCard({ lead, session, onQuickView }) {
             <ArrowRight className="w-3 h-3 ml-1" />
           </Button>
         </div>
+
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-4 pt-4 border-t border-slate-200 space-y-3"
+          >
+            {lead.Rating && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Rating</p>
+                <Badge className="bg-blue-100 text-blue-800">{lead.Rating}</Badge>
+              </div>
+            )}
+            {lead.Industry && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Industry</p>
+                <p className="text-sm text-slate-900">{lead.Industry}</p>
+              </div>
+            )}
+            {lead.Use_of_Proceeds__c && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Use of Funds</p>
+                <p className="text-sm text-slate-900">{lead.Use_of_Proceeds__c}</p>
+              </div>
+            )}
+            {lead.Estimated_Monthly_Revenue__c && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Monthly Revenue</p>
+                <p className="text-sm font-semibold text-[#08708E]">${parseFloat(lead.Estimated_Monthly_Revenue__c).toLocaleString()}</p>
+              </div>
+            )}
+            {lead.Call_Disposition__c && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Call Disposition</p>
+                <Badge className="bg-green-600 text-white">{lead.Call_Disposition__c}</Badge>
+              </div>
+            )}
+          </motion.div>
+        )}
       </motion.div>
   );
 }
