@@ -505,6 +505,7 @@ export default function RepPortal() {
         userName={session.name}
         showCreateTask={true}
         onCreateTaskClick={() => setShowCreateTask(true)}
+        session={session}
       />
 
       {/* Stats */}
