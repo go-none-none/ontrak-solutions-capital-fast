@@ -207,14 +207,14 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             )}
 
             {/* Opp Info */}
-            {(opportunity.Type || opportunity.LeadSource || opportunity.csbs__ISO__c || opportunity.csbs__Line_of_Credit__c) && (
+            {fullData && (fullData.Type || fullData.LeadSource || fullData.csbs__ISO__c || fullData.csbs__Line_of_Credit__c) && (
               <div className="space-y-2 border-t pt-2">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Opp Info</p>
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  {opportunity.Type && <div><span className="text-slate-500">Type:</span> {opportunity.Type}</div>}
-                  {opportunity.LeadSource && <div><span className="text-slate-500">Source:</span> {opportunity.LeadSource}</div>}
-                  {opportunity.csbs__ISO__c && <div><span className="text-slate-500">ISO:</span> {opportunity.csbs__ISO__c}</div>}
-                  {opportunity.csbs__Line_of_Credit__c && <div><span className="text-slate-500">LOC:</span> {opportunity.csbs__Line_of_Credit__c}</div>}
+                  {fullData.Type && <div><span className="text-slate-500">Type:</span> {fullData.Type}</div>}
+                  {fullData.LeadSource && <div><span className="text-slate-500">Source:</span> {fullData.LeadSource}</div>}
+                  {fullData.csbs__ISO__c && <div><span className="text-slate-500">ISO:</span> {fullData.csbs__ISO__c}</div>}
+                  {fullData.csbs__Line_of_Credit__c && <div><span className="text-slate-500">LOC:</span> {fullData.csbs__Line_of_Credit__c}</div>}
                 </div>
               </div>
             )}
