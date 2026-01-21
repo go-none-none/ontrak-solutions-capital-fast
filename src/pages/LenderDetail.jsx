@@ -20,7 +20,7 @@ export default function LenderDetail() {
     }
     const parsedSession = JSON.parse(sessionData);
     setSession(parsedSession);
-    loadLender(parsedSession);
+    loadLender();
   }, []);
 
   const loadLender = async () => {
