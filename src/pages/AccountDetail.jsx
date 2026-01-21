@@ -931,6 +931,31 @@ export default function AccountDetail() {
               </div>
             )}
 
+            {/* System Information Section */}
+            {account && (
+              <div className="bg-slate-100 rounded-lg p-6">
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">System Information</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-slate-600 mb-1">Created By</p>
+                    <p className="text-slate-900 font-medium">{account?.CreatedBy?.Name || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-600 mb-1">Account Owner</p>
+                    <p className="text-slate-900 font-medium">{account?.Owner?.Name || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-600 mb-1">Last Modified By</p>
+                    <p className="text-slate-900 font-medium">{account?.LastModifiedBy?.Name || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-600 mb-1">Parent Account</p>
+                    <p className="text-slate-900 font-medium">{account?.Parent?.Name || '-'}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Save Button */}
             {isEditing && (
               <div className="flex justify-end gap-2">
