@@ -415,7 +415,8 @@ export default function RepPortal() {
         lead.Phone?.toLowerCase().includes(term) ||
         lead.MobilePhone?.toLowerCase().includes(term);
     }
-    const stageMatch = !stageFilter || lead.Status === stageFilter;
+    // Only apply stage filter when NOT searching
+    const stageMatch = !searchTerm && (!stageFilter || lead.Status === stageFilter);
     return searchMatch && stageMatch;
   });
 
@@ -427,8 +428,9 @@ export default function RepPortal() {
         opp.Account?.Name?.toLowerCase().includes(term);
     }
 
+    // Only apply stage filter when NOT searching
     let stageMatch = true;
-    if (stageFilter) {
+    if (!searchTerm && stageFilter) {
       if (stageFilter === 'Declined') {
         stageMatch = opp.StageName && opp.StageName.includes('Declined');
       } else {
