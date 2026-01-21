@@ -6,7 +6,7 @@ import { DollarSign, Calendar, Building2, TrendingUp, Eye, ArrowRight } from 'lu
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 
-export default function OpportunityCard({ opportunity, session, onUpdate, onQuickView }) {
+export default function OpportunityCard({ opportunity, session, onUpdate, isExpanded, onToggleExpand }) {
   const navigate = useNavigate();
 
   const stages = [
@@ -48,8 +48,8 @@ export default function OpportunityCard({ opportunity, session, onUpdate, onQuic
 
   const handleQuickView = (e) => {
     e.stopPropagation();
-    if (onQuickView) {
-      onQuickView(opportunity);
+    if (onToggleExpand) {
+      onToggleExpand(opportunity.Id);
     }
   };
 
@@ -152,7 +152,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, onQuic
             className="flex-1 text-xs"
           >
             <Eye className="w-3 h-3 mr-1" />
-            Quick View
+            {isExpanded ? 'Collapse' : 'Quick View'}
           </Button>
           <Button
             size="sm"
@@ -163,6 +163,46 @@ export default function OpportunityCard({ opportunity, session, onUpdate, onQuic
             <ArrowRight className="w-3 h-3 ml-1" />
           </Button>
         </div>
+
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-4 pt-4 border-t border-slate-200 space-y-3"
+          >
+            {opportunity.Type && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Type</p>
+                <p className="text-sm text-slate-900">{opportunity.Type}</p>
+              </div>
+            )}
+            {opportunity.Amount_Requested__c && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Amount Requested</p>
+                <p className="text-sm font-semibold text-orange-600">${parseFloat(opportunity.Amount_Requested__c).toLocaleString()}</p>
+              </div>
+            )}
+            {opportunity.Estimated_Monthly_Revenue__c && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Monthly Revenue</p>
+                <p className="text-sm font-semibold text-slate-900">${parseFloat(opportunity.Estimated_Monthly_Revenue__c).toLocaleString()}</p>
+              </div>
+            )}
+            {opportunity.LeadSource && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Lead Source</p>
+                <p className="text-sm text-slate-900">{opportunity.LeadSource}</p>
+              </div>
+            )}
+            {opportunity.Use_of_Proceeds__c && (
+              <div>
+                <p className="text-xs text-slate-500 font-semibold mb-1">Use of Funds</p>
+                <p className="text-sm text-slate-900">{opportunity.Use_of_Proceeds__c}</p>
+              </div>
+            )}
+          </motion.div>
+        )}
     </motion.div>
   );
 }
