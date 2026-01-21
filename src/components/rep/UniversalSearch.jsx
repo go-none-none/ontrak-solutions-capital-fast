@@ -23,7 +23,7 @@ export default function UniversalSearch({ session }) {
   }, []);
 
   useEffect(() => {
-    if (!searchTerm.trim()) {
+    if (!searchTerm.trim() || !session?.token) {
       setResults([]);
       setShowDropdown(false);
       return;
@@ -32,7 +32,7 @@ export default function UniversalSearch({ session }) {
     const performSearch = async () => {
       setLoading(true);
       try {
-        const [leadsRes, oppsRes, contactsRes, accountsRes] = await Promise.all([
+        const results = await Promise.allSettled([
           base44.functions.invoke('getRepLeads', {
             userId: session?.userId,
             token: session?.token,
@@ -53,6 +53,11 @@ export default function UniversalSearch({ session }) {
             instanceUrl: session?.instanceUrl
           })
         ]);
+
+        const leadsRes = results[0].status === 'fulfilled' ? results[0].value : { data: {} };
+        const oppsRes = results[1].status === 'fulfilled' ? results[1].value : { data: {} };
+        const contactsRes = results[2].status === 'fulfilled' ? results[2].value : { data: {} };
+        const accountsRes = results[3].status === 'fulfilled' ? results[3].value : { data: {} };
 
         const searchLower = searchTerm.toLowerCase();
         const allResults = [];
