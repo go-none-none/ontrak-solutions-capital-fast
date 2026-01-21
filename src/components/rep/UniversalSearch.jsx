@@ -113,31 +113,37 @@ export default function UniversalSearch({ session }) {
             });
         }
 
-        // Filter all accounts by Type
+        // Filter all accounts by RecordType
         if (accountsRes.data?.accounts) {
           accountsRes.data.accounts
             .filter(a => a.Name?.toLowerCase().includes(searchLower))
             .forEach(account => {
-              const accountType = account.Type || 'Other';
+              // Check RecordTypeName for lender/merchant categorization
+              const recordType = account.RecordTypeName?.toLowerCase() || '';
+              let accountCategory = 'Account';
+              let path = null;
+              let color = 'bg-slate-100 text-slate-800';
+              let icon = Building2;
               
-              const typeColorMap = {
-                'Lender': { color: 'bg-green-100 text-green-800', icon: Building2 },
-                'Merchant': { color: 'bg-indigo-100 text-indigo-800', icon: Briefcase },
-                'Prospect': { color: 'bg-amber-100 text-amber-800', icon: User },
-                'Customer': { color: 'bg-emerald-100 text-emerald-800', icon: Building2 }
-              };
-              
-              const typeConfig = typeColorMap[accountType] || { color: 'bg-slate-100 text-slate-800', icon: Building2 };
+              if (recordType.includes('lender')) {
+                accountCategory = 'Lender';
+                path = 'LenderDetail';
+                color = 'bg-green-100 text-green-800';
+              } else if (recordType.includes('merchant')) {
+                accountCategory = 'Merchant';
+                path = 'MerchantDetail';
+                color = 'bg-indigo-100 text-indigo-800';
+              }
               
               allResults.push({
                 id: account.Id,
                 name: account.Name,
-                subtitle: account.Industry || accountType,
-                type: accountType,
+                subtitle: account.Industry || accountCategory,
+                type: accountCategory,
                 category: 'Account',
-                color: typeConfig.color,
-                icon: typeConfig.icon,
-                path: accountType === 'Lender' ? 'LenderDetail' : accountType === 'Merchant' ? 'MerchantDetail' : null,
+                color: color,
+                icon: icon,
+                path: path,
                 record: account
               });
             });
