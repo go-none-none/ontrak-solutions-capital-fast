@@ -1176,9 +1176,11 @@ export default function RepPortal() {
           </div>
         )}
         </div>
-      </div>
+        </div>
+          </>
+        )}
 
-      {/* Create Task Modal */}
+        {/* Create Task Modal */}
       <CreateTaskModal
         isOpen={showCreateTask}
         onClose={() => setShowCreateTask(false)}
