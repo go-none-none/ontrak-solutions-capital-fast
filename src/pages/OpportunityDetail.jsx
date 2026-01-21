@@ -501,9 +501,9 @@ export default function OpportunityDetail() {
       {/* Stage Progress */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         {!opportunity.StageName?.includes('Declined') ? (
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
             <h3 className="text-sm font-semibold text-slate-700 mb-4">Opportunity Stage</h3>
-            <div className="flex justify-between items-start mb-3 gap-1">
+            <div className="flex justify-between items-start mb-3 gap-0.5 sm:gap-1 overflow-x-auto">
               {[
                 { label: 'App In', name: 'Application In' },
                 { label: 'Underwriting', name: 'Underwriting' },
@@ -564,9 +564,9 @@ export default function OpportunityDetail() {
                 onClick={() => handleStatusChange('Declined')}
                 disabled={updatingStatus}
                 variant="outline"
-                className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+                className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 text-xs sm:text-sm w-full sm:w-auto"
               >
-                <XCircle className="w-4 h-4 mr-2" />
+                <XCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Mark as Declined
               </Button>
             </div>
@@ -635,39 +635,18 @@ export default function OpportunityDetail() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-        <div className="grid lg:grid-cols-3 gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6 overflow-x-hidden">
+        <div className="grid lg:grid-cols-3 gap-6 max-w-full">
           {/* Main Column */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 min-w-0 overflow-x-hidden">
             <Tabs defaultValue="details" className="space-y-6">
-              {/* Mobile Dropdown */}
-              <div className="md:hidden">
-                <Select defaultValue="details" onValueChange={(value) => {
-                  const trigger = document.querySelector(`[data-state][value="${value}"]`);
-                  if (trigger) trigger.click();
-                }}>
-                  <SelectTrigger className="w-full bg-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="details">Details</SelectItem>
-                    <SelectItem value="submissions">Submissions</SelectItem>
-                    <SelectItem value="offers">Offers</SelectItem>
-                    <SelectItem value="statements">Statements</SelectItem>
-                    <SelectItem value="debt">Debt</SelectItem>
-                    <SelectItem value="commissions">Commissions</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Desktop Tabs */}
-              <TabsList className="hidden md:grid bg-white p-1 rounded-lg shadow-sm grid-cols-6 gap-1">
-                <TabsTrigger value="details" className="text-sm px-4">Details</TabsTrigger>
-                <TabsTrigger value="submissions" className="text-sm px-4">Submissions</TabsTrigger>
-                <TabsTrigger value="offers" className="text-sm px-4">Offers</TabsTrigger>
-                <TabsTrigger value="statements" className="text-sm px-4">Statements</TabsTrigger>
-                <TabsTrigger value="debt" className="text-sm px-4">Debt</TabsTrigger>
-                <TabsTrigger value="commissions" className="text-sm px-4">Commissions</TabsTrigger>
+              <TabsList className="bg-white p-1 rounded-lg shadow-sm grid grid-cols-2 md:grid-cols-6 gap-1">
+                <TabsTrigger value="details" className="text-xs md:text-sm px-1 md:px-4">Details</TabsTrigger>
+                <TabsTrigger value="submissions" className="text-xs md:text-sm px-1 md:px-4">Submissions</TabsTrigger>
+                <TabsTrigger value="offers" className="text-xs md:text-sm px-1 md:px-4">Offers</TabsTrigger>
+                <TabsTrigger value="statements" className="text-xs md:text-sm px-1 md:px-4">Statements</TabsTrigger>
+                <TabsTrigger value="debt" className="text-xs md:text-sm px-1 md:px-4">Debt</TabsTrigger>
+                <TabsTrigger value="commissions" className="text-xs md:text-sm px-1 md:px-4">Commissions</TabsTrigger>
               </TabsList>
 
               {/* Submissions Tab */}
@@ -805,7 +784,7 @@ export default function OpportunityDetail() {
                             </Button>
                           </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-3 text-sm">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
                           <div>
                             <p className="text-slate-500 text-xs">Funded</p>
                             <p className="font-bold text-orange-600">{formatCurrency(offer.csbs__Funded__c)}</p>
