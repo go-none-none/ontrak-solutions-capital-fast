@@ -42,8 +42,24 @@ export default function AccountDetail() {
   useEffect(() => {
     if (session) {
       loadAccount();
+      loadRecordTypes();
     }
   }, [session]);
+
+  const loadRecordTypes = async () => {
+    setLoadingRecordTypes(true);
+    try {
+      const response = await base44.functions.invoke('getAccountRecordTypes', {
+        token: session?.token,
+        instanceUrl: session?.instanceUrl
+      });
+      setRecordTypes(response.data.recordTypes || []);
+    } catch (error) {
+      console.error('Load record types error:', error);
+    } finally {
+      setLoadingRecordTypes(false);
+    }
+  };
 
   const loadAccount = async () => {
     setLoading(true);
