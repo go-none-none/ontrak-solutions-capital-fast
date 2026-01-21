@@ -294,7 +294,7 @@ export default function AccountDetail() {
                   )}
                 </div>
 
-                <div className="md:col-span-1">
+                <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
                     Record Type {!account && <span className="text-red-500">*</span>}
                   </label>
@@ -359,6 +359,72 @@ export default function AccountDetail() {
                 </div>
 
                 <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                  {isEditing ? (
+                    <Input
+                      type="email"
+                      value={editData.csbs__Email__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__Email__c: e.target.value })}
+                      placeholder="Email"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__Email__c || '-'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Tier</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.csbs__Tier__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__Tier__c: e.target.value })}
+                      placeholder="Tier"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__Tier__c || '-'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Tier Position</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.csbs__Tier_Position__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__Tier_Position__c: e.target.value })}
+                      placeholder="Tier Position"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__Tier_Position__c || '-'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Emails to CC</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.csbs__Emails_to_CC__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__Emails_to_CC__c: e.target.value })}
+                      placeholder="Emails to CC"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__Emails_to_CC__c || '-'}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Emails to BCC</label>
+                  {isEditing ? (
+                    <Input
+                      value={editData.csbs__Emails_to_BCC__c || ''}
+                      onChange={(e) => setEditData({ ...editData, csbs__Emails_to_BCC__c: e.target.value })}
+                      placeholder="Emails to BCC"
+                    />
+                  ) : (
+                    <p className="text-slate-600">{account?.csbs__Emails_to_BCC__c || '-'}</p>
+                  )}
+                </div>
+
+                <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Additional Phone</label>
                   {isEditing ? (
                     <Input
@@ -408,20 +474,6 @@ export default function AccountDetail() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                  {isEditing ? (
-                    <Input
-                      type="email"
-                      value={editData.csbs__Email__c || ''}
-                      onChange={(e) => setEditData({ ...editData, csbs__Email__c: e.target.value })}
-                      placeholder="Email"
-                    />
-                  ) : (
-                    <p className="text-slate-600">{account?.csbs__Email__c || '-'}</p>
-                  )}
-                </div>
-
-                <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">DBA</label>
                   {isEditing ? (
                     <Input
@@ -434,7 +486,7 @@ export default function AccountDetail() {
                   )}
                 </div>
 
-                <div className="md:col-span-2">
+                <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Application Industry</label>
                   {isEditing ? (
                     <Input
@@ -502,7 +554,7 @@ export default function AccountDetail() {
                   )}
                 </div>
 
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
                   {isEditing ? (
                     <Textarea
