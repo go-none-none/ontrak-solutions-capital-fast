@@ -3,20 +3,17 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { recordId } = await req.json();
+    const { recordId, token, instanceUrl } = await req.json();
 
-    if (!recordId) {
-      return Response.json({ error: 'Missing recordId' }, { status: 400 });
+    if (!recordId || !token || !instanceUrl) {
+      return Response.json({ error: 'Missing parameters' }, { status: 400 });
     }
-
-    const accessToken = await base44.asServiceRole.connectors.getAccessToken('salesforce');
-    const instanceUrl = Deno.env.get('SALESFORCE_INSTANCE_URL');
 
     const response = await fetch(
       `${instanceUrl}/services/data/v59.0/sobjects/Account/${recordId}`,
       {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       }
