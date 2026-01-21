@@ -106,16 +106,10 @@ export default function LeadCard({ lead, session }) {
             </a>
           )}
           {lead.Email && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}&openEmail=true`);
-              }}
-              className="flex items-center gap-1 hover:text-[#08708E] transition-colors"
-            >
+            <div className="flex items-center gap-1">
               <Mail className="w-4 h-4" />
-              <span className="truncate hover:underline">{lead.Email}</span>
-            </button>
+              <span className="truncate">{lead.Email}</span>
+            </div>
           )}
         </div>
 
