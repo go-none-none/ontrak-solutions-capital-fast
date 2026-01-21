@@ -82,29 +82,34 @@ export default function AccountDetail() {
         return;
       }
 
-      const [accountRes, typesRes] = await Promise.all([
-        base44.functions.invoke('getSalesforceAccount', {
-          accountId: accountId,
-          token: session?.token,
-          instanceUrl: session?.instanceUrl
-        }),
-        base44.functions.invoke('getAccountRecordTypes', {
-          token: session?.token,
-          instanceUrl: session?.instanceUrl
-        })
-      ]);
+      const accountRes = await base44.functions.invoke('getSalesforceAccount', {
+        accountId: accountId,
+        token: session?.token,
+        instanceUrl: session?.instanceUrl
+      });
 
       const accountRecord = accountRes.data.account;
       const isMerchantType = accountRecord.RecordType?.Name?.toLowerCase().includes('merchant');
       setIsMerchant(isMerchantType);
       setAccount(accountRecord);
       setEditData(accountRecord);
-      setRecordTypes(typesRes.data.recordTypes || []);
     } catch (error) {
       console.error('Load error:', error);
       setAccount(null);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadRecordTypes = async () => {
+    try {
+      const typesRes = await base44.functions.invoke('getAccountRecordTypes', {
+        token: session?.token,
+        instanceUrl: session?.instanceUrl
+      });
+      setRecordTypes(typesRes.data.recordTypes || []);
+    } catch (error) {
+      console.error('Record types error:', error);
     }
   };
 
