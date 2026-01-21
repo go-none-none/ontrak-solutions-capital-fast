@@ -247,39 +247,42 @@ export default function MerchantDetail() {
                 </div>
               </div>
 
-              {/* Business Address */}
-              {isEditing ? (
-                <div>
-                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Business Address</h2>
+              {/* Address Information */}
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Address Information</h2>
+                {isEditing ? (
                   <div className="space-y-3">
                     <div>
-                      <Label htmlFor="businessStreet">Street</Label>
-                      <Textarea id="businessStreet" value={editData.BillingStreet || ''} onChange={(e) => setEditData({ ...editData, BillingStreet: e.target.value })} rows={2} />
+                      <Label htmlFor="billingStreet">Billing Street</Label>
+                      <Textarea id="billingStreet" value={editData.BillingStreet || ''} onChange={(e) => setEditData({ ...editData, BillingStreet: e.target.value })} rows={2} />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="businessCity">City</Label>
-                        <Input id="businessCity" value={editData.BillingCity || ''} onChange={(e) => setEditData({ ...editData, BillingCity: e.target.value })} />
+                        <Label htmlFor="billingCity">City</Label>
+                        <Input id="billingCity" value={editData.BillingCity || ''} onChange={(e) => setEditData({ ...editData, BillingCity: e.target.value })} />
                       </div>
                       <div>
-                        <Label htmlFor="businessState">State</Label>
-                        <Input id="businessState" value={editData.BillingState || ''} onChange={(e) => setEditData({ ...editData, BillingState: e.target.value })} />
+                        <Label htmlFor="billingState">State/Province</Label>
+                        <select value={editData.BillingState || ''} onChange={(e) => setEditData({ ...editData, BillingState: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
+                          <option value="">Select State</option>
+                          {US_STATES.map(state => <option key={state} value={state}>{state}</option>)}
+                        </select>
                       </div>
                       <div>
-                        <Label htmlFor="businessZip">Zip</Label>
-                        <Input id="businessZip" value={editData.BillingPostalCode || ''} onChange={(e) => setEditData({ ...editData, BillingPostalCode: e.target.value })} />
+                        <Label htmlFor="billingZip">Zip/Postal Code</Label>
+                        <Input id="billingZip" value={editData.BillingPostalCode || ''} onChange={(e) => setEditData({ ...editData, BillingPostalCode: e.target.value })} />
                       </div>
                       <div>
-                        <Label htmlFor="businessCountry">Country</Label>
-                        <Input id="businessCountry" value={editData.BillingCountry || ''} onChange={(e) => setEditData({ ...editData, BillingCountry: e.target.value })} />
+                        <Label htmlFor="billingCountry">Country</Label>
+                        <select value={editData.BillingCountry || ''} onChange={(e) => setEditData({ ...editData, BillingCountry: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-md">
+                          <option value="">Select Country</option>
+                          {COUNTRIES.map(country => <option key={country} value={country}>{country}</option>)}
+                        </select>
                       </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                (merchant.BillingStreet || merchant.BillingCity) && (
-                  <div>
-                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Address</h2>
+                ) : (
+                  (merchant.BillingStreet || merchant.BillingCity) && (
                     <div className="space-y-2 text-sm text-slate-600">
                       {merchant.BillingStreet && <p>{merchant.BillingStreet}</p>}
                       {(merchant.BillingCity || merchant.BillingState || merchant.BillingPostalCode) && (
@@ -287,9 +290,9 @@ export default function MerchantDetail() {
                       )}
                       {merchant.BillingCountry && <p>{merchant.BillingCountry}</p>}
                     </div>
-                  </div>
-                )
-              )}
+                  )
+                )}
+              </div>
 
               {/* Business Information */}
               <div>
