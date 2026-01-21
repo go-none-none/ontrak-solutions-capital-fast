@@ -311,7 +311,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             {fullData && (fullData.csbs__Avg_Gross_Monthly_Sales__c || fullData.csbs__Avg_Credit_Card_Volume__c || fullData.csbs__Avg_NSFs__c) && (
               <div className="space-y-2 border-t pt-2">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Banking Activity</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-3 gap-2 text-xs">
                   {fullData.csbs__Avg_Gross_Monthly_Sales__c && <div><span className="text-slate-500">Sales:</span> {formatCurrency(fullData.csbs__Avg_Gross_Monthly_Sales__c)}</div>}
                   {fullData.csbs__Avg_Credit_Card_Volume__c && <div><span className="text-slate-500">CC Vol:</span> {formatCurrency(fullData.csbs__Avg_Credit_Card_Volume__c)}</div>}
                   {fullData.csbs__Avg_Daily_Balance__c && <div><span className="text-slate-500">Avg Bal:</span> {formatCurrency(fullData.csbs__Avg_Daily_Balance__c)}</div>}
