@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, Calendar, Building2, TrendingUp } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { DollarSign, Calendar, Building2, TrendingUp, Eye, ArrowRight } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 
-export default function OpportunityCard({ opportunity, session, onUpdate }) {
+export default function OpportunityCard({ opportunity, session, onUpdate, onQuickView }) {
   const navigate = useNavigate();
 
   const stages = [
@@ -40,8 +41,16 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
     }).format(amount);
   };
 
-  const handleClick = () => {
+  const handleFullView = (e) => {
+    e.stopPropagation();
     navigate(createPageUrl('OpportunityDetail') + `?id=${opportunity.Id}`);
+  };
+
+  const handleQuickView = (e) => {
+    e.stopPropagation();
+    if (onQuickView) {
+      onQuickView(opportunity);
+    }
   };
 
   const currentStage = getCurrentStageIndex();
@@ -60,8 +69,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      onClick={handleClick}
-      className={`border rounded-xl p-5 bg-white transition-all cursor-pointer ${
+      className={`border rounded-xl p-5 bg-white transition-all ${
         isDeclined 
           ? 'border-red-200 bg-red-50/50 hover:shadow-lg hover:border-red-400' 
           : 'border-slate-200 hover:shadow-lg hover:border-orange-600'
@@ -128,12 +136,32 @@ export default function OpportunityCard({ opportunity, session, onUpdate }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="flex items-center justify-between text-xs text-slate-500 mb-4">
           <div className="flex items-center gap-1">
             <Calendar className="w-3 h-3" />
             <span>Close: {formatDate(opportunity.CloseDate)}</span>
           </div>
           <span>Updated {formatDate(opportunity.LastModifiedDate)}</span>
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleQuickView}
+            className="flex-1 text-xs"
+          >
+            <Eye className="w-3 h-3 mr-1" />
+            Quick View
+          </Button>
+          <Button
+            size="sm"
+            onClick={handleFullView}
+            className="flex-1 bg-orange-600 hover:bg-orange-700 text-xs"
+          >
+            Full View
+            <ArrowRight className="w-3 h-3 ml-1" />
+          </Button>
         </div>
     </motion.div>
   );
