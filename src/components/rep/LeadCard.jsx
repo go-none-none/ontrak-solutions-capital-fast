@@ -180,45 +180,26 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
                   <Badge className="bg-blue-100 text-blue-800">{lead.Rating}</Badge>
                 </div>
               )}
-              {lead.csbs__Credit_Score__c && (
+              {lead.Title && (
                 <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Credit Score</p>
-                  <p className="text-sm font-semibold text-slate-900">{lead.csbs__Credit_Score__c}</p>
+                  <p className="text-xs text-slate-500 font-semibold mb-1">Title</p>
+                  <p className="text-sm text-slate-900">{lead.Title}</p>
                 </div>
               )}
-              {lead.csbs__Time_In_Business__c && (
+              {lead.Website && (
                 <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Time in Business</p>
-                  <p className="text-sm text-slate-900">{lead.csbs__Time_In_Business__c}</p>
+                  <p className="text-xs text-slate-500 font-semibold mb-1">Website</p>
+                  <p className="text-sm text-slate-900 truncate">{lead.Website}</p>
                 </div>
               )}
-              {lead.csbs__Entity_Type__c && (
-                <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Entity Type</p>
-                  <p className="text-sm text-slate-900">{lead.csbs__Entity_Type__c}</p>
-                </div>
-              )}
-              {lead.LeadSource && (
-                <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Source</p>
-                  <p className="text-sm text-slate-900">{lead.LeadSource}</p>
-                </div>
-              )}
-            </div>
-            
-            {lead.Use_of_Proceeds__c && (
-              <div>
-                <p className="text-xs text-slate-500 font-semibold mb-1">Use of Funds</p>
-                <p className="text-sm text-slate-900">{lead.Use_of_Proceeds__c}</p>
               </div>
-            )}
-            
-            {lead.Estimated_Monthly_Revenue__c && (
-              <div>
-                <p className="text-xs text-slate-500 font-semibold mb-1">Estimated Monthly Revenue</p>
-                <p className="text-sm font-semibold text-[#08708E]">{formatCurrency(lead.Estimated_Monthly_Revenue__c)}</p>
+
+              {lead.Description && (
+              <div className="border-t pt-3">
+                <p className="text-xs text-slate-500 font-semibold mb-1">Notes</p>
+                <p className="text-sm text-slate-900 line-clamp-3">{lead.Description}</p>
               </div>
-            )}
+              )}
 
             {lead.AnnualRevenue && (
               <div>
