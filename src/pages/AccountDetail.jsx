@@ -76,7 +76,7 @@ export default function AccountDetail() {
         instanceUrl: session?.instanceUrl
       });
 
-      const accountRecord = response.data.record;
+      const accountRecord = response.data.account;
       const isMerchantType = accountRecord.RecordTypeName?.toLowerCase().includes('merchant');
       setIsMerchant(isMerchantType);
       setAccount(accountRecord);
