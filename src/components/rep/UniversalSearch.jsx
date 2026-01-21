@@ -34,7 +34,7 @@ export default function UniversalSearch({ session }) {
     const search = async () => {
       setLoading(true);
       try {
-        const [leadsRes, oppsRes, contactsRes, lendersRes] = await Promise.all([
+        const [leadsRes, oppsRes, contactsRes, accountsRes] = await Promise.all([
           base44.functions.invoke('getRepLeads', {
             userId: session?.userId,
             token: session?.token,
@@ -50,7 +50,7 @@ export default function UniversalSearch({ session }) {
             token: session?.token,
             instanceUrl: session?.instanceUrl
           }),
-          base44.functions.invoke('getSalesforceLenders', {
+          base44.functions.invoke('getSalesforceAccounts', {
             token: session?.token,
             instanceUrl: session?.instanceUrl
           })
@@ -58,6 +58,7 @@ export default function UniversalSearch({ session }) {
 
         const searchLower = searchTerm.toLowerCase();
         const allResults = [];
+        const categories = new Set();
 
         // Filter leads
         if (leadsRes.data?.leads) {
@@ -69,6 +70,7 @@ export default function UniversalSearch({ session }) {
                 name: lead.Name,
                 subtitle: lead.Company,
                 type: 'Lead',
+                category: 'Lead',
                 color: 'bg-blue-100 text-blue-800',
                 icon: Contact,
                 path: 'LeadDetail',
@@ -87,6 +89,7 @@ export default function UniversalSearch({ session }) {
                 name: opp.Name,
                 subtitle: opp.Account?.Name,
                 type: 'Opportunity',
+                category: 'Opportunity',
                 color: 'bg-orange-100 text-orange-800',
                 icon: Briefcase,
                 path: 'OpportunityDetail',
@@ -105,6 +108,7 @@ export default function UniversalSearch({ session }) {
                 name: contact.Name,
                 subtitle: contact.Title,
                 type: 'Contact',
+                category: 'Contact',
                 color: 'bg-purple-100 text-purple-800',
                 icon: User,
                 path: 'ContactDetail',
@@ -113,24 +117,38 @@ export default function UniversalSearch({ session }) {
             });
         }
 
-        // Filter lenders
-        if (lendersRes.data?.lenders) {
-          lendersRes.data.lenders
-            .filter(l => l.Name?.toLowerCase().includes(searchLower))
-            .forEach(lender => {
+        // Filter all accounts by Type
+        if (accountsRes.data?.accounts) {
+          accountsRes.data.accounts
+            .filter(a => a.Name?.toLowerCase().includes(searchLower))
+            .forEach(account => {
+              const accountType = account.Type || 'Other';
+              categories.add(accountType);
+              
+              const typeColorMap = {
+                'Lender': { color: 'bg-green-100 text-green-800', icon: Building2 },
+                'Merchant': { color: 'bg-indigo-100 text-indigo-800', icon: Briefcase },
+                'Prospect': { color: 'bg-amber-100 text-amber-800', icon: User },
+                'Customer': { color: 'bg-emerald-100 text-emerald-800', icon: Building2 }
+              };
+              
+              const typeConfig = typeColorMap[accountType] || { color: 'bg-slate-100 text-slate-800', icon: Building2 };
+              
               allResults.push({
-                id: lender.Id,
-                name: lender.Name,
-                subtitle: lender.Industry__c,
-                type: 'Lender',
-                color: 'bg-green-100 text-green-800',
-                icon: Building2,
-                path: 'LenderDetail',
-                record: lender
+                id: account.Id,
+                name: account.Name,
+                subtitle: account.Industry || accountType,
+                type: accountType,
+                category: 'Account',
+                color: typeConfig.color,
+                icon: typeConfig.icon,
+                path: accountType === 'Lender' ? 'LenderDetail' : null,
+                record: account
               });
             });
         }
 
+        setAccountCategories(Array.from(categories).sort());
         setResults(allResults);
         setShowDropdown(true);
       } catch (error) {
