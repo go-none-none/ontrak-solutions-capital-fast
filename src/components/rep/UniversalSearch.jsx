@@ -121,20 +121,17 @@ export default function UniversalSearch({ session }) {
               // Check RecordTypeName for lender/merchant categorization
               const recordType = account.RecordTypeName?.toLowerCase() || '';
               let accountCategory = 'Account';
-              let path = null;
               let color = 'bg-slate-100 text-slate-800';
               let icon = Building2;
-              
+
               if (recordType.includes('lender')) {
                 accountCategory = 'Lender';
-                path = 'AccountDetail';
                 color = 'bg-green-100 text-green-800';
               } else if (recordType.includes('merchant')) {
                 accountCategory = 'Merchant';
-                path = 'AccountDetail';
                 color = 'bg-indigo-100 text-indigo-800';
               }
-              
+
               allResults.push({
                 id: account.Id,
                 name: account.Name,
@@ -143,7 +140,7 @@ export default function UniversalSearch({ session }) {
                 category: 'Account',
                 color: color,
                 icon: icon,
-                path: path,
+                path: 'AccountDetail',
                 record: account
               });
             });
