@@ -179,12 +179,20 @@ export default function MerchantDetail() {
           {/* Main Column */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-sm p-6 space-y-6">
-              {/* Contact Information */}
+              {/* Account Information */}
               <div>
-                <h2 className="text-lg font-semibold text-slate-900 mb-4">Contact Information</h2>
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Account Information</h2>
                 <div className="space-y-3">
                   {isEditing ? (
                     <>
+                      <div>
+                        <Label htmlFor="accountName">Account Name *</Label>
+                        <Input id="accountName" value={editData.Name || ''} onChange={(e) => setEditData({ ...editData, Name: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label htmlFor="dba">DBA</Label>
+                        <Input id="dba" value={editData.DBA__c || ''} onChange={(e) => setEditData({ ...editData, DBA__c: e.target.value })} />
+                      </div>
                       <div>
                         <Label htmlFor="phone">Phone</Label>
                         <Input id="phone" value={editData.Phone || ''} onChange={(e) => setEditData({ ...editData, Phone: e.target.value })} />
@@ -194,16 +202,47 @@ export default function MerchantDetail() {
                         <Input id="email" type="email" value={editData.Email__c || ''} onChange={(e) => setEditData({ ...editData, Email__c: e.target.value })} />
                       </div>
                       <div>
+                        <Label htmlFor="additionalPhone">Additional Phone</Label>
+                        <Input id="additionalPhone" value={editData.Phone_Additional__c || ''} onChange={(e) => setEditData({ ...editData, Phone_Additional__c: e.target.value })} />
+                      </div>
+                      <div>
                         <Label htmlFor="website">Website</Label>
                         <Input id="website" value={editData.Website || ''} onChange={(e) => setEditData({ ...editData, Website: e.target.value })} />
                       </div>
+                      <div>
+                        <Label htmlFor="fax">Fax</Label>
+                        <Input id="fax" value={editData.Fax || ''} onChange={(e) => setEditData({ ...editData, Fax: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label htmlFor="originalISO">Original ISO</Label>
+                        <Input id="originalISO" value={editData.Original_ISO__c || ''} onChange={(e) => setEditData({ ...editData, Original_ISO__c: e.target.value })} />
+                      </div>
                     </>
                   ) : (
-                    <>
-                      {merchant.Phone && <div className="flex items-center gap-3"><a href={`tel:${merchant.Phone}`} className="text-orange-600">{merchant.Phone}</a></div>}
-                      {merchant.Email__c && <div className="flex items-center gap-3"><a href={`mailto:${merchant.Email__c}`} className="text-orange-600">{merchant.Email__c}</a></div>}
-                      {merchant.Website && <div className="flex items-center gap-3"><a href={merchant.Website} target="_blank" rel="noopener noreferrer" className="text-orange-600">{merchant.Website}</a></div>}
-                    </>
+                    <div className="space-y-2 text-sm">
+                      {editData.DBA__c && <div><p className="text-slate-500 text-xs mb-1">DBA</p><p className="font-medium">{editData.DBA__c}</p></div>}
+                      {merchant.Phone && <div><a href={`tel:${merchant.Phone}`} className="text-orange-600">{merchant.Phone}</a></div>}
+                      {merchant.Email__c && <div><a href={`mailto:${merchant.Email__c}`} className="text-orange-600">{merchant.Email__c}</a></div>}
+                      {merchant.Phone_Additional__c && <div><a href={`tel:${merchant.Phone_Additional__c}`} className="text-orange-600">{merchant.Phone_Additional__c}</a></div>}
+                      {merchant.Website && <div><a href={merchant.Website} target="_blank" rel="noopener noreferrer" className="text-orange-600">{merchant.Website}</a></div>}
+                      {merchant.Fax && <div><p className="text-slate-600">Fax: {merchant.Fax}</p></div>}
+                      {merchant.Original_ISO__c && <div><p className="text-slate-500 text-xs mb-1">Original ISO</p><p className="font-medium">{merchant.Original_ISO__c}</p></div>}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900 mb-4">Description</h2>
+                <div className="space-y-3">
+                  {isEditing ? (
+                    <div>
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea id="description" value={editData.Description || ''} onChange={(e) => setEditData({ ...editData, Description: e.target.value })} rows={4} />
+                    </div>
+                  ) : (
+                    <p className="text-sm text-slate-600">{merchant.Description || 'No description'}</p>
                   )}
                 </div>
               </div>
