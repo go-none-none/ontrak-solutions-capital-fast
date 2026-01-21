@@ -28,6 +28,12 @@ export default function LenderDetail() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const lenderId = urlParams.get('id');
+      
+      if (!lenderId) {
+        setLender(null);
+        setLoading(false);
+        return;
+      }
 
       const response = await base44.functions.invoke('getSalesforceRecord', {
         recordId: lenderId,
@@ -39,6 +45,7 @@ export default function LenderDetail() {
       setLender(response.data.record);
     } catch (error) {
       console.error('Load error:', error);
+      setLender(null);
     } finally {
       setLoading(false);
     }
