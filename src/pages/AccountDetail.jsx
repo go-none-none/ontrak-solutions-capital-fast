@@ -242,9 +242,30 @@ export default function AccountDetail() {
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Record Type</label>
-                  <p className="text-slate-900">{recordTypeName || 'Not set'}</p>
+                <div className="md:col-span-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Record Type {!account && <span className="text-red-500">*</span>}
+                  </label>
+                  {isEditing || !account ? (
+                    <select
+                      value={recordTypeId || ''}
+                      onChange={(e) => {
+                        const selected = recordTypes.find(rt => rt.id === e.target.value);
+                        setRecordTypeId(e.target.value);
+                        setRecordTypeName(selected?.name || '');
+                        setEditData({ ...editData, RecordTypeId: e.target.value });
+                      }}
+                      disabled={account?.Id}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-md disabled:bg-slate-100"
+                    >
+                      <option value="">Select Record Type</option>
+                      {recordTypes.map(rt => (
+                        <option key={rt.id} value={rt.id}>{rt.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <p className="text-slate-900">{recordTypeName || 'Not set'}</p>
+                  )}
                 </div>
 
                 <div>
