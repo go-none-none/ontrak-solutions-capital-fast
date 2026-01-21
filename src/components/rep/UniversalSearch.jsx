@@ -127,11 +127,11 @@ export default function UniversalSearch({ session }) {
               
               if (recordType.includes('lender')) {
                 accountCategory = 'Lender';
-                path = 'LenderDetail';
+                path = 'AccountDetail';
                 color = 'bg-green-100 text-green-800';
               } else if (recordType.includes('merchant')) {
                 accountCategory = 'Merchant';
-                path = 'MerchantDetail';
+                path = 'AccountDetail';
                 color = 'bg-indigo-100 text-indigo-800';
               }
               
