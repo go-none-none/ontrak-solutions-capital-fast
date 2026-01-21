@@ -23,7 +23,7 @@ export default function LenderDetail() {
     loadLender(parsedSession);
   }, []);
 
-  const loadLender = async (sessionData) => {
+  const loadLender = async () => {
     setLoading(true);
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -35,11 +35,8 @@ export default function LenderDetail() {
         return;
       }
 
-      const response = await base44.functions.invoke('getSalesforceRecord', {
-        recordId: lenderId,
-        recordType: 'Account',
-        token: sessionData.token,
-        instanceUrl: sessionData.instanceUrl
+      const response = await base44.functions.invoke('getSalesforceLender', {
+        recordId: lenderId
       });
 
       setLender(response.data.record);
