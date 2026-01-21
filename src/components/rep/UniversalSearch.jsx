@@ -141,7 +141,7 @@ export default function UniversalSearch({ session }) {
         allResults.push({
           id: account.Id,
           name: account.Name,
-          subtitle: null,
+          subtitle: account.RecordType?.Name,
           type: accountCategory,
           category: 'Account',
           color: color,
