@@ -25,10 +25,11 @@ export default function UniversalSearch({ session }) {
   useEffect(() => {
     if (!searchTerm.trim()) {
       setResults([]);
+      setShowDropdown(false);
       return;
     }
 
-    const search = async () => {
+    const timer = setTimeout(async () => {
       setLoading(true);
       try {
         const [leadsRes, oppsRes, contactsRes, accountsRes] = await Promise.all([
