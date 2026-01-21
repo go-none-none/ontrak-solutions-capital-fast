@@ -1175,9 +1175,8 @@ export default function RepPortal() {
           </div>
         )}
         </div>
-      </>
-      )}
-      </div>
+        </>
+        )}
 
         {/* Quick View Modal */}
         {quickViewRecord && (
