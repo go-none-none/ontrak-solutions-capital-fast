@@ -250,7 +250,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             {fullData && (fullData.csbs__Amount_Requested__c || fullData.csbs__Months_In_Business__c || fullData.csbs__Estimated_Monthly_Revenue__c) && (
               <div className="space-y-2 border-t pt-2">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Qualifying</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-3 gap-2 text-xs">
                   {fullData.csbs__Amount_Requested__c && <div><span className="text-slate-500">Req:</span> {formatCurrency(fullData.csbs__Amount_Requested__c)}</div>}
                   {fullData.csbs__Months_In_Business__c && <div><span className="text-slate-500">Months:</span> {fullData.csbs__Months_In_Business__c}</div>}
                   {fullData.csbs__Use_of_Proceeds__c && <div className="col-span-2"><span className="text-slate-500">Use:</span> {fullData.csbs__Use_of_Proceeds__c}</div>}
