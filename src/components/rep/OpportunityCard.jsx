@@ -184,58 +184,24 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
                   <p className="text-sm text-slate-900">{opportunity.LeadSource}</p>
                 </div>
               )}
-              {opportunity.csbs__Months_In_Business__c && (
+              {opportunity.Amount && (
                 <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Months in Business</p>
-                  <p className="text-sm text-slate-900">{opportunity.csbs__Months_In_Business__c}</p>
+                  <p className="text-xs text-slate-500 font-semibold mb-1">Amount</p>
+                  <p className="text-sm font-semibold text-orange-600">{formatCurrency(opportunity.Amount)}</p>
                 </div>
               )}
-              {opportunity.csbs__Estimated_Monthly_MCA_Amount__c && (
+              {opportunity.Probability && (
                 <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Est. Monthly MCA</p>
-                  <p className="text-sm font-semibold text-orange-600">{formatCurrency(opportunity.csbs__Estimated_Monthly_MCA_Amount__c)}</p>
+                  <p className="text-xs text-slate-500 font-semibold mb-1">Probability</p>
+                  <p className="text-sm text-slate-900">{opportunity.Probability}%</p>
                 </div>
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 border-t pt-3">
-              {opportunity.Amount_Requested__c && (
-                <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Amount Requested</p>
-                  <p className="text-sm font-semibold text-orange-600">{formatCurrency(opportunity.Amount_Requested__c)}</p>
-                </div>
-              )}
-              {opportunity.Estimated_Monthly_Revenue__c && (
-                <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Monthly Revenue</p>
-                  <p className="text-sm font-semibold text-slate-900">{formatCurrency(opportunity.Estimated_Monthly_Revenue__c)}</p>
-                </div>
-              )}
-              {opportunity.csbs__Open_Loan_Balances__c && (
-                <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Open Balances</p>
-                  <p className="text-sm font-semibold text-slate-900">{formatCurrency(opportunity.csbs__Open_Loan_Balances__c)}</p>
-                </div>
-              )}
-              {opportunity.csbs__Avg_Daily_Balance__c && (
-                <div>
-                  <p className="text-xs text-slate-500 font-semibold mb-1">Avg Daily Balance</p>
-                  <p className="text-sm font-semibold text-slate-900">{formatCurrency(opportunity.csbs__Avg_Daily_Balance__c)}</p>
-                </div>
-              )}
-            </div>
-            
-            {opportunity.Use_of_Proceeds__c && (
-              <div>
-                <p className="text-xs text-slate-500 font-semibold mb-1">Use of Funds</p>
-                <p className="text-sm text-slate-900">{opportunity.Use_of_Proceeds__c}</p>
-              </div>
-            )}
-
-            {opportunity.csbs__Stage_Detail__c && (
-              <div>
-                <p className="text-xs text-slate-500 font-semibold mb-1">Stage Detail</p>
-                <p className="text-sm text-slate-900">{opportunity.csbs__Stage_Detail__c}</p>
+            {opportunity.CloseDate && (
+              <div className="border-t pt-3">
+                <p className="text-xs text-slate-500 font-semibold mb-1">Close Date</p>
+                <p className="text-sm text-slate-900">{formatDate(opportunity.CloseDate)}</p>
               </div>
             )}
           </motion.div>
