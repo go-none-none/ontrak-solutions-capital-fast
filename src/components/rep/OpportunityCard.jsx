@@ -326,7 +326,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             {fullData && (fullData.csbs__Renewal_Status__c || fullData.csbs__Previous_Funding__c) && (
               <div className="space-y-2 border-t pt-2">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Additional</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-3 gap-2 text-xs">
                   {fullData.csbs__Renewal_Status__c && <div><span className="text-slate-500">Renewal:</span> {fullData.csbs__Renewal_Status__c}</div>}
                   {fullData.csbs__Previous_Funding__c && <div><span className="text-slate-500">Prev Fund:</span> {formatCurrency(fullData.csbs__Previous_Funding__c)}</div>}
                   {fullData.csbs__Open_Bankruptcies__c && <div><span className="text-slate-500">Bankruptcies:</span> {fullData.csbs__Open_Bankruptcies__c}</div>}
