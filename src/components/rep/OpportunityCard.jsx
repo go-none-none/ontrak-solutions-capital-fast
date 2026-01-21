@@ -220,18 +220,18 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             )}
 
             {/* Qualifying Info */}
-            {(opportunity.csbs__Amount_Requested__c || opportunity.csbs__Months_In_Business__c || opportunity.csbs__Estimated_Monthly_Revenue__c) && (
+            {fullData && (fullData.csbs__Amount_Requested__c || fullData.csbs__Months_In_Business__c || fullData.csbs__Estimated_Monthly_Revenue__c) && (
               <div className="space-y-2 border-t pt-2">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Qualifying</p>
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  {opportunity.csbs__Amount_Requested__c && <div><span className="text-slate-500">Req:</span> {formatCurrency(opportunity.csbs__Amount_Requested__c)}</div>}
-                  {opportunity.csbs__Months_In_Business__c && <div><span className="text-slate-500">Months:</span> {opportunity.csbs__Months_In_Business__c}</div>}
-                  {opportunity.csbs__Use_of_Proceeds__c && <div className="col-span-2"><span className="text-slate-500">Use:</span> {opportunity.csbs__Use_of_Proceeds__c}</div>}
-                  {opportunity.csbs__Estimated_Monthly_Revenue__c && <div><span className="text-slate-500">Revenue:</span> {formatCurrency(opportunity.csbs__Estimated_Monthly_Revenue__c)}</div>}
-                  {opportunity.csbs__Number_of_Terminals__c && <div><span className="text-slate-500">Terminals:</span> {opportunity.csbs__Number_of_Terminals__c}</div>}
-                  {opportunity.csbs__Open_Loan_Balances__c && <div><span className="text-slate-500">Balances:</span> {formatCurrency(opportunity.csbs__Open_Loan_Balances__c)}</div>}
-                  {opportunity.csbs__Open_Bankruptcies__c && <div><span className="text-slate-500">Bankruptcies:</span> {opportunity.csbs__Open_Bankruptcies__c}</div>}
-                  {opportunity.csbs__Number_of_Open_Positions__c && <div><span className="text-slate-500">Positions:</span> {opportunity.csbs__Number_of_Open_Positions__c}</div>}
+                  {fullData.csbs__Amount_Requested__c && <div><span className="text-slate-500">Req:</span> {formatCurrency(fullData.csbs__Amount_Requested__c)}</div>}
+                  {fullData.csbs__Months_In_Business__c && <div><span className="text-slate-500">Months:</span> {fullData.csbs__Months_In_Business__c}</div>}
+                  {fullData.csbs__Use_of_Proceeds__c && <div className="col-span-2"><span className="text-slate-500">Use:</span> {fullData.csbs__Use_of_Proceeds__c}</div>}
+                  {fullData.csbs__Estimated_Monthly_Revenue__c && <div><span className="text-slate-500">Revenue:</span> {formatCurrency(fullData.csbs__Estimated_Monthly_Revenue__c)}</div>}
+                  {fullData.csbs__Number_of_Terminals__c && <div><span className="text-slate-500">Terminals:</span> {fullData.csbs__Number_of_Terminals__c}</div>}
+                  {fullData.csbs__Open_Loan_Balances__c && <div><span className="text-slate-500">Balances:</span> {formatCurrency(fullData.csbs__Open_Loan_Balances__c)}</div>}
+                  {fullData.csbs__Open_Bankruptcies__c && <div><span className="text-slate-500">Bankruptcies:</span> {fullData.csbs__Open_Bankruptcies__c}</div>}
+                  {fullData.csbs__Number_of_Open_Positions__c && <div><span className="text-slate-500">Positions:</span> {fullData.csbs__Number_of_Open_Positions__c}</div>}
                 </div>
               </div>
             )}
