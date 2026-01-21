@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Loader2, Contact, Briefcase, Building2, X, User, ChevronDown } from 'lucide-react';
+import { Search, Loader2, Contact, Briefcase, Building2, X, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
