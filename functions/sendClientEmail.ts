@@ -20,6 +20,22 @@ Deno.serve(async (req) => {
 
     const cleanMessage = message.replace(/<[^>]*>/g, '').trim();
 
+        // Get session from headers
+        const authHeader = req.headers.get('authorization');
+        let sessionToken = null;
+        let sessionInstanceUrl = null;
+
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const sessionData = authHeader.substring(7);
+          try {
+            const parsed = JSON.parse(atob(sessionData));
+            sessionToken = parsed.token;
+            sessionInstanceUrl = parsed.instanceUrl;
+          } catch (e) {
+            // If parsing fails, continue without session
+          }
+        }
+
         // Generate PDF
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
@@ -152,18 +168,52 @@ Deno.serve(async (req) => {
     const pdfBase64 = btoa(String.fromCharCode(...new Uint8Array(pdfBytes)));
 
     // Upload PDF to Salesforce
-    try {
-      const base44 = createClientFromRequest(req);
-      const uploadResponse = await base44.functions.invoke('uploadSalesforceFile', {
-        fileName: 'Offer_Proposal.pdf',
-        fileData: pdfBase64,
-        recordId: opportunityId,
-        token: Deno.env.get("SALESFORCE_TOKEN"),
-        instanceUrl: Deno.env.get("SALESFORCE_INSTANCE_URL")
-      });
-    } catch (uploadError) {
-      console.error('Failed to upload PDF to Salesforce:', uploadError);
-      // Continue with email even if upload fails
+    if (sessionToken && sessionInstanceUrl) {
+      try {
+        const uploadResponse = await fetch(`${sessionInstanceUrl}/services/data/v59.0/sobjects/ContentVersion`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${sessionToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            Title: 'Offer_Proposal.pdf',
+            PathOnClient: 'Offer_Proposal.pdf',
+            VersionData: pdfBase64
+          })
+        });
+
+        if (uploadResponse.ok) {
+          const cvResult = await uploadResponse.json();
+
+          // Get ContentDocumentId
+          const cdQuery = `SELECT ContentDocumentId FROM ContentVersion WHERE Id = '${cvResult.id}'`;
+          const cdResponse = await fetch(
+            `${sessionInstanceUrl}/services/data/v59.0/query/?q=${encodeURIComponent(cdQuery)}`,
+            { headers: { 'Authorization': `Bearer ${sessionToken}` } }
+          );
+
+          const cdData = await cdResponse.json();
+          const contentDocumentId = cdData.records[0].ContentDocumentId;
+
+          // Link to opportunity
+          await fetch(`${sessionInstanceUrl}/services/data/v59.0/sobjects/ContentDocumentLink`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${sessionToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              ContentDocumentId: contentDocumentId,
+              LinkedEntityId: opportunityId,
+              ShareType: 'V'
+            })
+          });
+        }
+      } catch (uploadError) {
+        console.error('Failed to upload PDF to Salesforce:', uploadError);
+        // Continue with email even if upload fails
+      }
     }
 
     const emailHTML = `<!DOCTYPE html>
