@@ -70,6 +70,16 @@ export default function RepPortal() {
     return dispositionColorMap[disposition] || 'bg-gray-400 text-white';
   };
 
+  const handleEmailClick = (email, recordType, recordId) => {
+    if (recordType === 'lead') {
+      navigate(createPageUrl('LeadDetail') + `?id=${recordId}&openEmail=true`);
+    } else if (recordType === 'opportunity') {
+      navigate(createPageUrl('OpportunityDetail') + `?id=${recordId}&openEmail=true`);
+    } else if (recordType === 'contact') {
+      navigate(createPageUrl('ContactDetail') + `?id=${recordId}&openEmail=true`);
+    }
+  };
+
   useEffect(() => {
     checkSession();
     
@@ -396,16 +406,26 @@ export default function RepPortal() {
   };
 
   const filteredLeads = leads.filter(lead => {
-    const searchMatch = lead.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.Company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.Email?.toLowerCase().includes(searchTerm.toLowerCase());
+    let searchMatch = true;
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      searchMatch = lead.Name?.toLowerCase().includes(term) ||
+        lead.Company?.toLowerCase().includes(term) ||
+        lead.Email?.toLowerCase().includes(term) ||
+        lead.Phone?.toLowerCase().includes(term) ||
+        lead.MobilePhone?.toLowerCase().includes(term);
+    }
     const stageMatch = !stageFilter || lead.Status === stageFilter;
     return searchMatch && stageMatch;
   });
 
   const filteredOpportunities = opportunities.filter(opp => {
-    const searchMatch = opp.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      opp.Account?.Name?.toLowerCase().includes(searchTerm.toLowerCase());
+    let searchMatch = true;
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      searchMatch = opp.Name?.toLowerCase().includes(term) ||
+        opp.Account?.Name?.toLowerCase().includes(term);
+    }
 
     let stageMatch = true;
     if (stageFilter) {
@@ -482,6 +502,21 @@ export default function RepPortal() {
         onCreateTaskClick={() => setShowCreateTask(true)}
       />
 
+      {/* Universal Search */}
+      {(activeTab === 'leads' || activeTab === 'opportunities' || activeTab === 'dispositions') && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+            <Input
+              placeholder="Search all leads, opportunities, and contacts..."
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base w-full"
+            />
+          </div>
+        </div>
+      )}
+
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -556,24 +591,7 @@ export default function RepPortal() {
           </motion.div>
           </div>
 
-        {/* Universal Search Box */}
-        {(activeTab === 'leads' || activeTab === 'opportunities' || activeTab === 'dispositions') && (
-          <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 sm:mt-6">
-            <div className="relative flex-1 mb-4 sm:mb-6">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
-              <Input
-                placeholder={
-                  activeTab === 'leads' ? 'Search leads by name, company, email, or phone...' :
-                  activeTab === 'opportunities' ? 'Search opportunities by name or account...' :
-                  'Search by lead name, company, or phone...'
-                }
-                value={searchTerm}
-                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="pl-9 sm:pl-10 h-10 sm:h-12 text-sm sm:text-base w-full"
-              />
-            </div>
-          </div>
-        )}
+
 
         {/* Pipeline */}
         {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
@@ -1005,6 +1023,17 @@ export default function RepPortal() {
                               </div>
                               
                               <div className="space-y-2 mb-3 pb-3 border-b border-slate-100">
+                                {lead.Email && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEmailClick(lead.Email, 'lead', lead.Id);
+                                    }}
+                                    className="text-xs text-[#08708E] hover:underline block text-left"
+                                  >
+                                    {lead.Email}
+                                  </button>
+                                )}
                                 {lead.MobilePhone && (
                                   <a 
                                     href={`tel:${lead.MobilePhone}`} 
