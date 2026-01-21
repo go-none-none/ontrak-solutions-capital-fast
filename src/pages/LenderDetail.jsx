@@ -32,6 +32,9 @@ export default function LenderDetail() {
   const [session, setSession] = useState(null);
   const [lender, setLender] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('sfSession');
