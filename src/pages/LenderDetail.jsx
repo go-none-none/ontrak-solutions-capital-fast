@@ -36,7 +36,9 @@ export default function LenderDetail() {
       }
 
       const response = await base44.functions.invoke('getSalesforceLender', {
-        recordId: lenderId
+        recordId: lenderId,
+        token: session?.token,
+        instanceUrl: session?.instanceUrl
       });
 
       setLender(response.data.record);
