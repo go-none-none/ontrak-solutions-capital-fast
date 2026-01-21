@@ -201,15 +201,15 @@ export default function UniversalSearch({ session }) {
 
       </div>
 
-      {showDropdown && (filteredResults.length > 0 || searchTerm) && (
+      {showDropdown && (results.length > 0 || searchTerm) && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-[600px] overflow-y-auto">
-          {loading && filteredResults.length === 0 ? (
+           {loading && results.length === 0 ? (
             <div className="flex items-center justify-center py-6">
               <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
             </div>
-          ) : filteredResults.length > 0 ? (
+          ) : results.length > 0 ? (
             <div className="divide-y divide-slate-100">
-              {filteredResults.map((result) => {
+              {results.map((result) => {
                 const Icon = result.icon;
                 return (
                   <button
