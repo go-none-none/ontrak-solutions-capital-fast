@@ -646,9 +646,9 @@ export default function RepPortal() {
             </div>
           </motion.div>
           </div>
-          </div>
-          )}
-
+        </div>
+      ) : (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           {!searchTerm && (
             <>
               {/* Pipeline */}
@@ -1178,6 +1178,8 @@ export default function RepPortal() {
         </div>
         </div>
         </>
+        )}
+        </div>
         )}
 
         {/* Create Task Modal */}
