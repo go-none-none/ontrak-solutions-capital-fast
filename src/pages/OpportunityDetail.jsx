@@ -311,9 +311,9 @@ export default function OpportunityDetail() {
     }
   };
 
-  const handleFieldSave = async (field) => {
+  const handleFieldSave = React.useCallback(async (field) => {
     try {
-      setEditing({ ...editing, [field]: true });
+      setEditing(prev => ({ ...prev, [field]: true }));
       await base44.functions.invoke('updateSalesforceRecord', {
         objectType: 'Opportunity',
         recordId: opportunity.Id,
@@ -322,12 +322,24 @@ export default function OpportunityDetail() {
         instanceUrl: session.instanceUrl
       });
       await loadOpportunity(session);
-      setEditing({ ...editing, [field]: false });
+      setEditing(prev => ({ ...prev, [field]: false }));
     } catch (error) {
       console.error('Update error:', error);
-      setEditing({ ...editing, [field]: false });
+      setEditing(prev => ({ ...prev, [field]: false }));
     }
-  };
+  }, [opportunity.Id, editValues, session]);
+
+  const handleFieldEdit = React.useCallback((field, value) => {
+    setEditValues(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleFieldCancel = React.useCallback((field) => {
+    setEditing(prev => ({ ...prev, [field]: false }));
+  }, []);
+
+  const handleFieldStartEdit = React.useCallback((field) => {
+    setEditing(prev => ({ ...prev, [field]: true }));
+  }, []);
 
   const handleDeleteRecord = async (objectType, recordId, recordName) => {
     if (!confirm(`Are you sure you want to delete ${recordName}?`)) {
@@ -383,7 +395,7 @@ export default function OpportunityDetail() {
     }
   };
 
-  const EditableFieldWrapper = ({ label, field, value, disabled = false }) => {
+  const EditableFieldWrapper = React.useCallback(({ label, field, value, disabled = false }) => {
     return (
       <EditableField
         label={label}
@@ -392,13 +404,13 @@ export default function OpportunityDetail() {
         editing={editing}
         editValues={editValues}
         disabled={disabled}
-        onEdit={(field, value) => setEditValues({ ...editValues, [field]: value })}
+        onEdit={handleFieldEdit}
         onSave={handleFieldSave}
-        onCancel={(field) => setEditing({ ...editing, [field]: false })}
-        onStartEdit={(field) => setEditing({ ...editing, [field]: true })}
+        onCancel={handleFieldCancel}
+        onStartEdit={handleFieldStartEdit}
       />
     );
-  };
+  }, [editing, editValues, handleFieldEdit, handleFieldSave, handleFieldCancel, handleFieldStartEdit]);
 
   if (loading) {
     return (
