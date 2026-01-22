@@ -32,21 +32,19 @@ export default function RepPortalHeader({
   return (
     <div className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-start justify-between">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Rep Portal</h1>
-              {userName && <p className="text-xs sm:text-sm text-slate-600 truncate">Welcome back, {userName}</p>}
-            </div>
+        <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Rep Portal</h1>
+            {userName && <p className="text-xs sm:text-sm text-slate-600 truncate">Welcome back, {userName}</p>}
           </div>
           
           {session && (
-            <div className="w-full">
+            <div className="w-full lg:flex-1 lg:max-w-md">
               <UniversalSearch session={session} />
             </div>
           )}
           
-          <div className="flex items-center gap-2 sm:gap-3 justify-center sm:justify-end">
+          <div className="flex items-center gap-2 sm:gap-3 justify-center sm:justify-end lg:flex-shrink-0">
             {showBackButton && (
               <Button 
                 variant="outline" 
