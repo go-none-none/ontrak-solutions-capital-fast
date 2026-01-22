@@ -87,10 +87,7 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
       <div className={`grid gap-2 ${activeTab === 'leads' ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-7'}`}>
         {pipelineData.map((stage, idx) => (
           <motion.div key={idx} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }} className="relative group">
-            <button
-              onClick={() => onStageClick && onStageClick(stage.name)}
-              className={`w-full bg-gradient-to-br ${stage.color} rounded-lg p-3 text-white shadow-md hover:shadow-xl hover:scale-105 transition-all text-left relative overflow-hidden flex flex-col justify-between`}
-            >
+            <button onClick={() => onStageClick && onStageClick(stage.name)} className={`w-full bg-gradient-to-br ${stage.color} rounded-lg p-3 text-white shadow-md hover:shadow-xl hover:scale-105 transition-all text-left relative overflow-hidden flex flex-col justify-between`}>
               <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative">
                 <div className="text-xl font-bold mb-1">{stage.count}</div>

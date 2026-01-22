@@ -23,17 +23,8 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
     if (isExpanded && !fullData && session) {
       setLoadingData(true);
       Promise.all([
-        base44.functions.invoke('getSalesforceRecord', {
-          recordId: opportunity.Id,
-          recordType: 'Opportunity',
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        }),
-        base44.functions.invoke('getSalesforceContactRoles', {
-          recordId: opportunity.Id,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
+        base44.functions.invoke('getSalesforceRecord', { recordId: opportunity.Id, recordType: 'Opportunity', token: session.token, instanceUrl: session.instanceUrl }),
+        base44.functions.invoke('getSalesforceContactRoles', { recordId: opportunity.Id, token: session.token, instanceUrl: session.instanceUrl })
       ]).then(([oppRes, contactRes]) => {
         setFullData(oppRes.data.record);
         setContactRoles(contactRes.data.contactRoles || []);
@@ -58,20 +49,12 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
 
   const formatDate = (dateString) => {
     if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
+    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   const formatCurrency = (amount) => {
     if (!amount) return '$0';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0
-    }).format(amount);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
   };
 
   const handleFullView = (e) => {
@@ -92,15 +75,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`border rounded-lg bg-white transition-all cursor-pointer ${
-        isDeclined 
-          ? 'border-red-200 bg-red-50/50 hover:shadow-lg hover:border-red-400' 
-          : 'border-slate-200 hover:shadow-lg hover:border-orange-600'
-      }`}
-    >
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`border rounded-lg bg-white transition-all cursor-pointer ${isDeclined ? 'border-red-200 bg-red-50/50 hover:shadow-lg hover:border-red-400' : 'border-slate-200 hover:shadow-lg hover:border-orange-600'}`}>
       <div className="p-3" onClick={handleCardClick}>
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1 min-w-0">
@@ -112,11 +87,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
               </div>
             )}
           </div>
-          <Badge className={`text-xs ml-2 flex-shrink-0 ${
-            isDeclined 
-              ? 'bg-red-100 text-red-800' 
-              : statusColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'
-          }`}>
+          <Badge className={`text-xs ml-2 flex-shrink-0 ${isDeclined ? 'bg-red-100 text-red-800' : statusColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'}`}>
             {opportunity.StageName}
           </Badge>
         </div>
@@ -126,21 +97,13 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
             <div className="flex justify-between items-start mb-1 gap-0.5">
               {stages.map((stage, idx) => (
                 <div key={idx} className="flex flex-col items-center flex-1 min-w-0">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold flex-shrink-0 ${
-                    idx <= currentStage ? 'bg-orange-600 text-white' : 'bg-slate-200 text-slate-500'
-                  }`}>
-                    {idx + 1}
-                  </div>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold flex-shrink-0 ${idx <= currentStage ? 'bg-orange-600 text-white' : 'bg-slate-200 text-slate-500'}`}>{idx + 1}</div>
                   <span className="text-[9px] text-slate-600 mt-0.5 text-center leading-tight">{stage.label}</span>
                 </div>
               ))}
             </div>
             <div className="flex gap-0.5">
-              {stages.map((_, idx) => (
-                <div key={idx} className={`h-1 flex-1 rounded ${
-                  idx <= currentStage ? 'bg-orange-600' : 'bg-slate-200'
-                }`} />
-              ))}
+              {stages.map((_, idx) => (<div key={idx} className={`h-1 flex-1 rounded ${idx <= currentStage ? 'bg-orange-600' : 'bg-slate-200'}`} />))}
             </div>
           </div>
         )}
@@ -172,17 +135,8 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
       </div>
 
       {isExpanded && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="px-3 pb-3 pt-0 border-t border-slate-200"
-          >
-            {loadingData && (
-              <div className="flex justify-center py-4">
-                <Loader2 className="w-4 h-4 animate-spin text-orange-600" />
-              </div>
-            )}
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="px-3 pb-3 pt-0 border-t border-slate-200">
+            {loadingData && (<div className="flex justify-center py-4"><Loader2 className="w-4 h-4 animate-spin text-orange-600" /></div>)}
 
             <div className="grid grid-cols-2 gap-4">
               {contactRoles && contactRoles.length > 0 && (
@@ -213,11 +167,7 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
               )}
             </div>
 
-          <Button
-            onClick={handleFullView}
-            className="w-full mt-3 bg-orange-600 hover:bg-orange-700 text-white"
-            size="sm"
-          >
+          <Button onClick={handleFullView} className="w-full mt-3 bg-orange-600 hover:bg-orange-700 text-white" size="sm">
             <ExternalLink className="w-4 h-4 mr-2" />
             View Full Details
           </Button>

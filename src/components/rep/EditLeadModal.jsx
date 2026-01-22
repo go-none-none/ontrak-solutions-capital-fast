@@ -7,17 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from 'lucide-react';
 
 export default function EditLeadModal({ isOpen, onClose, lead, onSave }) {
-  const [formData, setFormData] = useState({
-    FirstName: lead?.FirstName || '',
-    LastName: lead?.LastName || '',
-    Company: lead?.Company || '',
-    Title: lead?.Title || '',
-    Phone: lead?.Phone || '',
-    Email: lead?.Email || '',
-    Status: lead?.Status || '',
-    Industry: lead?.Industry || '',
-    LeadSource: lead?.LeadSource || ''
-  });
+  const [formData, setFormData] = useState({ FirstName: lead?.FirstName || '', LastName: lead?.LastName || '', Company: lead?.Company || '', Title: lead?.Title || '', Phone: lead?.Phone || '', Email: lead?.Email || '', Status: lead?.Status || '', Industry: lead?.Industry || '', LeadSource: lead?.LeadSource || '' });
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -40,15 +30,8 @@ export default function EditLeadModal({ isOpen, onClose, lead, onSave }) {
             <div><Label>Last Name</Label><Input value={formData.LastName} onChange={(e) => setFormData({ ...formData, LastName: e.target.value })} required /></div>
           </div>
 
-          <div>
-            <Label>Company</Label>
-            <Input value={formData.Company} onChange={(e) => setFormData({ ...formData, Company: e.target.value })} required />
-          </div>
-
-          <div>
-            <Label>Title</Label>
-            <Input value={formData.Title} onChange={(e) => setFormData({ ...formData, Title: e.target.value })} />
-          </div>
+          <div><Label>Company</Label><Input value={formData.Company} onChange={(e) => setFormData({ ...formData, Company: e.target.value })} required /></div>
+          <div><Label>Title</Label><Input value={formData.Title} onChange={(e) => setFormData({ ...formData, Title: e.target.value })} /></div>
 
           <div className="grid sm:grid-cols-2 gap-4">
             <div><Label>Phone</Label><Input type="tel" value={formData.Phone} onChange={(e) => setFormData({ ...formData, Phone: e.target.value })} /></div>
@@ -73,10 +56,7 @@ export default function EditLeadModal({ isOpen, onClose, lead, onSave }) {
             <div><Label>Lead Source</Label><Input value={formData.LeadSource} onChange={(e) => setFormData({ ...formData, LeadSource: e.target.value })} /></div>
           </div>
 
-          <div>
-            <Label>Industry</Label>
-            <Input value={formData.Industry} onChange={(e) => setFormData({ ...formData, Industry: e.target.value })} />
-          </div>
+          <div><Label>Industry</Label><Input value={formData.Industry} onChange={(e) => setFormData({ ...formData, Industry: e.target.value })} /></div>
 
           <div className="flex gap-3 pt-4">
             <Button type="submit" disabled={saving} className="flex-1 bg-orange-600 hover:bg-orange-700">

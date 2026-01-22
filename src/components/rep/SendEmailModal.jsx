@@ -10,10 +10,7 @@ import { toast } from 'sonner';
 export default function SendEmailModal({ recipientEmail, recipientName }) {
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
-  const [formData, setFormData] = useState({
-    subject: '',
-    message: ''
-  });
+  const [formData, setFormData] = useState({ subject: '', message: '' });
 
   const handleSend = async () => {
     if (!formData.subject.trim() || !formData.message.trim()) {
@@ -23,13 +20,7 @@ export default function SendEmailModal({ recipientEmail, recipientName }) {
 
     setSending(true);
     try {
-      await base44.functions.invoke('sendClientEmail', {
-        recipientEmail,
-        recipientName,
-        subject: formData.subject,
-        message: formData.message
-      });
-
+      await base44.functions.invoke('sendClientEmail', { recipientEmail, recipientName, subject: formData.subject, message: formData.message });
       toast.success('Email sent successfully!');
       setOpen(false);
       setFormData({ subject: '', message: '' });
@@ -53,28 +44,9 @@ export default function SendEmailModal({ recipientEmail, recipientName }) {
           <DialogTitle>Send Email to {recipientName}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
-          <div>
-            <label className="text-sm font-medium text-slate-700 mb-1 block">To:</label>
-            <Input value={recipientEmail} disabled className="bg-slate-50" />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-slate-700 mb-1 block">Subject:</label>
-            <Input
-              placeholder="Email subject"
-              value={formData.subject}
-              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-slate-700 mb-1 block">Message:</label>
-            <Textarea
-              placeholder="Type your message here..."
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              rows={8}
-              className="resize-none"
-            />
-          </div>
+          <div><label className="text-sm font-medium text-slate-700 mb-1 block">To:</label><Input value={recipientEmail} disabled className="bg-slate-50" /></div>
+          <div><label className="text-sm font-medium text-slate-700 mb-1 block">Subject:</label><Input placeholder="Email subject" value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} /></div>
+          <div><label className="text-sm font-medium text-slate-700 mb-1 block">Message:</label><Textarea placeholder="Type your message here..." value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} rows={8} className="resize-none" /></div>
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={sending}>Cancel</Button>

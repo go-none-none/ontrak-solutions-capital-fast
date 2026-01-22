@@ -15,9 +15,7 @@ const INDUSTRIES = ['Agriculture and Landscaping', 'Apparel and Accessories', 'A
 
 export default function CreateLenderModal({ isOpen, onClose, session, onSuccess }) {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    Name: '', csbs__Active__c: false, csbs__Tier__c: '', csbs__Tier_Position__c: '', csbs__Priority_Lender__c: false, Phone: '', Fax: '', Website: '', csbs__Email__c: '', csbs__Emails_to_CC__c: '', csbs__Emails_to_BCC__c: '', csbs__Application_Industry__c: false, BillingStreet: '', BillingCity: '', BillingState: '', BillingPostalCode: '', BillingCountry: '', ShippingStreet: '', ShippingCity: '', ShippingState: '', ShippingPostalCode: '', ShippingCountry: '', csbs__Minimum_Credit_Score__c: '', csbs__Maximum_Negative_Days__c: '', csbs__Minimum_Monthly_Deposit_Count__c: '', csbs__Maximum_NSFs__c: '', csbs__Minimum_Monthly_Deposit_Amount__c: '', csbs__Minimum_Average_Daily_Balance__c: '', csbs__Minimum_Months_in_Business__c: '', csbs__Restricted_States__c: [], csbs__Maximum_Offer_Amount__c: '', csbs__Restricted_Industries__c: [], csbs__Net_Offer_Percentage__c: ''
-  });
+  const [formData, setFormData] = useState({ Name: '', csbs__Active__c: false, csbs__Tier__c: '', csbs__Tier_Position__c: '', csbs__Priority_Lender__c: false, Phone: '', Fax: '', Website: '', csbs__Email__c: '', csbs__Emails_to_CC__c: '', csbs__Emails_to_BCC__c: '', csbs__Application_Industry__c: false, BillingStreet: '', BillingCity: '', BillingState: '', BillingPostalCode: '', BillingCountry: '', ShippingStreet: '', ShippingCity: '', ShippingState: '', ShippingPostalCode: '', ShippingCountry: '', csbs__Minimum_Credit_Score__c: '', csbs__Maximum_Negative_Days__c: '', csbs__Minimum_Monthly_Deposit_Count__c: '', csbs__Maximum_NSFs__c: '', csbs__Minimum_Monthly_Deposit_Amount__c: '', csbs__Minimum_Average_Daily_Balance__c: '', csbs__Minimum_Months_in_Business__c: '', csbs__Restricted_States__c: [], csbs__Maximum_Offer_Amount__c: '', csbs__Restricted_Industries__c: [], csbs__Net_Offer_Percentage__c: '' });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,20 +28,11 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
     try {
       const dataToSend = {
         ...formData,
-        csbs__Restricted_States__c: formData.csbs__Restricted_States__c?.length > 0 
-          ? formData.csbs__Restricted_States__c.join(';') 
-          : '',
-        csbs__Restricted_Industries__c: formData.csbs__Restricted_Industries__c?.length > 0 
-          ? formData.csbs__Restricted_Industries__c.join(';') 
-          : ''
+        csbs__Restricted_States__c: formData.csbs__Restricted_States__c?.length > 0 ? formData.csbs__Restricted_States__c.join(';') : '',
+        csbs__Restricted_Industries__c: formData.csbs__Restricted_Industries__c?.length > 0 ? formData.csbs__Restricted_Industries__c.join(';') : ''
       };
 
-      const response = await base44.functions.invoke('createSalesforceLender', {
-        data: dataToSend,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
-
+      const response = await base44.functions.invoke('createSalesforceLender', { data: dataToSend, token: session.token, instanceUrl: session.instanceUrl });
       onSuccess(response.data.id);
       onClose();
     } catch (error) {
@@ -100,10 +89,7 @@ export default function CreateLenderModal({ isOpen, onClose, session, onSuccess 
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="netOffer">Net Offer %</Label>
-            <Input id="netOffer" type="number" step="0.01" value={formData.csbs__Net_Offer_Percentage__c} onChange={(e) => setFormData({ ...formData, csbs__Net_Offer_Percentage__c: e.target.value })} />
-          </div>
+          <div><Label htmlFor="netOffer">Net Offer %</Label><Input id="netOffer" type="number" step="0.01" value={formData.csbs__Net_Offer_Percentage__c} onChange={(e) => setFormData({ ...formData, csbs__Net_Offer_Percentage__c: e.target.value })} /></div>
 
           <div className="flex justify-end gap-2 pt-4 border-t">
             <Button type="button" variant="outline" onClick={onClose} disabled={loading}>Cancel</Button>

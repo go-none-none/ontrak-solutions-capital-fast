@@ -22,10 +22,7 @@ export default function SMSWidget({ phoneNumber }) {
         <h3 className="font-semibold">Quick SMS</h3>
       </div>
       <p className="text-white/80 text-sm mb-4">{phoneNumber}</p>
-      <Button
-        onClick={handleSMS}
-        className="w-full bg-white text-green-700 hover:bg-white/90"
-      >
+      <Button onClick={handleSMS} className="w-full bg-white text-green-700 hover:bg-white/90">
         <MessageSquare className="w-4 h-4 mr-2" />
         Send SMS
       </Button>

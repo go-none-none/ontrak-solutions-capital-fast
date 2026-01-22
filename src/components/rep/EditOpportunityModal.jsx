@@ -8,17 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from 'lucide-react';
 
 export default function EditOpportunityModal({ isOpen, onClose, opportunity, onSave }) {
-  const [formData, setFormData] = useState({
-    Name: opportunity?.Name || '',
-    StageName: opportunity?.StageName || '',
-    Amount: opportunity?.Amount || '',
-    CloseDate: opportunity?.CloseDate || '',
-    Probability: opportunity?.Probability || '',
-    Type: opportunity?.Type || '',
-    LeadSource: opportunity?.LeadSource || '',
-    NextStep: opportunity?.NextStep || '',
-    Description: opportunity?.Description || ''
-  });
+  const [formData, setFormData] = useState({ Name: opportunity?.Name || '', StageName: opportunity?.StageName || '', Amount: opportunity?.Amount || '', CloseDate: opportunity?.CloseDate || '', Probability: opportunity?.Probability || '', Type: opportunity?.Type || '', LeadSource: opportunity?.LeadSource || '', NextStep: opportunity?.NextStep || '', Description: opportunity?.Description || '' });
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -36,10 +26,7 @@ export default function EditOpportunityModal({ isOpen, onClose, opportunity, onS
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label>Opportunity Name</Label>
-            <Input value={formData.Name} onChange={(e) => setFormData({ ...formData, Name: e.target.value })} required />
-          </div>
+          <div><Label>Opportunity Name</Label><Input value={formData.Name} onChange={(e) => setFormData({ ...formData, Name: e.target.value })} required /></div>
 
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
@@ -70,15 +57,8 @@ export default function EditOpportunityModal({ isOpen, onClose, opportunity, onS
             <div><Label>Lead Source</Label><Input value={formData.LeadSource} onChange={(e) => setFormData({ ...formData, LeadSource: e.target.value })} /></div>
           </div>
 
-          <div>
-            <Label>Next Step</Label>
-            <Input value={formData.NextStep} onChange={(e) => setFormData({ ...formData, NextStep: e.target.value })} />
-          </div>
-
-          <div>
-            <Label>Description</Label>
-            <Textarea value={formData.Description} onChange={(e) => setFormData({ ...formData, Description: e.target.value })} rows={3} />
-          </div>
+          <div><Label>Next Step</Label><Input value={formData.NextStep} onChange={(e) => setFormData({ ...formData, NextStep: e.target.value })} /></div>
+          <div><Label>Description</Label><Textarea value={formData.Description} onChange={(e) => setFormData({ ...formData, Description: e.target.value })} rows={3} /></div>
 
           <div className="flex gap-3 pt-4">
             <Button type="submit" disabled={saving} className="flex-1 bg-orange-600 hover:bg-orange-700">
