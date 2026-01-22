@@ -96,37 +96,13 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`border rounded-lg bg-white transition-all ${
+      className={`border rounded-lg bg-white transition-all cursor-pointer ${
         isDeclined 
           ? 'border-red-200 bg-red-50/50 hover:shadow-lg hover:border-red-400' 
           : 'border-slate-200 hover:shadow-lg hover:border-orange-600'
       }`}
     >
-      <div className="flex gap-2 p-3">
-        {/* Left Action Buttons */}
-        <div className="flex flex-col gap-1 flex-shrink-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleQuickView}
-            className="h-8 w-8"
-            title={isExpanded ? 'Collapse' : 'Quick View'}
-          >
-            <Eye className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleFullView}
-            className="h-8 w-8 text-orange-600 hover:text-orange-700"
-            title="Full View"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 min-w-0">
+      <div className="p-3" onClick={handleCardClick}>
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1 min-w-0">
             <h3 className="text-base font-semibold text-slate-900 truncate">{opportunity.Name}</h3>

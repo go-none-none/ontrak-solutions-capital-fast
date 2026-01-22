@@ -64,33 +64,9 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="border border-slate-200 rounded-lg bg-white transition-all hover:shadow-lg hover:border-[#08708E]"
+      className="border border-slate-200 rounded-lg bg-white transition-all hover:shadow-lg hover:border-[#08708E] cursor-pointer"
     >
-      <div className="flex gap-2 p-3">
-        {/* Left Action Buttons */}
-        <div className="flex flex-col gap-1 flex-shrink-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleQuickView}
-            className="h-8 w-8"
-            title={isExpanded ? 'Collapse' : 'Quick View'}
-          >
-            <Eye className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleFullView}
-            className="h-8 w-8 text-[#08708E] hover:text-[#065a72]"
-            title="Full View"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 min-w-0">
+      <div className="p-3" onClick={handleCardClick}>
         <div className="flex items-start justify-between mb-2">
           <div className="flex-1 min-w-0">
             <h3 className="text-base font-semibold text-slate-900 truncate">{lead.Name}</h3>
