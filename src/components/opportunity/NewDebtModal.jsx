@@ -18,15 +18,7 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
   const [lenders, setLenders] = useState([]);
   const [showCreateLender, setShowCreateLender] = useState(false);
   const [formData, setFormData] = useState({
-    creditorId: '',
-    balance: '',
-    lender: '',
-    estimatedMonthlyMCA: '',
-    openPosition: false,
-    notes: '',
-    type: '',
-    payment: '',
-    frequency: ''
+    creditorId: '', balance: '', lender: '', estimatedMonthlyMCA: '', openPosition: false, notes: '', type: '', payment: '', frequency: ''
   });
 
   useEffect(() => {
@@ -34,15 +26,7 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
       loadPicklists();
       if (debt) {
         setFormData({
-          creditorId: debt.csbs__Creditor__c || '',
-          balance: debt.csbs__Balance__c || '',
-          lender: debt.csbs__Lender__c || '',
-          estimatedMonthlyMCA: debt.csbs__Estimated_Monthly_MCA_Amount__c || '',
-          openPosition: debt.csbs__Open_Position__c || false,
-          notes: debt.csbs__Notes__c || '',
-          type: debt.csbs__Type__c || '',
-          payment: debt.csbs__Payment__c || '',
-          frequency: debt.csbs__Frequency__c || ''
+          creditorId: debt.csbs__Creditor__c || '', balance: debt.csbs__Balance__c || '', lender: debt.csbs__Lender__c || '', estimatedMonthlyMCA: debt.csbs__Estimated_Monthly_MCA_Amount__c || '', openPosition: debt.csbs__Open_Position__c || false, notes: debt.csbs__Notes__c || '', type: debt.csbs__Type__c || '', payment: debt.csbs__Payment__c || '', frequency: debt.csbs__Frequency__c || ''
         });
       }
     }
@@ -121,15 +105,7 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
       }
       
       setFormData({
-        creditorId: '',
-        balance: '',
-        lender: '',
-        estimatedMonthlyMCA: '',
-        openPosition: false,
-        notes: '',
-        type: '',
-        payment: '',
-        frequency: ''
+        creditorId: '', balance: '', lender: '', estimatedMonthlyMCA: '', openPosition: false, notes: '', type: '', payment: '', frequency: ''
       });
     } catch (error) {
       console.error('Debt operation error:', error);
@@ -177,22 +153,22 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
               {!debt && (
                 <Button type="submit" name="saveNew" disabled={loading} variant="outline">{loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save & New'}</Button>
               )}
-              <Button type="submit" name="save" disabled={loading} className="bg-blue-600 hover:bg-blue-700">{loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save'}</Button>
+              <Button type="submit" name="save" disabled={loading} className="bg-orange-600 hover:bg-orange-700">{loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save'}</Button>
             </div>
           </form>
         )}
-      </DialogContent>
 
-      <CreateLenderModal
-        isOpen={showCreateLender}
-        onClose={() => setShowCreateLender(false)}
-        session={session}
-        onSuccess={(newLenderId) => {
-          setFormData({ ...formData, creditorId: newLenderId });
-          loadPicklists();
-          setShowCreateLender(false);
-        }}
-      />
+        <CreateLenderModal
+          isOpen={showCreateLender}
+          onClose={() => setShowCreateLender(false)}
+          session={session}
+          onSuccess={(newLenderId) => {
+            setFormData({ ...formData, creditorId: newLenderId });
+            loadPicklists();
+            setShowCreateLender(false);
+          }}
+        />
+      </DialogContent>
     </Dialog>
   );
 }

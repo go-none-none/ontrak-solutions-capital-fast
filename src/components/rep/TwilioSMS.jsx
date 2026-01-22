@@ -6,7 +6,7 @@ import { base44 } from '@/api/base44Client';
 export default function TwilioSMS({ phoneNumber, recordId, recordType, session }) {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
-  const [status, setStatus] = useState(null); // 'success' or 'error'
+  const [status, setStatus] = useState(null);
   const [statusMessage, setStatusMessage] = useState('');
 
   const handleSendSMS = async () => {

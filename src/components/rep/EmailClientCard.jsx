@@ -35,20 +35,15 @@ export default function EmailClientCard({ recipientEmail, recipientName, recordI
         instanceUrl: session.instanceUrl
       });
 
-      console.log('Email send response:', response);
-
       if (response.data?.success) {
         toast.success('Email sent successfully!');
         setFormData({ subject: '', message: '' });
         setOpen(false);
       } else {
-        console.error('Email send failed:', response.data);
         toast.error(response.data?.error || 'Failed to send email');
       }
     } catch (error) {
       console.error('Send email error:', error);
-      console.error('Error response data:', error.response?.data);
-      console.error('Salesforce error details:', JSON.stringify(error.response?.data?.details, null, 2));
       toast.error(error.response?.data?.error || error.message || 'Failed to send email');
     } finally {
       setSending(false);
@@ -71,44 +66,15 @@ export default function EmailClientCard({ recipientEmail, recipientName, recordI
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div className="p-4 pt-0 space-y-4">
-            <div>
-              <label className="text-sm font-medium text-slate-700 mb-1 block">To:</label>
-              <Input value={`${recipientName} <${recipientEmail}>`} disabled className="bg-slate-50" />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-slate-700 mb-1 block">Subject:</label>
-              <Input
-                placeholder="Email subject"
-                value={formData.subject}
-                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-slate-700 mb-1 block">Message:</label>
-              <Textarea
-                placeholder="Type your message here..."
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                rows={6}
-                className="resize-none"
-              />
-            </div>
+            <div><label className="text-sm font-medium text-slate-700 mb-1 block">To:</label><Input value={`${recipientName} <${recipientEmail}>`} disabled className="bg-slate-50" /></div>
+            <div><label className="text-sm font-medium text-slate-700 mb-1 block">Subject:</label><Input placeholder="Email subject" value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} /></div>
+            <div><label className="text-sm font-medium text-slate-700 mb-1 block">Message:</label><Textarea placeholder="Type your message here..." value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} rows={6} className="resize-none" /></div>
             <Button 
               onClick={handleSend} 
               disabled={sending} 
-              className="w-full bg-[#08708E] hover:bg-[#065a72]"
+              className="w-full bg-orange-600 hover:bg-orange-700"
             >
-              {sending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <Send className="w-4 h-4 mr-2" />
-                  Send Email
-                </>
-              )}
+              {sending ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sending...</>) : (<><Send className="w-4 h-4 mr-2" />Send Email</>)}
             </Button>
           </div>
         </CollapsibleContent>
