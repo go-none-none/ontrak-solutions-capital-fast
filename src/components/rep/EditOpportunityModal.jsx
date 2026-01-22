@@ -45,9 +45,7 @@ export default function EditOpportunityModal({ isOpen, onClose, opportunity, onS
             <div>
               <Label>Stage</Label>
               <Select value={formData.StageName} onValueChange={(value) => setFormData({ ...formData, StageName: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Application In">Application In</SelectItem>
                   <SelectItem value="Underwriting">Underwriting</SelectItem>

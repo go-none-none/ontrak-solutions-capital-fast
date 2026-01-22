@@ -104,7 +104,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
       if (onUpdate) await onUpdate();
       onClose();
     } catch (error) {
-      console.error('Error updating task:', error);
       alert('Failed to update task');
     } finally {
       setSaving(false);
@@ -123,7 +122,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
       if (onUpdate) await onUpdate();
       onClose();
     } catch (error) {
-      console.error('Error completing task:', error);
       alert('Failed to complete task');
     } finally {
       setSaving(false);
@@ -142,26 +140,17 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
           <div className="space-y-4 mt-4">
             <div>
               <label className="text-sm font-medium text-slate-700 mb-1 block">Subject</label>
-              <Input
-                value={editValues.Subject}
-                onChange={(e) => setEditValues({ ...editValues, Subject: e.target.value })}
-              />
+              <Input value={editValues.Subject} onChange={(e) => setEditValues({ ...editValues, Subject: e.target.value })} />
             </div>
             <div>
               <label className="text-sm font-medium text-slate-700 mb-1 block">Description</label>
-              <Textarea
-                value={editValues.Description}
-                onChange={(e) => setEditValues({ ...editValues, Description: e.target.value })}
-                rows={4}
-              />
+              <Textarea value={editValues.Description} onChange={(e) => setEditValues({ ...editValues, Description: e.target.value })} rows={4} />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium text-slate-700 mb-1 block">Priority</label>
                 <Select value={editValues.Priority} onValueChange={(val) => setEditValues({ ...editValues, Priority: val })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="High">High</SelectItem>
                     <SelectItem value="Normal">Normal</SelectItem>
@@ -172,9 +161,7 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               <div>
                 <label className="text-sm font-medium text-slate-700 mb-1 block">Status</label>
                 <Select value={editValues.Status} onValueChange={(val) => setEditValues({ ...editValues, Status: val })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Not Started">Not Started</SelectItem>
                     <SelectItem value="In Progress">In Progress</SelectItem>
@@ -186,11 +173,7 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
             </div>
             <div>
               <label className="text-sm font-medium text-slate-700 mb-1 block">Due Date</label>
-              <Input
-                type="date"
-                value={editValues.ActivityDate}
-                onChange={(e) => setEditValues({ ...editValues, ActivityDate: e.target.value })}
-              />
+              <Input type="date" value={editValues.ActivityDate} onChange={(e) => setEditValues({ ...editValues, ActivityDate: e.target.value })} />
             </div>
 
             <div>
@@ -207,42 +190,18 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                       <p className="font-medium text-slate-900">{selectedRelated.Name}</p>
                       <p className="text-xs text-slate-500">{selectedRelated.Type}</p>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedRelated(null);
-                        setEditValues({ ...editValues, WhatId: '' });
-                      }}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => { setSelectedRelated(null); setEditValues({ ...editValues, WhatId: '' }); }}>
                       <X className="w-4 h-4" />
                     </Button>
                   </div>
                 ) : (
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <Input
-                      placeholder="Search leads or opportunities..."
-                      value={relatedSearch}
-                      onChange={(e) => {
-                        setRelatedSearch(e.target.value);
-                        searchRelatedRecords(e.target.value);
-                      }}
-                      className="pl-10"
-                    />
+                    <Input placeholder="Search leads or opportunities..." value={relatedSearch} onChange={(e) => { setRelatedSearch(e.target.value); searchRelatedRecords(e.target.value); }} className="pl-10" />
                     {relatedResults.length > 0 && (
                       <div className="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                         {relatedResults.map((result) => (
-                          <button
-                            key={result.Id}
-                            onClick={() => {
-                              setSelectedRelated(result);
-                              setEditValues({ ...editValues, WhatId: result.Id });
-                              setRelatedSearch('');
-                              setRelatedResults([]);
-                            }}
-                            className="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center gap-2 border-b border-slate-100 last:border-0"
-                          >
+                          <button key={result.Id} onClick={() => { setSelectedRelated(result); setEditValues({ ...editValues, WhatId: result.Id }); setRelatedSearch(''); setRelatedResults([]); }} className="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center gap-2 border-b border-slate-100 last:border-0">
                             {result.Type === 'Lead' ? (
                               <UsersIcon className="w-4 h-4 text-blue-600" />
                             ) : (
@@ -261,50 +220,9 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               </div>
             </div>
 
-            {(task.WhoId || task.Owner) && (
-              <div className="border-t pt-4 space-y-3">
-                <p className="text-sm font-semibold text-slate-700">Read-Only Information</p>
-                
-                {task.Owner && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-1 flex items-center gap-1">
-                      <User className="w-3 h-3" />
-                      Assigned To
-                    </p>
-                    <p className="text-slate-900 font-medium">{task.Owner.Name}</p>
-                  </div>
-                )}
-
-                {task.WhoId && task.Who?.Name && (
-                  <div>
-                    <p className="text-xs text-slate-500 mb-2">Contact</p>
-                    <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                      <User className="w-4 h-4 text-purple-600" />
-                      <div>
-                        <p className="font-medium text-slate-900">{task.Who.Name}</p>
-                        <p className="text-xs text-slate-500">Contact</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
             <div className="flex gap-2 pt-4 border-t">
-              <Button onClick={handleSave} disabled={saving} className="bg-purple-600">
-                <Save className="w-4 h-4 mr-2" />
-                Save Changes
-              </Button>
-              <Button variant="outline" onClick={() => { 
-                setIsEditing(false); 
-                setEditValues({ Subject: task.Subject, Description: task.Description || '', Priority: task.Priority, Status: task.Status, ActivityDate: task.ActivityDate || '', WhatId: task.WhatId || '' });
-                setSelectedRelated(task.WhatId && task.What?.Name ? { Id: task.WhatId, Name: task.What.Name, Type: task.What.Type } : null);
-                setRelatedSearch('');
-                setRelatedResults([]);
-              }}>
-                <X className="w-4 h-4 mr-2" />
-                Cancel
-              </Button>
+              <Button onClick={handleSave} disabled={saving} className="bg-orange-600"><Save className="w-4 h-4 mr-2" />Save Changes</Button>
+              <Button variant="outline" onClick={() => { setIsEditing(false); setEditValues({ Subject: task.Subject, Description: task.Description || '', Priority: task.Priority, Status: task.Status, ActivityDate: task.ActivityDate || '', WhatId: task.WhatId || '' }); setSelectedRelated(task.WhatId && task.What?.Name ? { Id: task.WhatId, Name: task.What.Name, Type: task.What.Type } : null); setRelatedSearch(''); setRelatedResults([]); }}><X className="w-4 h-4 mr-2" />Cancel</Button>
             </div>
           </div>
         ) : (
@@ -346,19 +264,7 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
             {task.WhatId && task.What?.Name && (
               <div className="border-t pt-4">
                 <p className="text-xs text-slate-500 mb-2 font-semibold">Related To</p>
-                <button
-                  onClick={() => {
-                    if ((task.WhatId.startsWith('00Q') || task.WhatId.startsWith('006')) && onOpenRelated) {
-                      onOpenRelated({
-                        recordId: task.WhatId,
-                        recordType: task.WhatId.startsWith('00Q') ? 'lead' : 'opportunity',
-                        recordName: task.What.Name
-                      });
-                      onClose();
-                    }
-                  }}
-                  className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 hover:border-[#08708E] transition-all w-full text-left cursor-pointer"
-                >
+                <button onClick={() => { if ((task.WhatId.startsWith('00Q') || task.WhatId.startsWith('006')) && onOpenRelated) { onOpenRelated({ recordId: task.WhatId, recordType: task.WhatId.startsWith('00Q') ? 'lead' : 'opportunity', recordName: task.What.Name }); onClose(); } }} className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200 hover:bg-slate-100 hover:border-orange-600 transition-all w-full text-left cursor-pointer">
                   {task.WhatId.startsWith('00Q') ? (
                     <UsersIcon className="w-4 h-4 text-blue-600" />
                   ) : task.WhatId.startsWith('006') ? (
@@ -373,22 +279,9 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                     </p>
                   </div>
                   {(task.WhatId.startsWith('00Q') || task.WhatId.startsWith('006')) && (
-                    <span className="text-xs text-[#08708E]">View →</span>
+                    <span className="text-xs text-orange-600">View →</span>
                   )}
                 </button>
-              </div>
-            )}
-
-            {task.WhoId && task.Who?.Name && (
-              <div className="border-t pt-4">
-                <p className="text-xs text-slate-500 mb-2 font-semibold">Contact</p>
-                <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                  <User className="w-4 h-4 text-purple-600" />
-                  <div>
-                    <p className="font-medium text-slate-900">{task.Who.Name}</p>
-                    <p className="text-xs text-slate-500">Contact</p>
-                  </div>
-                </div>
               </div>
             )}
 

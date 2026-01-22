@@ -59,9 +59,7 @@ export default function EditLeadModal({ isOpen, onClose, lead, onSave }) {
             <div>
               <Label>Status</Label>
               <Select value={formData.Status} onValueChange={(value) => setFormData({ ...formData, Status: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Open - Not Contacted">Open - Not Contacted</SelectItem>
                   <SelectItem value="Working - Contacted">Working - Contacted</SelectItem>
