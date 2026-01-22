@@ -23,7 +23,7 @@ export default function UniversalSearch({ session }) {
   }, []);
 
   useEffect(() => {
-    if (!searchTerm.trim() || searchTerm.trim().length < 2 || !session?.token) {
+    if (!searchTerm.trim() || !session?.token) {
       setResults([]);
       setShowDropdown(false);
       return;
@@ -119,27 +119,23 @@ export default function UniversalSearch({ session }) {
             });
         }
 
-        // Filter all accounts by Active Lender checkbox or RecordType
+        // Filter all accounts by RecordType
         if (accountsRes.data?.accounts) {
         accountsRes.data.accounts
         .filter(a => a.Name?.toLowerCase().includes(searchLower))
         .forEach(account => {
-        // Prioritize Active Lender checkbox, fallback to RecordType
-        const isActiveLender = account.csbs__Active_Lender__c === true;
+        // Check RecordType for lender/merchant categorization
         const recordTypeName = account.RecordType?.Name?.toLowerCase() || '';
         let accountCategory = 'Account';
         let color = 'bg-slate-100 text-slate-800';
         let icon = Building2;
 
-        if (isActiveLender) {
+        if (recordTypeName.includes('lender')) {
           accountCategory = 'Lender';
           color = 'bg-emerald-100 text-emerald-800';
         } else if (recordTypeName.includes('merchant')) {
           accountCategory = 'Merchant';
           color = 'bg-violet-100 text-violet-800';
-        } else if (recordTypeName.includes('lender')) {
-          accountCategory = 'Lender';
-          color = 'bg-emerald-100 text-emerald-800';
         }
 
         allResults.push({
@@ -165,7 +161,7 @@ export default function UniversalSearch({ session }) {
       }
     };
 
-    const timer = setTimeout(performSearch, 500);
+    const timer = setTimeout(performSearch, 300);
     return () => clearTimeout(timer);
   }, [searchTerm, session]);
 
@@ -235,6 +231,11 @@ export default function UniversalSearch({ session }) {
                         <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${result.color}`}>
                           {result.type}
                         </span>
+                        {result.recordType && result.category === 'Account' && (
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${result.color}`}>
+                            {result.recordType}
+                          </span>
+                        )}
                         {result.subtitle && (
                           <span className="text-[11px] text-slate-500 truncate">{result.subtitle}</span>
                         )}
