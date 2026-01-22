@@ -37,7 +37,6 @@ export default function TaskCard({ tasksData, onClick, loading, isActive }) {
           <p className="text-xs text-slate-600 mb-0.5">My Tasks</p>
           <p className="text-2xl font-bold text-slate-900">{total}</p>
           
-          {/* Breakdown */}
           <div className="mt-1 space-y-0.5">
             {overdue.length > 0 && (
               <div className="flex items-center gap-1 text-xs text-red-600">

@@ -79,7 +79,6 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
           </Badge>
         </div>
 
-        {/* Stage Progress Bar */}
         <div className="mb-2">
           <div className="flex justify-between items-center mb-1">
             {stages.map((stage, idx) => (
@@ -148,7 +147,6 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
             exit={{ opacity: 0, height: 0 }}
             className="px-3 pb-3 space-y-3"
           >
-            {/* Quick Info */}
             <div className="space-y-2">
               <p className="text-xs font-semibold text-slate-700 uppercase">Quick Info</p>
               {lead.AnnualRevenue && (
@@ -159,40 +157,18 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
               )}
             </div>
 
-            {/* Contact & Basic */}
             {(lead.Title || lead.Industry || lead.Website) && (
               <div className="space-y-2 border-t pt-3">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Contact & Basic</p>
                 <div className="grid grid-cols-2 gap-3">
-                  {lead.Title && (
-                    <div>
-                      <p className="text-xs text-slate-500 mb-0.5">Title</p>
-                      <p className="text-sm text-slate-900">{lead.Title}</p>
-                    </div>
-                  )}
-                  {lead.Industry && (
-                    <div>
-                      <p className="text-xs text-slate-500 mb-0.5">Industry</p>
-                      <p className="text-sm text-slate-900">{lead.Industry}</p>
-                    </div>
-                  )}
-                  {lead.Website && (
-                    <div>
-                      <p className="text-xs text-slate-500 mb-0.5">Website</p>
-                      <p className="text-sm text-slate-900 truncate text-ellipsis">{lead.Website}</p>
-                    </div>
-                  )}
-                  {lead.Rating && (
-                    <div>
-                      <p className="text-xs text-slate-500 mb-0.5">Rating</p>
-                      <Badge className="bg-blue-100 text-blue-800 text-xs">{lead.Rating}</Badge>
-                    </div>
-                  )}
+                  {lead.Title && (<div><p className="text-xs text-slate-500 mb-0.5">Title</p><p className="text-sm text-slate-900">{lead.Title}</p></div>)}
+                  {lead.Industry && (<div><p className="text-xs text-slate-500 mb-0.5">Industry</p><p className="text-sm text-slate-900">{lead.Industry}</p></div>)}
+                  {lead.Website && (<div><p className="text-xs text-slate-500 mb-0.5">Website</p><p className="text-sm text-slate-900 truncate text-ellipsis">{lead.Website}</p></div>)}
+                  {lead.Rating && (<div><p className="text-xs text-slate-500 mb-0.5">Rating</p><Badge className="bg-blue-100 text-blue-800 text-xs">{lead.Rating}</Badge></div>)}
                 </div>
               </div>
             )}
 
-            {/* Business Info */}
             {lead.Call_Disposition__c && (
               <div className="space-y-2 border-t pt-3">
                 <p className="text-xs font-semibold text-slate-700 uppercase">Business</p>
