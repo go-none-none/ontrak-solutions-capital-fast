@@ -23,15 +23,11 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
   const [isParsed, setIsParsed] = useState(false);
   const [parsedFileUrl, setParsedFileUrl] = useState(null);
   
-  const [formData, setFormData] = useState({
-    accountNo: '', accountTitle: '', company: '', bankName: '', startingDate: '', startingBalance: '', endingDate: '', endingBalance: '', reconciled: false, unreconciledEndBalance: '', fraudScore: '', avgDailyBalance: '', depositCount: '', depositAmount: '', withdrawalsCount: '', totalWithdrawals: '', transactionsCount: '', minResolution: '', maxResolution: '', nsfs: '', negativeDays: '', fraudReasons: '', notes: ''
-  });
+  const [formData, setFormData] = useState({ accountNo: '', accountTitle: '', company: '', bankName: '', startingDate: '', startingBalance: '', endingDate: '', endingBalance: '', reconciled: false, unreconciledEndBalance: '', fraudScore: '', avgDailyBalance: '', depositCount: '', depositAmount: '', withdrawalsCount: '', totalWithdrawals: '', transactionsCount: '', minResolution: '', maxResolution: '', nsfs: '', negativeDays: '', fraudReasons: '', notes: '' });
 
   useEffect(() => {
     if (statement) {
-      setFormData({
-        accountNo: statement.csbs__Account_No__c || '', accountTitle: statement.csbs__Account_Title__c || '', company: statement.csbs__Company__c || '', bankName: statement.csbs__Bank_Name__c || '', startingDate: statement.csbs__Starting_Date__c || '', startingBalance: statement.csbs__Starting_Balance__c || '', endingDate: statement.csbs__Ending_Date__c || '', endingBalance: statement.csbs__Ending_Balance__c || '', reconciled: statement.csbs__Reconciled__c || false, unreconciledEndBalance: statement.csbs__Unreconciled_End_Balance__c || '', fraudScore: statement.csbs__Fraud_Score__c || '', avgDailyBalance: statement.csbs__Average_Daily_Balance__c || '', depositCount: statement.csbs__Deposit_Count__c || '', depositAmount: statement.csbs__Deposit_Amount__c || '', withdrawalsCount: statement.csbs__Withdrawals_Count__c || '', totalWithdrawals: statement.csbs__Total_Withdrawals__c || '', transactionsCount: statement.csbs__Transactions_Count__c || '', minResolution: statement.csbs__Min_Resolution__c || '', maxResolution: statement.csbs__Max_Resolution__c || '', nsfs: statement.csbs__NSFs__c || '', negativeDays: statement.csbs__Negative_Days__c || '', fraudReasons: statement.csbs__Fraud_Reasons__c || '', notes: statement.csbs__Notes__c || ''
-      });
+      setFormData({ accountNo: statement.csbs__Account_No__c || '', accountTitle: statement.csbs__Account_Title__c || '', company: statement.csbs__Company__c || '', bankName: statement.csbs__Bank_Name__c || '', startingDate: statement.csbs__Starting_Date__c || '', startingBalance: statement.csbs__Starting_Balance__c || '', endingDate: statement.csbs__Ending_Date__c || '', endingBalance: statement.csbs__Ending_Balance__c || '', reconciled: statement.csbs__Reconciled__c || false, unreconciledEndBalance: statement.csbs__Unreconciled_End_Balance__c || '', fraudScore: statement.csbs__Fraud_Score__c || '', avgDailyBalance: statement.csbs__Average_Daily_Balance__c || '', depositCount: statement.csbs__Deposit_Count__c || '', depositAmount: statement.csbs__Deposit_Amount__c || '', withdrawalsCount: statement.csbs__Withdrawals_Count__c || '', totalWithdrawals: statement.csbs__Total_Withdrawals__c || '', transactionsCount: statement.csbs__Transactions_Count__c || '', minResolution: statement.csbs__Min_Resolution__c || '', maxResolution: statement.csbs__Max_Resolution__c || '', nsfs: statement.csbs__NSFs__c || '', negativeDays: statement.csbs__Negative_Days__c || '', fraudReasons: statement.csbs__Fraud_Reasons__c || '', notes: statement.csbs__Notes__c || '' });
     }
   }, [statement]);
 
@@ -44,12 +40,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       if (file.tempFileUrl) {
         fileUrl = file.tempFileUrl;
       } else {
-        const response = await base44.functions.invoke('getSalesforceFileContent', {
-          contentDocumentId: file.ContentDocumentId,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        });
-
+        const response = await base44.functions.invoke('getSalesforceFileContent', { contentDocumentId: file.ContentDocumentId, token: session.token, instanceUrl: session.instanceUrl });
         const data = response.data;
         const base64Data = data.file;
         const binaryString = atob(base64Data);
@@ -58,43 +49,18 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
           bytes[i] = binaryString.charCodeAt(i);
         }
         const pdfFile = new File([bytes], file.ContentDocument.Title + '.pdf', { type: 'application/pdf' });
-
         const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfFile });
         fileUrl = uploadResponse.file_url;
       }
 
-      setFormData(prev => ({ 
-        ...prev, 
-        tempFileUrl: file.tempFileUrl || null,
-        csbs__Source_File_ID__c: file.isTemp ? null : fileId 
-      }));
-
+      setFormData(prev => ({ ...prev, tempFileUrl: file.tempFileUrl || null, csbs__Source_File_ID__c: file.isTemp ? null : fileId }));
       setParsedFileUrl(fileUrl);
 
       const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
     
       if (parseResponse.data.success && parseResponse.data.data) {
         const p = parseResponse.data.data;
-        setFormData(prev => ({
-          ...prev,
-          bankName: p.bank_name || prev.bankName,
-          accountNo: p.account_number || prev.accountNo,
-          accountTitle: p.account_title || prev.accountTitle,
-          company: p.company || prev.company,
-          startingDate: p.starting_date || prev.startingDate,
-          endingDate: p.ending_date || prev.endingDate,
-          startingBalance: p.starting_balance || prev.startingBalance,
-          endingBalance: p.ending_balance || prev.endingBalance,
-          avgDailyBalance: p.average_daily_balance || prev.avgDailyBalance,
-          depositAmount: p.deposit_amount || prev.depositAmount,
-          depositCount: p.deposit_count || prev.depositCount,
-          withdrawalsCount: p.withdrawals_count || prev.withdrawalsCount,
-          totalWithdrawals: p.total_withdrawals || prev.totalWithdrawals,
-          transactionsCount: p.transactions_count || prev.transactionsCount,
-          nsfs: p.nsf_count || prev.nsfs,
-          negativeDays: p.negative_days || prev.negativeDays,
-          notes: (p.notes || prev.notes).slice(0, 255)
-        }));
+        setFormData(prev => ({ ...prev, bankName: p.bank_name || prev.bankName, accountNo: p.account_number || prev.accountNo, accountTitle: p.account_title || prev.accountTitle, company: p.company || prev.company, startingDate: p.starting_date || prev.startingDate, endingDate: p.ending_date || prev.endingDate, startingBalance: p.starting_balance || prev.startingBalance, endingBalance: p.ending_balance || prev.endingBalance, avgDailyBalance: p.average_daily_balance || prev.avgDailyBalance, depositAmount: p.deposit_amount || prev.depositAmount, depositCount: p.deposit_count || prev.depositCount, withdrawalsCount: p.withdrawals_count || prev.withdrawalsCount, totalWithdrawals: p.total_withdrawals || prev.totalWithdrawals, transactionsCount: p.transactions_count || prev.transactionsCount, nsfs: p.nsf_count || prev.nsfs, negativeDays: p.negative_days || prev.negativeDays, notes: (p.notes || prev.notes).slice(0, 255) }));
         setIsParsed(true);
         alert('✅ Statement parsed successfully! All data extracted and populated. Please review.');
       } else {
@@ -117,12 +83,10 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     if (file.type !== 'application/pdf') {
       alert('Please upload a PDF file');
       return;
     }
-
     await proceedWithParsing(file, null);
   };
 
@@ -133,40 +97,17 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
     try {
       const uploadResponse = await base44.integrations.Core.UploadFile({ file });
       const fileUrl = uploadResponse.file_url;
-
       if (fileContentDocumentId) {
         setFormData(prev => ({ ...prev, csbs__Source_File_ID__c: fileContentDocumentId }));
       }
-
       setParsedFileUrl(fileUrl);
 
       const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
       
       if (parseResponse.data.success && parseResponse.data.data) {
         const p = parseResponse.data.data;
-
-        setFormData(prev => ({
-          ...prev,
-          bankName: p.bank_name || prev.bankName,
-          accountNo: p.account_number || prev.accountNo,
-          accountTitle: p.account_title || prev.accountTitle,
-          company: p.company || prev.company,
-          startingDate: p.starting_date || prev.startingDate,
-          endingDate: p.ending_date || prev.endingDate,
-          startingBalance: p.starting_balance || prev.startingBalance,
-          endingBalance: p.ending_balance || prev.endingBalance,
-          avgDailyBalance: p.average_daily_balance || prev.avgDailyBalance,
-          depositAmount: p.deposit_amount || prev.depositAmount,
-          depositCount: p.deposit_count || prev.depositCount,
-          withdrawalsCount: p.withdrawals_count || prev.withdrawalsCount,
-          totalWithdrawals: p.total_withdrawals || prev.totalWithdrawals,
-          transactionsCount: p.transactions_count || prev.transactionsCount,
-          nsfs: p.nsf_count || prev.nsfs,
-          negativeDays: p.negative_days || prev.negativeDays,
-          notes: (p.notes || prev.notes).slice(0, 255)
-        }));
+        setFormData(prev => ({ ...prev, bankName: p.bank_name || prev.bankName, accountNo: p.account_number || prev.accountNo, accountTitle: p.account_title || prev.accountTitle, company: p.company || prev.company, startingDate: p.starting_date || prev.startingDate, endingDate: p.ending_date || prev.endingDate, startingBalance: p.starting_balance || prev.startingBalance, endingBalance: p.ending_balance || prev.endingBalance, avgDailyBalance: p.average_daily_balance || prev.avgDailyBalance, depositAmount: p.deposit_amount || prev.depositAmount, depositCount: p.deposit_count || prev.depositCount, withdrawalsCount: p.withdrawals_count || prev.withdrawalsCount, totalWithdrawals: p.total_withdrawals || prev.totalWithdrawals, transactionsCount: p.transactions_count || prev.transactionsCount, nsfs: p.nsf_count || prev.nsfs, negativeDays: p.negative_days || prev.negativeDays, notes: (p.notes || prev.notes).slice(0, 255) }));
         setIsParsed(true);
-        
         alert('✅ Statement parsed successfully! All data extracted and populated. Please review.');
       } else {
         throw new Error('Failed to parse statement');
@@ -186,22 +127,9 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
 
     try {
       if (statement) {
-        await base44.functions.invoke('updateSalesforceStatement', {
-          statementId: statement.Id,
-          statementData: formData,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        });
+        await base44.functions.invoke('updateSalesforceStatement', { statementId: statement.Id, statementData: formData, token: session.token, instanceUrl: session.instanceUrl });
       } else {
-        await base44.functions.invoke('createSalesforceStatement', {
-          opportunityId,
-          statementData: {
-            ...formData,
-            fileUrl: parsedFileUrl
-          },
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        });
+        await base44.functions.invoke('createSalesforceStatement', { opportunityId, statementData: { ...formData, fileUrl: parsedFileUrl }, token: session.token, instanceUrl: session.instanceUrl });
         
         if (formData.tempFileUrl) {
           const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${opportunityId}`) || '[]');
@@ -213,9 +141,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       onSuccess();
       
       setIsParsed(false);
-      setFormData({
-        accountNo: '', accountTitle: '', company: '', bankName: '', startingDate: '', startingBalance: '', endingDate: '', endingBalance: '', reconciled: false, unreconciledEndBalance: '', fraudScore: '', avgDailyBalance: '', depositCount: '', depositAmount: '', withdrawalsCount: '', totalWithdrawals: '', transactionsCount: '', minResolution: '', maxResolution: '', nsfs: '', negativeDays: '', fraudReasons: '', notes: ''
-      });
+      setFormData({ accountNo: '', accountTitle: '', company: '', bankName: '', startingDate: '', startingBalance: '', endingDate: '', endingBalance: '', reconciled: false, unreconciledEndBalance: '', fraudScore: '', avgDailyBalance: '', depositCount: '', depositAmount: '', withdrawalsCount: '', totalWithdrawals: '', transactionsCount: '', minResolution: '', maxResolution: '', nsfs: '', negativeDays: '', fraudReasons: '', notes: '' });
       onClose();
     } catch (error) {
       console.error('Create statement error:', error);
@@ -237,13 +163,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
             <h3 className="text-sm font-semibold text-purple-900 mb-4">Select a PDF to Parse</h3>
             <div className="space-y-2">
               {availableFiles.map(file => (
-                <button
-                  key={file.ContentDocumentId}
-                  type="button"
-                  onClick={() => parseExistingFile(file)}
-                  disabled={parsingFile}
-                  className="w-full flex items-center gap-3 p-3 bg-white rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors text-left disabled:opacity-50"
-                >
+                <button key={file.ContentDocumentId} type="button" onClick={() => parseExistingFile(file)} disabled={parsingFile} className="w-full flex items-center gap-3 p-3 bg-white rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors text-left disabled:opacity-50">
                   <div className="flex-1">
                     <p className="text-sm font-medium text-slate-900">{file.ContentDocument.Title}</p>
                     <p className="text-xs text-slate-500">PDF • {formatFileSize(file.ContentDocument.ContentSize)}</p>
@@ -277,23 +197,13 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
                 </p>
                 {!isParsed && (
                   <div className="flex items-center gap-3">
-                    <label 
-                      htmlFor="statement-upload" 
-                      className={`inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium cursor-pointer hover:bg-blue-700 transition-colors ${uploadingFile ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
+                    <label htmlFor="statement-upload" className={`inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium cursor-pointer hover:bg-blue-700 transition-colors ${uploadingFile ? 'opacity-50 cursor-not-allowed' : ''}`}>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                       Choose PDF File
                     </label>
-                    <input
-                      type="file"
-                      accept="application/pdf"
-                      onChange={handleFileUpload}
-                      disabled={uploadingFile}
-                      className="hidden"
-                      id="statement-upload"
-                    />
+                    <input type="file" accept="application/pdf" onChange={handleFileUpload} disabled={uploadingFile} className="hidden" id="statement-upload" />
                     {parsingFile && (
                       <div className="flex items-center gap-2 text-blue-700 bg-blue-100 px-3 py-2 rounded-lg">
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -314,26 +224,4 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
               <div><p className="text-green-700 font-medium">Bank Name</p><p className="text-slate-900">{formData.bankName || '—'}</p></div>
               <div><p className="text-green-700 font-medium">Account No</p><p className="text-slate-900">{formData.accountNo || '—'}</p></div>
               <div><p className="text-green-700 font-medium">Account Title</p><p className="text-slate-900">{formData.accountTitle || '—'}</p></div>
-              <div><p className="text-green-700 font-medium">Company</p><p className="text-slate-900">{formData.company || '—'}</p></div>
-              <div><p className="text-green-700 font-medium">Starting Date</p><p className="text-slate-900">{formData.startingDate || '—'}</p></div>
-              <div><p className="text-green-700 font-medium">Ending Date</p><p className="text-slate-900">{formData.endingDate || '—'}</p></div>
-              <div><p className="text-green-700 font-medium">Starting Balance</p><p className="text-slate-900">{formData.startingBalance ? `$${Number(formData.startingBalance).toLocaleString()}` : '—'}</p></div>
-              <div><p className="text-green-700 font-medium">Ending Balance</p><p className="text-slate-900">{formData.endingBalance ? `$${Number(formData.endingBalance).toLocaleString()}` : '—'}</p></div>
-            </div>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div><h3 className="text-sm font-semibold text-slate-700 mb-4 pb-2 border-b">Information</h3><div className="grid grid-cols-2 gap-x-6 gap-y-4"><div className="space-y-4"><div><Label htmlFor="accountNo">Account No</Label><Input id="accountNo" value={formData.accountNo} onChange={(e) => setFormData({ ...formData, accountNo: e.target.value })} /></div><div><Label htmlFor="accountTitle">Account Title</Label><Input id="accountTitle" value={formData.accountTitle} onChange={(e) => setFormData({ ...formData, accountTitle: e.target.value })} /></div><div><Label htmlFor="company">Company</Label><Input id="company" value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })} /></div><div><Label htmlFor="bankName">Bank Name</Label><Input id="bankName" value={formData.bankName} onChange={(e) => setFormData({ ...formData, bankName: e.target.value })} /></div><div><Label htmlFor="startingDate">Starting Date</Label><Input id="startingDate" type="date" value={formData.startingDate} onChange={(e) => setFormData({ ...formData, startingDate: e.target.value })} /></div><div><Label htmlFor="startingBalance">Starting Balance</Label><Input id="startingBalance" type="number" step="0.01" value={formData.startingBalance} onChange={(e) => setFormData({ ...formData, startingBalance: e.target.value })} /></div><div><Label htmlFor="endingDate">Ending Date</Label><Input id="endingDate" type="date" value={formData.endingDate} onChange={(e) => setFormData({ ...formData, endingDate: e.target.value })} /></div><div><Label htmlFor="endingBalance">Ending Balance</Label><Input id="endingBalance" type="number" step="0.01" value={formData.endingBalance} onChange={(e) => setFormData({ ...formData, endingBalance: e.target.value })} /></div><div className="flex items-center gap-2"><Checkbox id="reconciled" checked={formData.reconciled} onCheckedChange={(checked) => setFormData({ ...formData, reconciled: checked })} /><Label htmlFor="reconciled" className="cursor-pointer">Reconciled</Label></div><div><Label htmlFor="unreconciledEndBalance">Unreconciled End Balance</Label><Input id="unreconciledEndBalance" type="number" step="0.01" value={formData.unreconciledEndBalance} onChange={(e) => setFormData({ ...formData, unreconciledEndBalance: e.target.value })} /></div></div><div className="space-y-4"><div><Label>*Opportunity</Label><div className="px-3 py-2 bg-slate-50 border rounded text-sm text-slate-600">Auto-filled</div></div><div><Label htmlFor="avgDailyBalance">Average Daily Balance</Label><Input id="avgDailyBalance" type="number" step="0.01" value={formData.avgDailyBalance} onChange={(e) => setFormData({ ...formData, avgDailyBalance: e.target.value })} /></div><div><Label htmlFor="depositCount">Deposit Count</Label><Input id="depositCount" type="number" value={formData.depositCount} onChange={(e) => setFormData({ ...formData, depositCount: e.target.value })} /></div><div><Label htmlFor="depositAmount">Deposit Amount</Label><Input id="depositAmount" type="number" step="0.01" value={formData.depositAmount} onChange={(e) => setFormData({ ...formData, depositAmount: e.target.value })} /></div><div><Label htmlFor="withdrawalsCount">Withdrawals Count</Label><Input id="withdrawalsCount" type="number" value={formData.withdrawalsCount} onChange={(e) => setFormData({ ...formData, withdrawalsCount: e.target.value })} /></div><div><Label htmlFor="totalWithdrawals">Total Withdrawals</Label><Input id="totalWithdrawals" type="number" step="0.01" value={formData.totalWithdrawals} onChange={(e) => setFormData({ ...formData, totalWithdrawals: e.target.value })} /></div><div><Label htmlFor="transactionsCount">Transactions Count</Label><Input id="transactionsCount" type="number" value={formData.transactionsCount} onChange={(e) => setFormData({ ...formData, transactionsCount: e.target.value })} /></div><div><Label htmlFor="nsfs">NSFs</Label><Input id="nsfs" type="number" value={formData.nsfs} onChange={(e) => setFormData({ ...formData, nsfs: e.target.value })} /></div><div><Label htmlFor="negativeDays">Negative Days</Label><Input id="negativeDays" type="number" value={formData.negativeDays} onChange={(e) => setFormData({ ...formData, negativeDays: e.target.value })} /></div></div></div></div>
-
-          <div><h3 className="text-sm font-semibold text-slate-700 mb-4 pb-2 border-b">Fraud</h3><div className="grid grid-cols-2 gap-x-6 gap-y-4"><div><Label htmlFor="fraudScore">Fraud Score</Label><Input id="fraudScore" type="number" value={formData.fraudScore} onChange={(e) => setFormData({ ...formData, fraudScore: e.target.value })} /></div><div><Label htmlFor="fraudReasons">Fraud Reasons</Label><Textarea id="fraudReasons" value={formData.fraudReasons} onChange={(e) => setFormData({ ...formData, fraudReasons: e.target.value })} rows={3} /></div><div className="col-span-2"><div className="flex items-center justify-between mb-1"><Label htmlFor="notes">Notes</Label><span className="text-xs text-slate-500">{formData.notes.length}/255</span></div><Textarea id="notes" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value.slice(0, 255) })} rows={3} maxLength="255" /></div></div></div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>Cancel</Button>
-            <Button type="submit" disabled={loading} className="bg-orange-600 hover:bg-orange-700">{loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save'}</Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
+              <div><p className="text-green-700 font-medium">Company</p><p className="text-slate-900">{formData.company || '—'}</p>
