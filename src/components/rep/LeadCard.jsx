@@ -64,100 +64,105 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="border border-slate-200 rounded-xl p-5 bg-white transition-all hover:shadow-lg hover:border-[#08708E]"
+      className="border border-slate-200 rounded-lg p-3 bg-white transition-all hover:shadow-lg hover:border-[#08708E] flex gap-2"
     >
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-slate-900 mb-1">{lead.Name}</h3>
-            <div className="flex items-center gap-1 text-slate-600 mb-2">
-              <Building2 className="w-4 h-4" />
-              <span className="text-sm">{lead.Company}</span>
+        {/* Left Action Buttons */}
+        <div className="flex flex-col gap-1 flex-shrink-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleQuickView}
+            className="h-8 w-8"
+            title={isExpanded ? 'Collapse' : 'Quick View'}
+          >
+            <Eye className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleFullView}
+            className="h-8 w-8 text-[#08708E] hover:text-[#065a72]"
+            title="Full View"
+          >
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base font-semibold text-slate-900 truncate">{lead.Name}</h3>
+            <div className="flex items-center gap-1 text-slate-600">
+              <Building2 className="w-3 h-3 flex-shrink-0" />
+              <span className="text-xs truncate">{lead.Company}</span>
             </div>
           </div>
-          <Badge className={statusColors[lead.Status] || 'bg-slate-100 text-slate-800'}>
+          <Badge className={`${statusColors[lead.Status] || 'bg-slate-100 text-slate-800'} text-xs ml-2 flex-shrink-0`}>
             {lead.Status}
           </Badge>
         </div>
 
         {/* Stage Progress Bar */}
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
+        <div className="mb-2">
+          <div className="flex justify-between items-center mb-1">
             {stages.map((stage, idx) => (
               <div key={idx} className="flex flex-col items-center flex-1">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold ${
                   idx <= currentStage ? 'bg-[#08708E] text-white' : 'bg-slate-200 text-slate-500'
                 }`}>
                   {idx + 1}
                 </div>
-                <span className="text-xs text-slate-600 mt-1 text-center">{stage.label}</span>
+                <span className="text-[9px] text-slate-600 mt-0.5 text-center leading-tight">{stage.label}</span>
               </div>
             ))}
           </div>
-          <div className="flex gap-1">
+          <div className="flex gap-0.5">
             {stages.map((_, idx) => (
-              <div key={idx} className={`h-1.5 flex-1 rounded ${
+              <div key={idx} className={`h-1 flex-1 rounded ${
                 idx <= currentStage ? 'bg-[#08708E]' : 'bg-slate-200'
               }`} />
             ))}
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 mb-3">
+        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 mb-2">
           {lead.Phone && (
             <a
               href={`tel:${lead.Phone}`}
               onClick={(e) => e.stopPropagation()}
               className="flex items-center gap-1 hover:text-[#08708E] transition-colors"
             >
-              <Phone className="w-4 h-4" />
+              <Phone className="w-3 h-3" />
               <span>{lead.Phone}</span>
             </a>
           )}
           {lead.Email && (
-            <div className="flex items-center gap-1">
-              <Mail className="w-4 h-4" />
+            <div className="flex items-center gap-1 truncate">
+              <Mail className="w-3 h-3 flex-shrink-0" />
               <span className="truncate">{lead.Email}</span>
             </div>
           )}
         </div>
 
         {lead.Funding_Amount_Requested__c && (
-          <div className="mb-3 text-sm">
-            <span className="text-slate-500">Funding Requested: </span>
+          <div className="mb-2 text-xs">
+            <span className="text-slate-500">Requested: </span>
             <span className="font-semibold text-[#08708E]">
               ${parseFloat(lead.Funding_Amount_Requested__c).toLocaleString()}
             </span>
           </div>
         )}
 
-        <div className="flex items-center justify-between text-xs text-slate-500 mb-4">
+        <div className="flex items-center justify-between text-[10px] text-slate-500">
           <div className="flex items-center gap-1">
             <Calendar className="w-3 h-3" />
             <span>Updated {formatDate(lead.LastModifiedDate)}</span>
           </div>
           {lead.LeadSource && (
-            <span className="px-2 py-1 bg-slate-100 rounded">{lead.LeadSource}</span>
+            <span className="px-1.5 py-0.5 bg-slate-100 rounded text-[10px]">{lead.LeadSource}</span>
           )}
         </div>
-
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleQuickView}
-            className="flex-1 text-xs"
-          >
-            <Eye className="w-3 h-3 mr-1" />
-            {isExpanded ? 'Collapse' : 'Quick View'}
-          </Button>
-          <Button
-            size="sm"
-            onClick={handleFullView}
-            className="flex-1 bg-[#08708E] hover:bg-[#065a72] text-xs"
-          >
-            Full View
-            <ArrowRight className="w-3 h-3 ml-1" />
-          </Button>
         </div>
 
         {isExpanded && (
