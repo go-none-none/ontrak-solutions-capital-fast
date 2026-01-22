@@ -63,9 +63,7 @@ export default function AdminPipeline() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('salesforceAuth', {
-        action: 'getLoginUrl'
-      });
+      const response = await base44.functions.invoke('salesforceAuth', { action: 'getLoginUrl' });
       window.location.href = response.data.loginUrl;
     } catch (error) {
       console.error('Login error:', error);
@@ -103,18 +101,9 @@ export default function AdminPipeline() {
 
     try {
       const [pipelineRes, tasksRes, usersRes] = await Promise.all([
-        base44.functions.invoke('getAllRepsPipeline', {
-          token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
-        }),
-        base44.functions.invoke('getAllSalesforceTasks', {
-          token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
-        }),
-        base44.functions.invoke('getSalesforceUsers', {
-          token: sessionData.token,
-          instanceUrl: sessionData.instanceUrl
-        })
+        base44.functions.invoke('getAllRepsPipeline', { token: sessionData.token, instanceUrl: sessionData.instanceUrl }),
+        base44.functions.invoke('getAllSalesforceTasks', { token: sessionData.token, instanceUrl: sessionData.instanceUrl }),
+        base44.functions.invoke('getSalesforceUsers', { token: sessionData.token, instanceUrl: sessionData.instanceUrl })
       ]);
 
       setRepsData(pipelineRes.data.reps || []);
@@ -171,12 +160,7 @@ export default function AdminPipeline() {
     weekEnd.setDate(weekEnd.getDate() + 7);
     const weekEndStr = weekEnd.toISOString().split('T')[0];
 
-    const categorized = {
-      overdue: [],
-      dueToday: [],
-      dueThisWeek: [],
-      upcoming: []
-    };
+    const categorized = { overdue: [], dueToday: [], dueThisWeek: [], upcoming: [] };
 
     tasks.forEach(task => {
       if (!task.ActivityDate) {
@@ -235,24 +219,13 @@ export default function AdminPipeline() {
   if (!session) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl shadow-2xl p-12 max-w-md w-full text-center"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl shadow-2xl p-12 max-w-md w-full text-center">
           <div className="w-20 h-20 bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Users className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-slate-900 mb-3">Admin Pipeline</h1>
-          <p className="text-slate-600 mb-8">
-            Sign in with Salesforce to view all reps' pipelines
-          </p>
-          <Button
-            onClick={handleLogin}
-            className="w-full h-14 bg-[#08708E] hover:bg-[#065a72] text-white text-lg font-semibold"
-          >
-            Sign in with Salesforce
-          </Button>
+          <p className="text-slate-600 mb-8">Sign in with Salesforce to view all reps' pipelines</p>
+          <Button onClick={handleLogin} className="w-full h-14 bg-[#08708E] hover:bg-[#065a72] text-white text-lg font-semibold">Sign in with Salesforce</Button>
         </motion.div>
       </div>
     );
@@ -269,13 +242,7 @@ export default function AdminPipeline() {
 
   let allRepsData = allUsers.map(user => {
     const existingRep = repsData.find(r => r.userId === user.Id);
-    return existingRep || {
-      userId: user.Id,
-      name: user.Name,
-      email: user.Email,
-      leads: [],
-      opportunities: []
-    };
+    return existingRep || { userId: user.Id, name: user.Name, email: user.Email, leads: [], opportunities: [] };
   });
 
   if (tableSort.column) {
@@ -312,13 +279,7 @@ export default function AdminPipeline() {
 
     allRepsData.forEach(rep => {
       rep.leads?.forEach(lead => {
-        if (
-          lead.Name?.toLowerCase().includes(term) ||
-          lead.Company?.toLowerCase().includes(term) ||
-          lead.Email?.toLowerCase().includes(term) ||
-          lead.Phone?.toLowerCase().includes(term) ||
-          lead.Status?.toLowerCase().includes(term)
-        ) {
+        if (lead.Name?.toLowerCase().includes(term) || lead.Company?.toLowerCase().includes(term) || lead.Email?.toLowerCase().includes(term) || lead.Phone?.toLowerCase().includes(term) || lead.Status?.toLowerCase().includes(term)) {
           results.leads.push({ ...lead, ownerName: rep.name });
         }
       });
@@ -326,24 +287,14 @@ export default function AdminPipeline() {
 
     allRepsData.forEach(rep => {
       rep.opportunities?.forEach(opp => {
-        if (
-          opp.Name?.toLowerCase().includes(term) ||
-          opp.Account?.Name?.toLowerCase().includes(term) ||
-          opp.StageName?.toLowerCase().includes(term) ||
-          (opp.Amount && opp.Amount.toString().includes(term))
-        ) {
+        if (opp.Name?.toLowerCase().includes(term) || opp.Account?.Name?.toLowerCase().includes(term) || opp.StageName?.toLowerCase().includes(term) || (opp.Amount && opp.Amount.toString().includes(term))) {
           results.opportunities.push({ ...opp, ownerName: rep.name });
         }
       });
     });
 
     allTasks.forEach(task => {
-      if (
-        task.Subject?.toLowerCase().includes(term) ||
-        task.Description?.toLowerCase().includes(term) ||
-        task.Status?.toLowerCase().includes(term) ||
-        task.What?.Name?.toLowerCase().includes(term)
-      ) {
+      if (task.Subject?.toLowerCase().includes(term) || task.Description?.toLowerCase().includes(term) || task.Status?.toLowerCase().includes(term) || task.What?.Name?.toLowerCase().includes(term)) {
         const owner = allUsers.find(u => u.Id === task.OwnerId);
         results.tasks.push({ ...task, ownerName: owner?.Name });
       }
@@ -452,12 +403,7 @@ export default function AdminPipeline() {
         <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <Input
-              placeholder="Search across all leads, opportunities, and tasks..."
-              value={universalSearch}
-              onChange={(e) => handleUniversalSearch(e.target.value)}
-              className="pl-10 h-12 text-base"
-            />
+            <Input placeholder="Search across all leads, opportunities, and tasks..." value={universalSearch} onChange={(e) => handleUniversalSearch(e.target.value)} className="pl-10 h-12 text-base" />
             {universalSearch && (
               <button onClick={() => handleUniversalSearch('')} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
@@ -616,9 +562,7 @@ export default function AdminPipeline() {
                                   {activeView === 'leads' ? 'Leads' : activeView === 'opportunities' ? 'Opportunities' : 'Tasks'} Details
                                   {stageFilter[rep.userId] && <span className="ml-2 text-sm font-normal text-slate-600">(Filtered by: {stages.find(s => s.name === stageFilter[rep.userId])?.label})</span>}
                                 </h4>
-                                {stageFilter[rep.userId] && (
-                                  <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setStageFilter(prev => ({ ...prev, [rep.userId]: null })); }} className="text-xs">Clear Filter</Button>
-                                )}
+                                {stageFilter[rep.userId] && (<Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setStageFilter(prev => ({ ...prev, [rep.userId]: null })); }} className="text-xs">Clear Filter</Button>)}
                               </div>
                               <div className="relative mb-3">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
