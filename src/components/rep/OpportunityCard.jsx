@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Calendar, Building2, TrendingUp, Eye, ArrowRight, Loader2 } from 'lucide-react';
+import { DollarSign, Calendar, Building2, TrendingUp, ExternalLink, Loader2 } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -12,6 +12,12 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
   const [fullData, setFullData] = useState(null);
   const [contactRoles, setContactRoles] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
+
+  const handleCardClick = () => {
+    if (onToggleExpand) {
+      onToggleExpand(opportunity.Id);
+    }
+  };
 
   useEffect(() => {
     if (isExpanded && !fullData && session) {
@@ -71,13 +77,6 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
   const handleFullView = (e) => {
     e.stopPropagation();
     navigate(createPageUrl('OpportunityDetail') + `?id=${opportunity.Id}`);
-  };
-
-  const handleQuickView = (e) => {
-    e.stopPropagation();
-    if (onToggleExpand) {
-      onToggleExpand(opportunity.Id);
-    }
   };
 
   const currentStage = getCurrentStageIndex();
@@ -319,6 +318,15 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
                 </div>
               </div>
             )}
+
+            <Button
+              onClick={handleFullView}
+              className="w-full mt-3 bg-orange-600 hover:bg-orange-700 text-white"
+              size="sm"
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              View Full Details
+            </Button>
           </motion.div>
         )}
     </motion.div>

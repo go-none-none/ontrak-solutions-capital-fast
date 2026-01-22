@@ -2,12 +2,18 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, Building2, Calendar, DollarSign, Eye, ArrowRight } from 'lucide-react';
+import { Phone, Mail, Building2, Calendar, DollarSign, ExternalLink } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function LeadCard({ lead, session, onQuickView, isExpanded, onToggleExpand }) {
   const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    if (onToggleExpand) {
+      onToggleExpand(lead.Id);
+    }
+  };
 
   const stages = [
     { label: 'New', status: 'Open - Not Contacted' },
@@ -42,13 +48,6 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
   const handleFullView = (e) => {
     e.stopPropagation();
     navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`);
-  };
-
-  const handleQuickView = (e) => {
-    e.stopPropagation();
-    if (onToggleExpand) {
-      onToggleExpand(lead.Id);
-    }
   };
 
   const currentStage = getCurrentStageIndex();
@@ -212,6 +211,14 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
               </div>
             )}
 
+            <Button
+              onClick={handleFullView}
+              className="w-full mt-3 bg-[#08708E] hover:bg-[#065a72] text-white"
+              size="sm"
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              View Full Details
+            </Button>
           </motion.div>
         )}
       </motion.div>
