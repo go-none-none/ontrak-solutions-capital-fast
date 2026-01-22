@@ -139,10 +139,9 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
             <span className="px-1.5 py-0.5 bg-slate-100 rounded text-[10px]">{lead.LeadSource}</span>
           )}
         </div>
-        </div>
       </div>
 
-        {isExpanded && (
+      {isExpanded && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -211,16 +210,16 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
               </div>
             )}
 
-            <Button
-              onClick={handleFullView}
-              className="w-full mt-3 bg-[#08708E] hover:bg-[#065a72] text-white"
-              size="sm"
-            >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              View Full Details
-            </Button>
-          </motion.div>
-        )}
-      </motion.div>
+          <Button
+            onClick={handleFullView}
+            className="w-full mt-3 bg-[#08708E] hover:bg-[#065a72] text-white"
+            size="sm"
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            View Full Details
+          </Button>
+        </motion.div>
+      )}
+    </motion.div>
   );
 }
