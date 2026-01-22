@@ -13,16 +13,13 @@ export default function NotificationBell() {
   
   console.log('NotificationBell - notifications:', unreadCount, notifications);
 
-  // Animate when notifications change
   useEffect(() => {
     if (unreadCount > 0) {
-      // Trigger animation
       setShouldRing(true);
       setTimeout(() => setShouldRing(false), 600);
     }
   }, [unreadCount]);
 
-  // Close notification box when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (notificationRef.current && !notificationRef.current.contains(e.target)) {

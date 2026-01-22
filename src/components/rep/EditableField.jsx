@@ -35,16 +35,13 @@ const PAYMENT_METHODS = [
   "Wire Transfer"
 ];
 
-// Field configuration - maps field names to their types and options
 const FIELD_CONFIG = {
-  // Boolean fields (checkboxes)
   'csbs__Seasonal_Business__c': { type: 'checkbox' },
   'csbs__E_Commerce__c': { type: 'checkbox' },
   'csbs__Franchise__c': { type: 'checkbox' },
   'csbs__Home_Based_Business__c': { type: 'checkbox' },
   'Line_of_Credit__c': { type: 'checkbox' },
   
-  // Picklist fields (dropdowns)
   'csbs__Entity_Type__c': { type: 'select', options: ENTITY_TYPES },
   'csbs__Home_Address_State__c': { type: 'select', options: US_STATES },
   'csbs__Owner_2_Home_Address_State__c': { type: 'select', options: US_STATES },
@@ -52,7 +49,6 @@ const FIELD_CONFIG = {
   'Payment_Frequency__c': { type: 'select', options: PAYMENT_FREQUENCIES },
   'Payment_Method__c': { type: 'select', options: PAYMENT_METHODS },
   
-  // Date fields
   'csbs__Birthdate__c': { type: 'date' },
   'csbs__Owner_2_Birthday__c': { type: 'date' },
   'csbs__Business_Start_Date_Current_Ownership__c': { type: 'date' },
@@ -63,7 +59,6 @@ const FIELD_CONFIG = {
   'X80_Paid_In__c': { type: 'date' },
   'X100_Paid_In__c': { type: 'date' },
   
-  // Number/Percentage fields
   'csbs__Ownership_Percentage__c': { type: 'number', suffix: '%' },
   'csbs__Owner_2_Ownership__c': { type: 'number', suffix: '%' },
   'csbs__CreditScore__c': { type: 'number' },
@@ -81,16 +76,13 @@ const FIELD_CONFIG = {
   'Buy_Rate__c': { type: 'number' },
   'Factor_Rate__c': { type: 'number' },
   
-  // Email fields
   'Email': { type: 'email' },
   'csbs__Owner_2_Email__c': { type: 'email' },
   
-  // Phone fields
   'Phone': { type: 'tel' },
   'MobilePhone': { type: 'tel' },
   'csbs__Owner_2_Mobile__c': { type: 'tel' },
   
-  // Multiline text
   'Description': { type: 'textarea' },
   'Use_of_Proceeds__c': { type: 'textarea' },
   'csbs__Seasonal_Peak_Months__c': { type: 'textarea' }
@@ -112,7 +104,6 @@ export default function EditableField({
   const isEditing = editing[field];
   const displayValue = isEditing ? editValues[field] : value;
   
-  // Use local handlers to prevent re-renders
   const handleEdit = React.useCallback((newValue) => {
     onEdit(field, newValue);
   }, [field, onEdit]);

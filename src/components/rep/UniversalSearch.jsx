@@ -34,7 +34,6 @@ export default function UniversalSearch({ session }) {
       try {
         const searchLower = searchTerm.toLowerCase();
         
-        // Perform search via backend function
         const response = await base44.functions.invoke('performUniversalSearch', {
           searchTerm: searchLower,
           userId: session?.userId,
@@ -44,7 +43,6 @@ export default function UniversalSearch({ session }) {
 
         const allResults = [];
 
-        // Process leads
         if (response.data?.leads) {
           response.data.leads.forEach(lead => {
             allResults.push({
@@ -61,7 +59,6 @@ export default function UniversalSearch({ session }) {
           });
         }
 
-        // Process opportunities
         if (response.data?.opportunities) {
           response.data.opportunities.forEach(opp => {
             allResults.push({
@@ -78,7 +75,6 @@ export default function UniversalSearch({ session }) {
           });
         }
 
-        // Process contacts
         if (response.data?.contacts) {
           response.data.contacts.forEach(contact => {
             allResults.push({
@@ -95,19 +91,16 @@ export default function UniversalSearch({ session }) {
           });
         }
 
-        // Process accounts - use Active Lender checkbox
         if (response.data?.accounts) {
           response.data.accounts.forEach(account => {
             let accountCategory = 'Account';
             let color = 'bg-slate-100 text-slate-800';
             let icon = Building2;
 
-            // Check if Active Lender
             if (account.csbs__Active_Lender__c) {
               accountCategory = 'Lender';
               color = 'bg-emerald-100 text-emerald-800';
             } else {
-              // Default to Merchant if not a lender
               const recordTypeName = account.RecordType?.Name?.toLowerCase() || '';
               if (recordTypeName.includes('merchant')) {
                 accountCategory = 'Merchant';
@@ -148,8 +141,6 @@ export default function UniversalSearch({ session }) {
     }
   };
 
-
-
   const handleClear = () => {
     setSearchTerm('');
     setResults([]);
@@ -181,8 +172,6 @@ export default function UniversalSearch({ session }) {
             </button>
           )}
         </div>
-
-
       </div>
 
       {showDropdown && (results.length > 0 || searchTerm) && (

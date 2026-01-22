@@ -16,7 +16,6 @@ export default function ContactCard({ contact }) {
       className="bg-white rounded-lg shadow-sm border border-slate-200 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer p-4"
     >
       <div className="space-y-3">
-        {/* Name and Title */}
         <div>
           <h3 className="font-semibold text-slate-900 text-base">{contact.Name}</h3>
           {contact.Title && (
@@ -24,7 +23,6 @@ export default function ContactCard({ contact }) {
           )}
         </div>
 
-        {/* Account and Department */}
         <div className="flex flex-wrap gap-2">
           {contact.AccountName && (
             <Badge variant="outline" className="text-xs flex items-center gap-1">
@@ -39,7 +37,6 @@ export default function ContactCard({ contact }) {
           )}
         </div>
 
-        {/* Contact Info */}
         <div className="space-y-2 pt-2 border-t border-slate-100">
           {contact.Email && (
             <a 
@@ -75,7 +72,6 @@ export default function ContactCard({ contact }) {
           )}
         </div>
 
-        {/* Credit Score */}
         {contact.csbs__Credit_Score__c && (
           <div className="pt-2 border-t border-slate-100">
             <p className="text-xs text-slate-500 mb-1">Credit Score</p>
