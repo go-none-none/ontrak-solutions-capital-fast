@@ -170,10 +170,9 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
           </div>
           <span>Updated {formatDate(opportunity.LastModifiedDate)}</span>
         </div>
-        </div>
       </div>
 
-        {isExpanded && (
+      {isExpanded && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -319,16 +318,16 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
               </div>
             )}
 
-            <Button
-              onClick={handleFullView}
-              className="w-full mt-3 bg-orange-600 hover:bg-orange-700 text-white"
-              size="sm"
-            >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              View Full Details
-            </Button>
-          </motion.div>
-        )}
+          <Button
+            onClick={handleFullView}
+            className="w-full mt-3 bg-orange-600 hover:bg-orange-700 text-white"
+            size="sm"
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            View Full Details
+          </Button>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
