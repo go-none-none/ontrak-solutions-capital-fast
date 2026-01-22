@@ -1,107 +1,144 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { DollarSign, TrendingUp, Target } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { GripVertical, Plus, X, ChevronDown, Search } from 'lucide-react';
+import LeadCard from './LeadCard';
+import OpportunityCard from './OpportunityCard';
+import { Droppable, Draggable, DragDropContext } from '@hello-pangea/dnd';
 
-export default function PipelineView({ leads, opportunities, activeTab, onStageClick }) {
-  const leadStages = [
-    { name: 'Open - Not Contacted', label: 'New', color: 'from-blue-500 to-blue-600' },
-    { name: 'Working - Contacted', label: 'Contacted', color: 'from-yellow-500 to-yellow-600' },
-    { name: 'Working - Application Out', label: 'App Out', color: 'from-purple-500 to-purple-600' },
-    { name: 'Application Missing Info', label: 'Missing Info', color: 'from-orange-500 to-orange-600' },
-    { name: 'Closed - Not Converted', label: 'Not Converted', color: 'from-red-500 to-red-600' }
+export default function PipelineView({ records = [], type = 'leads', onStageChange, onCreateNew, session, onRecordSelect, stageName }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedStages, setExpandedStages] = useState({});
+
+  const stages = type === 'leads' ? [
+    { name: 'new', label: 'Open - Not Contacted', color: 'bg-blue-500' },
+    { name: 'contacted', label: 'Working - Contacted', color: 'bg-yellow-500' },
+    { name: 'qualified', label: 'Qualified', color: 'bg-purple-500' },
+    { name: 'in_progress', label: 'In Progress', color: 'bg-orange-500' },
+    { name: 'funded', label: 'Funded', color: 'bg-green-500' },
+    { name: 'declined', label: 'Declined', color: 'bg-red-500' }
+  ] : [
+    { name: 'Application In', label: 'Application In', color: 'bg-blue-500' },
+    { name: 'Underwriting', label: 'Underwriting', color: 'bg-purple-500' },
+    { name: 'Approved', label: 'Approved', color: 'bg-green-500' },
+    { name: 'Contracts Out', label: 'Contracts Out', color: 'bg-yellow-500' },
+    { name: 'Contracts In', label: 'Contracts In', color: 'bg-indigo-500' },
+    { name: 'Closed - Funded', label: 'Funded', color: 'bg-green-600' },
+    { name: 'Declined', label: 'Declined', color: 'bg-red-500' }
   ];
 
-  const opportunityStages = [
-    { name: 'Application In', label: 'App In', color: 'from-blue-500 to-blue-600' },
-    { name: 'Underwriting', label: 'Underwriting', color: 'from-purple-500 to-purple-600' },
-    { name: 'Approved', label: 'Approved', color: 'from-green-500 to-green-600' },
-    { name: 'Contracts Out', label: 'Contracts Out', color: 'from-yellow-500 to-yellow-600' },
-    { name: 'Contracts In', label: 'Contracts In', color: 'from-indigo-500 to-indigo-600' },
-    { name: 'Closed - Funded', label: 'Funded', color: 'from-emerald-500 to-emerald-600' },
-    { name: 'Declined', label: 'Declined', color: 'from-red-500 to-red-600' }
-  ];
-
-  const stages = activeTab === 'leads' ? leadStages : opportunityStages;
-
-  const getPipelineData = () => {
-    if (activeTab === 'leads') {
-      return stages.map(stage => {
-        const stageLeads = leads.filter(l => l.Status === stage.name);
-        return { ...stage, count: stageLeads.length, amount: 0 };
-      });
-    } else {
-      return stages.map(stage => {
-        let stageOpps;
-        if (stage.name === 'Declined') {
-          stageOpps = opportunities.filter(o => o.StageName && o.StageName.includes('Declined'));
-        } else {
-          stageOpps = opportunities.filter(o => o.StageName === stage.name);
+  const stageGroups = useMemo(() => {
+    const groups = {};
+    stages.forEach(stage => {
+      groups[stage.name] = [];
+    });
+    
+    records.forEach(record => {
+      const stageKey = type === 'leads' ? record.Status : record.StageName;
+      if (groups[stageKey]) {
+        if (!searchTerm || 
+            record.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            record.Company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            record.Email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (record.Account?.Name?.toLowerCase().includes(searchTerm.toLowerCase()))) {
+          groups[stageKey].push(record);
         }
-        const totalAmount = stageOpps.reduce((sum, o) => sum + (o.Amount || 0), 0);
-        return { ...stage, count: stageOpps.length, amount: totalAmount };
-      });
+      }
+    });
+    
+    return groups;
+  }, [records, searchTerm, type]);
+
+  const handleDragEnd = (result) => {
+    const { source, destination, draggableId } = result;
+    if (!destination) return;
+    if (source.droppableId === destination.droppableId && source.index === destination.index) return;
+    
+    const recordId = draggableId;
+    const newStage = destination.droppableId;
+    if (onStageChange) {
+      onStageChange(recordId, newStage);
     }
   };
 
-  const pipelineData = getPipelineData();
-  const totalPipeline = activeTab === 'opportunities' ? pipelineData.reduce((sum, stage) => sum + stage.amount, 0) : 0;
-  const totalDeals = pipelineData.reduce((sum, stage) => sum + stage.count, 0);
-
-  const formatCurrency = (amount) => {
-    if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
-    if (amount >= 1000) return `$${(amount / 1000).toFixed(0)}K`;
-    return `$${amount.toFixed(0)}`;
+  const toggleStageExpand = (stageName) => {
+    setExpandedStages(prev => ({ ...prev, [stageName]: !prev[stageName] }));
   };
 
   return (
-    <div className="bg-gradient-to-br from-white to-slate-50 rounded-xl shadow-lg p-4 border-2 border-slate-200">
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-4 gap-3">
-        <div>
-          <h2 className="text-lg font-bold text-slate-900 mb-0.5">Pipeline Overview</h2>
-          <p className="text-slate-600 text-xs">{activeTab === 'leads' ? 'Track your lead progress' : 'Monitor deal flow and stages'}</p>
+    <div className="space-y-4">
+      <div className="flex gap-3 mb-4">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Input placeholder="Search records..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10" />
         </div>
-        <div className="flex flex-wrap gap-3">
-          <div className="bg-white rounded-lg px-3 py-1.5 shadow-sm border border-slate-200">
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-orange-600" />
-              <div>
-                <p className="text-xs text-slate-500">Total {activeTab === 'leads' ? 'Leads' : 'Deals'}</p>
-                <p className="text-lg font-bold text-slate-900">{totalDeals}</p>
-              </div>
-            </div>
-          </div>
-          {activeTab === 'opportunities' && (
-            <div className="bg-gradient-to-br from-orange-600 to-orange-700 rounded-lg px-3 py-1.5 shadow-sm">
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-white" />
-                <div>
-                  <p className="text-xs text-white/80">Pipeline Value</p>
-                  <p className="text-lg font-bold text-white">{formatCurrency(totalPipeline)}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+        {onCreateNew && (<Button onClick={onCreateNew} className="bg-blue-600 hover:bg-blue-700"><Plus className="w-4 h-4 mr-2" />New</Button>)}
       </div>
 
-      <div className={`grid gap-2 ${activeTab === 'leads' ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-7'}`}>
-        {pipelineData.map((stage, idx) => (
-          <motion.div key={idx} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }} className="relative group">
-            <button onClick={() => onStageClick && onStageClick(stage.name)} className={`w-full bg-gradient-to-br ${stage.color} rounded-lg p-3 text-white shadow-md hover:shadow-xl hover:scale-105 transition-all text-left relative overflow-hidden flex flex-col justify-between`}>
-              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative">
-                <div className="text-xl font-bold mb-1">{stage.count}</div>
-                <div className="text-xs font-medium opacity-90 mb-1 break-words">{stage.label}</div>
-                {activeTab === 'opportunities' && stage.amount > 0 && (
-                  <div className="text-xs font-semibold bg-white/20 rounded px-1.5 py-0.5 inline-block mt-auto">
-                    {formatCurrency(stage.amount)}
-                  </div>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+          {stages.map(stage => {
+            const isExpanded = expandedStages[stage.name] !== false;
+            const stageRecords = stageGroups[stage.name] || [];
+            const count = stageRecords.length;
+
+            return (
+              <Droppable key={stage.name} droppableId={stage.name}>
+                {(provided, snapshot) => (
+                  <motion.div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className={`rounded-lg border-2 transition-colors ${snapshot.isDraggingOver ? 'border-blue-400 bg-blue-50' : 'border-slate-200 bg-slate-50'}`}
+                  >
+                    <button
+                      onClick={() => toggleStageExpand(stage.name)}
+                      className="w-full px-4 py-3 flex items-center justify-between bg-white rounded-t-lg hover:bg-slate-50 transition-colors border-b border-slate-200"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full ${stage.color}`}></div>
+                        <span className="font-semibold text-slate-900">{stage.label}</span>
+                        <span className="px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-medium">{count}</span>
+                      </div>
+                      <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isExpanded ? 'rotate-0' : '-rotate-90'}`} />
+                    </button>
+
+                    {isExpanded && (
+                      <div className="p-3 space-y-2 min-h-[300px]">
+                        {stageRecords.length === 0 ? (
+                          <div className="h-40 flex items-center justify-center text-slate-400 text-sm">No records</div>
+                        ) : (
+                          stageRecords.map((record, index) => (
+                            <Draggable key={record.Id} draggableId={record.Id} index={index}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className={`transition-all ${snapshot.isDragging ? 'opacity-50' : ''}`}
+                                >
+                                  {type === 'leads' ? (
+                                    <LeadCard lead={record} session={session} onSelect={onRecordSelect} />
+                                  ) : (
+                                    <OpportunityCard opportunity={record} session={session} onSelect={onRecordSelect} />
+                                  )}
+                                </div>
+                              )}
+                            </Draggable>
+                          ))
+                        )}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </motion.div>
                 )}
-              </div>
-            </button>
-          </motion.div>
-        ))}
-      </div>
+              </Droppable>
+            );
+          })}
+        </div>
+      </DragDropContext>
     </div>
   );
 }
