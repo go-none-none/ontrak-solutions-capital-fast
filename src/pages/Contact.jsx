@@ -12,53 +12,29 @@ export default function Contact() {
     e.preventDefault();
     const form = e.target;
     
-    // Create a hidden iframe to submit the form
     const iframe = document.createElement('iframe');
     iframe.name = 'hidden_iframe';
     iframe.style.display = 'none';
     document.body.appendChild(iframe);
     
-    // Set form target to iframe
     form.target = 'hidden_iframe';
-    
-    // Submit the form
     form.submit();
     
-    // Show thank you message
     setSubmitted(true);
     
-    // Clean up iframe after a delay
     setTimeout(() => {
       document.body.removeChild(iframe);
     }, 2000);
   };
 
   const contactInfo = [
-    {
-      icon: Phone,
-      title: 'Phone',
-      value: '(302) 520-5200',
-      link: 'tel:+13025205200',
-      description: 'Mon-Fri 9am to 6pm EST'
-    },
-    {
-      icon: Mail,
-      title: 'Email',
-      value: 'info@ontrak.co',
-      link: 'mailto:info@ontrak.co',
-      description: 'We respond within 24 hours'
-    },
-    {
-      icon: Clock,
-      title: 'Business Hours',
-      value: 'Monday - Friday',
-      description: '9:00 AM - 6:00 PM EST'
-    }
+    { icon: Phone, title: 'Phone', value: '(302) 520-5200', link: 'tel:+13025205200', description: 'Mon-Fri 9am to 6pm EST' },
+    { icon: Mail, title: 'Email', value: 'info@ontrak.co', link: 'mailto:info@ontrak.co', description: 'We respond within 24 hours' },
+    { icon: Clock, title: 'Business Hours', value: 'Monday - Friday', description: '9:00 AM - 6:00 PM EST' }
   ];
 
   return (
     <div className="min-h-screen">
-      {/* Hero */}
       <section className="relative h-[400px] bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
@@ -67,10 +43,7 @@ export default function Contact() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div className="grid lg:grid-cols-2 gap-8 items-center w-full">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
+            <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }}>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
                 Your Funding, Our Help
               </h1>
@@ -97,11 +70,7 @@ export default function Contact() {
               </div>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="hidden lg:block"
-            >
+            <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} className="hidden lg:block">
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6932157da76cc7fc545d1203/d7af804c1_OnTrak-Contact.jpg" 
                 alt="Contact Us"
@@ -110,23 +79,14 @@ export default function Contact() {
             </motion.div>
           </div>
         </div>
-            </section>
+      </section>
 
-      {/* Contact Form */}
       <section className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-stretch">
-            {/* Left - Info */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="flex flex-col"
-            >
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex flex-col">
               <span className="text-[#08708E] font-semibold text-sm uppercase tracking-wider">Get In Touch</span>
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mt-4 mb-6">
-                Send Us a Message
-              </h2>
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mt-4 mb-6">Send Us a Message</h2>
               <p className="text-slate-600 text-lg mb-8">
                 Have questions about our funding options? Want to discuss your specific business needs? 
                 Fill out the form and one of our specialists will get back to you within 24 hours.
@@ -148,9 +108,7 @@ export default function Contact() {
                   ))}
                 </ul>
                 <div className="mt-auto pt-6 border-t border-white/20">
-                  <p className="text-white/80 mb-4">
-                    Ready to get started? Skip the contact form and apply directly.
-                  </p>
+                  <p className="text-white/80 mb-4">Ready to get started? Skip the contact form and apply directly.</p>
                   <Link to={createPageUrl('application')}>
                     <Button className="w-full bg-white text-[#08708E] hover:bg-white/90 font-semibold h-12 rounded-xl">
                       Apply Now
@@ -161,13 +119,7 @@ export default function Contact() {
               </div>
             </motion.div>
 
-            {/* Right - Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="flex"
-            >
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex">
               {!submitted ? (
                 <form 
                   action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dam00001TLTFV" 
@@ -177,80 +129,23 @@ export default function Contact() {
                 >
                   <input type="hidden" name="oid" value="00Dam00001TLTFV" />
                   <input type="hidden" name="retURL" value="" />
-                
-                {/* Lead Source for Salesforce routing */}
-                <input type="hidden" name="lead_source" value="Website" />
+                  <input type="hidden" name="lead_source" value="Website" />
                 
                   <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="first_name" className="block text-sm font-medium text-slate-700 mb-2">First Name</label>
-                      <input
-                        id="first_name"
-                        name="first_name"
-                        type="text"
-                        maxLength="40"
-                        required
-                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="last_name" className="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
-                      <input
-                        id="last_name"
-                        name="last_name"
-                        type="text"
-                        maxLength="80"
-                        required
-                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
-                      />
-                    </div>
+                    <div><label htmlFor="first_name" className="block text-sm font-medium text-slate-700 mb-2">First Name</label><input id="first_name" name="first_name" type="text" maxLength="40" required className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent" /></div>
+                    <div><label htmlFor="last_name" className="block text-sm font-medium text-slate-700 mb-2">Last Name</label><input id="last_name" name="last_name" type="text" maxLength="80" required className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent" /></div>
                   </div>
 
-                  <div>
-                    <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">Company</label>
-                    <input
-                      id="company"
-                      name="company"
-                      type="text"
-                      maxLength="40"
-                      required
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
-                    />
-                  </div>
+                  <div><label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">Company</label><input id="company" name="company" type="text" maxLength="40" required className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent" /></div>
 
                   <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-2">Phone</label>
-                      <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        maxLength="40"
-                        required
-                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        maxLength="80"
-                        required
-                        className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent"
-                      />
-                    </div>
+                    <div><label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-2">Phone</label><input id="phone" name="phone" type="tel" maxLength="40" required className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent" /></div>
+                    <div><label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">Email</label><input id="email" name="email" type="email" maxLength="80" required className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#08708E] focus:border-transparent" /></div>
                   </div>
 
                   <div className="space-y-3">
                     <label className="flex items-start gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        name="consent"
-                        required
-                        className="mt-1 w-4 h-4 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
-                      />
+                      <input type="checkbox" name="consent" required className="mt-1 w-4 h-4 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]" />
                       <span className="text-xs text-slate-600">
                         I consent to receive texts and agree to the <Link to={createPageUrl('TermsOfService')} className="text-[#08708E] hover:underline">Terms & Conditions</Link> and <Link to={createPageUrl('PrivacyPolicy')} className="text-[#08708E] hover:underline">Privacy Policy</Link>.
                       </span>
@@ -260,10 +155,7 @@ export default function Contact() {
                     </p>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full h-14 bg-[#08708E] hover:bg-[#065a72] text-white rounded-xl text-lg font-semibold transition-colors duration-200 mt-auto"
-                  >
+                  <button type="submit" className="w-full h-14 bg-[#08708E] hover:bg-[#065a72] text-white rounded-xl text-lg font-semibold transition-colors duration-200 mt-auto">
                     Send Message
                   </button>
                 </form>
@@ -273,9 +165,7 @@ export default function Contact() {
                     <CheckCircle className="w-8 h-8 text-green-600" />
                   </div>
                   <h3 className="text-2xl font-bold text-slate-900">Thank You!</h3>
-                  <p className="text-slate-600">
-                    Your message has been sent successfully. We'll get back to you within 24 hours.
-                  </p>
+                  <p className="text-slate-600">Your message has been sent successfully. We'll get back to you within 24 hours.</p>
                   <Link to={createPageUrl('application')}>
                     <Button className="bg-[#08708E] hover:bg-[#065a72] text-white px-8 py-3 rounded-full font-semibold mt-4">
                       Apply Now
@@ -285,14 +175,13 @@ export default function Contact() {
                 </div>
               )}
             </motion.div>
-            </div>
-            </div>
-            </section>
+          </div>
+        </div>
+      </section>
 
-            {/* Contact Info Cards */}
-            <section className="py-16 bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {contactInfo.map((info, i) => (
               <motion.div
                 key={i}
@@ -316,9 +205,9 @@ export default function Contact() {
                 <p className="text-sm text-slate-500">{info.description}</p>
               </motion.div>
             ))}
-            </div>
-            </div>
-            </section>
-            </div>
-            );
-            }
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

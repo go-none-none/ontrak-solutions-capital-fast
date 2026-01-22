@@ -17,17 +17,13 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
   const [frequencyPicklist, setFrequencyPicklist] = useState([]);
   const [lenders, setLenders] = useState([]);
   const [showCreateLender, setShowCreateLender] = useState(false);
-  const [formData, setFormData] = useState({
-    creditorId: '', balance: '', lender: '', estimatedMonthlyMCA: '', openPosition: false, notes: '', type: '', payment: '', frequency: ''
-  });
+  const [formData, setFormData] = useState({ creditorId: '', balance: '', lender: '', estimatedMonthlyMCA: '', openPosition: false, notes: '', type: '', payment: '', frequency: '' });
 
   useEffect(() => {
     if (isOpen) {
       loadPicklists();
       if (debt) {
-        setFormData({
-          creditorId: debt.csbs__Creditor__c || '', balance: debt.csbs__Balance__c || '', lender: debt.csbs__Lender__c || '', estimatedMonthlyMCA: debt.csbs__Estimated_Monthly_MCA_Amount__c || '', openPosition: debt.csbs__Open_Position__c || false, notes: debt.csbs__Notes__c || '', type: debt.csbs__Type__c || '', payment: debt.csbs__Payment__c || '', frequency: debt.csbs__Frequency__c || ''
-        });
+        setFormData({ creditorId: debt.csbs__Creditor__c || '', balance: debt.csbs__Balance__c || '', lender: debt.csbs__Lender__c || '', estimatedMonthlyMCA: debt.csbs__Estimated_Monthly_MCA_Amount__c || '', openPosition: debt.csbs__Open_Position__c || false, notes: debt.csbs__Notes__c || '', type: debt.csbs__Type__c || '', payment: debt.csbs__Payment__c || '', frequency: debt.csbs__Frequency__c || '' });
       }
     }
   }, [isOpen, debt]);
@@ -36,22 +32,9 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
     setLoadingPicklists(true);
     try {
       const [typeRes, frequencyRes, lendersRes] = await Promise.all([
-        base44.functions.invoke('getSalesforcePicklistValues', {
-          objectType: 'csbs__Debt__c',
-          fieldName: 'csbs__Type__c',
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        }),
-        base44.functions.invoke('getSalesforcePicklistValues', {
-          objectType: 'csbs__Debt__c',
-          fieldName: 'csbs__Frequency__c',
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        }),
-        base44.functions.invoke('getSalesforceLenders', {
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
+        base44.functions.invoke('getSalesforcePicklistValues', { objectType: 'csbs__Debt__c', fieldName: 'csbs__Type__c', token: session.token, instanceUrl: session.instanceUrl }),
+        base44.functions.invoke('getSalesforcePicklistValues', { objectType: 'csbs__Debt__c', fieldName: 'csbs__Frequency__c', token: session.token, instanceUrl: session.instanceUrl }),
+        base44.functions.invoke('getSalesforceLenders', { token: session.token, instanceUrl: session.instanceUrl })
       ]);
 
       setTypePicklist(typeRes.data.values || []);
@@ -70,30 +53,9 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
 
     try {
       if (debt) {
-        await base44.functions.invoke('updateSalesforceRecord', {
-          objectType: 'csbs__Debt__c',
-          recordId: debt.Id,
-          data: {
-            csbs__Creditor__c: formData.creditorId,
-            csbs__Balance__c: formData.balance,
-            csbs__Lender__c: formData.lender,
-            csbs__Estimated_Monthly_MCA_Amount__c: formData.estimatedMonthlyMCA,
-            csbs__Open_Position__c: formData.openPosition,
-            csbs__Notes__c: formData.notes,
-            csbs__Type__c: formData.type,
-            csbs__Payment__c: formData.payment,
-            csbs__Frequency__c: formData.frequency
-          },
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        });
+        await base44.functions.invoke('updateSalesforceRecord', { objectType: 'csbs__Debt__c', recordId: debt.Id, data: { csbs__Creditor__c: formData.creditorId, csbs__Balance__c: formData.balance, csbs__Lender__c: formData.lender, csbs__Estimated_Monthly_MCA_Amount__c: formData.estimatedMonthlyMCA, csbs__Open_Position__c: formData.openPosition, csbs__Notes__c: formData.notes, csbs__Type__c: formData.type, csbs__Payment__c: formData.payment, csbs__Frequency__c: formData.frequency }, token: session.token, instanceUrl: session.instanceUrl });
       } else {
-        await base44.functions.invoke('createSalesforceDebt', {
-          opportunityId,
-          debtData: formData,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        });
+        await base44.functions.invoke('createSalesforceDebt', { opportunityId, debtData: formData, token: session.token, instanceUrl: session.instanceUrl });
       }
 
       onSuccess();
@@ -104,11 +66,8 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
         onClose();
       }
       
-      setFormData({
-        creditorId: '', balance: '', lender: '', estimatedMonthlyMCA: '', openPosition: false, notes: '', type: '', payment: '', frequency: ''
-      });
+      setFormData({ creditorId: '', balance: '', lender: '', estimatedMonthlyMCA: '', openPosition: false, notes: '', type: '', payment: '', frequency: '' });
     } catch (error) {
-      console.error('Debt operation error:', error);
       alert('Failed to save debt: ' + (error.response?.data?.error || error.message));
     } finally {
       setLoading(false);
@@ -140,7 +99,7 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
                   <div><Label htmlFor="notes">Notes</Label><Textarea id="notes" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} rows={4} /></div>
                 </div>
                 <div className="space-y-4">
-                  <div><Label className="text-red-600">*Opportunity</Label><div className="px-3 py-2 bg-slate-50 border rounded text-sm text-slate-600">Auto-filled</div></div>
+                  <div><Label>*Opportunity</Label><div className="px-3 py-2 bg-slate-50 border rounded text-sm text-slate-600">Auto-filled</div></div>
                   <div><Label htmlFor="type">Type</Label><Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value })}><SelectTrigger><SelectValue placeholder="--None--" /></SelectTrigger><SelectContent>{typePicklist.map(type => (<SelectItem key={type} value={type}>{type}</SelectItem>))}</SelectContent></Select></div>
                   <div><Label htmlFor="payment">Payment</Label><Input id="payment" type="number" step="0.01" value={formData.payment} onChange={(e) => setFormData({ ...formData, payment: e.target.value })} /></div>
                   <div><Label htmlFor="frequency">Frequency</Label><Select value={formData.frequency} onValueChange={(value) => setFormData({ ...formData, frequency: value })}><SelectTrigger><SelectValue placeholder="--None--" /></SelectTrigger><SelectContent>{frequencyPicklist.map(freq => (<SelectItem key={freq} value={freq}>{freq}</SelectItem>))}</SelectContent></Select></div>
@@ -150,9 +109,7 @@ export default function NewDebtModal({ isOpen, onClose, opportunityId, session, 
 
             <div className="flex justify-end gap-3 pt-4 border-t">
               <Button type="button" variant="outline" onClick={onClose} disabled={loading}>Cancel</Button>
-              {!debt && (
-                <Button type="submit" name="saveNew" disabled={loading} variant="outline">{loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save & New'}</Button>
-              )}
+              {!debt && (<Button type="submit" name="saveNew" disabled={loading} variant="outline">{loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save & New'}</Button>)}
               <Button type="submit" name="save" disabled={loading} className="bg-orange-600 hover:bg-orange-700">{loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save'}</Button>
             </div>
           </form>
