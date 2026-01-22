@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ArrowLeft, Loader2, ChevronDown, CheckCircle2, XCircle, Zap, Eye } from 'lucide-react';
+import { ArrowLeft, Loader2, ChevronDown, CheckCircle2, XCircle, Zap, Eye, Edit, Save, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
@@ -11,8 +11,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { NotificationContext } from '../components/context/NotificationContext';
 
 import FileManager from '../components/rep/FileManager.jsx';
-import EditableField from '../components/rep/EditableField.jsx';
 import CommunicationCard from '../components/rep/CommunicationCard.jsx';
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import RepPortalHeader from '../components/rep/RepPortalHeader';
 import ActivityPanel from '../components/rep/ActivityPanel';
 import NewStatementModal from '../components/opportunity/NewStatementModal';
@@ -34,8 +36,9 @@ export default function OpportunityDetail() {
   const [opportunity, setOpportunity] = useState(null);
   const [contactRoles, setContactRoles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState({});
-  const [editValues, setEditValues] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [saving, setSaving] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [showDeclinedReasons, setShowDeclinedReasons] = useState(false);
@@ -311,36 +314,28 @@ export default function OpportunityDetail() {
     }
   };
 
-  const handleFieldSave = React.useCallback(async (field) => {
-    if (!opportunity?.Id) return;
+  const handleSave = async () => {
+    setSaving(true);
     try {
-      setEditing(prev => ({ ...prev, [field]: true }));
+      const { Id, CreatedBy, CreatedDate, LastModifiedBy, LastModifiedDate, Owner, Account, ...cleanData } = editData;
+      
       await base44.functions.invoke('updateSalesforceRecord', {
         objectType: 'Opportunity',
         recordId: opportunity.Id,
-        data: { [field]: editValues[field] },
+        data: cleanData,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
+      
       await loadOpportunity(session);
-      setEditing(prev => ({ ...prev, [field]: false }));
+      setIsEditing(false);
     } catch (error) {
-      console.error('Update error:', error);
-      setEditing(prev => ({ ...prev, [field]: false }));
+      console.error('Save error:', error);
+      alert('Failed to save: ' + (error.response?.data?.error || error.message));
+    } finally {
+      setSaving(false);
     }
-  }, [opportunity?.Id, editValues, session]);
-
-  const handleFieldEdit = React.useCallback((field, value) => {
-    setEditValues(prev => ({ ...prev, [field]: value }));
-  }, []);
-
-  const handleFieldCancel = React.useCallback((field) => {
-    setEditing(prev => ({ ...prev, [field]: false }));
-  }, []);
-
-  const handleFieldStartEdit = React.useCallback((field) => {
-    setEditing(prev => ({ ...prev, [field]: true }));
-  }, []);
+  };
 
   const handleDeleteRecord = async (objectType, recordId, recordName) => {
     if (!confirm(`Are you sure you want to delete ${recordName}?`)) {
@@ -396,22 +391,7 @@ export default function OpportunityDetail() {
     }
   };
 
-  const EditableFieldWrapper = React.memo(({ label, field, value, disabled = false }) => {
-    return (
-      <EditableField
-        label={label}
-        field={field}
-        value={value}
-        editing={editing}
-        editValues={editValues}
-        disabled={disabled}
-        onEdit={handleFieldEdit}
-        onSave={handleFieldSave}
-        onCancel={handleFieldCancel}
-        onStartEdit={handleFieldStartEdit}
-      />
-    );
-  });
+
 
   if (loading) {
     return (
@@ -498,15 +478,48 @@ export default function OpportunityDetail() {
                       <p className="text-xs sm:text-sm text-slate-600 truncate">{opportunity.Account?.Name}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      {session?.isAdmin && (
-                        <Button 
-                          onClick={() => setShowHistory(true)} 
-                          variant="outline"
-                          size="sm"
-                          className="text-xs sm:text-sm"
-                        >
-                          History
-                        </Button>
+                      {isEditing ? (
+                        <>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => { setIsEditing(false); setEditData(opportunity); }}
+                            disabled={saving}
+                            size="sm"
+                            className="text-xs sm:text-sm"
+                          >
+                            <X className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Cancel</span>
+                          </Button>
+                          <Button 
+                            onClick={handleSave}
+                            disabled={saving}
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700 text-xs sm:text-sm"
+                          >
+                            {saving ? <Loader2 className="w-4 h-4 animate-spin sm:mr-2" /> : <Save className="w-4 h-4 sm:mr-2" />}
+                            {saving ? 'Saving...' : 'Save'}
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button 
+                            onClick={() => { setIsEditing(true); setEditData(opportunity); }}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs sm:text-sm"
+                          >
+                            <Edit className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Edit</span>
+                          </Button>
+                          {session?.isAdmin && (
+                            <Button 
+                              onClick={() => setShowHistory(true)} 
+                              variant="outline"
+                              size="sm"
+                              className="text-xs sm:text-sm"
+                            >
+                              History
+                            </Button>
+                          )}
+                        </>
                       )}
                       <Badge className={`${stageColors[opportunity.StageName] || 'bg-slate-100 text-slate-800'} text-xs sm:text-sm whitespace-nowrap`}>
                         {opportunity.StageName}
@@ -1135,19 +1148,52 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Opportunity Name" field="Name" value={opportunity.Name} />
+                        {[
+                          { label: 'Opportunity Name', field: 'Name' },
+                          { label: 'Close Date', field: 'CloseDate', type: 'date' },
+                          { label: 'Type', field: 'Type' },
+                          { label: 'Lead Source', field: 'LeadSource' },
+                          { label: 'ISO', field: 'csbs__ISO__c' },
+                          { label: 'Stage Detail', field: 'csbs__Stage_Detail__c' }
+                        ].map(({ label, field, type }) => (
+                          <div key={field}>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                            {isEditing ? (
+                              <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                            ) : (
+                              <p className="text-slate-900">{opportunity[field] || '-'}</p>
+                            )}
+                          </div>
+                        ))}
                         <div>
-                          <p className="text-slate-500 text-xs mb-1">Opportunity Owner</p>
-                          <p className="font-medium text-slate-900">{opportunity.Owner?.Name || 'Unknown'}</p>
+                          <label className="block text-xs font-medium text-slate-700 mb-1">Opportunity Owner</label>
+                          <p className="text-slate-900">{opportunity.Owner?.Name || 'Unknown'}</p>
                         </div>
-                        <EditableFieldWrapper label="Account Name" field="AccountId" value={opportunity.Account?.Name} />
-                        <EditableFieldWrapper label="Close Date" field="CloseDate" value={opportunity.CloseDate} />
-                        <EditableFieldWrapper label="Type" field="Type" value={opportunity.Type} />
-                        <EditableFieldWrapper label="Lead Source" field="LeadSource" value={opportunity.LeadSource} />
-                        <EditableFieldWrapper label="Stage" field="StageName" value={opportunity.StageName} disabled={true} />
-                        <EditableFieldWrapper label="ISO" field="csbs__ISO__c" value={opportunity.csbs__ISO__c} />
-                        <EditableFieldWrapper label="Stage Detail" field="csbs__Stage_Detail__c" value={opportunity.csbs__Stage_Detail__c} />
-                        <EditableFieldWrapper label="Line of Credit" field="csbs__Line_of_Credit__c" value={opportunity.csbs__Line_of_Credit__c} />
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 mb-1">Account Name</label>
+                          <p className="text-slate-900">{opportunity.Account?.Name || '-'}</p>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-slate-700 mb-1">Stage</label>
+                          <p className="text-slate-900">{opportunity.StageName || '-'}</p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {isEditing ? (
+                            <>
+                              <Checkbox
+                                id="line_of_credit"
+                                checked={editData.csbs__Line_of_Credit__c || false}
+                                onCheckedChange={(checked) => setEditData({...editData, csbs__Line_of_Credit__c: checked})}
+                              />
+                              <label htmlFor="line_of_credit" className="text-xs font-medium text-slate-700 cursor-pointer">Line of Credit</label>
+                            </>
+                          ) : (
+                            <>
+                              <label className="block text-xs font-medium text-slate-700">Line of Credit</label>
+                              <p className="text-slate-900">{opportunity.csbs__Line_of_Credit__c ? 'Yes' : 'No'}</p>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -1162,17 +1208,28 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Amount Requested" field="csbs__Amount_Requested__c" value={opportunity.csbs__Amount_Requested__c} />
-                        <EditableFieldWrapper label="Months In Business" field="csbs__Months_In_Business__c" value={opportunity.csbs__Months_In_Business__c} />
-                        <EditableFieldWrapper label="Use of Proceeds" field="csbs__Use_of_Proceeds__c" value={opportunity.csbs__Use_of_Proceeds__c} />
-                        <EditableFieldWrapper label="Estimated Monthly Revenue $" field="csbs__Estimated_Monthly_Revenue__c" value={opportunity.csbs__Estimated_Monthly_Revenue__c} />
-                        <EditableFieldWrapper label="Number of Terminals" field="csbs__Number_of_Terminals__c" value={opportunity.csbs__Number_of_Terminals__c} />
-                        <EditableFieldWrapper label="Open Balances $" field="csbs__Open_Loan_Balances__c" value={opportunity.csbs__Open_Loan_Balances__c} />
-                        <EditableFieldWrapper label="Current Credit Card Processor" field="csbs__Current_Credit_Card_Processor__c" value={opportunity.csbs__Current_Credit_Card_Processor__c} />
-                        <EditableFieldWrapper label="Open Bankruptcies" field="csbs__Open_Bankruptcies__c" value={opportunity.csbs__Open_Bankruptcies__c} />
-                        <EditableFieldWrapper label="# of Open Positions" field="csbs__Number_of_Open_Positions__c" value={opportunity.csbs__Number_of_Open_Positions__c} />
-                        <EditableFieldWrapper label="Judgements / Liens" field="csbs__Judgements_Liens__c" value={opportunity.csbs__Judgements_Liens__c} />
-                        <EditableFieldWrapper label="Estimated Monthly MCA Amount" field="csbs__Estimated_Monthly_MCA_Amount__c" value={opportunity.csbs__Estimated_Monthly_MCA_Amount__c} />
+                        {[
+                          { label: 'Amount Requested', field: 'csbs__Amount_Requested__c', type: 'number' },
+                          { label: 'Months In Business', field: 'csbs__Months_In_Business__c', type: 'number' },
+                          { label: 'Use of Proceeds', field: 'csbs__Use_of_Proceeds__c' },
+                          { label: 'Estimated Monthly Revenue $', field: 'csbs__Estimated_Monthly_Revenue__c', type: 'number' },
+                          { label: 'Number of Terminals', field: 'csbs__Number_of_Terminals__c', type: 'number' },
+                          { label: 'Open Balances $', field: 'csbs__Open_Loan_Balances__c', type: 'number' },
+                          { label: 'Current Credit Card Processor', field: 'csbs__Current_Credit_Card_Processor__c' },
+                          { label: 'Open Bankruptcies', field: 'csbs__Open_Bankruptcies__c' },
+                          { label: '# of Open Positions', field: 'csbs__Number_of_Open_Positions__c', type: 'number' },
+                          { label: 'Judgements / Liens', field: 'csbs__Judgements_Liens__c' },
+                          { label: 'Estimated Monthly MCA Amount', field: 'csbs__Estimated_Monthly_MCA_Amount__c', type: 'number' }
+                        ].map(({ label, field, type }) => (
+                          <div key={field}>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                            {isEditing ? (
+                              <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                            ) : (
+                              <p className="text-slate-900">{opportunity[field] || '-'}</p>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -1227,15 +1284,26 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Avg Gross Monthly Sales" field="csbs__Avg_Gross_Monthly_Sales__c" value={opportunity.csbs__Avg_Gross_Monthly_Sales__c} />
-                        <EditableFieldWrapper label="Avg Bank Deposits $" field="csbs__Avg_Bank_Deposits__c" value={opportunity.csbs__Avg_Bank_Deposits__c} />
-                        <EditableFieldWrapper label="Avg Bank Deposits #" field="csbs__Avg_Bank_Deposits_Number__c" value={opportunity.csbs__Avg_Bank_Deposits_Number__c} />
-                        <EditableFieldWrapper label="Avg Credit Card Volume" field="csbs__Avg_Credit_Card_Volume__c" value={opportunity.csbs__Avg_Credit_Card_Volume__c} />
-                        <EditableFieldWrapper label="Avg Daily Balance" field="csbs__Avg_Daily_Balance__c" value={opportunity.csbs__Avg_Daily_Balance__c} />
-                        <EditableFieldWrapper label="Avg Credit Card Batches" field="csbs__Avg_Credit_Card_Batches__c" value={opportunity.csbs__Avg_Credit_Card_Batches__c} />
-                        <EditableFieldWrapper label="Avg NSFs" field="csbs__Avg_NSFs__c" value={opportunity.csbs__Avg_NSFs__c} />
-                        <EditableFieldWrapper label="Avg Credit Card Transaction Amount" field="csbs__Avg_Credit_Card_Transaction_Amount__c" value={opportunity.csbs__Avg_Credit_Card_Transaction_Amount__c} />
-                        <EditableFieldWrapper label="Avg Negative Days" field="csbs__Avg_Negative_Days__c" value={opportunity.csbs__Avg_Negative_Days__c} />
+                        {[
+                          { label: 'Avg Gross Monthly Sales', field: 'csbs__Avg_Gross_Monthly_Sales__c', type: 'number' },
+                          { label: 'Avg Bank Deposits $', field: 'csbs__Avg_Bank_Deposits__c', type: 'number' },
+                          { label: 'Avg Bank Deposits #', field: 'csbs__Avg_Bank_Deposits_Number__c', type: 'number' },
+                          { label: 'Avg Credit Card Volume', field: 'csbs__Avg_Credit_Card_Volume__c', type: 'number' },
+                          { label: 'Avg Daily Balance', field: 'csbs__Avg_Daily_Balance__c', type: 'number' },
+                          { label: 'Avg Credit Card Batches', field: 'csbs__Avg_Credit_Card_Batches__c', type: 'number' },
+                          { label: 'Avg NSFs', field: 'csbs__Avg_NSFs__c', type: 'number' },
+                          { label: 'Avg Credit Card Transaction Amount', field: 'csbs__Avg_Credit_Card_Transaction_Amount__c', type: 'number' },
+                          { label: 'Avg Negative Days', field: 'csbs__Avg_Negative_Days__c', type: 'number' }
+                        ].map(({ label, field, type }) => (
+                          <div key={field}>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                            {isEditing ? (
+                              <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                            ) : (
+                              <p className="text-slate-900">{opportunity[field] || '-'}</p>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -1250,12 +1318,23 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Lender Name 1" field="Lender_Name_1__c" value={opportunity.Lender_Name_1__c} />
-                        <EditableFieldWrapper label="Open Balance Amount 1" field="Open_Balance_Amount_1__c" value={opportunity.Open_Balance_Amount_1__c} />
-                        <EditableFieldWrapper label="Lender Name 2" field="Lender_Name_2__c" value={opportunity.Lender_Name_2__c} />
-                        <EditableFieldWrapper label="Open Balance Amount 2" field="Open_Balance_Amount_2__c" value={opportunity.Open_Balance_Amount_2__c} />
-                        <EditableFieldWrapper label="Lender Name 3" field="Lender_Name_3__c" value={opportunity.Lender_Name_3__c} />
-                        <EditableFieldWrapper label="Open Balance Amount 3" field="Open_Balance_Amount_3__c" value={opportunity.Open_Balance_Amount_3__c} />
+                        {[
+                          { label: 'Lender Name 1', field: 'Lender_Name_1__c' },
+                          { label: 'Open Balance Amount 1', field: 'Open_Balance_Amount_1__c', type: 'number' },
+                          { label: 'Lender Name 2', field: 'Lender_Name_2__c' },
+                          { label: 'Open Balance Amount 2', field: 'Open_Balance_Amount_2__c', type: 'number' },
+                          { label: 'Lender Name 3', field: 'Lender_Name_3__c' },
+                          { label: 'Open Balance Amount 3', field: 'Open_Balance_Amount_3__c', type: 'number' }
+                        ].map(({ label, field, type }) => (
+                          <div key={field}>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                            {isEditing ? (
+                              <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                            ) : (
+                              <p className="text-slate-900">{opportunity[field] || '-'}</p>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -1270,25 +1349,36 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Funded Date" field="csbs__Funded_Date__c" value={opportunity.csbs__Funded_Date__c} />
-                        <EditableFieldWrapper label="Selected Offer" field="csbs__Selected_Offer__c" value={opportunity.csbs__Selected_Offer__c} />
-                        <EditableFieldWrapper label="Lender" field="csbs__Lender__c" value={opportunity.csbs__Lender__c} />
-                        <EditableFieldWrapper label="Buy Rate" field="csbs__Buy_Rate__c" value={opportunity.csbs__Buy_Rate__c} />
-                        <EditableFieldWrapper label="Funded" field="csbs__Funded__c" value={opportunity.csbs__Funded__c} />
-                        <EditableFieldWrapper label="Factor Rate" field="csbs__Factor_Rate__c" value={opportunity.csbs__Factor_Rate__c} />
-                        <EditableFieldWrapper label="Payoff" field="csbs__Payoff__c" value={opportunity.csbs__Payoff__c} />
-                        <EditableFieldWrapper label="Product" field="csbs__Product__c" value={opportunity.csbs__Product__c} />
-                        <EditableFieldWrapper label="Net Funded" field="csbs__Net_Funded__c" value={opportunity.csbs__Net_Funded__c} />
-                        <EditableFieldWrapper label="Payment Amount" field="csbs__Payment_Amount__c" value={opportunity.csbs__Payment_Amount__c} />
-                        <EditableFieldWrapper label="Term" field="csbs__Term__c" value={opportunity.csbs__Term__c} />
-                        <EditableFieldWrapper label="Payment Frequency" field="csbs__Payment_Frequency__c" value={opportunity.csbs__Payment_Frequency__c} />
-                        <EditableFieldWrapper label="Payback" field="csbs__Payback__c" value={opportunity.csbs__Payback__c} />
-                        <EditableFieldWrapper label="Payment Method" field="csbs__Payment_Method__c" value={opportunity.csbs__Payment_Method__c} />
-                        <EditableFieldWrapper label="Holdback %" field="csbs__Holdback_Percentage__c" value={opportunity.csbs__Holdback_Percentage__c} />
-                        <EditableFieldWrapper label="Commission $" field="csbs__Commission_Amount__c" value={opportunity.csbs__Commission_Amount__c} />
-                        <EditableFieldWrapper label="Commission %" field="csbs__Commission_Percentage__c" value={opportunity.csbs__Commission_Percentage__c} />
-                        <EditableFieldWrapper label="Origination Fee $" field="csbs__Origination_Fee_Amount__c" value={opportunity.csbs__Origination_Fee_Amount__c} />
-                        <EditableFieldWrapper label="Origination Fee %" field="csbs__Origination_Fee_Percentage__c" value={opportunity.csbs__Origination_Fee_Percentage__c} />
+                        {[
+                          { label: 'Funded Date', field: 'csbs__Funded_Date__c', type: 'date' },
+                          { label: 'Selected Offer', field: 'csbs__Selected_Offer__c' },
+                          { label: 'Lender', field: 'csbs__Lender__c' },
+                          { label: 'Buy Rate', field: 'csbs__Buy_Rate__c', type: 'number' },
+                          { label: 'Funded', field: 'csbs__Funded__c', type: 'number' },
+                          { label: 'Factor Rate', field: 'csbs__Factor_Rate__c', type: 'number' },
+                          { label: 'Payoff', field: 'csbs__Payoff__c', type: 'number' },
+                          { label: 'Product', field: 'csbs__Product__c' },
+                          { label: 'Net Funded', field: 'csbs__Net_Funded__c', type: 'number' },
+                          { label: 'Payment Amount', field: 'csbs__Payment_Amount__c', type: 'number' },
+                          { label: 'Term', field: 'csbs__Term__c', type: 'number' },
+                          { label: 'Payment Frequency', field: 'csbs__Payment_Frequency__c' },
+                          { label: 'Payback', field: 'csbs__Payback__c', type: 'number' },
+                          { label: 'Payment Method', field: 'csbs__Payment_Method__c' },
+                          { label: 'Holdback %', field: 'csbs__Holdback_Percentage__c', type: 'number' },
+                          { label: 'Commission $', field: 'csbs__Commission_Amount__c', type: 'number' },
+                          { label: 'Commission %', field: 'csbs__Commission_Percentage__c', type: 'number' },
+                          { label: 'Origination Fee $', field: 'csbs__Origination_Fee_Amount__c', type: 'number' },
+                          { label: 'Origination Fee %', field: 'csbs__Origination_Fee_Percentage__c', type: 'number' }
+                        ].map(({ label, field, type }) => (
+                          <div key={field}>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                            {isEditing ? (
+                              <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                            ) : (
+                              <p className="text-slate-900">{opportunity[field] || '-'}</p>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </CollapsibleContent>
                   </div>
@@ -1303,18 +1393,29 @@ export default function OpportunityDetail() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                        <EditableFieldWrapper label="Estimated Paid In %" field="csbs__Estimated_Paid_In_Percentage__c" value={opportunity.csbs__Estimated_Paid_In_Percentage__c} />
-                        <EditableFieldWrapper label="60% Paid In" field="csbs__Sixty_Percent_Paid_In__c" value={opportunity.csbs__Sixty_Percent_Paid_In__c} />
-                        <EditableFieldWrapper label="20% Paid In" field="csbs__Twenty_Percent_Paid_In__c" value={opportunity.csbs__Twenty_Percent_Paid_In__c} />
-                        <EditableFieldWrapper label="80% Paid In" field="csbs__Eighty_Percent_Paid_In__c" value={opportunity.csbs__Eighty_Percent_Paid_In__c} />
-                        <EditableFieldWrapper label="40% Paid In" field="csbs__Fourty_Percent_Paid_In__c" value={opportunity.csbs__Fourty_Percent_Paid_In__c} />
-                        <EditableFieldWrapper label="100% Paid In" field="csbs__One_Hundred_Percent_Paid_In__c" value={opportunity.csbs__One_Hundred_Percent_Paid_In__c} />
-                        <EditableFieldWrapper label="Renewal Status" field="csbs__Renewal_Status__c" value={opportunity.csbs__Renewal_Status__c} />
-                        <EditableFieldWrapper label="Previous Funding" field="csbs__Previous_Funding__c" value={opportunity.csbs__Previous_Funding__c} />
-                        <EditableFieldWrapper label="Renewal Status Notes" field="csbs__Renewal_Status_Notes__c" value={opportunity.csbs__Renewal_Status_Notes__c} />
-                        <EditableFieldWrapper label="Next Funding" field="csbs__Next_Funding__c" value={opportunity.csbs__Next_Funding__c} />
-                        <EditableFieldWrapper label="Originating Opportunity" field="csbs__Originating_Opportunity__c" value={opportunity.csbs__Originating_Opportunity__c} />
-                        <EditableFieldWrapper label="Current Renewal" field="csbs__Current_Renewal__c" value={opportunity.csbs__Current_Renewal__c} />
+                        {[
+                          { label: 'Estimated Paid In %', field: 'csbs__Estimated_Paid_In_Percentage__c', type: 'number' },
+                          { label: '60% Paid In', field: 'csbs__Sixty_Percent_Paid_In__c', type: 'date' },
+                          { label: '20% Paid In', field: 'csbs__Twenty_Percent_Paid_In__c', type: 'date' },
+                          { label: '80% Paid In', field: 'csbs__Eighty_Percent_Paid_In__c', type: 'date' },
+                          { label: '40% Paid In', field: 'csbs__Fourty_Percent_Paid_In__c', type: 'date' },
+                          { label: '100% Paid In', field: 'csbs__One_Hundred_Percent_Paid_In__c', type: 'date' },
+                          { label: 'Renewal Status', field: 'csbs__Renewal_Status__c' },
+                          { label: 'Previous Funding', field: 'csbs__Previous_Funding__c', type: 'number' },
+                          { label: 'Renewal Status Notes', field: 'csbs__Renewal_Status_Notes__c' },
+                          { label: 'Next Funding', field: 'csbs__Next_Funding__c', type: 'number' },
+                          { label: 'Originating Opportunity', field: 'csbs__Originating_Opportunity__c' },
+                          { label: 'Current Renewal', field: 'csbs__Current_Renewal__c' }
+                        ].map(({ label, field, type }) => (
+                          <div key={field}>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                            {isEditing ? (
+                              <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                            ) : (
+                              <p className="text-slate-900">{opportunity[field] || '-'}</p>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </CollapsibleContent>
                   </div>
