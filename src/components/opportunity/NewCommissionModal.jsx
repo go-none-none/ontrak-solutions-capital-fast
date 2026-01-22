@@ -29,7 +29,6 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
       loadRecordTypes();
       loadPicklists();
       
-      // If editing, populate form
       if (commission) {
         setSelectedRecordType(commission.RecordTypeId);
         setFormData({
@@ -39,7 +38,7 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
           csbs__Date_Due__c: commission.csbs__Date_Due__c || '',
           csbs__Date_Paid__c: commission.csbs__Date_Paid__c || ''
         });
-        setStep(2); // Skip record type selection when editing
+        setStep(2);
       }
     } else {
       resetForm();
@@ -112,7 +111,6 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
     setLoading(true);
     try {
       if (commission) {
-        // Update existing commission
         await base44.functions.invoke('updateSalesforceRecord', {
           objectType: 'csbs__Commission__c',
           recordId: commission.Id,
@@ -121,7 +119,6 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
           instanceUrl: session.instanceUrl
         });
       } else {
-        // Create new commission
         await base44.functions.invoke('createSalesforceCommission', {
           opportunityId,
           accountId,
@@ -136,7 +133,6 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
       onClose();
     } catch (error) {
       console.error('Commission error:', error);
-      console.error('Error response:', error.response?.data);
       alert(`Failed to ${commission ? 'update' : 'create'} commission: ${error.response?.data?.details?.[0]?.message || error.message}`);
     } finally {
       setLoading(false);
@@ -198,79 +194,8 @@ export default function NewCommissionModal({ isOpen, onClose, opportunityId, acc
 
         {step === 2 && (
           <div className="space-y-4">
-            {/* Information Section */}
-            <div>
-              <h3 className="font-semibold text-slate-900 mb-3">Information</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Status *</Label>
-                  <Select 
-                    value={formData.csbs__Status__c} 
-                    onValueChange={(value) => setFormData({...formData, csbs__Status__c: value})}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statusOptions.map(option => (
-                        <SelectItem key={option} value={option}>{option}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            {/* Detail Section */}
-            <div className="border-t pt-4">
-              <h3 className="font-semibold text-slate-900 mb-3">Detail</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Amount *</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.csbs__Amount__c}
-                    onChange={(e) => setFormData({...formData, csbs__Amount__c: e.target.value})}
-                    placeholder="0.00"
-                  />
-                </div>
-                <div>
-                  <Label>Type</Label>
-                  <Select 
-                    value={formData.csbs__Type__c} 
-                    onValueChange={(value) => setFormData({...formData, csbs__Type__c: value})}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="--None--" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={null}>--None--</SelectItem>
-                      {typeOptions.map(option => (
-                        <SelectItem key={option} value={option}>{option}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Date Due</Label>
-                  <Input
-                    type="date"
-                    value={formData.csbs__Date_Due__c}
-                    onChange={(e) => setFormData({...formData, csbs__Date_Due__c: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label>Date Paid</Label>
-                  <Input
-                    type="date"
-                    value={formData.csbs__Date_Paid__c}
-                    onChange={(e) => setFormData({...formData, csbs__Date_Paid__c: e.target.value})}
-                  />
-                </div>
-              </div>
-            </div>
-
+            <div><h3 className="font-semibold text-slate-900 mb-3">Information</h3><div className="grid grid-cols-2 gap-4"><div><Label>Status *</Label><Select value={formData.csbs__Status__c} onValueChange={(value) => setFormData({...formData, csbs__Status__c: value})}><SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger><SelectContent>{statusOptions.map(option => (<SelectItem key={option} value={option}>{option}</SelectItem>))}</SelectContent></Select></div></div></div>
+            <div className="border-t pt-4"><h3 className="font-semibold text-slate-900 mb-3">Detail</h3><div className="grid grid-cols-2 gap-4"><div><Label>Amount *</Label><Input type="number" step="0.01" value={formData.csbs__Amount__c} onChange={(e) => setFormData({...formData, csbs__Amount__c: e.target.value})} placeholder="0.00" /></div><div><Label>Type</Label><Select value={formData.csbs__Type__c} onValueChange={(value) => setFormData({...formData, csbs__Type__c: value})}><SelectTrigger><SelectValue placeholder="--None--" /></SelectTrigger><SelectContent><SelectItem value={null}>--None--</SelectItem>{typeOptions.map(option => (<SelectItem key={option} value={option}>{option}</SelectItem>))}</SelectContent></Select></div><div><Label>Date Due</Label><Input type="date" value={formData.csbs__Date_Due__c} onChange={(e) => setFormData({...formData, csbs__Date_Due__c: e.target.value})} /></div><div><Label>Date Paid</Label><Input type="date" value={formData.csbs__Date_Paid__c} onChange={(e) => setFormData({...formData, csbs__Date_Paid__c: e.target.value})} /></div></div></div>
             <div className="flex justify-end gap-2 pt-4">
               {!commission && <Button variant="outline" onClick={() => setStep(1)}>Back</Button>}
               <Button variant="outline" onClick={onClose}>Cancel</Button>

@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Badge } from "@/components/ui/badge";
 import { Loader2, ChevronDown, Pencil, X, Check } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
@@ -160,7 +159,6 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Information */}
           <Collapsible defaultOpen={true}>
             <div className="bg-slate-50 rounded-lg overflow-hidden">
               <CollapsibleTrigger className="w-full px-4 py-2 flex items-center justify-between hover:bg-slate-100">
@@ -169,47 +167,17 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <div className="p-4 pt-2 grid grid-cols-2 gap-4 text-sm bg-white">
-                  <div>
-                    <Label className="text-xs text-slate-500">Submission Id</Label>
-                    <p className="font-medium text-slate-900">{submission.Name}</p>
-                  </div>
-                  <div>
-                    <Label className="text-xs text-slate-500">Opportunity</Label>
-                    <p className="font-medium text-slate-900">{submission.csbs__Opportunity__r?.Name || '-'}</p>
-                  </div>
-                  <EditableField
-                    label="Status"
-                    field="csbs__Status__c"
-                    value={formData.csbs__Status__c}
-                    type="select"
-                    options={statusPicklist}
-                  />
-                  <EditableField
-                    label="Lender"
-                    field="csbs__Lender__c"
-                    value={submission.csbs__Lender__r?.Name || '-'}
-                  />
-                  <div className="col-span-2">
-                    <EditableField
-                      label="Status Detail"
-                      field="csbs__Status_Detail__c"
-                      value={formData.csbs__Status_Detail__c}
-                      type="textarea"
-                    />
-                  </div>
-                  <EditableField
-                    label="Type"
-                    field="csbs__Type__c"
-                    value={formData.csbs__Type__c}
-                    type="select"
-                    options={typePicklist}
-                  />
+                  <div><Label className="text-xs text-slate-500">Submission Id</Label><p className="font-medium text-slate-900">{submission.Name}</p></div>
+                  <div><Label className="text-xs text-slate-500">Opportunity</Label><p className="font-medium text-slate-900">{submission.csbs__Opportunity__r?.Name || '-'}</p></div>
+                  <EditableField label="Status" field="csbs__Status__c" value={formData.csbs__Status__c} type="select" options={statusPicklist} />
+                  <EditableField label="Lender" field="csbs__Lender__c" value={submission.csbs__Lender__r?.Name || '-'} />
+                  <div className="col-span-2"><EditableField label="Status Detail" field="csbs__Status_Detail__c" value={formData.csbs__Status_Detail__c} type="textarea" /></div>
+                  <EditableField label="Type" field="csbs__Type__c" value={formData.csbs__Type__c} type="select" options={typePicklist} />
                 </div>
               </CollapsibleContent>
             </div>
           </Collapsible>
 
-          {/* Notes */}
           <Collapsible defaultOpen={true}>
             <div className="bg-slate-50 rounded-lg overflow-hidden">
               <CollapsibleTrigger className="w-full px-4 py-2 flex items-center justify-between hover:bg-slate-100">
@@ -218,18 +186,12 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <div className="p-4 pt-2 bg-white">
-                  <EditableField
-                    label="Notes"
-                    field="csbs__Notes__c"
-                    value={formData.csbs__Notes__c}
-                    type="textarea"
-                  />
+                  <EditableField label="Notes" field="csbs__Notes__c" value={formData.csbs__Notes__c} type="textarea" />
                 </div>
               </CollapsibleContent>
             </div>
           </Collapsible>
 
-          {/* Email Information */}
           <Collapsible defaultOpen={false}>
             <div className="bg-slate-50 rounded-lg overflow-hidden">
               <CollapsibleTrigger className="w-full px-4 py-2 flex items-center justify-between hover:bg-slate-100">
@@ -238,51 +200,18 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <div className="p-4 pt-2 grid grid-cols-2 gap-4 bg-white">
-                  <EditableField
-                    label="Email"
-                    field="csbs__Email__c"
-                    value={formData.csbs__Email__c}
-                    type="email"
-                  />
-                  <EditableField
-                    label="Email to CC"
-                    field="csbs__Email_to_CC__c"
-                    value={formData.csbs__Email_to_CC__c}
-                  />
-                  <div className="col-span-2">
-                    <EditableField
-                      label="Email to BCC"
-                      field="csbs__Email_to_BCC__c"
-                      value={formData.csbs__Email_to_BCC__c}
-                    />
-                  </div>
+                  <EditableField label="Email" field="csbs__Email__c" value={formData.csbs__Email__c} type="email" />
+                  <EditableField label="Email to CC" field="csbs__Email_to_CC__c" value={formData.csbs__Email_to_CC__c} />
+                  <div className="col-span-2"><EditableField label="Email to BCC" field="csbs__Email_to_BCC__c" value={formData.csbs__Email_to_BCC__c} /></div>
                 </div>
               </CollapsibleContent>
             </div>
           </Collapsible>
 
-          {/* Save Button */}
           <div className="flex justify-end gap-2 pt-4 border-t">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={loading}
-              className="bg-orange-600 hover:bg-orange-700"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                'Save Changes'
-              )}
+            <Button variant="outline" onClick={onClose} disabled={loading}>Cancel</Button>
+            <Button onClick={handleSave} disabled={loading} className="bg-orange-600 hover:bg-orange-700">
+              {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</> : 'Save Changes'}
             </Button>
           </div>
         </div>

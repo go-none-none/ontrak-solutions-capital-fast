@@ -34,7 +34,6 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
         instanceUrl: session.instanceUrl
       });
 
-      // Map files to include more details
       const mappedFiles = (response.data.files || []).map(file => ({
         id: file.ContentDocumentId,
         title: file.ContentDocument.Title,
@@ -60,9 +59,6 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
         instanceUrl: session.instanceUrl
       });
       
-      console.log('Lenders response:', response.data);
-      
-      // Evaluate each lender's qualification
       const lendersData = response.data.lenders || [];
       const lendersWithStatus = lendersData.map(lender => ({
         ...lender,
@@ -79,19 +75,14 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
   };
 
   const evaluateLenderQualification = (lender, opp) => {
-    const missingFields = [];
-    
-    // Check credit score
     if (lender.csbs__Minimum_Credit_Score__c && (!opp.csbs__Credit_Score__c || opp.csbs__Credit_Score__c < lender.csbs__Minimum_Credit_Score__c)) {
       return 'unqualified';
     }
 
-    // Check months in business
     if (lender.csbs__Minimum_Months_in_Business__c && (!opp.csbs__Months_In_Business__c || opp.csbs__Months_In_Business__c < lender.csbs__Minimum_Months_in_Business__c)) {
       return 'unqualified';
     }
 
-    // Check monthly deposits
     if (lender.csbs__Minimum_Monthly_Deposit_Amount__c && (!opp.csbs__Avg_Bank_Deposits__c || opp.csbs__Avg_Bank_Deposits__c < lender.csbs__Minimum_Monthly_Deposit_Amount__c)) {
       return 'unqualified';
     }
@@ -100,22 +91,18 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
       return 'unqualified';
     }
 
-    // Check NSFs
     if (lender.csbs__Maximum_NSFs__c && opp.csbs__Avg_NSFs__c > lender.csbs__Maximum_NSFs__c) {
       return 'unqualified';
     }
 
-    // Check negative days
     if (lender.csbs__Maximum_Negative_Days__c && opp.csbs__Avg_Negative_Days__c > lender.csbs__Maximum_Negative_Days__c) {
       return 'unqualified';
     }
 
-    // Check daily balance
     if (lender.csbs__Minimum_Average_Daily_Balance__c && (!opp.csbs__Avg_Daily_Balance__c || opp.csbs__Avg_Daily_Balance__c < lender.csbs__Minimum_Average_Daily_Balance__c)) {
       return 'unqualified';
     }
 
-    // Check restricted industries
     if (lender.csbs__Restricted_Industries__c && opp.Account?.Industry) {
       const restrictedIndustries = lender.csbs__Restricted_Industries__c.split(';');
       if (restrictedIndustries.includes(opp.Account.Industry)) {
@@ -123,7 +110,6 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
       }
     }
 
-    // Check restricted states
     if (lender.csbs__Restricted_States__c && opp.Account?.BillingState) {
       const restrictedStates = lender.csbs__Restricted_States__c.split(';');
       if (restrictedStates.includes(opp.Account.BillingState)) {
@@ -205,32 +191,12 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
               </TabsList>
 
               <TabsContent value="lenders" className="space-y-4">
-                {/* Filter */}
                 <div className="flex gap-2 mb-4">
-                  <Button
-                    variant={filter === 'All' ? 'default' : 'outline'}
-                    onClick={() => setFilter('All')}
-                    size="sm"
-                  >
-                    All
-                  </Button>
-                  <Button
-                    variant={filter === 'Qualified' ? 'default' : 'outline'}
-                    onClick={() => setFilter('Qualified')}
-                    size="sm"
-                  >
-                    Qualified
-                  </Button>
-                  <Button
-                    variant={filter === 'Unqualified' ? 'default' : 'outline'}
-                    onClick={() => setFilter('Unqualified')}
-                    size="sm"
-                  >
-                    Unqualified
-                  </Button>
+                  <Button variant={filter === 'All' ? 'default' : 'outline'} onClick={() => setFilter('All')} size="sm">All</Button>
+                  <Button variant={filter === 'Qualified' ? 'default' : 'outline'} onClick={() => setFilter('Qualified')} size="sm">Qualified</Button>
+                  <Button variant={filter === 'Unqualified' ? 'default' : 'outline'} onClick={() => setFilter('Unqualified')} size="sm">Unqualified</Button>
                 </div>
 
-                {/* Lenders Table */}
                 <div className="border rounded-lg overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead className="bg-slate-50 border-b">
@@ -249,12 +215,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                     <tbody>
                       {filteredLenders.map(lender => (
                         <tr key={lender.Id} className="border-b hover:bg-slate-50">
-                          <td className="p-2">
-                            <Checkbox
-                              checked={selectedLenders[lender.Id] || false}
-                              onCheckedChange={() => toggleLender(lender.Id)}
-                            />
-                          </td>
+                          <td className="p-2"><Checkbox checked={selectedLenders[lender.Id] || false} onCheckedChange={() => toggleLender(lender.Id)} /></td>
                           <td className="p-2">{getStatusIcon(lender.status)}</td>
                           <td className="p-2 font-medium">{lender.Name}</td>
                           <td className="p-2">{lender.csbs__Minimum_Credit_Score__c || '-'}</td>
@@ -262,14 +223,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                           <td className="p-2">{lender.csbs__Maximum_NSFs__c || '-'}</td>
                           <td className="p-2">{lender.csbs__Minimum_Months_in_Business__c || '-'}</td>
                           <td className="p-2 text-xs">{lender.csbs__Restricted_States__c || '-'}</td>
-                          <td className="p-2">
-                            <Input
-                              placeholder="Notes..."
-                              value={notes[lender.Id] || ''}
-                              onChange={(e) => setNotes({ ...notes, [lender.Id]: e.target.value })}
-                              className="h-7 text-xs"
-                            />
-                          </td>
+                          <td className="p-2"><Input placeholder="Notes..." value={notes[lender.Id] || ''} onChange={(e) => setNotes({ ...notes, [lender.Id]: e.target.value })} className="h-7 text-xs" /></td>
                         </tr>
                       ))}
                     </tbody>
@@ -283,10 +237,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                     <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
                   </div>
                 ) : files.length === 0 ? (
-                  <div className="py-8 text-center text-slate-600">
-                    <File className="w-8 h-8 mx-auto mb-2 text-slate-400" />
-                    <p>No files found</p>
-                  </div>
+                  <div className="py-8 text-center text-slate-600"><File className="w-8 h-8 mx-auto mb-2 text-slate-400" /><p>No files found</p></div>
                 ) : (
                   <div className="space-y-2">
                     {files.map(file => (
@@ -302,11 +253,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                           [file.id]: !prev[file.id]
                         }))}
                       >
-                        <Checkbox
-                          checked={selectedFiles[file.id] || false}
-                          onCheckedChange={() => {}}
-                          className="mt-1"
-                        />
+                        <Checkbox checked={selectedFiles[file.id] || false} onCheckedChange={() => {}} className="mt-1" />
                         <File className="w-5 h-5 text-slate-400 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-slate-900 truncate">{file.title}</p>
@@ -335,24 +282,10 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
               </TabsContent>
             </Tabs>
 
-            {/* Actions */}
             <div className="flex justify-end gap-2 mt-4">
-              <Button variant="outline" onClick={onClose} disabled={submitting}>
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="bg-orange-600 hover:bg-orange-700"
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  'Submit'
-                )}
+              <Button variant="outline" onClick={onClose} disabled={submitting}>Cancel</Button>
+              <Button onClick={handleSubmit} disabled={submitting} className="bg-orange-600 hover:bg-orange-700">
+                {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Submitting...</> : 'Submit'}
               </Button>
             </div>
           </>
