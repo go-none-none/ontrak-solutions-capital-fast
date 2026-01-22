@@ -185,7 +185,24 @@ export default function AccountDetail() {
       setIsEditing(false);
     } catch (error) {
       console.error('Save error:', error);
-      alert('Failed to save: ' + (error.response?.data?.error || error.message));
+      console.error('Full error response:', error.response?.data);
+      
+      // Extract detailed error message
+      let errorMessage = 'Failed to save: ';
+      if (error.response?.data?.details) {
+        const details = error.response.data.details;
+        if (Array.isArray(details) && details.length > 0) {
+          errorMessage += details.map(d => d.message || JSON.stringify(d)).join(', ');
+        } else if (typeof details === 'object') {
+          errorMessage += JSON.stringify(details, null, 2);
+        } else {
+          errorMessage += details;
+        }
+      } else {
+        errorMessage += error.response?.data?.error || error.message;
+      }
+      
+      alert(errorMessage);
     } finally {
       setSaving(false);
     }
