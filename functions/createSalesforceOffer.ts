@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const { opportunityId, lenderId, offerData, token, instanceUrl } = await req.json();
+    const { opportunityId, submissionId, offerData, token, instanceUrl } = await req.json();
 
     if (!token || !instanceUrl || !opportunityId) {
       return Response.json({ error: 'Missing required parameters' }, { status: 400 });
@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify({
           csbs__Opportunity__c: opportunityId,
-          csbs__Lender__c: lenderId,
+          csbs__Submission__c: submissionId,
           ...offerData
         })
       }
