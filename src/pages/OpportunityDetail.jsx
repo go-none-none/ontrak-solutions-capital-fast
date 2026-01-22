@@ -396,7 +396,7 @@ export default function OpportunityDetail() {
     }
   };
 
-  const EditableFieldWrapper = ({ label, field, value, disabled = false }) => {
+  const EditableFieldWrapper = React.memo(({ label, field, value, disabled = false }) => {
     return (
       <EditableField
         label={label}
@@ -411,7 +411,7 @@ export default function OpportunityDetail() {
         onStartEdit={handleFieldStartEdit}
       />
     );
-  };
+  });
 
   if (loading) {
     return (

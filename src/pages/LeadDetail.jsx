@@ -290,7 +290,7 @@ export default function LeadDetail() {
     }
   };
 
-  const EditableFieldWrapper = ({ label, field, value, disabled = false }) => {
+  const EditableFieldWrapper = React.memo(({ label, field, value, disabled = false }) => {
     return (
       <EditableField
         label={label}
@@ -305,7 +305,7 @@ export default function LeadDetail() {
         onStartEdit={handleFieldStartEdit}
       />
     );
-  };
+  });
 
   const getCurrentStageIndex = () => {
     const index = stages.findIndex(s => s.status === lead?.Status);
