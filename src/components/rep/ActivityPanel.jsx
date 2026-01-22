@@ -18,11 +18,25 @@ export default function ActivityPanel({ recordId, recordType, session }) {
   const loadActivities = async () => {
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('getSalesforceActivities', { recordId, recordType, token: session.token, instanceUrl: session.instanceUrl });
+      console.log('Loading activities for:', { recordId, recordType });
+      console.log('Session:', { hasToken: !!session?.token, hasInstance: !!session?.instanceUrl });
+      
+      const response = await base44.functions.invoke('getSalesforceActivities', {
+        recordId,
+        recordType,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      
+      console.log('Activities response:', response);
+      console.log('Activities count:', response.data?.activities?.length);
+      console.log('Counts:', response.data?.counts);
+      
       setActivities(response.data.activities || []);
       setCounts(response.data.counts || { tasks: 0, events: 0, emails: 0, total: 0 });
     } catch (error) {
       console.error('Error loading activities:', error);
+      console.error('Error details:', error.response?.data);
     } finally {
       setLoading(false);
     }
@@ -60,9 +74,11 @@ export default function ActivityPanel({ recordId, recordType, session }) {
     const now = new Date();
     const diffMs = now - date;
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Yesterday';
     if (diffDays < 7) return `${diffDays} days ago`;
+    
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
@@ -78,28 +94,68 @@ export default function ActivityPanel({ recordId, recordType, session }) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const renderHTML = (html) => {
+    if (!html) return null;
+    return (
+      <div 
+        dangerouslySetInnerHTML={{ __html: html }} 
+        className="prose prose-sm max-w-none overflow-x-auto [&_img]:max-w-full [&_table]:max-w-full [&_*]:break-words" 
+        style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
+      />
+    );
+  };
+
   const renderLinksAsClickable = (text) => {
     if (!text) return text;
+    
+    // Match URLs with optional surrounding text like "name: url" or "name (url)"
     const urlWithContextRegex = /([^:\s]+):\s*(https?:\/\/[^\s]+)|([^(]+)\s*\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s]+)/g;
     const parts = [];
     let lastIndex = 0;
     let match;
     
     while ((match = urlWithContextRegex.exec(text)) !== null) {
-      if (match.index > lastIndex) parts.push(text.substring(lastIndex, match.index));
+      // Add text before the match
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      
       if (match[1] && match[2]) {
-        parts.push(<a key={match.index} href={match[2]} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">{match[1]}<ExternalLink className="w-3 h-3" /></a>);
+        // Pattern: "name: url"
+        parts.push(
+          <a key={match.index} href={match[2]} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
+            {match[1]}
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        );
       } else if (match[3] && match[4]) {
-        parts.push(<a key={match.index} href={match[4]} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">{match[3].trim()}<ExternalLink className="w-3 h-3" /></a>);
+        // Pattern: "name (url)"
+        parts.push(
+          <a key={match.index} href={match[4]} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
+            {match[3].trim()}
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        );
       } else if (match[5]) {
+        // Just URL
         const url = match[5];
         const displayText = url.length > 40 ? url.substring(0, 40) + '...' : url;
-        parts.push(<a key={match.index} href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1 break-all">{displayText}<ExternalLink className="w-3 h-3" /></a>);
+        parts.push(
+          <a key={match.index} href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1 break-all">
+            {displayText}
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        );
       }
+      
       lastIndex = urlWithContextRegex.lastIndex;
     }
     
-    if (lastIndex < text.length) parts.push(text.substring(lastIndex));
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
     return parts.length > 0 ? parts : text;
   };
 
@@ -123,8 +179,10 @@ export default function ActivityPanel({ recordId, recordType, session }) {
       <CollapsibleContent>
         <div className="max-h-[600px] overflow-y-auto">
           {activities.length === 0 ? (
-            <div className="p-8 text-center text-slate-500">No activities found</div>
-           ) : (
+            <div className="p-8 text-center text-slate-500">
+              No activities found
+            </div>
+          ) : (
             <div className="divide-y divide-slate-100">
               {activities.map(activity => (
               <div key={activity.id} className="p-4 hover:bg-slate-50 transition-colors">
@@ -140,6 +198,7 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                           {activity.subject || `${activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}`}
                         </h4>
                         
+                        {/* Metadata row */}
                         <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-600">
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
@@ -174,6 +233,7 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                           )}
                         </div>
 
+                        {/* Call disposition */}
                         {activity.callDisposition && (
                           <div className="mt-2">
                             <Badge className="bg-blue-100 text-blue-800 text-xs">
@@ -182,6 +242,7 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                           </div>
                         )}
 
+                        {/* Event details */}
                         {activity.type === 'event' && (
                           <div className="mt-2 text-xs text-slate-600">
                             {activity.startDate && activity.endDate && (
@@ -198,6 +259,7 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                           </div>
                         )}
 
+                        {/* Email details */}
                         {activity.type === 'email' && (
                           <div className="mt-2 space-y-1">
                             <div className="text-xs text-slate-600">
@@ -218,6 +280,7 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                           </div>
                         )}
 
+                        {/* Description/Body preview */}
                         {(activity.description || activity.body) && (
                           <button
                             onClick={() => toggleActivity(activity.id)}
@@ -229,8 +292,11 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                         )}
 
                         {expandedActivities[activity.id] && (activity.description || activity.body) && (
-                          <div className="mt-2 p-3 bg-slate-50 rounded-lg text-xs text-slate-700 overflow-x-auto max-w-full">
-                            <div className="whitespace-pre-wrap break-words">{renderLinksAsClickable(activity.description || activity.body)}</div>
+                          <div className="mt-2 p-3 bg-slate-50 rounded-lg text-xs text-slate-700 overflow-x-auto max-w-full" style={{ wordWrap: 'break-word' }}>
+                            {activity.type === 'email' && activity.body 
+                              ? renderHTML(activity.body)
+                              : <div className="whitespace-pre-wrap break-words">{renderLinksAsClickable(activity.description || activity.body)}</div>
+                            }
                           </div>
                         )}
                       </div>

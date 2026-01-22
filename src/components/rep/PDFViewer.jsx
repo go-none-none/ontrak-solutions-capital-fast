@@ -1,66 +1,131 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Loader2, Download, X, AlertCircle } from 'lucide-react';
 
 export default function PDFViewer({ file, session, isOpen, onClose }) {
-  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pdfData, setPdfData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (isOpen && file && session) {
-      loadPdf();
+    if (isOpen && file) {
+      loadPDF();
+    } else {
+      setPdfData(null);
+      setError(null);
     }
-  }, [isOpen, file, session]);
+  }, [isOpen, file]);
 
-  const loadPdf = async () => {
+  const loadPDF = async () => {
     setLoading(true);
+    setError(null);
+    
     try {
-      const response = await fetch(`${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`, {
-        headers: { Authorization: `Bearer ${session.token}` }
+      console.log('Loading PDF for file:', file.ContentDocumentId);
+      
+      // Direct fetch to avoid base44 auth check
+      const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contentDocumentId: file.ContentDocumentId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
       });
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      setPdfUrl(url);
+
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response error:', errorText);
+        throw new Error('Failed to fetch file content');
+      }
+
+      const data = await response.json();
+      console.log('Data received, has file:', !!data.file, 'file length:', data.file?.length);
+
+      if (!data || !data.file) {
+        throw new Error('No file content received');
+      }
+
+      // Use data URL instead of blob URL for better iframe compatibility
+      const base64 = data.file;
+      const dataUrl = `data:application/pdf;base64,${base64}`;
+      console.log('Data URL created, length:', dataUrl.length);
+      
+      setPdfData(dataUrl);
     } catch (error) {
-      console.error('Error loading PDF:', error);
+      console.error('PDF load error:', error);
+      setError(error.message || 'Failed to load PDF');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDownload = () => {
+    if (pdfData) {
+      const a = document.createElement('a');
+      a.href = pdfData;
+      a.download = `${file.ContentDocument.Title}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+
+  const handleClose = () => {
+    setPdfData(null);
+    setError(null);
+    onClose();
+  };
+
+  if (!file) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-        <div className="flex items-center justify-between p-4 border-b bg-slate-50 sticky top-0">
-          <h2 className="font-semibold text-slate-900">
-            {file?.ContentDocument?.Title}.{file?.ContentDocument?.FileExtension}
-          </h2>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-6xl h-[90vh] p-0 gap-0 flex flex-col">
+        <div className="flex items-center justify-between px-6 py-3 border-b flex-shrink-0">
+          <DialogTitle className="text-base font-semibold">{file.ContentDocument.Title}</DialogTitle>
           <div className="flex gap-2">
-            {pdfUrl && (
-              <a href={pdfUrl} download={`${file?.ContentDocument?.Title}.pdf`}>
-                <Button variant="ghost" size="icon">
-                  <Download className="w-4 h-4" />
-                </Button>
-              </a>
+            {pdfData && (
+              <Button variant="outline" size="sm" onClick={handleDownload}>
+                <Download className="w-4 h-4 mr-2" />
+                Download
+              </Button>
             )}
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            <Button variant="ghost" size="icon" onClick={handleClose}>
               <X className="w-4 h-4" />
             </Button>
           </div>
         </div>
-
-        <div className="relative bg-slate-100">
-          {loading ? (
-            <div className="h-96 flex items-center justify-center">
-              <p className="text-slate-500">Loading PDF...</p>
+        
+        <div className="flex-1 overflow-hidden min-h-0">
+          {loading && (
+            <div className="flex flex-col items-center justify-center h-full">
+              <Loader2 className="w-12 h-12 text-[#08708E] animate-spin mb-4" />
+              <p className="text-slate-600">Loading PDF...</p>
             </div>
-          ) : pdfUrl ? (
-            <iframe src={pdfUrl} className="w-full h-96 border-0" title="PDF Viewer" />
-          ) : (
-            <div className="h-96 flex items-center justify-center text-slate-500">
-              Unable to load PDF
+          )}
+          
+          {error && (
+            <div className="flex flex-col items-center justify-center h-full p-8">
+              <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+              <p className="text-slate-900 font-semibold mb-2">Failed to load PDF</p>
+              <p className="text-slate-600 mb-4">{error}</p>
+              <Button onClick={loadPDF}>Try Again</Button>
             </div>
+          )}
+          
+          {pdfData && !loading && !error && (
+            <iframe
+              src={`${pdfData}#toolbar=1&navpanes=0&scrollbar=1`}
+              className="w-full h-full border-0"
+              title="PDF Viewer"
+            />
           )}
         </div>
       </DialogContent>

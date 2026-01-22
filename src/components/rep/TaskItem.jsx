@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, Clock, AlertCircle, Calendar, Edit, X, ExternalLink, Save, Building, Loader2 } from 'lucide-react';
+import { CheckCircle2, Clock, AlertCircle, Calendar, Edit, X, ExternalLink, Save, Building, Loader2, Users, TrendingUp, Contact } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
@@ -18,8 +18,17 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
   const [relatedRecords, setRelatedRecords] = useState(null);
   const [activeTab, setActiveTab] = useState('details');
   const [isEditing, setIsEditing] = useState(false);
-  const [editValues, setEditValues] = useState({ Subject: task.Subject, Description: task.Description || '', Priority: task.Priority, Status: task.Status, ActivityDate: task.ActivityDate || '' });
+  const [editValues, setEditValues] = useState({
+    Subject: task.Subject,
+    Description: task.Description || '',
+    Priority: task.Priority,
+    Status: task.Status,
+    ActivityDate: task.ActivityDate || ''
+  });
   const [saving, setSaving] = useState(false);
+  const [iframeModal, setIframeModal] = useState(false);
+  const [iframeUrl, setIframeUrl] = useState('');
+  const [iframeTitle, setIframeTitle] = useState('');
 
   const getTaskCategory = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -66,9 +75,17 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
   const handleMarkComplete = async () => {
     setSaving(true);
     try {
-      await base44.functions.invoke('updateSalesforceTask', { taskId: task.Id, updates: { Status: 'Completed' }, token: session.token, instanceUrl: session.instanceUrl });
+      const response = await base44.functions.invoke('updateSalesforceTask', {
+        taskId: task.Id,
+        updates: { Status: 'Completed' },
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      console.log('Task update response:', response);
       await onUpdate();
     } catch (error) {
+      console.error('Error completing task:', error);
+      console.error('Full error:', JSON.stringify(error, null, 2));
       alert(`Failed to complete task: ${error.response?.data?.error || error.message}`);
     } finally {
       setSaving(false);
@@ -78,10 +95,16 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await base44.functions.invoke('updateSalesforceTask', { taskId: task.Id, updates: editValues, token: session.token, instanceUrl: session.instanceUrl });
+      await base44.functions.invoke('updateSalesforceTask', {
+        taskId: task.Id,
+        updates: editValues,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
       setIsEditing(false);
       await onUpdate();
     } catch (error) {
+      console.error('Error updating task:', error);
       alert('Failed to update task');
     } finally {
       setSaving(false);
@@ -97,12 +120,21 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
     
     try {
       const [accountRes, relatedRes] = await Promise.all([
-        base44.functions.invoke('getSalesforceAccount', { accountId: task.Account.Id, token: session.token, instanceUrl: session.instanceUrl }),
-        base44.functions.invoke('getSalesforceAccountRelated', { accountId: task.Account.Id, token: session.token, instanceUrl: session.instanceUrl })
+        base44.functions.invoke('getSalesforceAccount', {
+          accountId: task.Account.Id,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        }),
+        base44.functions.invoke('getSalesforceAccountRelated', {
+          accountId: task.Account.Id,
+          token: session.token,
+          instanceUrl: session.instanceUrl
+        })
       ]);
       setAccountData(accountRes.data.account);
       setRelatedRecords(relatedRes.data);
     } catch (error) {
+      console.error('Error loading account:', error);
       alert('Failed to load account details');
       setShowAccountModal(false);
     } finally {
@@ -116,11 +148,13 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Account: {accountData?.Name || 'Loading...'}</DialogTitle>
-            <DialogDescription>View account information and related records</DialogDescription>
+            <DialogDescription>
+              View account information and related records
+            </DialogDescription>
           </DialogHeader>
           {loadingAccount ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
+              <Loader2 className="w-8 h-8 animate-spin text-[#08708E]" />
             </div>
           ) : accountData ? (
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -132,18 +166,63 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
 
               <TabsContent value="details" className="space-y-4 mt-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div><p className="text-xs text-slate-500 mb-1">Account Name</p><p className="text-slate-900 font-semibold text-base">{accountData.Name || 'N/A'}</p></div>
-                  <div><p className="text-xs text-slate-500 mb-1">Phone</p>{accountData.Phone ? <a href={`tel:${accountData.Phone}`} className="text-orange-600 hover:underline font-medium">{accountData.Phone}</a> : <p className="text-slate-400">Not available</p>}</div>
-                  <div><p className="text-xs text-slate-500 mb-1">Website</p>{accountData.Website ? <a href={accountData.Website} target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline font-medium break-all">{accountData.Website}</a> : <p className="text-slate-400">Not available</p>}</div>
-                  <div><p className="text-xs text-slate-500 mb-1">Type</p>{accountData.Type ? <p className="text-slate-900 font-medium">{accountData.Type}</p> : <p className="text-slate-400">Not available</p>}</div>
-                  <div><p className="text-xs text-slate-500 mb-1">Industry</p>{accountData.Industry ? <p className="text-slate-900 font-medium">{accountData.Industry}</p> : <p className="text-slate-400">Not available</p>}</div>
+                  <div>
+                    <p className="text-xs text-slate-500 mb-1">Account Name</p>
+                    <p className="text-slate-900 font-semibold text-base">{accountData.Name || 'N/A'}</p>
+                  </div>
+                  {accountData.Phone ? (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Phone</p>
+                      <a href={`tel:${accountData.Phone}`} className="text-[#08708E] hover:underline font-medium">{accountData.Phone}</a>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Phone</p>
+                      <p className="text-slate-400">Not available</p>
+                    </div>
+                  )}
+                  {accountData.Website ? (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Website</p>
+                      <a href={accountData.Website} target="_blank" rel="noopener noreferrer" className="text-[#08708E] hover:underline font-medium break-all">{accountData.Website}</a>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Website</p>
+                      <p className="text-slate-400">Not available</p>
+                    </div>
+                  )}
+                  {accountData.Type ? (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Type</p>
+                      <p className="text-slate-900 font-medium">{accountData.Type}</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Type</p>
+                      <p className="text-slate-400">Not available</p>
+                    </div>
+                  )}
+                  {accountData.Industry ? (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Industry</p>
+                      <p className="text-slate-900 font-medium">{accountData.Industry}</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-xs text-slate-500 mb-1">Industry</p>
+                      <p className="text-slate-400">Not available</p>
+                    </div>
+                  )}
                 </div>
                 
                 {(accountData.BillingStreet || accountData.BillingCity) ? (
                   <div className="border-t pt-4">
                     <p className="text-xs text-slate-500 mb-2 font-semibold">Billing Address</p>
                     {accountData.BillingStreet && <p className="text-slate-900">{accountData.BillingStreet}</p>}
-                    {accountData.BillingCity && (<p className="text-slate-900">{accountData.BillingCity}{accountData.BillingState ? `, ${accountData.BillingState}` : ''} {accountData.BillingPostalCode || ''}</p>)}
+                    {accountData.BillingCity && (
+                      <p className="text-slate-900">{accountData.BillingCity}{accountData.BillingState ? `, ${accountData.BillingState}` : ''} {accountData.BillingPostalCode || ''}</p>
+                    )}
                     {accountData.BillingCountry && <p className="text-slate-900">{accountData.BillingCountry}</p>}
                   </div>
                 ) : null}
@@ -154,12 +233,27 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
                     <p className="text-slate-900 text-sm leading-relaxed">{accountData.Description}</p>
                   </div>
                 ) : null}
+                
+                {!accountData.Phone && !accountData.Website && !accountData.Type && !accountData.Industry && !accountData.BillingStreet && !accountData.Description && (
+                  <div className="text-center py-8">
+                    <p className="text-slate-500">No additional details available for this account</p>
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="leads" className="space-y-2">
                 {relatedRecords?.leads?.length > 0 ? (
                   relatedRecords.leads.map(lead => (
-                    <button key={lead.Id} onClick={() => window.location.href = `${createPageUrl('LeadDetail')}?id=${lead.Id}`} className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors">
+                    <button
+                      key={lead.Id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIframeUrl(`${createPageUrl('LeadDetail')}?id=${lead.Id}`);
+                        setIframeTitle(`Lead: ${lead.Name}`);
+                        setIframeModal(true);
+                      }}
+                      className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                    >
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="font-semibold text-slate-900">{lead.Name}</p>
@@ -177,7 +271,16 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
               <TabsContent value="opportunities" className="space-y-2">
                 {relatedRecords?.opportunities?.length > 0 ? (
                   relatedRecords.opportunities.map(opp => (
-                    <button key={opp.Id} onClick={() => window.location.href = `${createPageUrl('OpportunityDetail')}?id=${opp.Id}`} className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors">
+                    <button
+                      key={opp.Id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIframeUrl(`${createPageUrl('OpportunityDetail')}?id=${opp.Id}`);
+                        setIframeTitle(`Opportunity: ${opp.Name}`);
+                        setIframeModal(true);
+                      }}
+                      className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                    >
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="font-semibold text-slate-900">{opp.Name}</p>
@@ -191,53 +294,183 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
                   <p className="text-slate-500 text-center py-8">No opportunities found</p>
                 )}
               </TabsContent>
-            </Tabs>
+
+              </Tabs>
           ) : null}
         </DialogContent>
       </Dialog>
+
+      {/* Iframe Modal */}
+      <Dialog open={iframeModal} onOpenChange={setIframeModal}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0">
+          <DialogHeader className="px-6 py-4 border-b">
+            <DialogTitle>{iframeTitle}</DialogTitle>
+            <DialogDescription className="sr-only">
+              View detailed record information
+            </DialogDescription>
+          </DialogHeader>
+          <div className="h-[calc(90vh-80px)]">
+            <iframe
+              src={iframeUrl}
+              className="w-full h-full border-0"
+              title={iframeTitle}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} onClick={() => onOpenModal && onOpenModal(task)} className={`border-l-4 rounded-lg p-4 transition-all cursor-pointer hover:shadow-md ${getCategoryColor()}`}>
-        {isEditing ? (
-          <div className="space-y-3">
-            <Input value={editValues.Subject} onChange={(e) => setEditValues({ ...editValues, Subject: e.target.value })} placeholder="Subject" />
-            <Textarea value={editValues.Description} onChange={(e) => setEditValues({ ...editValues, Description: e.target.value })} placeholder="Description" rows={2} />
-            <div className="grid grid-cols-3 gap-2">
-              <div><label className="text-xs text-slate-600 mb-1 block">Priority</label><Select value={editValues.Priority} onValueChange={(val) => setEditValues({ ...editValues, Priority: val })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="High">High</SelectItem><SelectItem value="Normal">Normal</SelectItem><SelectItem value="Low">Low</SelectItem></SelectContent></Select></div>
-              <div><label className="text-xs text-slate-600 mb-1 block">Due Date</label><Input type="date" value={editValues.ActivityDate} onChange={(e) => setEditValues({ ...editValues, ActivityDate: e.target.value })} /></div>
-              <div><label className="text-xs text-slate-600 mb-1 block">Status</label><Select value={editValues.Status} onValueChange={(val) => setEditValues({ ...editValues, Status: val })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Not Started">Not Started</SelectItem><SelectItem value="In Progress">In Progress</SelectItem><SelectItem value="Waiting">Waiting</SelectItem><SelectItem value="Completed">Completed</SelectItem></SelectContent></Select></div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      onClick={() => onOpenModal && onOpenModal(task)}
+      className={`border-l-4 rounded-lg p-4 transition-all cursor-pointer hover:shadow-md ${getCategoryColor()}`}
+    >
+      {isEditing ? (
+        <div className="space-y-3">
+          <Input
+            value={editValues.Subject}
+            onChange={(e) => setEditValues({ ...editValues, Subject: e.target.value })}
+            placeholder="Subject"
+          />
+          <Textarea
+            value={editValues.Description}
+            onChange={(e) => setEditValues({ ...editValues, Description: e.target.value })}
+            placeholder="Description"
+            rows={2}
+          />
+          <div className="grid grid-cols-3 gap-2">
+            <div>
+              <label className="text-xs text-slate-600 mb-1 block">Priority</label>
+              <Select value={editValues.Priority} onValueChange={(val) => setEditValues({ ...editValues, Priority: val })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Normal">Normal</SelectItem>
+                  <SelectItem value="Low">Low</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <div className="flex gap-2">
-              <Button size="sm" onClick={handleSave} disabled={saving} className="bg-orange-600"><Save className="w-4 h-4 mr-1" />Save</Button>
-              <Button size="sm" variant="outline" onClick={() => { setIsEditing(false); setEditValues({ Subject: task.Subject, Description: task.Description || '', Priority: task.Priority, Status: task.Status, ActivityDate: task.ActivityDate || '' }); }}><X className="w-4 h-4 mr-1" />Cancel</Button>
+            <div>
+              <label className="text-xs text-slate-600 mb-1 block">Due Date</label>
+              <Input
+                type="date"
+                value={editValues.ActivityDate}
+                onChange={(e) => setEditValues({ ...editValues, ActivityDate: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="text-xs text-slate-600 mb-1 block">Status</label>
+              <Select value={editValues.Status} onValueChange={(val) => setEditValues({ ...editValues, Status: val })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Not Started">Not Started</SelectItem>
+                  <SelectItem value="In Progress">In Progress</SelectItem>
+                  <SelectItem value="Waiting">Waiting</SelectItem>
+                  <SelectItem value="Completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        ) : (
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 flex items-start gap-3">
-              {getCategoryIcon()}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-slate-900 mb-1">{task.Subject}</h3>
-                {task.Description && (<p className="text-sm text-slate-600 mb-2">{task.Description}</p>)}
-                <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="px-2 py-1 rounded-full bg-white border border-slate-300">Due: {formatDate(task.ActivityDate)}</span>
-                  <span className="px-2 py-1 rounded-full bg-white border border-slate-300">{task.Priority} Priority</span>
-                  <span className="px-2 py-1 rounded-full bg-white border border-slate-300">{task.Status}</span>
-                  {task.WhatId && task.Account?.Name && (
-                    <button onClick={(e) => { e.stopPropagation(); handleViewAccount(); }} className="px-2 py-1 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300 flex items-center gap-1 text-xs transition-colors">
-                      <Building className="w-3 h-3" />{task.Account.Name}
-                    </button>
-                  )}
-                </div>
+          <div className="flex gap-2">
+            <Button size="sm" onClick={handleSave} disabled={saving} className="bg-purple-600">
+              <Save className="w-4 h-4 mr-1" />
+              Save
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => { setIsEditing(false); setEditValues({ Subject: task.Subject, Description: task.Description || '', Priority: task.Priority, Status: task.Status, ActivityDate: task.ActivityDate || '' }); }}>
+              <X className="w-4 h-4 mr-1" />
+              Cancel
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div 
+          className="flex items-start justify-between gap-4"
+          onClick={(e) => {
+            if (e.target.closest('button') || e.target.closest('a')) {
+              e.stopPropagation();
+            }
+          }}
+        >
+          <div className="flex-1 flex items-start gap-3">
+            {getCategoryIcon()}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-slate-900 mb-1">{task.Subject}</h3>
+              {task.Description && (
+                <p className="text-sm text-slate-600 mb-2">{task.Description}</p>
+              )}
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="px-2 py-1 rounded-full bg-white border border-slate-300">
+                  Due: {formatDate(task.ActivityDate)}
+                </span>
+                <span className="px-2 py-1 rounded-full bg-white border border-slate-300">
+                  {task.Priority} Priority
+                </span>
+                <span className="px-2 py-1 rounded-full bg-white border border-slate-300">
+                  {task.Status}
+                </span>
+                {task.WhatId && (
+                  <>
+                    {task.WhatId.startsWith('001') && task.Account?.Name ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewAccount();
+                        }}
+                        className="px-2 py-1 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300 flex items-center gap-1 text-xs transition-colors"
+                      >
+                        <Building className="w-3 h-3" />
+                        {task.Account.Name}
+                      </button>
+                    ) : task.What?.Name && (
+                      <a
+                        href={`${createPageUrl(
+                          task.WhatId.startsWith('00Q') 
+                            ? 'LeadDetail' 
+                            : 'OpportunityDetail'
+                        )}?id=${task.WhatId}`}
+                        className="px-2 py-1 rounded-full bg-[#08708E] text-white hover:bg-[#065a72] flex items-center gap-1"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {task.What.Name}
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </>
+                )}
               </div>
             </div>
-            
-            <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}><Edit className="w-4 h-4" /></Button>
-              <Button size="sm" onClick={(e) => { e.stopPropagation(); handleMarkComplete(e); }} disabled={saving} className="bg-green-600 hover:bg-green-700"><CheckCircle2 className="w-4 h-4" /></Button>
-            </div>
           </div>
-        )}
-      </motion.div>
+          
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(true);
+              }}
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
+            <Button
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleMarkComplete(e);
+              }}
+              disabled={saving}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+    </motion.div>
     </>
   );
 }

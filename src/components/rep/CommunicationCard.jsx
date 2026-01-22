@@ -9,30 +9,51 @@ import { toast } from 'sonner';
 import { NotificationContext } from '../context/NotificationContext';
 import { createPageUrl } from '@/utils';
 
-export default function CommunicationCard({ recipientEmail, recipientName, phoneNumber, recordId, recordType, session, smsColor = 'bg-blue-600', emailColor = 'bg-orange-600', firstName = '' }) {
-  const [emailData, setEmailData] = useState({ subject: '', message: '' });
-  const [smsMessage, setSmsMessage] = useState('');
-  const [sending, setSending] = useState(false);
-  const [smsHistory, setSmsHistory] = useState([]);
-  const [loadingHistory, setLoadingHistory] = useState(false);
-  const [visibleSmsSids, setVisibleSmsSids] = useState(new Set());
-  const { addNotification, removeNotification, notifications, isSmsSidNotified } = useContext(NotificationContext);
-  const lastPollTime = useRef(new Date());
+export default function CommunicationCard({ 
+        recipientEmail, 
+        recipientName, 
+        phoneNumber,
+        recordId, 
+        recordType, 
+        session,
+        smsColor = 'bg-blue-600',
+        emailColor = 'bg-orange-600',
+        firstName = ''
+      }) {
+        const [emailData, setEmailData] = useState({ subject: '', message: '' });
+        const [smsMessage, setSmsMessage] = useState('');
+        const [sending, setSending] = useState(false);
+        const [smsHistory, setSmsHistory] = useState([]);
+        const [loadingHistory, setLoadingHistory] = useState(false);
+        const [visibleSmsSids, setVisibleSmsSids] = useState(new Set());
+        const { addNotification, removeNotification, notifications, isSmsSidNotified } = useContext(NotificationContext);
+        const lastPollTime = useRef(new Date());
 
   useEffect(() => {
     if (phoneNumber) {
       loadSmsHistory();
+      // Set up polling for new SMS every 10 seconds
       const interval = setInterval(loadSmsHistory, 10000);
       return () => clearInterval(interval);
     }
   }, [phoneNumber]);
 
+
+
   const loadSmsHistory = async () => {
     try {
-      const response = await base44.functions.invoke('getTwilioSmsHistory', { phoneNumber: phoneNumber.replace(/\D/g, ''), recordId, recordType, token: session.token, instanceUrl: session.instanceUrl });
+      const response = await base44.functions.invoke('getTwilioSmsHistory', {
+        phoneNumber: phoneNumber.replace(/\D/g, ''),
+        recordId,
+        recordType,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
       const messages = response.data.messages || [];
+      console.log('SMS messages fetched:', messages.length, messages);
       const allSmsSids = new Set(messages.map(m => m.sid));
 
+      // Only update state if there are new messages
       setSmsHistory(prev => {
         const prevSids = new Set(prev.map(m => m.sid));
         const hasNewMessages = messages.some(m => !prevSids.has(m.sid));
@@ -41,17 +62,21 @@ export default function CommunicationCard({ recipientEmail, recipientName, phone
 
       setVisibleSmsSids(allSmsSids);
 
+      // Check for new inbound messages received after last poll
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
       const now = new Date();
 
+      // Don't create notifications if user is already viewing this record
       const urlParams = new URLSearchParams(window.location.search);
       const currentRecordId = urlParams.get('id');
       const isCurrentRecord = currentRecordId === recordId;
 
       inboundMessages.forEach(msg => {
          const msgDate = new Date(msg.date);
+         // Only notify if message is VERY recent (last 60 seconds) AND not already notified AND not the current record
          const sixtySecondsAgo = new Date(Date.now() - 60000);
          if (msgDate > sixtySecondsAgo && !isSmsSidNotified(msg.sid) && !isCurrentRecord) {
+           console.log('Creating SMS notification for:', msg.sid, msg.body);
            addNotification({
              title: `New SMS from ${recipientName}`,
              message: msg.body,
@@ -81,7 +106,17 @@ export default function CommunicationCard({ recipientEmail, recipientName, phone
 
     setSending(true);
     try {
-      const response = await base44.functions.invoke('sendSalesforceEmail', { recipientEmail, recipientName, subject: emailData.subject, message: emailData.message, recordId, recordType, senderName: session.name, token: session.token, instanceUrl: session.instanceUrl });
+      const response = await base44.functions.invoke('sendSalesforceEmail', {
+        recipientEmail,
+        recipientName,
+        subject: emailData.subject,
+        message: emailData.message,
+        recordId,
+        recordType,
+        senderName: session.name,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
 
       if (response.data?.success) {
         toast.success('Email sent successfully!');
@@ -90,6 +125,7 @@ export default function CommunicationCard({ recipientEmail, recipientName, phone
         toast.error(response.data?.error || 'Failed to send email');
       }
     } catch (error) {
+      console.error('Send email error:', error);
       toast.error(error.message || 'Failed to send email');
     } finally {
       setSending(false);
@@ -104,12 +140,20 @@ export default function CommunicationCard({ recipientEmail, recipientName, phone
 
     setSending(true);
     try {
-      await base44.functions.invoke('sendTwilioSMS', { phoneNumber: phoneNumber.replace(/\D/g, ''), message: smsMessage.trim(), recordId, recordType, token: session.token, instanceUrl: session.instanceUrl });
+      await base44.functions.invoke('sendTwilioSMS', {
+        phoneNumber: phoneNumber.replace(/\D/g, ''),
+        message: smsMessage.trim(),
+        recordId,
+        recordType,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
 
       toast.success('SMS sent successfully');
       setSmsMessage('');
       await loadSmsHistory();
     } catch (error) {
+      console.error('SMS error:', error);
       toast.error(error.message || 'Failed to send SMS');
     } finally {
       setSending(false);
@@ -117,7 +161,12 @@ export default function CommunicationCard({ recipientEmail, recipientName, phone
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   const getStatusIcon = (status) => {
@@ -199,18 +248,38 @@ export default function CommunicationCard({ recipientEmail, recipientName, phone
             </div>
             <div>
               <label className="text-sm font-medium text-slate-700 mb-1 block">Subject:</label>
-              <Input placeholder="Email subject" value={emailData.subject} onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })} />
+              <Input
+                placeholder="Email subject"
+                value={emailData.subject}
+                onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
+              />
             </div>
             <div>
               <label className="text-sm font-medium text-slate-700 mb-1 block">Message:</label>
-              <Textarea placeholder="Type your message here..." value={emailData.message} onChange={(e) => setEmailData({ ...emailData, message: e.target.value })} rows={6} className="resize-none" />
+              <Textarea
+                placeholder="Type your message here..."
+                value={emailData.message}
+                onChange={(e) => setEmailData({ ...emailData, message: e.target.value })}
+                rows={6}
+                className="resize-none"
+              />
             </div>
             <Button 
               onClick={handleSendEmail} 
               disabled={sending} 
               className={`w-full ${emailColor} hover:${emailColor.replace('600', '700')}`}
             >
-              {sending ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sending...</>) : (<><Send className="w-4 h-4 mr-2" />Send Email</>)}
+              {sending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Send Email
+                </>
+              )}
             </Button>
           </TabsContent>
         )}
@@ -222,27 +291,54 @@ export default function CommunicationCard({ recipientEmail, recipientName, phone
               <Input value={phoneNumber} disabled className="bg-slate-50" />
             </div>
             <div className="flex gap-2">
-              <Button onClick={copyStatusLink} variant="outline" size="sm" className="flex-1">
+              <Button 
+                onClick={copyStatusLink} 
+                variant="outline"
+                size="sm"
+                className="flex-1"
+              >
                 <Copy className="w-3 h-3 mr-2" />
                 Copy Status Link
               </Button>
-              <Button onClick={useTemplate} variant="outline" size="sm" className="flex-1">
+              <Button 
+                onClick={useTemplate} 
+                variant="outline"
+                size="sm"
+                className="flex-1"
+              >
                 <MessageSquare className="w-3 h-3 mr-2" />
                 Use Template
               </Button>
             </div>
             <div>
               <label className="text-sm font-medium text-slate-700 mb-1 block">Message:</label>
-              <Textarea placeholder="Type your message..." value={smsMessage} onChange={(e) => setSmsMessage(e.target.value)} rows={4} className="resize-none" />
+              <Textarea
+                placeholder="Type your message..."
+                value={smsMessage}
+                onChange={(e) => setSmsMessage(e.target.value)}
+                rows={4}
+                className="resize-none"
+              />
             </div>
             <Button 
               onClick={handleSendSMS} 
               disabled={sending || !smsMessage.trim()} 
               className={`w-full ${smsColor} hover:${smsColor.replace('600', '700')}`}
             >
-              {sending ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sending...</>) : (<><Send className="w-4 h-4 mr-2" />Send SMS</>)}
+              {sending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Send SMS
+                </>
+              )}
             </Button>
 
+            {/* SMS History */}
             <div className="mt-6 pt-4 border-t border-slate-200">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-slate-900">Conversation History</h3>
@@ -253,7 +349,11 @@ export default function CommunicationCard({ recipientEmail, recipientName, phone
                   disabled={loadingHistory}
                   className="text-xs"
                 >
-                  {loadingHistory ? (<Loader2 className="w-3 h-3 animate-spin" />) : 'Refresh'}
+                  {loadingHistory ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    'Refresh'
+                  )}
                 </Button>
               </div>
 

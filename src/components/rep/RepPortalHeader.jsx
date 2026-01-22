@@ -1,53 +1,116 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { LogOut, RefreshCw, Plus, ArrowLeft, Users } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Home, Shield, RefreshCw, LogOut, Plus, ArrowLeft } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import NotificationBell from './NotificationBell';
+import UniversalSearch from './UniversalSearch';
 
-export default function RepPortalHeader({ isAdmin, refreshing, onRefresh, onLogout, userName, showCreateTask = true, showBackButton = false, onBackClick, session }) {
+export default function RepPortalHeader({ 
+  isAdmin, 
+  refreshing, 
+  onRefresh, 
+  onLogout,
+  userName,
+  showCreateTask = false,
+  onCreateTaskClick,
+  showBackButton = false,
+  onBackClick = null,
+  isAdminPortal = false,
+  session = null
+}) {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      navigate(-1);
+    }
+  };
+
   return (
-    <div className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            {showBackButton && (
-              <button onClick={onBackClick} className="text-slate-600 hover:text-slate-900 flex-shrink-0">
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-            )}
-            <div className="min-w-0">
-              <h1 className="text-lg sm:text-2xl font-bold text-slate-900 truncate">
-                {isAdmin ? 'Admin Pipeline' : 'Rep Portal'}
-              </h1>
-              {userName && <p className="text-xs sm:text-sm text-slate-600 truncate">{userName}</p>}
-            </div>
+    <div className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Rep Portal</h1>
+            {userName && <p className="text-xs sm:text-sm text-slate-600 truncate">Welcome back, {userName}</p>}
           </div>
-
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            {showCreateTask && (
-              <Link to={createPageUrl('AdminPipeline')} className="flex-1 sm:flex-initial">
-                <Button variant="outline" className="w-full sm:w-auto text-xs sm:text-sm min-h-[36px] sm:min-h-[40px]">
-                  <Users className="w-4 h-4 mr-1" />
-                  <span className="hidden sm:inline">Admin</span>
-                </Button>
-              </Link>
+          
+          {session && (
+            <div className="w-full lg:flex-1 lg:max-w-md">
+              <UniversalSearch session={session} />
+            </div>
+          )}
+          
+          <div className="flex items-center gap-2 sm:gap-3 justify-center sm:justify-end lg:flex-shrink-0">
+            {showBackButton && (
+              <Button 
+                variant="outline" 
+                size="icon"
+                onClick={handleBack}
+                className="h-10 w-10"
+                title="Go Back"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
             )}
-            <Button
-              onClick={onRefresh}
-              disabled={refreshing}
-              variant="outline"
-              className="flex-1 sm:flex-initial text-xs sm:text-sm min-h-[36px] sm:min-h-[40px]"
+            
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={() => navigate(createPageUrl(isAdminPortal ? 'AdminPipeline' : 'RepPortal'))}
+              className="h-10 w-10"
+              title="Go to Home"
             >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''} sm:mr-1`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <Home className="w-5 h-5" />
             </Button>
-            <Button
-              onClick={onLogout}
-              variant="outline"
-              className="flex-1 sm:flex-initial text-xs sm:text-sm min-h-[36px] sm:min-h-[40px] text-red-600 hover:text-red-700 hover:bg-red-50"
+
+            <NotificationBell />
+            
+            {showCreateTask && (
+              <Button 
+                onClick={onCreateTaskClick} 
+                size="icon"
+                className="h-10 w-10 bg-purple-600 hover:bg-purple-700"
+                title="Create Task"
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+            )}
+            
+            {isAdmin && (
+              <Button 
+                variant="outline" 
+                size="icon"
+                onClick={() => window.location.href = createPageUrl('AdminPipeline')}
+                className="h-10 w-10"
+                title="Admin Pipeline"
+              >
+                <Shield className="w-5 h-5" />
+              </Button>
+            )}
+            
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={onRefresh} 
+              disabled={refreshing} 
+              className="h-10 w-10"
+              title="Refresh"
             >
-              <LogOut className="w-4 h-4 sm:mr-1" />
-              <span className="hidden sm:inline">Logout</span>
+              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={onLogout} 
+              className="h-10 w-10"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
             </Button>
           </div>
         </div>

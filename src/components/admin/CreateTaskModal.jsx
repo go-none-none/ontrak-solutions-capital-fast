@@ -1,33 +1,144 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function CreateTaskModal({ isOpen, onClose, session, repsData, onSuccess }) {
-  const [formData, setFormData] = useState({ Subject: '', Description: '', Priority: 'Normal', Status: 'Not Started', ActivityDate: '', OwnerId: '' });
+export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, repsData }) {
   const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [formData, setFormData] = useState({
+    assignedTo: '',
+    subject: '',
+    dueDate: '',
+    priority: 'Normal',
+    status: 'Not Started',
+    relatedToId: '',
+    relatedToType: '',
+    description: ''
+  });
+  const [relatedRecords, setRelatedRecords] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && users.length === 0) {
+      loadUsers();
+    }
+  }, [isOpen]);
+
+  const searchRelatedRecords = async (term) => {
+    if (!term || term.length < 2) {
+      setRelatedRecords([]);
+      return;
+    }
+
+    // If repsData is provided (from AdminPipeline), search within it
+    if (repsData && repsData.length > 0) {
+      const records = [];
+      repsData.forEach(rep => {
+        rep.leads?.forEach(lead => {
+          if (lead.Name?.toLowerCase().includes(term.toLowerCase()) || 
+              lead.Company?.toLowerCase().includes(term.toLowerCase())) {
+            records.push({ id: lead.Id, name: lead.Name, type: 'Lead' });
+          }
+        });
+        rep.opportunities?.forEach(opp => {
+          if (opp.Name?.toLowerCase().includes(term.toLowerCase())) {
+            records.push({ id: opp.Id, name: opp.Name, type: 'Opportunity' });
+          }
+        });
+      });
+      setRelatedRecords(records);
+      return;
+    }
+
+    // Otherwise, search Salesforce directly (for RepPortal usage)
+    if (!session) return;
+    try {
+      const leadsQuery = `SELECT Id, Name FROM Lead WHERE Name LIKE '%${term}%' OR Company LIKE '%${term}%' LIMIT 10`;
+      const oppsQuery = `SELECT Id, Name FROM Opportunity WHERE Name LIKE '%${term}%' LIMIT 10`;
+      
+      const [leadsRes, oppsRes] = await Promise.all([
+        fetch(`${session.instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(leadsQuery)}`, {
+          headers: { 'Authorization': `Bearer ${session.token}` }
+        }),
+        fetch(`${session.instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(oppsQuery)}`, {
+          headers: { 'Authorization': `Bearer ${session.token}` }
+        })
+      ]);
+
+      const leadsData = await leadsRes.json();
+      const oppsData = await oppsRes.json();
+
+      const records = [
+        ...(leadsData.records || []).map(r => ({ id: r.Id, name: r.Name, type: 'Lead' })),
+        ...(oppsData.records || []).map(r => ({ id: r.Id, name: r.Name, type: 'Opportunity' }))
+      ];
+
+      setRelatedRecords(records);
+    } catch (error) {
+      console.error('Search error:', error);
+    }
+  };
+
+  const loadUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const response = await base44.functions.invoke('getSalesforceUsers', {
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+      setUsers(response.data.users || []);
+    } catch (error) {
+      console.error('Error loading users:', error);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.Subject || !formData.OwnerId) {
-      alert('Subject and Owner are required');
+    if (!formData.assignedTo || !formData.subject) {
+      alert('Please fill in all required fields');
       return;
     }
 
     setLoading(true);
     try {
-      await base44.functions.invoke('createSalesforceAdminTask', { data: formData, token: session.token, instanceUrl: session.instanceUrl });
-      onSuccess?.();
+      await base44.functions.invoke('createSalesforceAdminTask', {
+        assignedTo: formData.assignedTo,
+        subject: formData.subject,
+        dueDate: formData.dueDate || null,
+        priority: formData.priority,
+        status: formData.status,
+        relatedToId: formData.relatedToId || null,
+        relatedToType: formData.relatedToType || null,
+        description: formData.description,
+        token: session.token,
+        instanceUrl: session.instanceUrl
+      });
+
+      setFormData({
+        assignedTo: '',
+        subject: '',
+        dueDate: '',
+        priority: 'Normal',
+        status: 'Not Started',
+        relatedToId: '',
+        relatedToType: '',
+        description: ''
+      });
+      setRelatedRecords([]);
+      onSuccess();
       onClose();
-      setFormData({ Subject: '', Description: '', Priority: 'Normal', Status: 'Not Started', ActivityDate: '', OwnerId: '' });
     } catch (error) {
-      console.error('Create task error:', error);
-      alert('Failed to create task');
+      console.error('Error creating task:', error);
+      alert('Failed to create task: ' + (error.response?.data?.error || error.message));
     } finally {
       setLoading(false);
     }
@@ -38,21 +149,174 @@ export default function CreateTaskModal({ isOpen, onClose, session, repsData, on
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Create Task</DialogTitle>
+          <DialogDescription>Assign a new task to a rep</DialogDescription>
         </DialogHeader>
-
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div><Label htmlFor="subject">Subject <span className="text-red-500">*</span></Label><Input id="subject" value={formData.Subject} onChange={(e) => setFormData({ ...formData, Subject: e.target.value })} placeholder="Task subject" required /></div>
-          <div><Label htmlFor="owner">Owner <span className="text-red-500">*</span></Label><Select value={formData.OwnerId} onValueChange={(val) => setFormData({ ...formData, OwnerId: val })} required><SelectTrigger><SelectValue placeholder="Select owner" /></SelectTrigger><SelectContent>{repsData?.map(rep => (<SelectItem key={rep.userId} value={rep.userId}>{rep.name}</SelectItem>))}</SelectContent></Select></div>
           <div className="grid grid-cols-2 gap-4">
-            <div><Label htmlFor="priority">Priority</Label><Select value={formData.Priority} onValueChange={(val) => setFormData({ ...formData, Priority: val })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="High">High</SelectItem><SelectItem value="Normal">Normal</SelectItem><SelectItem value="Low">Low</SelectItem></SelectContent></Select></div>
-            <div><Label htmlFor="dueDate">Due Date</Label><Input id="dueDate" type="date" value={formData.ActivityDate} onChange={(e) => setFormData({ ...formData, ActivityDate: e.target.value })} /></div>
-          </div>
-          <div><Label htmlFor="description">Description</Label><Textarea id="description" value={formData.Description} onChange={(e) => setFormData({ ...formData, Description: e.target.value })} rows={4} /></div>
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">
+                Assign To <span className="text-red-500">*</span>
+              </label>
+              <Select
+                value={formData.assignedTo}
+                onValueChange={(val) => setFormData({ ...formData, assignedTo: val, relatedToId: '', relatedToType: '' })}
+                disabled={loadingUsers}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={loadingUsers ? "Loading..." : "Select rep"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map(user => (
+                    <SelectItem key={user.Id} value={user.Id}>
+                      {user.Name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="flex justify-end gap-2 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>Cancel</Button>
-            <Button type="submit" disabled={loading} className="bg-purple-600 hover:bg-purple-700">
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Create Task'}
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Priority</label>
+              <Select value={formData.priority} onValueChange={(val) => setFormData({ ...formData, priority: val })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="High">High</SelectItem>
+                  <SelectItem value="Normal">Normal</SelectItem>
+                  <SelectItem value="Low">Low</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-700 mb-1 block">
+              Subject <span className="text-red-500">*</span>
+            </label>
+            <Input
+              value={formData.subject}
+              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+              placeholder="e.g., Follow up with client"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Due Date</label>
+              <Input
+                type="date"
+                value={formData.dueDate}
+                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-slate-700 mb-1 block">Status</label>
+              <Select value={formData.status} onValueChange={(val) => setFormData({ ...formData, status: val })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Not Started">Not Started</SelectItem>
+                  <SelectItem value="In Progress">In Progress</SelectItem>
+                  <SelectItem value="Waiting">Waiting</SelectItem>
+                  <SelectItem value="Completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-700 mb-1 block">Related To</label>
+            <div className="relative">
+              <Input
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  searchRelatedRecords(e.target.value);
+                  setShowDropdown(true);
+                }}
+                onFocus={() => setShowDropdown(true)}
+                placeholder="Search leads or opportunities..."
+              />
+              {showDropdown && relatedRecords.length > 0 && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  {relatedRecords
+                    .filter(r => 
+                      r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      r.type.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map(record => (
+                      <button
+                        key={record.id}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ 
+                            ...formData, 
+                            relatedToId: record.id,
+                            relatedToType: record.type
+                          });
+                          setSearchTerm(`${record.name} (${record.type})`);
+                          setShowDropdown(false);
+                        }}
+                        className="w-full text-left px-3 py-2 hover:bg-slate-100 transition-colors border-b border-slate-100 last:border-0"
+                      >
+                        <p className="font-medium text-slate-900">{record.name}</p>
+                        <p className="text-xs text-slate-500">{record.type}</p>
+                      </button>
+                    ))}
+                  {relatedRecords.filter(r => 
+                    r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    r.type.toLowerCase().includes(searchTerm.toLowerCase())
+                  ).length === 0 && (
+                    <div className="px-3 py-4 text-center text-sm text-slate-500">
+                      No matches found
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            {formData.relatedToId && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData({ ...formData, relatedToId: '', relatedToType: '' });
+                  setSearchTerm('');
+                }}
+                className="text-xs text-slate-500 hover:text-slate-700 mt-1"
+              >
+                Clear selection
+              </button>
+            )}
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-700 mb-1 block">Description</label>
+            <Textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Add task details..."
+              rows={3}
+            />
+          </div>
+
+          <div className="flex gap-3 justify-end pt-4 border-t">
+            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={loading} className="bg-[#08708E]">
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Task
+                </>
+              )}
             </Button>
           </div>
         </form>

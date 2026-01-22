@@ -1,66 +1,80 @@
 import React from 'react';
-import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Clock, DollarSign, Shield, Users, TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Zap, Shield, Clock, DollarSign, Users, Award } from 'lucide-react';
 
 export default function WhyChooseUs() {
   const features = [
     {
       icon: Zap,
-      title: 'Lightning Fast',
-      description: 'Get approved and funded in 24-48 hours, not weeks or months.'
-    },
-    {
-      icon: DollarSign,
-      title: 'Transparent Pricing',
-      description: 'No hidden fees, no surprises. Know exactly what you\'re paying.'
-    },
-    {
-      icon: Clock,
-      title: 'Simple Process',
-      description: '5-minute online application with minimal documentation required.'
+      title: 'Lightning Fast Funding',
+      description: 'Get approved within hours and receive funds in as little as 24 hours.'
     },
     {
       icon: Shield,
-      title: 'Secure & Safe',
-      description: 'Bank-level security protects your data and financial information.'
+      title: 'No Collateral Required',
+      description: 'Unsecured funding options that don\'t put your assets at risk.'
+    },
+    {
+      icon: Clock,
+      title: 'Simple Application',
+      description: 'Apply in minutes with our streamlined digital process. No paperwork hassle.'
+    },
+    {
+      icon: DollarSign,
+      title: 'Flexible Repayment',
+      description: 'Customized payment schedules that align with your cash flow.'
     },
     {
       icon: Users,
-      title: 'Expert Support',
-      description: 'Dedicated team available to answer questions and guide you through.'
+      title: 'Dedicated Support',
+      description: 'Personal funding advisors available to guide you every step of the way.'
     },
     {
-      icon: TrendingUp,
-      title: 'Up to $500K',
-      description: 'Flexible funding amounts to match your business needs.'
+      icon: Award,
+      title: 'High Approval Rates',
+      description: '95% approval rate. We work with all credit types and business situations.'
     }
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-slate-50">
+    <section className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">Why Choose Us</h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            We've simplified small business funding so you can focus on growing your business.
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-[#08708E] font-semibold text-sm uppercase tracking-wider">Why Choose OnTrak</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6">
+            Funding Made Simple
+          </h2>
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+            We've streamlined the funding process so you can focus on what matters most — growing your business.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, idx) => {
-            const Icon = feature.icon;
-            return (
-              <Card key={idx} className="hover:shadow-lg transition-shadow">
-                <CardContent className="pt-8">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                    <Icon className="w-6 h-6 text-[#08708E]" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">{feature.title}</h3>
-                  <p className="text-slate-600">{feature.description}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="group p-8 rounded-2xl bg-slate-50 hover:bg-[#08708E] transition-all duration-500 cursor-pointer"
+            >
+              <div className="w-14 h-14 rounded-xl bg-[#08708E]/10 group-hover:bg-white/20 flex items-center justify-center mb-6 transition-colors duration-500">
+                <feature.icon className="w-7 h-7 text-[#08708E] group-hover:text-white transition-colors duration-500" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 group-hover:text-white mb-3 transition-colors duration-500">
+                {feature.title}
+              </h3>
+              <p className="text-slate-500 group-hover:text-white/80 transition-colors duration-500">
+                {feature.description}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

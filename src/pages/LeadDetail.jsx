@@ -77,6 +77,7 @@ export default function LeadDetail() {
     loadDispositionOptions(session);
   }, []);
 
+  // Clear notifications for this record on load
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const leadId = urlParams.get('id');
@@ -284,6 +285,8 @@ export default function LeadDetail() {
     }
   };
 
+
+
   const getCurrentStageIndex = () => {
     const index = stages.findIndex(s => s.status === lead?.Status);
     return index >= 0 ? index : 0;
@@ -323,6 +326,7 @@ export default function LeadDetail() {
         session={session}
       />
 
+      {/* Detail Header */}
       <div className="bg-white border-b border-slate-200 shadow-sm sticky top-[73px] z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
@@ -333,26 +337,51 @@ export default function LeadDetail() {
             <div className="flex gap-2 flex-wrap flex-shrink-0 w-full sm:w-auto">
               {isEditing ? (
                 <>
-                  <Button variant="outline" onClick={() => { setIsEditing(false); setEditData(lead); }} disabled={saving} size="sm" className="flex-1 sm:flex-initial text-xs sm:text-sm">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => { setIsEditing(false); setEditData(lead); }}
+                    disabled={saving}
+                    size="sm"
+                    className="flex-1 sm:flex-initial text-xs sm:text-sm"
+                  >
                     <X className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Cancel</span>
                   </Button>
-                  <Button onClick={handleSave} disabled={saving} size="sm" className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-initial text-xs sm:text-sm">
+                  <Button 
+                    onClick={handleSave}
+                    disabled={saving}
+                    size="sm"
+                    className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-initial text-xs sm:text-sm"
+                  >
                     {saving ? <Loader2 className="w-4 h-4 animate-spin sm:mr-2" /> : <Save className="w-4 h-4 sm:mr-2" />}
                     {saving ? 'Saving...' : 'Save'}
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button onClick={() => { setIsEditing(true); setEditData(lead); }} variant="outline" size="sm" className="flex-1 sm:flex-initial text-xs sm:text-sm">
+                  <Button 
+                    onClick={() => { setIsEditing(true); setEditData(lead); }}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 sm:flex-initial text-xs sm:text-sm"
+                  >
                     <Edit className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Edit</span>
                   </Button>
                   {session?.isAdmin && (
-                    <Button onClick={() => setShowHistory(true)} variant="outline" size="sm" className="flex-1 sm:flex-initial text-xs sm:text-sm">
+                    <Button 
+                      onClick={() => setShowHistory(true)} 
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 sm:flex-initial text-xs sm:text-sm"
+                    >
                       History
                     </Button>
                   )}
                   {!lead.IsConverted && (
-                    <Button onClick={handleConvertLead} disabled={converting} className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-initial text-xs sm:text-sm">
+                    <Button 
+                      onClick={handleConvertLead} 
+                      disabled={converting}
+                      className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-initial text-xs sm:text-sm"
+                    >
                       {converting ? <Loader2 className="w-4 h-4 animate-spin sm:mr-2" /> : <ArrowRight className="w-4 h-4 sm:mr-2" />}
                       <span className="hidden sm:inline">Convert to Opportunity</span>
                       <span className="sm:hidden">Convert</span>
@@ -365,17 +394,35 @@ export default function LeadDetail() {
         </div>
       </div>
 
+      {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid lg:grid-cols-3 gap-6">
+          {/* Main Column */}
           <div className="lg:col-span-2 space-y-4">
+            {/* Stage Progress */}
             {lead.Status !== 'Closed - Not Converted' ? (
               <div className="bg-white rounded-xl p-6 shadow-sm">
                 <h3 className="text-sm font-semibold text-slate-700 mb-4">Lead Stage</h3>
                 <div className="flex justify-between items-center mb-3">
                   {stages.map((stage, idx) => (
-                    <button key={idx} onClick={() => handleStatusChange(stage.status)} disabled={updatingStatus} className={`flex flex-col items-center flex-1 transition-all ${updatingStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'}`}>
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${idx <= getCurrentStageIndex() ? 'bg-[#08708E] text-white shadow-lg' : 'bg-slate-200 text-slate-500 hover:bg-slate-300'}`}>
-                        {idx < getCurrentStageIndex() ? <CheckCircle2 className="w-5 h-5" /> : idx + 1}
+                    <button
+                      key={idx}
+                      onClick={() => handleStatusChange(stage.status)}
+                      disabled={updatingStatus}
+                      className={`flex flex-col items-center flex-1 transition-all ${
+                        updatingStatus ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'
+                      }`}
+                    >
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                        idx <= getCurrentStageIndex() 
+                          ? 'bg-[#08708E] text-white shadow-lg' 
+                          : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
+                      }`}>
+                        {idx < getCurrentStageIndex() ? (
+                          <CheckCircle2 className="w-5 h-5" />
+                        ) : (
+                          idx + 1
+                        )}
                       </div>
                       <span className="text-xs text-slate-600 mt-2 text-center">{stage.label}</span>
                     </button>
@@ -383,12 +430,20 @@ export default function LeadDetail() {
                 </div>
                 <div className="flex gap-1 mb-4">
                   {stages.map((_, idx) => (
-                    <div key={idx} className={`h-2 flex-1 rounded transition-all ${idx <= getCurrentStageIndex() ? 'bg-[#08708E]' : 'bg-slate-200'}`} />
+                    <div key={idx} className={`h-2 flex-1 rounded transition-all ${
+                      idx <= getCurrentStageIndex() ? 'bg-[#08708E]' : 'bg-slate-200'
+                    }`} />
                   ))}
                 </div>
                 
+                {/* Not Converted Button */}
                 <div className="flex justify-center pt-2 border-t">
-                  <Button onClick={() => handleStatusChange('Closed - Not Converted')} disabled={updatingStatus} variant="outline" className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400">
+                  <Button
+                    onClick={() => handleStatusChange('Closed - Not Converted')}
+                    disabled={updatingStatus}
+                    variant="outline"
+                    className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+                  >
                     Mark as Not Converted
                   </Button>
                 </div>
@@ -401,6 +456,7 @@ export default function LeadDetail() {
               </div>
             )}
 
+            {/* Bank Statements Checklist - Only show when Application Missing Info */}
             {lead.Status === 'Application Missing Info' && (
               <Collapsible defaultOpen={true}>
                 <div className="bg-white rounded-xl shadow-sm overflow-hidden border-2 border-amber-200">
@@ -440,7 +496,7 @@ export default function LeadDetail() {
               </Collapsible>
             )}
 
-            {/* Collapsible sections truncated for brevity - same structure as original */}
+            {/* Contact Info - Always Open */}
             <Collapsible open={openSections.contact} onOpenChange={(val) => setOpenSections({...openSections, contact: val})}>
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
@@ -449,14 +505,93 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Company</label>
+                      {isEditing ? (
+                        <Input value={editData.Company || ''} onChange={(e) => setEditData({...editData, Company: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.Company || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Email</label>
+                      {isEditing ? (
+                        <Input type="email" value={editData.Email || ''} onChange={(e) => setEditData({...editData, Email: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.Email || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Phone</label>
+                      {isEditing ? (
+                        <Input value={editData.Phone || ''} onChange={(e) => setEditData({...editData, Phone: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.Phone || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Mobile</label>
+                      {isEditing ? (
+                        <Input value={editData.MobilePhone || ''} onChange={(e) => setEditData({...editData, MobilePhone: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.MobilePhone || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Title</label>
+                      {isEditing ? (
+                        <Input value={editData.Title || ''} onChange={(e) => setEditData({...editData, Title: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.Title || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Lead Source</label>
+                      {isEditing ? (
+                        <Input value={editData.LeadSource || ''} onChange={(e) => setEditData({...editData, LeadSource: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.LeadSource || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Industry</label>
+                      {isEditing ? (
+                        <Input value={editData.Industry || ''} onChange={(e) => setEditData({...editData, Industry: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.Industry || '-'}</p>
+                      )}
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+
+            {/* Owner 1 */}
+            <Collapsible open={openSections.owner1} onOpenChange={(val) => setOpenSections({...openSections, owner1: val})}>
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                  <h2 className="text-lg font-semibold text-slate-900">Owner Information</h2>
+                  <ChevronDown className={`w-5 h-5 transition-transform ${openSections.owner1 ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
                     {[
-                      { label: 'Company', field: 'Company' },
-                      { label: 'Email', field: 'Email', type: 'email' },
-                      { label: 'Phone', field: 'Phone' },
-                      { label: 'Mobile', field: 'MobilePhone' },
+                      { label: 'Name', field: 'Name' },
                       { label: 'Title', field: 'Title' },
-                      { label: 'Lead Source', field: 'LeadSource' },
-                      { label: 'Industry', field: 'Industry' }
+                      { label: 'Birthdate', field: 'csbs__Birthdate__c', type: 'date' },
+                      { label: 'Social Security Number', field: 'csbs__Social_Security_Number_Unencrypted__c' },
+                      { label: 'Ownership %', field: 'csbs__Ownership_Percentage__c', type: 'number' },
+                      { label: 'Credit Score', field: 'csbs__CreditScore__c', type: 'number' },
+                      { label: 'Application Federal Tax Id', field: 'csbs__Application_Federal_Tax_Id__c' },
+                      { label: 'Application SSN', field: 'csbs__Application_SSN__c' },
+                      { label: 'Application Owner 2 SSN', field: 'csbs__Application_Owner_2_SSN__c' },
+                      { label: 'Mobile', field: 'MobilePhone' },
+                      { label: 'Email', field: 'Email', type: 'email' },
+                      { label: 'Home Address Street', field: 'csbs__Home_Address_Street__c' },
+                      { label: 'Home Address City', field: 'csbs__Home_Address_City__c' },
+                      { label: 'Home Address State', field: 'csbs__Home_Address_State__c' },
+                      { label: 'Home Address Zip Code', field: 'csbs__Home_Address_Zip_Code__c' },
+                      { label: 'Home Address Country', field: 'csbs__Home_Address_Country__c' }
                     ].map(({ label, field, type }) => (
                       <div key={field}>
                         <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
@@ -472,10 +607,201 @@ export default function LeadDetail() {
               </div>
             </Collapsible>
 
-            <FileManager key={refreshKey} recordId={lead.Id} session={session} onFileUploaded={() => setRefreshKey(prev => prev + 1)} />
+            {/* Owner 2 */}
+            <Collapsible open={openSections.owner2} onOpenChange={(val) => setOpenSections({...openSections, owner2: val})}>
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                  <h2 className="text-lg font-semibold text-slate-900">Owner 2 Information</h2>
+                  <ChevronDown className={`w-5 h-5 transition-transform ${openSections.owner2 ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
+                    {[
+                      { label: 'Owner 2 First Name', field: 'csbs__Owner_2_First_Name__c' },
+                      { label: 'Owner 2 Last Name', field: 'csbs__Owner_2_Last_Name__c' },
+                      { label: 'Owner 2 Title', field: 'csbs__Owner_2_Title__c' },
+                      { label: 'Owner 2 Birthday', field: 'csbs__Owner_2_Birthday__c', type: 'date' },
+                      { label: 'Owner 2 Social Security Number', field: 'csbs__Owner_2_Social_Security_Number__c' },
+                      { label: 'Owner 2 Ownership %', field: 'csbs__Owner_2_Ownership__c', type: 'number' },
+                      { label: 'Owner 2 Credit Score', field: 'csbs__Owner_2_CreditScore__c', type: 'number' },
+                      { label: 'Owner 2 Mobile', field: 'csbs__Owner_2_Mobile__c' },
+                      { label: 'Owner 2 Email', field: 'csbs__Owner_2_Email__c', type: 'email' },
+                      { label: 'Owner 2 Home Address Street', field: 'csbs__Owner_2_Home_Address_Street__c' },
+                      { label: 'Owner 2 Home Address City', field: 'csbs__Owner_2_Home_Address_City__c' },
+                      { label: 'Owner 2 Home Address State', field: 'csbs__Owner_2_Home_Address_State__c' },
+                      { label: 'Owner 2 Home Address Zip Code', field: 'csbs__Owner_2_Home_Address_Zip_Code__c' },
+                      { label: 'Owner 2 Home Address Country', field: 'csbs__Owner_2_Home_Address_Country__c' }
+                    ].map(({ label, field, type }) => (
+                      <div key={field}>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                        {isEditing ? (
+                          <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                        ) : (
+                          <p className="text-slate-900">{lead[field] || '-'}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+
+            {/* Financial */}
+            <Collapsible open={openSections.financial} onOpenChange={(val) => setOpenSections({...openSections, financial: val})}>
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                  <h2 className="text-lg font-semibold text-slate-900">Financial Information</h2>
+                  <ChevronDown className={`w-5 h-5 transition-transform ${openSections.financial ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
+                    {[
+                      { label: 'Amount Requested', field: 'csbs__Amount_Requested__c', type: 'number' },
+                      { label: 'Use of Proceeds', field: 'csbs__Use_of_Proceeds__c' },
+                      { label: 'Monthly Revenue', field: 'csbs__Estimated_Monthly_Revenue__c', type: 'number' },
+                      { label: 'Annual Revenue', field: 'AnnualRevenue', type: 'number' }
+                    ].map(({ label, field, type }) => (
+                      <div key={field}>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                        {isEditing ? (
+                          <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                        ) : (
+                          <p className="text-slate-900">{lead[field] || '-'}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+
+            {/* Business */}
+            <Collapsible open={openSections.business} onOpenChange={(val) => setOpenSections({...openSections, business: val})}>
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                  <h2 className="text-lg font-semibold text-slate-900">Business Information</h2>
+                  <ChevronDown className={`w-5 h-5 transition-transform ${openSections.business ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
+                    {[
+                      { label: 'Application Industry', field: 'csbs__Application_Industry__c' },
+                      { label: 'Industry', field: 'Industry' },
+                      { label: 'Entity Type', field: 'csbs__Entity_Type__c' },
+                      { label: 'Federal Tax ID', field: 'csbs__Federal_Tax_ID_Unencrypted__c' },
+                      { label: 'State of Incorporation', field: 'csbs__State_of_Incorporation__c' },
+                      { label: 'Business Start Date', field: 'csbs__Business_Start_Date_Current_Ownership__c', type: 'date' }
+                    ].map(({ label, field, type }) => (
+                      <div key={field}>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                        {isEditing ? (
+                          <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                        ) : (
+                          <p className="text-slate-900">{lead[field] || '-'}</p>
+                        )}
+                      </div>
+                    ))}
+                    {[
+                      { label: 'Seasonal Business', field: 'csbs__Seasonal_Business__c' },
+                      { label: 'E-Commerce', field: 'csbs__E_Commerce__c' },
+                      { label: 'Franchise', field: 'csbs__Franchise__c' },
+                      { label: 'Home-Based Business', field: 'csbs__Home_Based_Business__c' }
+                    ].map(({ label, field }) => (
+                      <div key={field} className="flex items-center space-x-2">
+                        {isEditing ? (
+                          <>
+                            <Checkbox
+                              id={field}
+                              checked={editData[field] || false}
+                              onCheckedChange={(checked) => setEditData({...editData, [field]: checked})}
+                            />
+                            <label htmlFor={field} className="text-xs font-medium text-slate-700 cursor-pointer">{label}</label>
+                          </>
+                        ) : (
+                          <>
+                            <label className="block text-xs font-medium text-slate-700">{label}</label>
+                            <p className="text-slate-900">{lead[field] ? 'Yes' : 'No'}</p>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Seasonal Peak Months</label>
+                      {isEditing ? (
+                        <Input value={editData.csbs__Seasonal_Peak_Months__c || ''} onChange={(e) => setEditData({...editData, csbs__Seasonal_Peak_Months__c: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.csbs__Seasonal_Peak_Months__c || '-'}</p>
+                      )}
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+
+            {/* References */}
+            <Collapsible open={openSections.references} onOpenChange={(val) => setOpenSections({...openSections, references: val})}>
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-slate-50">
+                  <h2 className="text-lg font-semibold text-slate-900">References & Lenders</h2>
+                  <ChevronDown className={`w-5 h-5 transition-transform ${openSections.references ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-4 pt-0 space-y-4">
+                    <div>
+                      <p className="text-xs font-semibold text-slate-600 mb-2">Trade References</p>
+                      <div className="grid sm:grid-cols-3 gap-4 text-sm">
+                        {[
+                          { label: 'Reference 1', field: 'csbs__Business_Trade_Reference_1__c' },
+                          { label: 'Reference 2', field: 'csbs__Business_Trade_Reference_2__c' },
+                          { label: 'Reference 3', field: 'csbs__Business_Trade_Reference_3__c' }
+                        ].map(({ label, field }) => (
+                          <div key={field}>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                            {isEditing ? (
+                              <Input value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                            ) : (
+                              <p className="text-slate-900">{lead[field] || '-'}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-600 mb-2">Existing Lenders</p>
+                      <div className="grid sm:grid-cols-3 gap-4 text-sm">
+                        {[
+                          { label: 'Lender 1', field: 'Lender_Name_1__c' },
+                          { label: 'Lender 2', field: 'Lender_Name_2__c' },
+                          { label: 'Lender 3', field: 'Lender_Name_3__c' }
+                        ].map(({ label, field }) => (
+                          <div key={field}>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                            {isEditing ? (
+                              <Input value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                            ) : (
+                              <p className="text-slate-900">{lead[field] || '-'}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+
+            {/* Files */}
+            <FileManager
+              key={refreshKey}
+              recordId={lead.Id}
+              session={session}
+              onFileUploaded={() => setRefreshKey(prev => prev + 1)}
+            />
           </div>
 
-          <div className="space-y-6">
+          {/* Sidebar */}
+           <div className="space-y-6">
+            {/* Quick Info & Contact Information Combined */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h3 className="font-semibold text-slate-900 mb-4">Quick Info</h3>
               <div className="space-y-3 text-sm">
@@ -488,21 +814,43 @@ export default function LeadDetail() {
                   {!showOwnerChange ? (
                     <div className="flex items-center justify-between">
                       <p className="font-medium text-slate-900">{lead.Owner?.Name || 'Unknown'}</p>
-                      <Button variant="outline" size="sm" onClick={() => setShowOwnerChange(true)} className="text-xs">Change</Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowOwnerChange(true)}
+                        className="text-xs"
+                      >
+                        Change
+                      </Button>
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <Select value={lead.OwnerId} onValueChange={handleOwnerChange} disabled={changingOwner}>
+                      <Select
+                        value={lead.OwnerId}
+                        onValueChange={handleOwnerChange}
+                        disabled={changingOwner}
+                      >
                         <SelectTrigger className="w-full">
-                          <SelectValue>{changingOwner ? 'Changing...' : 'Select new owner'}</SelectValue>
+                          <SelectValue>
+                            {changingOwner ? 'Changing...' : 'Select new owner'}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           {users.map(user => (
-                            <SelectItem key={user.Id} value={user.Id}>{user.Name}</SelectItem>
+                            <SelectItem key={user.Id} value={user.Id}>
+                              {user.Name}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <Button variant="ghost" size="sm" onClick={() => setShowOwnerChange(false)} className="w-full text-xs">Cancel</Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowOwnerChange(false)}
+                        className="w-full text-xs"
+                      >
+                        Cancel
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -511,13 +859,26 @@ export default function LeadDetail() {
                   {!showStatusChange ? (
                     <div className="flex items-center justify-between">
                       <p className="font-medium text-slate-900">{lead.Status}</p>
-                      <Button variant="outline" size="sm" onClick={() => setShowStatusChange(true)} className="text-xs">Change</Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowStatusChange(true)}
+                        className="text-xs"
+                      >
+                        Change
+                      </Button>
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <Select value={lead.Status} onValueChange={handleQuickStatusChange} disabled={updatingQuickStatus}>
+                      <Select
+                        value={lead.Status}
+                        onValueChange={handleQuickStatusChange}
+                        disabled={updatingQuickStatus}
+                      >
                         <SelectTrigger className="w-full">
-                          <SelectValue>{updatingQuickStatus ? 'Updating...' : 'Select status'}</SelectValue>
+                          <SelectValue>
+                            {updatingQuickStatus ? 'Updating...' : 'Select status'}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Open - Not Contacted">Open - Not Contacted</SelectItem>
@@ -528,7 +889,14 @@ export default function LeadDetail() {
                           <SelectItem value="Closed - Not Converted">Closed - Not Converted</SelectItem>
                         </SelectContent>
                       </Select>
-                      <Button variant="ghost" size="sm" onClick={() => setShowStatusChange(false)} className="w-full text-xs">Cancel</Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowStatusChange(false)}
+                        className="w-full text-xs"
+                      >
+                        Cancel
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -537,21 +905,43 @@ export default function LeadDetail() {
                   {!showDispositionChange ? (
                     <div className="flex items-center justify-between">
                       <p className="font-medium text-slate-900">{lead.Call_Disposition__c || 'Not set'}</p>
-                      <Button variant="outline" size="sm" onClick={() => setShowDispositionChange(true)} className="text-xs">Change</Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowDispositionChange(true)}
+                        className="text-xs"
+                      >
+                        Change
+                      </Button>
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <Select value={lead.Call_Disposition__c || ''} onValueChange={handleDispositionChange} disabled={updatingDisposition}>
+                      <Select
+                        value={lead.Call_Disposition__c || ''}
+                        onValueChange={handleDispositionChange}
+                        disabled={updatingDisposition}
+                      >
                         <SelectTrigger className="w-full">
-                          <SelectValue>{updatingDisposition ? 'Updating...' : 'Select disposition'}</SelectValue>
+                          <SelectValue>
+                            {updatingDisposition ? 'Updating...' : 'Select disposition'}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           {dispositionOptions.map(option => (
-                            <SelectItem key={option} value={option}>{option}</SelectItem>
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <Button variant="ghost" size="sm" onClick={() => setShowDispositionChange(false)} className="w-full text-xs">Cancel</Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowDispositionChange(false)}
+                        className="w-full text-xs"
+                      >
+                        Cancel
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -559,27 +949,61 @@ export default function LeadDetail() {
                   <h4 className="font-semibold text-slate-900 mb-3">Contact</h4>
                   <div className="space-y-2">
                     {lead.Email && (
-                      <button onClick={() => communicationCardRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-sm text-[#08708E] hover:underline block text-left">
+                      <button 
+                        onClick={() => communicationCardRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                        className="text-sm text-[#08708E] hover:underline block text-left"
+                      >
                         {lead.Email}
                       </button>
                     )}
-                    {lead.Phone && <a href={`tel:${lead.Phone}`} className="text-sm text-[#08708E] hover:underline block">{lead.Phone}</a>}
-                    {lead.MobilePhone && <a href={`tel:${lead.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block">Mobile: {lead.MobilePhone}</a>}
+                    {lead.Phone && (
+                      <a href={`tel:${lead.Phone}`} className="text-sm text-[#08708E] hover:underline block">
+                        {lead.Phone}
+                      </a>
+                    )}
+                    {lead.MobilePhone && (
+                      <a href={`tel:${lead.MobilePhone}`} className="text-sm text-[#08708E] hover:underline block">
+                        Mobile: {lead.MobilePhone}
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
 
+            {/* Communication Card - Email & SMS */}
             <div ref={communicationCardRef}>
-              <CommunicationCard recipientEmail={lead.Email} recipientName={lead.Name} phoneNumber={lead.MobilePhone || lead.Phone} recordId={lead.Id} recordType="Lead" session={session} smsColor="bg-[#08708E]" emailColor="bg-[#08708E]" firstName={lead.FirstName} />
+              <CommunicationCard
+                recipientEmail={lead.Email}
+                recipientName={lead.Name}
+                phoneNumber={lead.MobilePhone || lead.Phone}
+                recordId={lead.Id}
+                recordType="Lead"
+                session={session}
+                smsColor="bg-[#08708E]"
+                emailColor="bg-[#08708E]"
+                firstName={lead.FirstName}
+              />
             </div>
 
-            <ActivityPanel recordId={lead.Id} recordType="Lead" session={session} />
+            {/* Activity Timeline */}
+            <ActivityPanel
+              recordId={lead.Id}
+              recordType="Lead"
+              session={session}
+            />
+
+
           </div>
         </div>
       </div>
 
-      <RecordHistoryModal isOpen={showHistory} onClose={() => setShowHistory(false)} recordId={lead?.Id} session={session} />
+      <RecordHistoryModal
+        isOpen={showHistory}
+        onClose={() => setShowHistory(false)}
+        recordId={lead?.Id}
+        session={session}
+      />
     </div>
   );
 }
