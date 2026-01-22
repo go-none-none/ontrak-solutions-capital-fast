@@ -78,21 +78,9 @@ export default function SendEmailModal({ recipientEmail, recipientName }) {
           </div>
         </div>
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={sending}>
-            Cancel
-          </Button>
-          <Button onClick={handleSend} disabled={sending} className="bg-[#08708E] hover:bg-[#065a72]">
-            {sending ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Sending...
-              </>
-            ) : (
-              <>
-                <Mail className="w-4 h-4 mr-2" />
-                Send Email
-              </>
-            )}
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={sending}>Cancel</Button>
+          <Button onClick={handleSend} disabled={sending} className="bg-orange-600 hover:bg-orange-700">
+            {sending ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sending...</>) : (<><Mail className="w-4 h-4 mr-2" />Send Email</>)}
           </Button>
         </div>
       </DialogContent>

@@ -70,7 +70,7 @@ export default function PowerDialer({ phoneNumber, recordId, session, onCallComp
     <>
       <Button
         onClick={() => setIsOpen(true)}
-        className="bg-[#08708E] hover:bg-[#065a72] gap-2"
+        className="bg-orange-600 hover:bg-orange-700 gap-2"
         size="sm"
       >
         <Phone className="w-4 h-4" />
@@ -108,14 +108,8 @@ export default function PowerDialer({ phoneNumber, recordId, session, onCallComp
               {!calling ? (
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-slate-700 mb-2 block">
-                      Phone Number
-                    </label>
-                    <Input
-                      value={phoneNumber}
-                      readOnly
-                      className="bg-slate-50"
-                    />
+                    <label className="text-sm font-medium text-slate-700 mb-2 block">Phone Number</label>
+                    <Input value={phoneNumber} readOnly className="bg-slate-50" />
                   </div>
                   <Button
                     onClick={handleCall}
@@ -139,9 +133,7 @@ export default function PowerDialer({ phoneNumber, recordId, session, onCallComp
                     <>
                       <div className="space-y-3">
                         <div>
-                          <label className="text-sm font-medium text-slate-700 mb-2 block">
-                            Call Disposition
-                          </label>
+                          <label className="text-sm font-medium text-slate-700 mb-2 block">Call Disposition</label>
                           <Select value={disposition} onValueChange={setDisposition}>
                             <SelectTrigger>
                               <SelectValue placeholder="Select outcome" />
@@ -158,9 +150,7 @@ export default function PowerDialer({ phoneNumber, recordId, session, onCallComp
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium text-slate-700 mb-2 block">
-                            Notes
-                          </label>
+                          <label className="text-sm font-medium text-slate-700 mb-2 block">Notes</label>
                           <Textarea
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
@@ -182,7 +172,7 @@ export default function PowerDialer({ phoneNumber, recordId, session, onCallComp
                         <Button
                           onClick={handleSaveDisposition}
                           disabled={!disposition || saving}
-                          className="flex-1 bg-[#08708E] hover:bg-[#065a72]"
+                          className="flex-1 bg-orange-600 hover:bg-orange-700"
                         >
                           {saving ? (
                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

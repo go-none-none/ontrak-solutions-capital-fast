@@ -8,7 +8,6 @@ export default function SMSWidget({ phoneNumber }) {
       alert('No phone number available');
       return;
     }
-    // Open Dialpad desktop app with SMS to this number
     window.location.href = `sms:${phoneNumber.replace(/\D/g, '')}`;
   };
 
