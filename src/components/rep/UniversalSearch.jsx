@@ -158,7 +158,7 @@ export default function UniversalSearch({ session }) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => searchTerm && setShowDropdown(true)}
-            className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
           />
           {loading ? (
             <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 animate-spin" />
@@ -178,7 +178,7 @@ export default function UniversalSearch({ session }) {
         <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-[600px] overflow-y-auto">
            {loading && results.length === 0 ? (
             <div className="flex items-center justify-center py-6">
-              <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+              <Loader2 className="w-5 h-5 text-orange-600 animate-spin" />
             </div>
           ) : results.length > 0 ? (
             <div className="divide-y divide-slate-100">

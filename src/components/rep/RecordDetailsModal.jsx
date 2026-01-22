@@ -53,7 +53,7 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
                 onClose();
                 navigate(createPageUrl('LeadDetail') + `?id=${record.Id}`);
               }}
-              className="text-[#08708E] hover:underline flex items-center gap-1 group"
+              className="text-orange-600 hover:underline flex items-center gap-1 group"
             >
               <span className="group-hover:font-semibold">{isLead ? record.Name : record.Name}</span>
               <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -82,7 +82,7 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
                   <Mail className="w-5 h-5 text-slate-400 mt-1" />
                   <div>
                     <p className="text-xs text-slate-500">Email</p>
-                    <a href={`mailto:${record.Email}`} className="font-medium text-[#08708E] hover:underline">
+                    <a href={`mailto:${record.Email}`} className="font-medium text-orange-600 hover:underline">
                       {record.Email || 'N/A'}
                     </a>
                   </div>
@@ -91,7 +91,7 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
                   <Phone className="w-5 h-5 text-slate-400 mt-1" />
                   <div>
                     <p className="text-xs text-slate-500">Phone</p>
-                    <a href={`tel:${record.Phone}`} className="font-medium text-[#08708E] hover:underline">
+                    <a href={`tel:${record.Phone}`} className="font-medium text-orange-600 hover:underline">
                       {record.Phone || 'N/A'}
                     </a>
                   </div>
@@ -100,7 +100,7 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
                   <DollarSign className="w-5 h-5 text-slate-400 mt-1" />
                   <div>
                     <p className="text-xs text-slate-500">Funding Requested</p>
-                    <p className="font-semibold text-[#08708E]">{formatCurrency(record.Amount_Requested__c)}</p>
+                    <p className="font-semibold text-orange-600">{formatCurrency(record.Amount_Requested__c)}</p>
                   </div>
                 </div>
                 {record.Estimated_Monthly_Revenue__c && (
@@ -135,7 +135,7 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
                   <DollarSign className="w-5 h-5 text-slate-400 mt-1" />
                   <div>
                     <p className="text-xs text-slate-500">Amount</p>
-                    <p className="font-semibold text-[#08708E] text-lg">{formatCurrency(record.Amount)}</p>
+                    <p className="font-semibold text-orange-600 text-lg">{formatCurrency(record.Amount)}</p>
                   </div>
                 </div>
                 {record.CloseDate && (
@@ -204,7 +204,7 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
                   {record.Account?.Phone && (
                     <div>
                       <p className="text-slate-500 text-xs">Company Phone</p>
-                      <a href={`tel:${record.Account.Phone}`} className="font-medium text-[#08708E] hover:underline">
+                      <a href={`tel:${record.Account.Phone}`} className="font-medium text-orange-600 hover:underline">
                         {record.Account.Phone}
                       </a>
                     </div>
@@ -320,7 +320,7 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
                   onClose();
                   onExpand();
                 }}
-                className="flex-1 bg-[#08708E] hover:bg-[#065a72]"
+                className="flex-1 bg-orange-600 hover:bg-orange-700"
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
                 Full Info

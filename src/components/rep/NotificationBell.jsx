@@ -10,8 +10,6 @@ export default function NotificationBell() {
   const [shouldRing, setShouldRing] = useState(false);
   const notificationRef = useRef(null);
   const unreadCount = notifications.length;
-  
-  console.log('NotificationBell - notifications:', unreadCount, notifications);
 
   useEffect(() => {
     if (unreadCount > 0) {
