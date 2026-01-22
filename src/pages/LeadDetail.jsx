@@ -203,6 +203,7 @@ export default function LeadDetail() {
   };
 
   const handleFieldSave = React.useCallback(async (field) => {
+    if (!lead?.Id) return;
     try {
       setEditing(prev => ({ ...prev, [field]: true }));
       await base44.functions.invoke('updateSalesforceRecord', {
@@ -219,7 +220,7 @@ export default function LeadDetail() {
       console.error('Update error:', error);
       setEditing(prev => ({ ...prev, [field]: false }));
     }
-  }, [lead.Id, editValues, session]);
+  }, [lead?.Id, editValues, session]);
 
   const handleFieldEdit = React.useCallback((field, value) => {
     setEditValues(prev => ({ ...prev, [field]: value }));

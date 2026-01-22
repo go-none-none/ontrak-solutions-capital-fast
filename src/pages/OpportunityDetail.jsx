@@ -312,6 +312,7 @@ export default function OpportunityDetail() {
   };
 
   const handleFieldSave = React.useCallback(async (field) => {
+    if (!opportunity?.Id) return;
     try {
       setEditing(prev => ({ ...prev, [field]: true }));
       await base44.functions.invoke('updateSalesforceRecord', {
@@ -327,7 +328,7 @@ export default function OpportunityDetail() {
       console.error('Update error:', error);
       setEditing(prev => ({ ...prev, [field]: false }));
     }
-  }, [opportunity.Id, editValues, session]);
+  }, [opportunity?.Id, editValues, session]);
 
   const handleFieldEdit = React.useCallback((field, value) => {
     setEditValues(prev => ({ ...prev, [field]: value }));
