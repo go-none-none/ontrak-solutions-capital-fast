@@ -44,7 +44,6 @@ export default function StatementPdfViewer({ statement, session, isOpen, onClose
       const url = URL.createObjectURL(blob);
       setPdfUrl(url);
     } catch (error) {
-      console.error('PDF load error:', error);
       setError(error.message || 'Failed to load PDF');
     } finally {
       setLoading(false);

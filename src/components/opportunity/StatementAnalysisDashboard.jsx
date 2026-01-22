@@ -46,8 +46,6 @@ export default function StatementAnalysisDashboard({ statements }) {
     }).format(amount || 0);
   };
 
-  const COLORS = ['#10b981', '#f59e0b', '#ef4444'];
-
   const getHealthScore = () => {
     const healthyCount = riskData[0]?.value || 0;
     const totalCount = stats.totalStatements;
@@ -183,9 +181,21 @@ export default function StatementAnalysisDashboard({ statements }) {
             <h3 className="text-base sm:text-lg font-semibold text-slate-900 truncate">Account Health Distribution</h3>
           </div>
           <div className="space-y-4">
-            <div className="p-4 bg-green-50 rounded-xl border border-green-200"><div className="flex items-center justify-between mb-2"><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-500"></div><span className="text-sm font-medium text-green-900">Healthy</span></div><span className="text-2xl font-bold text-green-900">{riskData[0]?.value || 0}</span></div><div className="w-full bg-green-200 rounded-full h-3"><div className="bg-green-500 h-3 rounded-full transition-all duration-500" style={{ width: `${((riskData[0]?.value || 0) / stats.totalStatements) * 100}%` }} /></div><p className="text-xs text-green-700 mt-1">{(((riskData[0]?.value || 0) / stats.totalStatements) * 100).toFixed(0)}% of periods</p></div>
-            <div className="p-4 bg-amber-50 rounded-xl border border-amber-200"><div className="flex items-center justify-between mb-2"><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-amber-500"></div><span className="text-sm font-medium text-amber-900">Moderate Risk</span></div><span className="text-2xl font-bold text-amber-900">{riskData[1]?.value || 0}</span></div><div className="w-full bg-amber-200 rounded-full h-3"><div className="bg-amber-500 h-3 rounded-full transition-all duration-500" style={{ width: `${((riskData[1]?.value || 0) / stats.totalStatements) * 100}%` }} /></div><p className="text-xs text-amber-700 mt-1">{(((riskData[1]?.value || 0) / stats.totalStatements) * 100).toFixed(0)}% of periods</p></div>
-            <div className="p-4 bg-red-50 rounded-xl border border-red-200"><div className="flex items-center justify-between mb-2"><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500"></div><span className="text-sm font-medium text-red-900">High Risk</span></div><span className="text-2xl font-bold text-red-900">{riskData[2]?.value || 0}</span></div><div className="w-full bg-red-200 rounded-full h-3"><div className="bg-red-500 h-3 rounded-full transition-all duration-500" style={{ width: `${((riskData[2]?.value || 0) / stats.totalStatements) * 100}%` }} /></div><p className="text-xs text-red-700 mt-1">{(((riskData[2]?.value || 0) / stats.totalStatements) * 100).toFixed(0)}% of periods</p></div>
+            {riskData.map((item, idx) => (
+              <div key={idx} className={`p-4 rounded-xl border ${idx === 0 ? 'bg-green-50 border-green-200' : idx === 1 ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200'}`}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full ${idx === 0 ? 'bg-green-500' : idx === 1 ? 'bg-amber-500' : 'bg-red-500'}`} />
+                    <span className={`text-sm font-medium ${idx === 0 ? 'text-green-900' : idx === 1 ? 'text-amber-900' : 'text-red-900'}`}>{item.name}</span>
+                  </div>
+                  <span className={`text-2xl font-bold ${idx === 0 ? 'text-green-900' : idx === 1 ? 'text-amber-900' : 'text-red-900'}`}>{item.value}</span>
+                </div>
+                <div className={`w-full rounded-full h-3 ${idx === 0 ? 'bg-green-200' : idx === 1 ? 'bg-amber-200' : 'bg-red-200'}`}>
+                  <div className={`h-3 rounded-full transition-all duration-500 ${idx === 0 ? 'bg-green-500' : idx === 1 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${((item.value || 0) / stats.totalStatements) * 100}%` }} />
+                </div>
+                <p className={`text-xs mt-1 ${idx === 0 ? 'text-green-700' : idx === 1 ? 'text-amber-700' : 'text-red-700'}`}>{(((item.value || 0) / stats.totalStatements) * 100).toFixed(0)}% of periods</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -195,9 +205,30 @@ export default function StatementAnalysisDashboard({ statements }) {
             <h3 className="text-base sm:text-lg font-semibold text-slate-900">Risk Metrics</h3>
           </div>
           <div className="space-y-4">
-            <div className="p-4 bg-red-50 rounded-xl border border-red-200"><div className="flex justify-between items-center mb-1"><span className="text-sm text-red-700 font-medium">Total NSF Count</span><span className="text-2xl font-bold text-red-900">{stats.totalNsfs}</span></div><div className="w-full bg-red-200 rounded-full h-2"><div className="bg-red-600 h-2 rounded-full" style={{ width: `${Math.min((stats.totalNsfs / (stats.totalStatements * 5)) * 100, 100)}%` }} /></div></div>
-            <div className="p-4 bg-amber-50 rounded-xl border border-amber-200"><div className="flex justify-between items-center mb-1"><span className="text-sm text-amber-700 font-medium">Total Negative Days</span><span className="text-2xl font-bold text-amber-900">{stats.totalNegativeDays}</span></div><div className="w-full bg-amber-200 rounded-full h-2"><div className="bg-amber-600 h-2 rounded-full" style={{ width: `${Math.min((stats.totalNegativeDays / (stats.totalStatements * 10)) * 100, 100)}%` }} /></div></div>
-            <div className="p-4 bg-green-50 rounded-xl border border-green-200"><div className="flex justify-between items-center"><span className="text-sm text-green-700 font-medium">Healthy Periods</span><span className="text-2xl font-bold text-green-900">{riskData[0]?.value || 0} / {stats.totalStatements}</span></div></div>
+            <div className="p-4 bg-red-50 rounded-xl border border-red-200">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm text-red-700 font-medium">Total NSF Count</span>
+                <span className="text-2xl font-bold text-red-900">{stats.totalNsfs}</span>
+              </div>
+              <div className="w-full bg-red-200 rounded-full h-2">
+                <div className="bg-red-600 h-2 rounded-full" style={{ width: `${Math.min((stats.totalNsfs / (stats.totalStatements * 5)) * 100, 100)}%` }} />
+              </div>
+            </div>
+            <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm text-amber-700 font-medium">Total Negative Days</span>
+                <span className="text-2xl font-bold text-amber-900">{stats.totalNegativeDays}</span>
+              </div>
+              <div className="w-full bg-amber-200 rounded-full h-2">
+                <div className="bg-amber-600 h-2 rounded-full" style={{ width: `${Math.min((stats.totalNegativeDays / (stats.totalStatements * 10)) * 100, 100)}%` }} />
+              </div>
+            </div>
+            <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-green-700 font-medium">Healthy Periods</span>
+                <span className="text-2xl font-bold text-green-900">{riskData[0]?.value || 0} / {stats.totalStatements}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

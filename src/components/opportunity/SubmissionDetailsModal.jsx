@@ -71,7 +71,6 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
       if (onSuccess) onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error updating submission:', error);
       alert('Failed to update submission');
     } finally {
       setLoading(false);
@@ -79,15 +78,6 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
   };
 
   if (!submission) return null;
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'numeric',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
 
   const EditableField = ({ label, field, value, type = 'text', options = [] }) => {
     const isEditing = editingField === field;
@@ -112,9 +102,7 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
                 value={formData[field]}
                 onValueChange={(val) => setFormData({ ...formData, [field]: val })}
               >
-                <SelectTrigger className="h-8">
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {options.map(opt => (
                     <SelectItem key={opt} value={opt}>{opt}</SelectItem>
@@ -135,12 +123,7 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
                 className="h-8"
               />
             )}
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8"
-              onClick={() => setEditingField(null)}
-            >
+            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditingField(null)}>
               <Check className="w-4 h-4" />
             </Button>
           </div>
