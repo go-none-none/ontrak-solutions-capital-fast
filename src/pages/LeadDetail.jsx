@@ -202,9 +202,9 @@ export default function LeadDetail() {
     }
   };
 
-  const handleFieldSave = async (field) => {
+  const handleFieldSave = React.useCallback(async (field) => {
     try {
-      setEditing({ ...editing, [field]: true });
+      setEditing(prev => ({ ...prev, [field]: true }));
       await base44.functions.invoke('updateSalesforceRecord', {
         objectType: 'Lead',
         recordId: lead.Id,
@@ -213,13 +213,25 @@ export default function LeadDetail() {
         instanceUrl: session.instanceUrl
       });
       await loadLead(session);
-      setEditing({ ...editing, [field]: false });
+      setEditing(prev => ({ ...prev, [field]: false }));
       setRefreshKey(prev => prev + 1);
     } catch (error) {
       console.error('Update error:', error);
-      setEditing({ ...editing, [field]: false });
+      setEditing(prev => ({ ...prev, [field]: false }));
     }
-  };
+  }, [lead.Id, editValues, session]);
+
+  const handleFieldEdit = React.useCallback((field, value) => {
+    setEditValues(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleFieldCancel = React.useCallback((field) => {
+    setEditing(prev => ({ ...prev, [field]: false }));
+  }, []);
+
+  const handleFieldStartEdit = React.useCallback((field) => {
+    setEditing(prev => ({ ...prev, [field]: true }));
+  }, []);
 
   const handleOwnerChange = async (newOwnerId) => {
     if (newOwnerId === lead.OwnerId) return;
@@ -277,7 +289,7 @@ export default function LeadDetail() {
     }
   };
 
-  const EditableFieldWrapper = ({ label, field, value, disabled = false }) => {
+  const EditableFieldWrapper = React.useCallback(({ label, field, value, disabled = false }) => {
     return (
       <EditableField
         label={label}
@@ -286,13 +298,13 @@ export default function LeadDetail() {
         editing={editing}
         editValues={editValues}
         disabled={disabled}
-        onEdit={(field, value) => setEditValues({ ...editValues, [field]: value })}
+        onEdit={handleFieldEdit}
         onSave={handleFieldSave}
-        onCancel={(field) => setEditing({ ...editing, [field]: false })}
-        onStartEdit={(field) => setEditing({ ...editing, [field]: true })}
+        onCancel={handleFieldCancel}
+        onStartEdit={handleFieldStartEdit}
       />
     );
-  };
+  }, [editing, editValues, handleFieldEdit, handleFieldSave, handleFieldCancel, handleFieldStartEdit]);
 
   const getCurrentStageIndex = () => {
     const index = stages.findIndex(s => s.status === lead?.Status);
