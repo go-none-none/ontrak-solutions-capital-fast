@@ -43,7 +43,6 @@ export default function EmailClientCard({ recipientEmail, recipientName, recordI
         toast.error(response.data?.error || 'Failed to send email');
       }
     } catch (error) {
-      console.error('Send email error:', error);
       toast.error(error.response?.data?.error || error.message || 'Failed to send email');
     } finally {
       setSending(false);

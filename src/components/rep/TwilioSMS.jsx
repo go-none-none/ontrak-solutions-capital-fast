@@ -34,7 +34,6 @@ export default function TwilioSMS({ phoneNumber, recordId, recordType, session }
       setMessage('');
       setTimeout(() => setStatus(null), 3000);
     } catch (error) {
-      console.error('SMS error:', error);
       setStatus('error');
       setStatusMessage(error.message || 'Failed to send SMS');
     } finally {
