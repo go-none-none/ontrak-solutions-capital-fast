@@ -510,22 +510,22 @@ export default function RepPortal() {
 
       {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             onClick={() => { setActiveTab('leads'); setStageFilter(null); setCurrentPage(1); }}
-            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
+            className={`bg-white rounded-xl p-3 shadow-sm cursor-pointer transition-all ${
               activeTab === 'leads' ? 'ring-2 ring-rose-500 shadow-md' : 'hover:shadow-md'
             }`}
           >
-            <div className="flex items-center justify-between h-full">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm text-slate-600 mb-1">Active Leads</p>
-                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{leads.length}</p>
+                <p className="text-xs text-slate-600 mb-0.5">Active Leads</p>
+                <p className="text-2xl font-bold text-slate-900">{leads.length}</p>
               </div>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center flex-shrink-0">
-                <Users className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-rose-500 to-rose-600 flex items-center justify-center flex-shrink-0">
+                <Users className="w-5 h-5 text-white" />
               </div>
             </div>
           </motion.div>
@@ -535,20 +535,20 @@ export default function RepPortal() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             onClick={() => { setActiveTab('opportunities'); setStageFilter(null); setCurrentPage(1); }}
-            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
+            className={`bg-white rounded-xl p-3 shadow-sm cursor-pointer transition-all ${
               activeTab === 'opportunities' ? 'ring-2 ring-orange-500 shadow-md' : 'hover:shadow-md'
             }`}
           >
-            <div className="flex items-center justify-between h-full">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm text-slate-600 mb-1">Open Opportunities</p>
-                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{opportunities.length}</p>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                <p className="text-xs text-slate-600 mb-0.5">Open Opportunities</p>
+                <p className="text-2xl font-bold text-slate-900">{opportunities.length}</p>
+                <p className="text-xs text-slate-500 mt-0.5">
                   ${opportunities.reduce((sum, o) => sum + (o.Amount || 0), 0).toLocaleString()}
                 </p>
               </div>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-5 h-5 text-white" />
               </div>
             </div>
           </motion.div>
@@ -565,18 +565,18 @@ export default function RepPortal() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             onClick={() => { setActiveTab('dispositions'); setDispositionFilter([]); setCurrentPage(1); }}
-            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all min-h-[120px] ${
+            className={`bg-white rounded-xl p-3 shadow-sm cursor-pointer transition-all ${
               activeTab === 'dispositions' ? 'ring-2 ring-sky-500 shadow-md' : 'hover:shadow-md'
             }`}
           >
-            <div className="flex items-center justify-between h-full">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm text-slate-600 mb-1">Call Dispositions</p>
-                <p className="text-2xl sm:text-3xl font-bold text-slate-900">{leads.filter(l => l.Call_Disposition__c).length}</p>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1">of {leads.length} leads</p>
+                <p className="text-xs text-slate-600 mb-0.5">Call Dispositions</p>
+                <p className="text-2xl font-bold text-slate-900">{leads.filter(l => l.Call_Disposition__c).length}</p>
+                <p className="text-xs text-slate-500 mt-0.5">of {leads.length} leads</p>
               </div>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center flex-shrink-0">
-                <Phone className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center flex-shrink-0">
+                <Phone className="w-5 h-5 text-white" />
               </div>
             </div>
           </motion.div>
