@@ -27,22 +27,15 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
   const loadFiles = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFiles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recordId,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
+      const response = await base44.functions.invoke('getSalesforceFiles', {
+        recordId,
+        token: session.token,
+        instanceUrl: session.instanceUrl
       });
-      const data = await response.json();
-      const sfFiles = data.files || [];
+      const sfFiles = response.data.files || [];
       
-      // Load temp files from localStorage
       const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${recordId}`) || '[]');
       
-      // Combine SF files with temp files
       const combinedFiles = [
         ...tempFiles.map(tf => ({
           ContentDocumentId: tf.id,
@@ -60,7 +53,6 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
       
       setFiles(combinedFiles);
       
-      // Get unparsed PDFs and notify parent
       const unparsedPdfs = combinedFiles.filter(file => {
         const isPdf = file.ContentDocument?.FileExtension?.toLowerCase() === 'pdf';
         const hasStatement = statements.some(stmt => stmt.csbs__Source_File_ID__c === file.ContentDocumentId);
@@ -80,10 +72,8 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
 
     setUploading(true);
     try {
-      // Upload to Base44 storage only (not Salesforce yet)
       const uploadResponse = await base44.integrations.Core.UploadFile({ file });
       
-      // Store file metadata in temp storage (will link to SF when statement is saved)
       const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${recordId}`) || '[]');
       tempFiles.push({
         id: `temp_${Date.now()}`,
@@ -142,22 +132,14 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
     const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext);
     
     if (isPdf) {
-      // For PDFs, fetch and open in new tab directly (more reliable than iframe)
       try {
-        const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contentDocumentId: file.ContentDocumentId,
-            token: session.token,
-            instanceUrl: session.instanceUrl
-          })
+        const response = await base44.functions.invoke('getSalesforceFileContent', {
+          contentDocumentId: file.ContentDocumentId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
         });
 
-        if (!response.ok) throw new Error('Failed to fetch file');
-
-        const data = await response.json();
-        const base64 = data.file;
+        const base64 = response.data.file;
         const binaryString = atob(base64);
         const bytes = new Uint8Array(binaryString.length);
         
@@ -169,7 +151,6 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
         
-        // Cleanup after a delay
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       } catch (error) {
         console.error('PDF open error:', error);
@@ -232,20 +213,14 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
     setDeleting(contentDocumentId);
     try {
       if (file.isTemp) {
-        // Remove from localStorage
         const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${recordId}`) || '[]');
         const filtered = tempFiles.filter(tf => tf.id !== contentDocumentId);
         localStorage.setItem(`temp_files_${recordId}`, JSON.stringify(filtered));
       } else {
-        // Delete from Salesforce
-        await fetch('/api/apps/6932157da76cc7fc545d1203/functions/deleteSalesforceFile', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contentDocumentId,
-            token: session.token,
-            instanceUrl: session.instanceUrl
-          })
+        await base44.functions.invoke('deleteSalesforceFile', {
+          contentDocumentId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
         });
       }
       
@@ -272,15 +247,11 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
     }
 
     try {
-      await fetch('/api/apps/6932157da76cc7fc545d1203/functions/renameSalesforceFile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contentDocumentId,
-          newTitle: newTitle.trim(),
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
+      await base44.functions.invoke('renameSalesforceFile', {
+        contentDocumentId,
+        newTitle: newTitle.trim(),
+        token: session.token,
+        instanceUrl: session.instanceUrl
       });
       
       await loadFiles();
@@ -291,8 +262,6 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
       alert('Failed to rename file');
     }
   };
-
-
 
   return (
     <>
@@ -370,7 +339,6 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                 transition={{ delay: i * 0.05 }}
                 className="p-3 rounded-lg hover:bg-slate-50 border border-slate-100"
               >
-                {/* Top Section: Checkbox, Icon, and File Name */}
                 <div className="flex items-center gap-3 mb-3">
                   <Checkbox
                     checked={selectedFiles.includes(file.ContentDocumentId)}
@@ -403,7 +371,6 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
                   </div>
                 </div>
                 
-                {/* Bottom Section: File Info and Actions */}
                 <div className="flex items-center justify-between gap-2 pl-14">
                   <p className="text-xs text-slate-500">
                     {formatFileSize(doc.ContentSize)} • {formatDate(doc.CreatedDate)}
@@ -516,7 +483,6 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
       onClose={closeImageViewer}
       />
 
-      {/* Statement Data Preview Modal */}
       {previewingStatement && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 shadow-lg max-h-[90vh] overflow-y-auto">

@@ -108,20 +108,17 @@ export default function ActivityPanel({ recordId, recordType, session }) {
   const renderLinksAsClickable = (text) => {
     if (!text) return text;
     
-    // Match URLs with optional surrounding text like "name: url" or "name (url)"
     const urlWithContextRegex = /([^:\s]+):\s*(https?:\/\/[^\s]+)|([^(]+)\s*\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s]+)/g;
     const parts = [];
     let lastIndex = 0;
     let match;
     
     while ((match = urlWithContextRegex.exec(text)) !== null) {
-      // Add text before the match
       if (match.index > lastIndex) {
         parts.push(text.substring(lastIndex, match.index));
       }
       
       if (match[1] && match[2]) {
-        // Pattern: "name: url"
         parts.push(
           <a key={match.index} href={match[2]} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
             {match[1]}
@@ -129,7 +126,6 @@ export default function ActivityPanel({ recordId, recordType, session }) {
           </a>
         );
       } else if (match[3] && match[4]) {
-        // Pattern: "name (url)"
         parts.push(
           <a key={match.index} href={match[4]} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline inline-flex items-center gap-1">
             {match[3].trim()}
@@ -137,7 +133,6 @@ export default function ActivityPanel({ recordId, recordType, session }) {
           </a>
         );
       } else if (match[5]) {
-        // Just URL
         const url = match[5];
         const displayText = url.length > 40 ? url.substring(0, 40) + '...' : url;
         parts.push(
@@ -151,7 +146,6 @@ export default function ActivityPanel({ recordId, recordType, session }) {
       lastIndex = urlWithContextRegex.lastIndex;
     }
     
-    // Add remaining text
     if (lastIndex < text.length) {
       parts.push(text.substring(lastIndex));
     }
@@ -198,7 +192,6 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                           {activity.subject || `${activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}`}
                         </h4>
                         
-                        {/* Metadata row */}
                         <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-600">
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
@@ -233,7 +226,6 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                           )}
                         </div>
 
-                        {/* Call disposition */}
                         {activity.callDisposition && (
                           <div className="mt-2">
                             <Badge className="bg-blue-100 text-blue-800 text-xs">
@@ -242,7 +234,6 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                           </div>
                         )}
 
-                        {/* Event details */}
                         {activity.type === 'event' && (
                           <div className="mt-2 text-xs text-slate-600">
                             {activity.startDate && activity.endDate && (
@@ -259,7 +250,6 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                           </div>
                         )}
 
-                        {/* Email details */}
                         {activity.type === 'email' && (
                           <div className="mt-2 space-y-1">
                             <div className="text-xs text-slate-600">
@@ -280,7 +270,6 @@ export default function ActivityPanel({ recordId, recordType, session }) {
                           </div>
                         )}
 
-                        {/* Description/Body preview */}
                         {(activity.description || activity.body) && (
                           <button
                             onClick={() => toggleActivity(activity.id)}

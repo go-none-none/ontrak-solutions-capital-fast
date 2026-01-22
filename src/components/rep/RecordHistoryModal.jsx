@@ -67,7 +67,6 @@ export default function RecordHistoryModal({ isOpen, onClose, recordId, session 
           </div>
         ) : history ? (
           <div className="space-y-6">
-            {/* System Info */}
             <div className="bg-slate-50 rounded-lg p-4">
               <h3 className="font-semibold text-slate-900 mb-3">System Information</h3>
               <div className="grid grid-cols-2 gap-3 text-sm">
@@ -84,7 +83,6 @@ export default function RecordHistoryModal({ isOpen, onClose, recordId, session 
               </div>
             </div>
 
-            {/* Stage History */}
             {history.stageHistory && history.stageHistory.length > 0 && (
               <div>
                 <h3 className="font-semibold text-slate-900 mb-3">
@@ -108,7 +106,6 @@ export default function RecordHistoryModal({ isOpen, onClose, recordId, session 
               </div>
             )}
 
-            {/* Field History */}
             {history.fieldHistory.length > 0 && (
               <div>
                 <h3 className="font-semibold text-slate-900 mb-3">
@@ -138,7 +135,6 @@ export default function RecordHistoryModal({ isOpen, onClose, recordId, session 
               </div>
             )}
 
-            {/* Activity History */}
             {history.activities && history.activities.length > 0 && (
               <div>
                 <h3 className="font-semibold text-slate-900 mb-3">

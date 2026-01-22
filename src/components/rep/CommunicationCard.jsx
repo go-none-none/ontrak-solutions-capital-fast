@@ -32,13 +32,10 @@ export default function CommunicationCard({
   useEffect(() => {
     if (phoneNumber) {
       loadSmsHistory();
-      // Set up polling for new SMS every 10 seconds
       const interval = setInterval(loadSmsHistory, 10000);
       return () => clearInterval(interval);
     }
   }, [phoneNumber]);
-
-
 
   const loadSmsHistory = async () => {
     try {
@@ -53,7 +50,6 @@ export default function CommunicationCard({
       console.log('SMS messages fetched:', messages.length, messages);
       const allSmsSids = new Set(messages.map(m => m.sid));
 
-      // Only update state if there are new messages
       setSmsHistory(prev => {
         const prevSids = new Set(prev.map(m => m.sid));
         const hasNewMessages = messages.some(m => !prevSids.has(m.sid));
@@ -62,18 +58,15 @@ export default function CommunicationCard({
 
       setVisibleSmsSids(allSmsSids);
 
-      // Check for new inbound messages received after last poll
       const inboundMessages = messages.filter(m => m.direction === 'inbound');
       const now = new Date();
 
-      // Don't create notifications if user is already viewing this record
       const urlParams = new URLSearchParams(window.location.search);
       const currentRecordId = urlParams.get('id');
       const isCurrentRecord = currentRecordId === recordId;
 
       inboundMessages.forEach(msg => {
          const msgDate = new Date(msg.date);
-         // Only notify if message is VERY recent (last 60 seconds) AND not already notified AND not the current record
          const sixtySecondsAgo = new Date(Date.now() - 60000);
          if (msgDate > sixtySecondsAgo && !isSmsSidNotified(msg.sid) && !isCurrentRecord) {
            console.log('Creating SMS notification for:', msg.sid, msg.body);
@@ -338,7 +331,6 @@ export default function CommunicationCard({
               )}
             </Button>
 
-            {/* SMS History */}
             <div className="mt-6 pt-4 border-t border-slate-200">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-slate-900">Conversation History</h3>
