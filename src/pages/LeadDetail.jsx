@@ -2,15 +2,17 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Edit, Loader2, CheckCircle2, ChevronDown, XCircle, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Edit, Loader2, CheckCircle2, ChevronDown, XCircle, ArrowRight, Save, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
 import { NotificationContext } from '../components/context/NotificationContext';
 
 import FileManager from '../components/rep/FileManager.jsx';
-import EditableField from '../components/rep/EditableField.jsx';
 import CommunicationCard from '../components/rep/CommunicationCard.jsx';
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import RepPortalHeader from '../components/rep/RepPortalHeader';
 import ActivityPanel from '../components/rep/ActivityPanel';
 import RecordHistoryModal from '../components/rep/RecordHistoryModal';
@@ -22,8 +24,9 @@ export default function LeadDetail() {
   const [loading, setLoading] = useState(true);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [converting, setConverting] = useState(false);
-  const [editing, setEditing] = useState({});
-  const [editValues, setEditValues] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [saving, setSaving] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [users, setUsers] = useState([]);
   const [changingOwner, setChangingOwner] = useState(false);
@@ -202,37 +205,29 @@ export default function LeadDetail() {
     }
   };
 
-  const handleFieldSave = React.useCallback(async (field) => {
-    if (!lead?.Id) return;
+  const handleSave = async () => {
+    setSaving(true);
     try {
-      setEditing(prev => ({ ...prev, [field]: true }));
+      const { Id, CreatedBy, CreatedDate, LastModifiedBy, LastModifiedDate, Owner, IsConverted, ConvertedAccountId, ConvertedContactId, ConvertedOpportunityId, ...cleanData } = editData;
+      
       await base44.functions.invoke('updateSalesforceRecord', {
         objectType: 'Lead',
         recordId: lead.Id,
-        data: { [field]: editValues[field] },
+        data: cleanData,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
+      
       await loadLead(session);
-      setEditing(prev => ({ ...prev, [field]: false }));
+      setIsEditing(false);
       setRefreshKey(prev => prev + 1);
     } catch (error) {
-      console.error('Update error:', error);
-      setEditing(prev => ({ ...prev, [field]: false }));
+      console.error('Save error:', error);
+      alert('Failed to save: ' + (error.response?.data?.error || error.message));
+    } finally {
+      setSaving(false);
     }
-  }, [lead?.Id, editValues, session]);
-
-  const handleFieldEdit = React.useCallback((field, value) => {
-    setEditValues(prev => ({ ...prev, [field]: value }));
-  }, []);
-
-  const handleFieldCancel = React.useCallback((field) => {
-    setEditing(prev => ({ ...prev, [field]: false }));
-  }, []);
-
-  const handleFieldStartEdit = React.useCallback((field) => {
-    setEditing(prev => ({ ...prev, [field]: true }));
-  }, []);
+  };
 
   const handleOwnerChange = async (newOwnerId) => {
     if (newOwnerId === lead.OwnerId) return;
@@ -290,22 +285,7 @@ export default function LeadDetail() {
     }
   };
 
-  const EditableFieldWrapper = React.memo(({ label, field, value, disabled = false }) => {
-    return (
-      <EditableField
-        label={label}
-        field={field}
-        value={value}
-        editing={editing}
-        editValues={editValues}
-        disabled={disabled}
-        onEdit={handleFieldEdit}
-        onSave={handleFieldSave}
-        onCancel={handleFieldCancel}
-        onStartEdit={handleFieldStartEdit}
-      />
-    );
-  });
+
 
   const getCurrentStageIndex = () => {
     const index = stages.findIndex(s => s.status === lead?.Status);
@@ -355,26 +335,59 @@ export default function LeadDetail() {
               <p className="text-xs sm:text-sm text-slate-600 truncate">{lead.Company}</p>
             </div>
             <div className="flex gap-2 flex-wrap flex-shrink-0 w-full sm:w-auto">
-              {session?.isAdmin && (
-                <Button 
-                  onClick={() => setShowHistory(true)} 
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 sm:flex-initial text-xs sm:text-sm"
-                >
-                  History
-                </Button>
-              )}
-              {!lead.IsConverted && (
-                <Button 
-                  onClick={handleConvertLead} 
-                  disabled={converting}
-                  className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-initial text-xs sm:text-sm"
-                >
-                  {converting ? <Loader2 className="w-4 h-4 animate-spin sm:mr-2" /> : <ArrowRight className="w-4 h-4 sm:mr-2" />}
-                  <span className="hidden sm:inline">Convert to Opportunity</span>
-                  <span className="sm:hidden">Convert</span>
-                </Button>
+              {isEditing ? (
+                <>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => { setIsEditing(false); setEditData(lead); }}
+                    disabled={saving}
+                    size="sm"
+                    className="flex-1 sm:flex-initial text-xs sm:text-sm"
+                  >
+                    <X className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Cancel</span>
+                  </Button>
+                  <Button 
+                    onClick={handleSave}
+                    disabled={saving}
+                    size="sm"
+                    className="bg-blue-600 hover:bg-blue-700 flex-1 sm:flex-initial text-xs sm:text-sm"
+                  >
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin sm:mr-2" /> : <Save className="w-4 h-4 sm:mr-2" />}
+                    {saving ? 'Saving...' : 'Save'}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button 
+                    onClick={() => { setIsEditing(true); setEditData(lead); }}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 sm:flex-initial text-xs sm:text-sm"
+                  >
+                    <Edit className="w-4 h-4 sm:mr-2" /> <span className="hidden sm:inline">Edit</span>
+                  </Button>
+                  {session?.isAdmin && (
+                    <Button 
+                      onClick={() => setShowHistory(true)} 
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 sm:flex-initial text-xs sm:text-sm"
+                    >
+                      History
+                    </Button>
+                  )}
+                  {!lead.IsConverted && (
+                    <Button 
+                      onClick={handleConvertLead} 
+                      disabled={converting}
+                      className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-initial text-xs sm:text-sm"
+                    >
+                      {converting ? <Loader2 className="w-4 h-4 animate-spin sm:mr-2" /> : <ArrowRight className="w-4 h-4 sm:mr-2" />}
+                      <span className="hidden sm:inline">Convert to Opportunity</span>
+                      <span className="sm:hidden">Convert</span>
+                    </Button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -492,13 +505,62 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableFieldWrapper label="Company" field="Company" value={lead.Company} />
-                    <EditableFieldWrapper label="Email" field="Email" value={lead.Email} />
-                    <EditableFieldWrapper label="Phone" field="Phone" value={lead.Phone} />
-                    <EditableFieldWrapper label="Mobile" field="MobilePhone" value={lead.MobilePhone} />
-                    <EditableFieldWrapper label="Title" field="Title" value={lead.Title} />
-                    <EditableFieldWrapper label="Lead Source" field="LeadSource" value={lead.LeadSource} />
-                    <EditableFieldWrapper label="Industry" field="Industry" value={lead.Industry} />
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Company</label>
+                      {isEditing ? (
+                        <Input value={editData.Company || ''} onChange={(e) => setEditData({...editData, Company: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.Company || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Email</label>
+                      {isEditing ? (
+                        <Input type="email" value={editData.Email || ''} onChange={(e) => setEditData({...editData, Email: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.Email || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Phone</label>
+                      {isEditing ? (
+                        <Input value={editData.Phone || ''} onChange={(e) => setEditData({...editData, Phone: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.Phone || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Mobile</label>
+                      {isEditing ? (
+                        <Input value={editData.MobilePhone || ''} onChange={(e) => setEditData({...editData, MobilePhone: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.MobilePhone || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Title</label>
+                      {isEditing ? (
+                        <Input value={editData.Title || ''} onChange={(e) => setEditData({...editData, Title: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.Title || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Lead Source</label>
+                      {isEditing ? (
+                        <Input value={editData.LeadSource || ''} onChange={(e) => setEditData({...editData, LeadSource: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.LeadSource || '-'}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Industry</label>
+                      {isEditing ? (
+                        <Input value={editData.Industry || ''} onChange={(e) => setEditData({...editData, Industry: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.Industry || '-'}</p>
+                      )}
+                    </div>
                   </div>
                 </CollapsibleContent>
               </div>
@@ -513,22 +575,33 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableFieldWrapper label="Name" field="Name" value={lead.Name} />
-                    <EditableFieldWrapper label="Title" field="Title" value={lead.Title} />
-                    <EditableFieldWrapper label="Birthdate" field="csbs__Birthdate__c" value={lead.csbs__Birthdate__c} />
-                    <EditableFieldWrapper label="Social Security Number" field="csbs__Social_Security_Number_Unencrypted__c" value={lead.csbs__Social_Security_Number_Unencrypted__c} />
-                    <EditableFieldWrapper label="Ownership %" field="csbs__Ownership_Percentage__c" value={lead.csbs__Ownership_Percentage__c} />
-                    <EditableFieldWrapper label="Credit Score" field="csbs__CreditScore__c" value={lead.csbs__CreditScore__c} />
-                    <EditableFieldWrapper label="Application Federal Tax Id" field="csbs__Application_Federal_Tax_Id__c" value={lead.csbs__Application_Federal_Tax_Id__c} />
-                    <EditableFieldWrapper label="Application SSN" field="csbs__Application_SSN__c" value={lead.csbs__Application_SSN__c} />
-                    <EditableFieldWrapper label="Application Owner 2 SSN" field="csbs__Application_Owner_2_SSN__c" value={lead.csbs__Application_Owner_2_SSN__c} />
-                    <EditableFieldWrapper label="Mobile" field="MobilePhone" value={lead.MobilePhone} />
-                    <EditableFieldWrapper label="Email" field="Email" value={lead.Email} />
-                    <EditableFieldWrapper label="Home Address Street" field="csbs__Home_Address_Street__c" value={lead.csbs__Home_Address_Street__c} />
-                    <EditableFieldWrapper label="Home Address City" field="csbs__Home_Address_City__c" value={lead.csbs__Home_Address_City__c} />
-                    <EditableFieldWrapper label="Home Address State" field="csbs__Home_Address_State__c" value={lead.csbs__Home_Address_State__c} />
-                    <EditableFieldWrapper label="Home Address Zip Code" field="csbs__Home_Address_Zip_Code__c" value={lead.csbs__Home_Address_Zip_Code__c} />
-                    <EditableFieldWrapper label="Home Address Country" field="csbs__Home_Address_Country__c" value={lead.csbs__Home_Address_Country__c} />
+                    {[
+                      { label: 'Name', field: 'Name' },
+                      { label: 'Title', field: 'Title' },
+                      { label: 'Birthdate', field: 'csbs__Birthdate__c', type: 'date' },
+                      { label: 'Social Security Number', field: 'csbs__Social_Security_Number_Unencrypted__c' },
+                      { label: 'Ownership %', field: 'csbs__Ownership_Percentage__c', type: 'number' },
+                      { label: 'Credit Score', field: 'csbs__CreditScore__c', type: 'number' },
+                      { label: 'Application Federal Tax Id', field: 'csbs__Application_Federal_Tax_Id__c' },
+                      { label: 'Application SSN', field: 'csbs__Application_SSN__c' },
+                      { label: 'Application Owner 2 SSN', field: 'csbs__Application_Owner_2_SSN__c' },
+                      { label: 'Mobile', field: 'MobilePhone' },
+                      { label: 'Email', field: 'Email', type: 'email' },
+                      { label: 'Home Address Street', field: 'csbs__Home_Address_Street__c' },
+                      { label: 'Home Address City', field: 'csbs__Home_Address_City__c' },
+                      { label: 'Home Address State', field: 'csbs__Home_Address_State__c' },
+                      { label: 'Home Address Zip Code', field: 'csbs__Home_Address_Zip_Code__c' },
+                      { label: 'Home Address Country', field: 'csbs__Home_Address_Country__c' }
+                    ].map(({ label, field, type }) => (
+                      <div key={field}>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                        {isEditing ? (
+                          <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                        ) : (
+                          <p className="text-slate-900">{lead[field] || '-'}</p>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </CollapsibleContent>
               </div>
@@ -543,20 +616,31 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableFieldWrapper label="Owner 2 First Name" field="csbs__Owner_2_First_Name__c" value={lead.csbs__Owner_2_First_Name__c} />
-                    <EditableFieldWrapper label="Owner 2 Last Name" field="csbs__Owner_2_Last_Name__c" value={lead.csbs__Owner_2_Last_Name__c} />
-                    <EditableFieldWrapper label="Owner 2 Title" field="csbs__Owner_2_Title__c" value={lead.csbs__Owner_2_Title__c} />
-                    <EditableFieldWrapper label="Owner 2 Birthday" field="csbs__Owner_2_Birthday__c" value={lead.csbs__Owner_2_Birthday__c} />
-                    <EditableFieldWrapper label="Owner 2 Social Security Number" field="csbs__Owner_2_Social_Security_Number__c" value={lead.csbs__Owner_2_Social_Security_Number__c} />
-                    <EditableFieldWrapper label="Owner 2 Ownership %" field="csbs__Owner_2_Ownership__c" value={lead.csbs__Owner_2_Ownership__c} />
-                    <EditableFieldWrapper label="Owner 2 Credit Score" field="csbs__Owner_2_CreditScore__c" value={lead.csbs__Owner_2_CreditScore__c} />
-                    <EditableFieldWrapper label="Owner 2 Mobile" field="csbs__Owner_2_Mobile__c" value={lead.csbs__Owner_2_Mobile__c} />
-                    <EditableFieldWrapper label="Owner 2 Email" field="csbs__Owner_2_Email__c" value={lead.csbs__Owner_2_Email__c} />
-                    <EditableFieldWrapper label="Owner 2 Home Address Street" field="csbs__Owner_2_Home_Address_Street__c" value={lead.csbs__Owner_2_Home_Address_Street__c} />
-                    <EditableFieldWrapper label="Owner 2 Home Address City" field="csbs__Owner_2_Home_Address_City__c" value={lead.csbs__Owner_2_Home_Address_City__c} />
-                    <EditableFieldWrapper label="Owner 2 Home Address State" field="csbs__Owner_2_Home_Address_State__c" value={lead.csbs__Owner_2_Home_Address_State__c} />
-                    <EditableFieldWrapper label="Owner 2 Home Address Zip Code" field="csbs__Owner_2_Home_Address_Zip_Code__c" value={lead.csbs__Owner_2_Home_Address_Zip_Code__c} />
-                    <EditableFieldWrapper label="Owner 2 Home Address Country" field="csbs__Owner_2_Home_Address_Country__c" value={lead.csbs__Owner_2_Home_Address_Country__c} />
+                    {[
+                      { label: 'Owner 2 First Name', field: 'csbs__Owner_2_First_Name__c' },
+                      { label: 'Owner 2 Last Name', field: 'csbs__Owner_2_Last_Name__c' },
+                      { label: 'Owner 2 Title', field: 'csbs__Owner_2_Title__c' },
+                      { label: 'Owner 2 Birthday', field: 'csbs__Owner_2_Birthday__c', type: 'date' },
+                      { label: 'Owner 2 Social Security Number', field: 'csbs__Owner_2_Social_Security_Number__c' },
+                      { label: 'Owner 2 Ownership %', field: 'csbs__Owner_2_Ownership__c', type: 'number' },
+                      { label: 'Owner 2 Credit Score', field: 'csbs__Owner_2_CreditScore__c', type: 'number' },
+                      { label: 'Owner 2 Mobile', field: 'csbs__Owner_2_Mobile__c' },
+                      { label: 'Owner 2 Email', field: 'csbs__Owner_2_Email__c', type: 'email' },
+                      { label: 'Owner 2 Home Address Street', field: 'csbs__Owner_2_Home_Address_Street__c' },
+                      { label: 'Owner 2 Home Address City', field: 'csbs__Owner_2_Home_Address_City__c' },
+                      { label: 'Owner 2 Home Address State', field: 'csbs__Owner_2_Home_Address_State__c' },
+                      { label: 'Owner 2 Home Address Zip Code', field: 'csbs__Owner_2_Home_Address_Zip_Code__c' },
+                      { label: 'Owner 2 Home Address Country', field: 'csbs__Owner_2_Home_Address_Country__c' }
+                    ].map(({ label, field, type }) => (
+                      <div key={field}>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                        {isEditing ? (
+                          <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                        ) : (
+                          <p className="text-slate-900">{lead[field] || '-'}</p>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </CollapsibleContent>
               </div>
@@ -571,10 +655,21 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableFieldWrapper label="Amount Requested" field="csbs__Amount_Requested__c" value={lead.csbs__Amount_Requested__c} />
-                    <EditableFieldWrapper label="Use of Proceeds" field="csbs__Use_of_Proceeds__c" value={lead.csbs__Use_of_Proceeds__c} />
-                    <EditableFieldWrapper label="Monthly Revenue" field="csbs__Estimated_Monthly_Revenue__c" value={lead.csbs__Estimated_Monthly_Revenue__c} />
-                    <EditableFieldWrapper label="Annual Revenue" field="AnnualRevenue" value={lead.AnnualRevenue} />
+                    {[
+                      { label: 'Amount Requested', field: 'csbs__Amount_Requested__c', type: 'number' },
+                      { label: 'Use of Proceeds', field: 'csbs__Use_of_Proceeds__c' },
+                      { label: 'Monthly Revenue', field: 'csbs__Estimated_Monthly_Revenue__c', type: 'number' },
+                      { label: 'Annual Revenue', field: 'AnnualRevenue', type: 'number' }
+                    ].map(({ label, field, type }) => (
+                      <div key={field}>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                        {isEditing ? (
+                          <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                        ) : (
+                          <p className="text-slate-900">{lead[field] || '-'}</p>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </CollapsibleContent>
               </div>
@@ -589,17 +684,55 @@ export default function LeadDetail() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="p-4 pt-0 grid sm:grid-cols-2 gap-4 text-sm">
-                    <EditableFieldWrapper label="Application Industry" field="csbs__Application_Industry__c" value={lead.csbs__Application_Industry__c} />
-                    <EditableFieldWrapper label="Industry" field="Industry" value={lead.Industry} />
-                    <EditableFieldWrapper label="Entity Type" field="csbs__Entity_Type__c" value={lead.csbs__Entity_Type__c} />
-                    <EditableFieldWrapper label="Federal Tax ID" field="csbs__Federal_Tax_ID_Unencrypted__c" value={lead.csbs__Federal_Tax_ID_Unencrypted__c} />
-                    <EditableFieldWrapper label="State of Incorporation" field="csbs__State_of_Incorporation__c" value={lead.csbs__State_of_Incorporation__c} />
-                    <EditableFieldWrapper label="Business Start Date" field="csbs__Business_Start_Date_Current_Ownership__c" value={lead.csbs__Business_Start_Date_Current_Ownership__c} />
-                    <EditableFieldWrapper label="Seasonal Business" field="csbs__Seasonal_Business__c" value={lead.csbs__Seasonal_Business__c} />
-                    <EditableFieldWrapper label="Seasonal Peak Months" field="csbs__Seasonal_Peak_Months__c" value={lead.csbs__Seasonal_Peak_Months__c} />
-                    <EditableFieldWrapper label="E-Commerce" field="csbs__E_Commerce__c" value={lead.csbs__E_Commerce__c} />
-                    <EditableFieldWrapper label="Franchise" field="csbs__Franchise__c" value={lead.csbs__Franchise__c} />
-                    <EditableFieldWrapper label="Home-Based Business" field="csbs__Home_Based_Business__c" value={lead.csbs__Home_Based_Business__c} />
+                    {[
+                      { label: 'Application Industry', field: 'csbs__Application_Industry__c' },
+                      { label: 'Industry', field: 'Industry' },
+                      { label: 'Entity Type', field: 'csbs__Entity_Type__c' },
+                      { label: 'Federal Tax ID', field: 'csbs__Federal_Tax_ID_Unencrypted__c' },
+                      { label: 'State of Incorporation', field: 'csbs__State_of_Incorporation__c' },
+                      { label: 'Business Start Date', field: 'csbs__Business_Start_Date_Current_Ownership__c', type: 'date' }
+                    ].map(({ label, field, type }) => (
+                      <div key={field}>
+                        <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                        {isEditing ? (
+                          <Input type={type || 'text'} value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                        ) : (
+                          <p className="text-slate-900">{lead[field] || '-'}</p>
+                        )}
+                      </div>
+                    ))}
+                    {[
+                      { label: 'Seasonal Business', field: 'csbs__Seasonal_Business__c' },
+                      { label: 'E-Commerce', field: 'csbs__E_Commerce__c' },
+                      { label: 'Franchise', field: 'csbs__Franchise__c' },
+                      { label: 'Home-Based Business', field: 'csbs__Home_Based_Business__c' }
+                    ].map(({ label, field }) => (
+                      <div key={field} className="flex items-center space-x-2">
+                        {isEditing ? (
+                          <>
+                            <Checkbox
+                              id={field}
+                              checked={editData[field] || false}
+                              onCheckedChange={(checked) => setEditData({...editData, [field]: checked})}
+                            />
+                            <label htmlFor={field} className="text-xs font-medium text-slate-700 cursor-pointer">{label}</label>
+                          </>
+                        ) : (
+                          <>
+                            <label className="block text-xs font-medium text-slate-700">{label}</label>
+                            <p className="text-slate-900">{lead[field] ? 'Yes' : 'No'}</p>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-700 mb-1">Seasonal Peak Months</label>
+                      {isEditing ? (
+                        <Input value={editData.csbs__Seasonal_Peak_Months__c || ''} onChange={(e) => setEditData({...editData, csbs__Seasonal_Peak_Months__c: e.target.value})} />
+                      ) : (
+                        <p className="text-slate-900">{lead.csbs__Seasonal_Peak_Months__c || '-'}</p>
+                      )}
+                    </div>
                   </div>
                 </CollapsibleContent>
               </div>
@@ -617,17 +750,39 @@ export default function LeadDetail() {
                     <div>
                       <p className="text-xs font-semibold text-slate-600 mb-2">Trade References</p>
                       <div className="grid sm:grid-cols-3 gap-4 text-sm">
-                        <EditableFieldWrapper label="Reference 1" field="csbs__Business_Trade_Reference_1__c" value={lead.csbs__Business_Trade_Reference_1__c} />
-                        <EditableFieldWrapper label="Reference 2" field="csbs__Business_Trade_Reference_2__c" value={lead.csbs__Business_Trade_Reference_2__c} />
-                        <EditableFieldWrapper label="Reference 3" field="csbs__Business_Trade_Reference_3__c" value={lead.csbs__Business_Trade_Reference_3__c} />
+                        {[
+                          { label: 'Reference 1', field: 'csbs__Business_Trade_Reference_1__c' },
+                          { label: 'Reference 2', field: 'csbs__Business_Trade_Reference_2__c' },
+                          { label: 'Reference 3', field: 'csbs__Business_Trade_Reference_3__c' }
+                        ].map(({ label, field }) => (
+                          <div key={field}>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                            {isEditing ? (
+                              <Input value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                            ) : (
+                              <p className="text-slate-900">{lead[field] || '-'}</p>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-slate-600 mb-2">Existing Lenders</p>
                       <div className="grid sm:grid-cols-3 gap-4 text-sm">
-                        <EditableFieldWrapper label="Lender 1" field="Lender_Name_1__c" value={lead.Lender_Name_1__c} />
-                        <EditableFieldWrapper label="Lender 2" field="Lender_Name_2__c" value={lead.Lender_Name_2__c} />
-                        <EditableFieldWrapper label="Lender 3" field="Lender_Name_3__c" value={lead.Lender_Name_3__c} />
+                        {[
+                          { label: 'Lender 1', field: 'Lender_Name_1__c' },
+                          { label: 'Lender 2', field: 'Lender_Name_2__c' },
+                          { label: 'Lender 3', field: 'Lender_Name_3__c' }
+                        ].map(({ label, field }) => (
+                          <div key={field}>
+                            <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
+                            {isEditing ? (
+                              <Input value={editData[field] || ''} onChange={(e) => setEditData({...editData, [field]: e.target.value})} />
+                            ) : (
+                              <p className="text-slate-900">{lead[field] || '-'}</p>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
