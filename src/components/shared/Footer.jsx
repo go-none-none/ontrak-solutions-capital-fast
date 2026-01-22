@@ -8,7 +8,6 @@ export default function Footer() {
     <footer className="bg-slate-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Brand */}
           <div className="space-y-6">
             <Link to={createPageUrl('Home')} className="inline-block">
             <img 
@@ -28,7 +27,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h4 className="font-semibold mb-6 text-white">Quick Links</h4>
             <ul className="space-y-3">
@@ -54,7 +52,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Industries */}
           <div>
             <h4 className="font-semibold mb-6 text-white">Industries</h4>
             <ul className="space-y-3">
@@ -81,7 +78,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* About */}
           <div>
             <h4 className="font-semibold mb-6 text-white">About OnTrak</h4>
             <ul className="space-y-4">
