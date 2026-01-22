@@ -300,7 +300,6 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
         </DialogContent>
       </Dialog>
 
-      {/* Iframe Modal */}
       <Dialog open={iframeModal} onOpenChange={setIframeModal}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0">
           <DialogHeader className="px-6 py-4 border-b">

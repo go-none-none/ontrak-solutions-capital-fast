@@ -68,7 +68,6 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
         </DialogHeader>
 
         <div className="space-y-6 mt-4">
-          {/* Primary Info */}
           <div className="grid grid-cols-2 gap-4">
             {isLead ? (
               <>
@@ -152,7 +151,6 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
             )}
           </div>
 
-          {/* Company & Address Information */}
           <div className="border-t pt-4">
             <h3 className="font-semibold text-slate-900 mb-3">Company & Address Details</h3>
             <div className="grid grid-cols-2 gap-3 text-sm">
@@ -222,7 +220,6 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
             </div>
           </div>
 
-          {/* Call Disposition (for leads) */}
           {isLead && record.Call_Disposition__c && (
            <div className="border-t pt-4">
              <h3 className="font-semibold text-slate-900 mb-3">Call Disposition</h3>
@@ -230,7 +227,6 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
            </div>
           )}
 
-          {/* Additional Details */}
           <div className="border-t pt-4">
            <h3 className="font-semibold text-slate-900 mb-3">Additional Information</h3>
            <div className="grid grid-cols-2 gap-3 text-sm">
@@ -304,7 +300,6 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
            </div>
           </div>
 
-          {/* Activity Timeline */}
           {isLead && session && (
            <div className="border-t pt-4">
              <ActivityPanel
@@ -315,7 +310,6 @@ export default function RecordDetailsModal({ record, type, isOpen, onClose, expa
            </div>
           )}
 
-          {/* Action Buttons */}
           <div className="flex gap-3 pt-4 border-t">
             <Button variant="outline" onClick={onClose} className="flex-1">
               Close
