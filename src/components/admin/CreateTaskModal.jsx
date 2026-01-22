@@ -135,7 +135,6 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error creating task:', error);
       alert('Failed to create task: ' + (error.response?.data?.error || error.message));
     } finally {
       setLoading(false);
@@ -264,14 +263,6 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
                         <p className="text-xs text-slate-500">{record.type}</p>
                       </button>
                     ))}
-                  {relatedRecords.filter(r => 
-                    r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    r.type.toLowerCase().includes(searchTerm.toLowerCase())
-                  ).length === 0 && (
-                    <div className="px-3 py-4 text-center text-sm text-slate-500">
-                      No matches found
-                    </div>
-                  )}
                 </div>
               )}
             </div>
@@ -303,7 +294,7 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
             <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="bg-[#08708E]">
+            <Button type="submit" disabled={loading} className="bg-orange-600 hover:bg-orange-700">
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />

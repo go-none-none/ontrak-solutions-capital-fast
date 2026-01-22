@@ -34,7 +34,6 @@ export default function SendEmailModal({ recipientEmail, recipientName }) {
       setOpen(false);
       setFormData({ subject: '', message: '' });
     } catch (error) {
-      console.error('Send email error:', error);
       toast.error('Failed to send email');
     } finally {
       setSending(false);

@@ -26,7 +26,6 @@ export default function PowerDialer({ phoneNumber, recordId, session, onCallComp
       
       setCallId(response.data.callId);
     } catch (error) {
-      console.error('Call error:', error);
       alert(`Failed to initiate call: ${error.response?.data?.error || error.message}`);
       setCalling(false);
     }
@@ -54,7 +53,6 @@ export default function PowerDialer({ phoneNumber, recordId, session, onCallComp
       
       if (onCallComplete) onCallComplete();
     } catch (error) {
-      console.error('Disposition error:', error);
       alert('Failed to save disposition');
     } finally {
       setSaving(false);
@@ -161,11 +159,7 @@ export default function PowerDialer({ phoneNumber, recordId, session, onCallComp
                       </div>
 
                       <div className="flex gap-3">
-                        <Button
-                          onClick={handleEndCall}
-                          variant="outline"
-                          className="flex-1"
-                        >
+                        <Button onClick={handleEndCall} variant="outline" className="flex-1">
                           <PhoneOff className="w-4 h-4 mr-2" />
                           End Call
                         </Button>
