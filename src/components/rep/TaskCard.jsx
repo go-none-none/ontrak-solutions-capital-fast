@@ -28,42 +28,42 @@ export default function TaskCard({ tasksData, onClick, loading, isActive }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
       onClick={onClick}
-      className={`bg-white rounded-2xl p-6 shadow-sm cursor-pointer transition-all ${
-        isActive ? 'ring-2 ring-[#08708E] shadow-md' : 'ring-2 ring-transparent hover:ring-[#08708E] hover:shadow-md'
+      className={`bg-white rounded-xl p-3 shadow-sm cursor-pointer transition-all ${
+        isActive ? 'ring-2 ring-[#08708E] shadow-md' : 'hover:shadow-md'
       }`}
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-slate-600 mb-1">My Tasks</p>
-          <p className="text-3xl font-bold text-slate-900">{total}</p>
+          <p className="text-xs text-slate-600 mb-0.5">My Tasks</p>
+          <p className="text-2xl font-bold text-slate-900">{total}</p>
           
           {/* Breakdown */}
-          <div className="mt-3 space-y-1">
+          <div className="mt-1 space-y-0.5">
             {overdue.length > 0 && (
-              <div className="flex items-center gap-2 text-xs text-red-600">
+              <div className="flex items-center gap-1 text-xs text-red-600">
                 <AlertCircle className="w-3 h-3" />
                 <span className="font-semibold">{overdue.length} Overdue</span>
               </div>
             )}
             {dueToday.length > 0 && (
-              <div className="flex items-center gap-2 text-xs text-orange-600">
+              <div className="flex items-center gap-1 text-xs text-orange-600">
                 <Clock className="w-3 h-3" />
                 <span className="font-semibold">{dueToday.length} Due Today</span>
               </div>
             )}
             {dueThisWeek.length > 0 && (
-              <div className="flex items-center gap-2 text-xs text-blue-600">
+              <div className="flex items-center gap-1 text-xs text-blue-600">
                 <Calendar className="w-3 h-3" />
                 <span className="font-semibold">{dueThisWeek.length} This Week</span>
               </div>
             )}
             {total === 0 && (
-              <p className="text-xs text-slate-500 mt-2">No open tasks</p>
+              <p className="text-xs text-slate-500 mt-1">No open tasks</p>
             )}
           </div>
         </div>
-        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-          <CheckSquare className="w-7 h-7 text-white" />
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+          <CheckSquare className="w-5 h-5 text-white" />
         </div>
       </div>
     </motion.div>
