@@ -22,25 +22,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
   const [paymentMethodOptions, setPaymentMethodOptions] = useState([]);
 
   const [formData, setFormData] = useState({
-    csbs__Funded__c: '',
-    csbs__Product__c: '',
-    csbs__Buy_Rate__c: '',
-    csbs__Payoff__c: '',
-    csbs__Factor_Rate__c: '',
-    csbs__Payment_Frequency__c: '',
-    csbs__Payback__c: '',
-    csbs__Payment_Amount__c: '',
-    csbs__Term__c: '',
-    csbs__Payment_Method__c: '',
-    csbs__Holdback_Percentage__c: '',
-    csbs__Selected__c: false,
-    csbs__Origination_Fee_Percentage__c: '',
-    csbs__Origination_Fee_Amount__c: '',
-    csbs__Commission_Percentage__c: '',
-    csbs__Commission_Amount__c: '',
-    csbs__Draw_Fee_Percent__c: '',
-    csbs__Draw_Fee_Amount__c: '',
-    csbs__Notes__c: ''
+    csbs__Funded__c: '', csbs__Product__c: '', csbs__Buy_Rate__c: '', csbs__Payoff__c: '', csbs__Factor_Rate__c: '', csbs__Payment_Frequency__c: '', csbs__Payback__c: '', csbs__Payment_Amount__c: '', csbs__Term__c: '', csbs__Payment_Method__c: '', csbs__Holdback_Percentage__c: '', csbs__Selected__c: false, csbs__Origination_Fee_Percentage__c: '', csbs__Origination_Fee_Amount__c: '', csbs__Commission_Percentage__c: '', csbs__Commission_Amount__c: '', csbs__Draw_Fee_Percent__c: '', csbs__Draw_Fee_Amount__c: '', csbs__Notes__c: ''
   });
 
   useEffect(() => {
@@ -51,25 +33,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
         setStep(3);
         setSelectedSubmission(offer.csbs__Submission__c);
         setFormData({
-          csbs__Funded__c: offer.csbs__Funded__c || '',
-          csbs__Product__c: offer.csbs__Product__c || '',
-          csbs__Buy_Rate__c: offer.csbs__Buy_Rate__c || '',
-          csbs__Payoff__c: offer.csbs__Payoff__c || '',
-          csbs__Factor_Rate__c: offer.csbs__Factor_Rate__c || '',
-          csbs__Payment_Frequency__c: offer.csbs__Payment_Frequency__c || '',
-          csbs__Payback__c: offer.csbs__Payback__c || '',
-          csbs__Payment_Amount__c: offer.csbs__Payment_Amount__c || '',
-          csbs__Term__c: offer.csbs__Term__c || '',
-          csbs__Payment_Method__c: offer.csbs__Payment_Method__c || '',
-          csbs__Holdback_Percentage__c: offer.csbs__Holdback_Percentage__c || '',
-          csbs__Selected__c: offer.csbs__Selected__c || false,
-          csbs__Origination_Fee_Percentage__c: offer.csbs__Origination_Fee_Percentage__c || '',
-          csbs__Origination_Fee_Amount__c: offer.csbs__Origination_Fee_Amount__c || '',
-          csbs__Commission_Percentage__c: offer.csbs__Commission_Percentage__c || '',
-          csbs__Commission_Amount__c: offer.csbs__Commission_Amount__c || '',
-          csbs__Draw_Fee_Percent__c: offer.csbs__Draw_Fee_Percent__c || '',
-          csbs__Draw_Fee_Amount__c: offer.csbs__Draw_Fee_Amount__c || '',
-          csbs__Notes__c: offer.csbs__Notes__c || ''
+          csbs__Funded__c: offer.csbs__Funded__c || '', csbs__Product__c: offer.csbs__Product__c || '', csbs__Buy_Rate__c: offer.csbs__Buy_Rate__c || '', csbs__Payoff__c: offer.csbs__Payoff__c || '', csbs__Factor_Rate__c: offer.csbs__Factor_Rate__c || '', csbs__Payment_Frequency__c: offer.csbs__Payment_Frequency__c || '', csbs__Payback__c: offer.csbs__Payback__c || '', csbs__Payment_Amount__c: offer.csbs__Payment_Amount__c || '', csbs__Term__c: offer.csbs__Term__c || '', csbs__Payment_Method__c: offer.csbs__Payment_Method__c || '', csbs__Holdback_Percentage__c: offer.csbs__Holdback_Percentage__c || '', csbs__Selected__c: offer.csbs__Selected__c || false, csbs__Origination_Fee_Percentage__c: offer.csbs__Origination_Fee_Percentage__c || '', csbs__Origination_Fee_Amount__c: offer.csbs__Origination_Fee_Amount__c || '', csbs__Commission_Percentage__c: offer.csbs__Commission_Percentage__c || '', csbs__Commission_Amount__c: offer.csbs__Commission_Amount__c || '', csbs__Draw_Fee_Percent__c: offer.csbs__Draw_Fee_Percent__c || '', csbs__Draw_Fee_Amount__c: offer.csbs__Draw_Fee_Amount__c || '', csbs__Notes__c: offer.csbs__Notes__c || ''
         });
       } else {
         resetForm();
@@ -83,25 +47,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
     setSelectedSubmission('');
     setLoading(false);
     setFormData({
-      csbs__Funded__c: '',
-      csbs__Product__c: '',
-      csbs__Buy_Rate__c: '',
-      csbs__Payoff__c: '',
-      csbs__Factor_Rate__c: '',
-      csbs__Payment_Frequency__c: '',
-      csbs__Payback__c: '',
-      csbs__Payment_Amount__c: '',
-      csbs__Term__c: '',
-      csbs__Payment_Method__c: '',
-      csbs__Holdback_Percentage__c: '',
-      csbs__Selected__c: false,
-      csbs__Origination_Fee_Percentage__c: '',
-      csbs__Origination_Fee_Amount__c: '',
-      csbs__Commission_Percentage__c: '',
-      csbs__Commission_Amount__c: '',
-      csbs__Draw_Fee_Percent__c: '',
-      csbs__Draw_Fee_Amount__c: '',
-      csbs__Notes__c: ''
+      csbs__Funded__c: '', csbs__Product__c: '', csbs__Buy_Rate__c: '', csbs__Payoff__c: '', csbs__Factor_Rate__c: '', csbs__Payment_Frequency__c: '', csbs__Payback__c: '', csbs__Payment_Amount__c: '', csbs__Term__c: '', csbs__Payment_Method__c: '', csbs__Holdback_Percentage__c: '', csbs__Selected__c: false, csbs__Origination_Fee_Percentage__c: '', csbs__Origination_Fee_Amount__c: '', csbs__Commission_Percentage__c: '', csbs__Commission_Amount__c: '', csbs__Draw_Fee_Percent__c: '', csbs__Draw_Fee_Amount__c: '', csbs__Notes__c: ''
     });
   };
 
@@ -263,7 +209,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
                 <div className="flex justify-end gap-2">
                   {!offer && <Button variant="outline" onClick={() => setStep(2)}>Back</Button>}
                   <Button variant="outline" onClick={handleClose}>Cancel</Button>
-                  <Button onClick={handleSubmit} disabled={loading}>{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}</Button>
+                  <Button onClick={handleSubmit} disabled={loading} className="bg-orange-600 hover:bg-orange-700">{loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}</Button>
                 </div>
               </>
             )}
