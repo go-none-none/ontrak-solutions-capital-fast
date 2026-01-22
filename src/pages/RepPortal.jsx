@@ -105,7 +105,7 @@ export default function RepPortal() {
 
   // Poll for new SMS notifications globally (from contacts with phone numbers)
   useEffect(() => {
-    if (!session || !contacts.length) return;
+    if (!session || !contacts || contacts.length === 0) return;
     
     const pollSms = async () => {
       const currentTime = new Date();
