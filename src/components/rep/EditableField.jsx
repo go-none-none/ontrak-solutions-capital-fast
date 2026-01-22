@@ -112,6 +112,24 @@ export default function EditableField({
   const isEditing = editing[field];
   const displayValue = isEditing ? editValues[field] : value;
   
+  // Use local handlers to prevent re-renders
+  const handleEdit = React.useCallback((newValue) => {
+    onEdit(field, newValue);
+  }, [field, onEdit]);
+  
+  const handleSave = React.useCallback(() => {
+    onSave(field);
+  }, [field, onSave]);
+  
+  const handleCancel = React.useCallback(() => {
+    onCancel(field);
+  }, [field, onCancel]);
+  
+  const handleStartEdit = React.useCallback(() => {
+    onEdit(field, value || (fieldConfig.type === 'checkbox' ? false : ''));
+    onStartEdit(field);
+  }, [field, value, fieldConfig.type, onEdit, onStartEdit]);
+  
   const renderDisplayValue = () => {
     if (fieldConfig.type === 'checkbox') {
       return value ? 'Yes' : 'No';
@@ -130,7 +148,7 @@ export default function EditableField({
             <input
               type="checkbox"
               checked={displayValue || false}
-              onChange={(e) => onEdit(field, e.target.checked)}
+              onChange={(e) => handleEdit(e.target.checked)}
               className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
             />
             <span className="text-sm text-slate-700">
@@ -143,7 +161,7 @@ export default function EditableField({
         return (
           <Select 
             value={displayValue || ''} 
-            onValueChange={(val) => onEdit(field, val)}
+            onValueChange={handleEdit}
           >
             <SelectTrigger className="h-8 text-sm">
               <SelectValue placeholder="Select..." />
@@ -160,7 +178,7 @@ export default function EditableField({
         return (
           <Textarea
             value={displayValue || ''}
-            onChange={(e) => onEdit(field, e.target.value)}
+            onChange={(e) => handleEdit(e.target.value)}
             className="text-sm min-h-20"
             rows={3}
           />
@@ -171,7 +189,7 @@ export default function EditableField({
           <Input
             type="date"
             value={displayValue || ''}
-            onChange={(e) => onEdit(field, e.target.value)}
+            onChange={(e) => handleEdit(e.target.value)}
             className="h-8 text-sm"
           />
         );
@@ -182,7 +200,7 @@ export default function EditableField({
             <Input
               type="number"
               value={displayValue || ''}
-              onChange={(e) => onEdit(field, e.target.value)}
+              onChange={(e) => handleEdit(e.target.value)}
               className="h-8 text-sm"
               step={fieldConfig.suffix === '%' ? '0.01' : '1'}
             />
@@ -197,7 +215,7 @@ export default function EditableField({
           <Input
             type={fieldConfig.type || 'text'}
             value={displayValue || ''}
-            onChange={(e) => onEdit(field, e.target.value)}
+            onChange={(e) => handleEdit(e.target.value)}
             className="h-8 text-sm"
           />
         );
@@ -213,10 +231,10 @@ export default function EditableField({
             {renderEditControl()}
           </div>
           <div className="flex gap-1">
-            <Button size="sm" variant="ghost" onClick={() => onSave(field)} className="h-8 w-8 p-0">
+            <Button size="sm" variant="ghost" onClick={handleSave} className="h-8 w-8 p-0">
               <Check className="w-4 h-4 text-green-600" />
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => onCancel(field)} className="h-8 w-8 p-0">
+            <Button size="sm" variant="ghost" onClick={handleCancel} className="h-8 w-8 p-0">
               <X className="w-4 h-4 text-red-600" />
             </Button>
           </div>
@@ -231,10 +249,7 @@ export default function EditableField({
               size="sm"
               variant="ghost"
               className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0"
-              onClick={() => {
-                onEdit(field, value || (fieldConfig.type === 'checkbox' ? false : ''));
-                onStartEdit(field);
-              }}
+              onClick={handleStartEdit}
             >
               <Edit className="w-3 h-3" />
             </Button>
