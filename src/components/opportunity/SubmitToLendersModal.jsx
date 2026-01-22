@@ -39,8 +39,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
         title: file.ContentDocument.Title,
         extension: file.ContentDocument.FileExtension,
         size: file.ContentDocument.ContentSize,
-        createdDate: file.ContentDocument.CreatedDate,
-        lastModifiedDate: file.ContentDocument.LastModifiedDate
+        createdDate: file.ContentDocument.CreatedDate
       }));
 
       setFiles(mappedFiles);
@@ -67,7 +66,6 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
       
       setLenders(lendersWithStatus);
     } catch (error) {
-      console.error('Error loading lenders:', error);
       alert('Failed to load lenders: ' + error.message);
     } finally {
       setLoading(false);
@@ -78,45 +76,33 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
     if (lender.csbs__Minimum_Credit_Score__c && (!opp.csbs__Credit_Score__c || opp.csbs__Credit_Score__c < lender.csbs__Minimum_Credit_Score__c)) {
       return 'unqualified';
     }
-
     if (lender.csbs__Minimum_Months_in_Business__c && (!opp.csbs__Months_In_Business__c || opp.csbs__Months_In_Business__c < lender.csbs__Minimum_Months_in_Business__c)) {
       return 'unqualified';
     }
-
     if (lender.csbs__Minimum_Monthly_Deposit_Amount__c && (!opp.csbs__Avg_Bank_Deposits__c || opp.csbs__Avg_Bank_Deposits__c < lender.csbs__Minimum_Monthly_Deposit_Amount__c)) {
       return 'unqualified';
     }
-
     if (lender.csbs__Minimum_Monthly_Deposit_Count__c && (!opp.csbs__Avg_Bank_Deposits_Number__c || opp.csbs__Avg_Bank_Deposits_Number__c < lender.csbs__Minimum_Monthly_Deposit_Count__c)) {
       return 'unqualified';
     }
-
     if (lender.csbs__Maximum_NSFs__c && opp.csbs__Avg_NSFs__c > lender.csbs__Maximum_NSFs__c) {
       return 'unqualified';
     }
-
     if (lender.csbs__Maximum_Negative_Days__c && opp.csbs__Avg_Negative_Days__c > lender.csbs__Maximum_Negative_Days__c) {
       return 'unqualified';
     }
-
-    if (lender.csbs__Minimum_Average_Daily_Balance__c && (!opp.csbs__Avg_Daily_Balance__c || opp.csbs__Avg_Daily_Balance__c < lender.csbs__Minimum_Average_Daily_Balance__c)) {
-      return 'unqualified';
-    }
-
     if (lender.csbs__Restricted_Industries__c && opp.Account?.Industry) {
       const restrictedIndustries = lender.csbs__Restricted_Industries__c.split(';');
       if (restrictedIndustries.includes(opp.Account.Industry)) {
         return 'unqualified';
       }
     }
-
     if (lender.csbs__Restricted_States__c && opp.Account?.BillingState) {
       const restrictedStates = lender.csbs__Restricted_States__c.split(';');
       if (restrictedStates.includes(opp.Account.BillingState)) {
         return 'unqualified';
       }
     }
-
     return 'qualified';
   };
 
@@ -147,7 +133,6 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
       if (onSuccess) onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error creating submissions:', error);
       alert('Failed to create submissions');
     } finally {
       setSubmitting(false);
@@ -260,9 +245,6 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                           <div className="flex gap-3 text-xs text-slate-500 mt-1">
                             <span>.{file.extension}</span>
                             <span>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
-                            {file.createdDate && (
-                              <span>{new Date(file.createdDate).toLocaleDateString()}</span>
-                            )}
                           </div>
                         </div>
                         {selectedFiles[file.id] && (
@@ -276,7 +258,7 @@ export default function SubmitToLendersModal({ isOpen, onClose, opportunity, ses
                 )}
                 {files.length > 0 && Object.values(selectedFiles).filter(Boolean).length > 0 && (
                   <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-                    {Object.values(selectedFiles).filter(Boolean).length} file(s) selected for submission
+                    {Object.values(selectedFiles).filter(Boolean).length} file(s) selected
                   </div>
                 )}
               </TabsContent>

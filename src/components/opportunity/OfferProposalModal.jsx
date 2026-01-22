@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Loader2, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 const formatCurrency = (amount) => {
@@ -22,11 +22,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   
-  const [pdfData, setPdfData] = useState({
-    linkLabel: '',
-    fileName: ''
-  });
-
   const [emailData, setEmailData] = useState({
     to: contactEmail || '',
     cc: '',
@@ -40,7 +35,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
       setStep(1);
       setSelectedOffers([]);
       setSent(false);
-      setPdfData({});
       setEmailData({
         to: contactEmail || '',
         cc: '',
@@ -94,21 +88,17 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
     try {
       const selected = offers.filter(o => selectedOffers.includes(o.Id));
 
-      const response = await base44.functions.invoke('sendClientEmail', {
+      await base44.functions.invoke('sendClientEmail', {
         recipientEmail: emailData.to,
         recipientName: opportunity.Account?.Name || 'Valued Customer',
         subject: emailData.subject,
         message: emailData.body,
-        senderName: session.name || 'OnTrak Capital',
+        senderName: session.name || 'Capital',
         offers: selected,
         opportunityId: opportunity.Id,
         sessionToken: session.token,
         sessionInstanceUrl: session.instanceUrl
       });
-
-      if (!response.data.pdfUploaded) {
-        console.warn('PDF was not uploaded to Salesforce');
-      }
 
       setSent(true);
       setTimeout(() => {
@@ -116,7 +106,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         onClose();
       }, 2000);
     } catch (error) {
-      console.error('Send error:', error);
       alert('Failed to send proposal: ' + (error.message || 'Unknown error'));
     } finally {
       setLoading(false);
@@ -132,11 +121,11 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
 
         <div className="mb-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className={`w-2 h-2 rounded-full ${step >= 1 ? 'bg-blue-600' : 'bg-slate-200'}`} />
-            <div className={`flex-1 h-1 rounded ${step >= 2 ? 'bg-blue-600' : 'bg-slate-200'}`} />
-            <div className={`w-2 h-2 rounded-full ${step >= 2 ? 'bg-blue-600' : 'bg-slate-200'}`} />
-            <div className={`flex-1 h-1 rounded ${step >= 3 ? 'bg-blue-600' : 'bg-slate-200'}`} />
-            <div className={`w-2 h-2 rounded-full ${step >= 3 ? 'bg-blue-600' : 'bg-slate-200'}`} />
+            <div className={`w-2 h-2 rounded-full ${step >= 1 ? 'bg-orange-600' : 'bg-slate-200'}`} />
+            <div className={`flex-1 h-1 rounded ${step >= 2 ? 'bg-orange-600' : 'bg-slate-200'}`} />
+            <div className={`w-2 h-2 rounded-full ${step >= 2 ? 'bg-orange-600' : 'bg-slate-200'}`} />
+            <div className={`flex-1 h-1 rounded ${step >= 3 ? 'bg-orange-600' : 'bg-slate-200'}`} />
+            <div className={`w-2 h-2 rounded-full ${step >= 3 ? 'bg-orange-600' : 'bg-slate-200'}`} />
           </div>
         </div>
 
@@ -174,12 +163,12 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
             <h3 className="font-semibold text-slate-900">Email Details</h3>
             <div className="border-t pt-4">
               <h4 className="font-medium text-slate-900 mb-4">Email Recipients</h4>
-              <div><Label htmlFor="to">*To</Label><Input id="to" type="email" value={emailData.to} onChange={(e) => setEmailData({ ...emailData, to: e.target.value })} placeholder="recipient@example.com" /></div>
+              <div><Label htmlFor="to">To</Label><Input id="to" type="email" value={emailData.to} onChange={(e) => setEmailData({ ...emailData, to: e.target.value })} placeholder="recipient@example.com" /></div>
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div><Label htmlFor="cc">CC</Label><Input id="cc" type="email" value={emailData.cc} onChange={(e) => setEmailData({ ...emailData, cc: e.target.value })} placeholder="cc@example.com" /></div>
                 <div><Label htmlFor="bcc">BCC</Label><Input id="bcc" type="email" value={emailData.bcc} onChange={(e) => setEmailData({ ...emailData, bcc: e.target.value })} placeholder="bcc@example.com" /></div>
               </div>
-              <div className="mt-4"><Label htmlFor="subject">*Subject</Label><Input id="subject" value={emailData.subject} onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })} /></div>
+              <div className="mt-4"><Label htmlFor="subject">Subject</Label><Input id="subject" value={emailData.subject} onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })} /></div>
             </div>
           </div>
         )}
@@ -195,20 +184,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
             <div className="bg-slate-50 border rounded-lg p-4">
               <p className="text-slate-600 font-medium text-sm mb-3">Preview:</p>
               <p className="text-slate-900 text-sm whitespace-pre-wrap">{emailData.body}</p>
-              <p className="text-slate-600 text-xs mt-4 pt-4 border-t">Your offers and PDF link will be included in the email automatically.</p>
-            </div>
-            <div>
-              <Label htmlFor="customMessage" className="mb-2 block font-medium">Add Custom Message (Optional)</Label>
-              <textarea
-                id="customMessage"
-                placeholder="Add any additional message before the offers..."
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                style={{ height: '100px' }}
-                onChange={(e) => setEmailData(prev => ({
-                  ...prev,
-                  customMessage: e.target.value
-                }))}
-              />
             </div>
           </div>
         )}
@@ -217,7 +192,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
           <div className="flex flex-col items-center justify-center py-8">
             <CheckCircle2 className="w-16 h-16 text-green-600 mb-3" />
             <p className="text-lg font-semibold text-slate-900">Proposal Sent!</p>
-            <p className="text-sm text-slate-600">Your offer proposal has been sent successfully.</p>
           </div>
         )}
 
@@ -237,7 +211,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
               <Button
                 onClick={handleNextStep}
                 disabled={loading || (step === 1 && selectedOffers.length === 0)}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-orange-600 hover:bg-orange-700"
               >
                 Next
               </Button>
@@ -245,7 +219,7 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
               <Button
                 onClick={handleSendProposal}
                 disabled={loading || !emailData.to}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-orange-600 hover:bg-orange-700"
               >
                 {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Send'}
               </Button>
