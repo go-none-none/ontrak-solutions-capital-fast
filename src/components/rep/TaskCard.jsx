@@ -29,7 +29,7 @@ export default function TaskCard({ tasksData, onClick, loading, isActive }) {
       transition={{ delay: 0.2 }}
       onClick={onClick}
       className={`bg-white rounded-xl p-3 shadow-sm cursor-pointer transition-all ${
-        isActive ? 'ring-2 ring-[#08708E] shadow-md' : 'hover:shadow-md'
+        isActive ? 'ring-2 ring-orange-600 shadow-md' : 'hover:shadow-md'
       }`}
     >
       <div className="flex items-center justify-between">
@@ -61,7 +61,7 @@ export default function TaskCard({ tasksData, onClick, loading, isActive }) {
             )}
           </div>
         </div>
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0">
           <CheckSquare className="w-5 h-5 text-white" />
         </div>
       </div>

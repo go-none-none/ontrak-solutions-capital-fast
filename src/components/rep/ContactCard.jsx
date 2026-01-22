@@ -42,7 +42,7 @@ export default function ContactCard({ contact }) {
             <a 
               href={`mailto:${contact.Email}`}
               onClick={(e) => e.stopPropagation()}
-              className="text-sm text-[#08708E] hover:underline flex items-center gap-2"
+              className="text-sm text-orange-600 hover:underline flex items-center gap-2"
             >
               <Mail className="w-4 h-4" />
               {contact.Email}
@@ -52,7 +52,7 @@ export default function ContactCard({ contact }) {
             <a 
               href={`tel:${contact.MobilePhone}`}
               onClick={(e) => e.stopPropagation()}
-              className="text-sm text-[#08708E] hover:underline flex items-center gap-2"
+              className="text-sm text-orange-600 hover:underline flex items-center gap-2"
             >
               <Phone className="w-4 h-4" />
               {contact.MobilePhone}

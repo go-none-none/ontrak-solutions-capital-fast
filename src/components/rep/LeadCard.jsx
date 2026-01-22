@@ -63,7 +63,7 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="border border-slate-200 rounded-lg bg-white transition-all hover:shadow-lg hover:border-[#08708E] cursor-pointer"
+      className="border border-slate-200 rounded-lg bg-white transition-all hover:shadow-lg hover:border-orange-600 cursor-pointer"
     >
       <div className="p-3" onClick={handleCardClick}>
         <div className="flex items-start justify-between mb-2">
@@ -84,7 +84,7 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
             {stages.map((stage, idx) => (
               <div key={idx} className="flex flex-col items-center flex-1">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold ${
-                  idx <= currentStage ? 'bg-[#08708E] text-white' : 'bg-slate-200 text-slate-500'
+                  idx <= currentStage ? 'bg-orange-600 text-white' : 'bg-slate-200 text-slate-500'
                 }`}>
                   {idx + 1}
                 </div>
@@ -95,7 +95,7 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
           <div className="flex gap-0.5">
             {stages.map((_, idx) => (
               <div key={idx} className={`h-1 flex-1 rounded ${
-                idx <= currentStage ? 'bg-[#08708E]' : 'bg-slate-200'
+                idx <= currentStage ? 'bg-orange-600' : 'bg-slate-200'
               }`} />
             ))}
           </div>
@@ -106,7 +106,7 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
             <a
               href={`tel:${lead.Phone}`}
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1 hover:text-[#08708E] transition-colors"
+              className="flex items-center gap-1 hover:text-orange-600 transition-colors"
             >
               <Phone className="w-3 h-3" />
               <span>{lead.Phone}</span>
@@ -123,7 +123,7 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
         {lead.Funding_Amount_Requested__c && (
           <div className="mb-2 text-xs">
             <span className="text-slate-500">Requested: </span>
-            <span className="font-semibold text-[#08708E]">
+            <span className="font-semibold text-orange-600">
               ${parseFloat(lead.Funding_Amount_Requested__c).toLocaleString()}
             </span>
           </div>
@@ -152,7 +152,7 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
               {lead.AnnualRevenue && (
                 <div>
                   <p className="text-xs text-slate-500 mb-0.5">Annual Revenue</p>
-                  <p className="text-sm font-semibold text-[#08708E]">{formatCurrency(lead.AnnualRevenue)}</p>
+                  <p className="text-sm font-semibold text-orange-600">{formatCurrency(lead.AnnualRevenue)}</p>
                 </div>
               )}
             </div>
@@ -188,7 +188,7 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
 
           <Button
             onClick={handleFullView}
-            className="w-full mt-3 bg-[#08708E] hover:bg-[#065a72] text-white"
+            className="w-full mt-3 bg-orange-600 hover:bg-orange-700 text-white"
             size="sm"
           >
             <ExternalLink className="w-4 h-4 mr-2" />
