@@ -37,7 +37,6 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
       return;
     }
 
-    // If repsData is provided (from AdminPipeline), search within it
     if (repsData && repsData.length > 0) {
       const records = [];
       repsData.forEach(rep => {
@@ -57,7 +56,6 @@ export default function CreateTaskModal({ isOpen, onClose, session, onSuccess, r
       return;
     }
 
-    // Otherwise, search Salesforce directly (for RepPortal usage)
     if (!session) return;
     try {
       const leadsQuery = `SELECT Id, Name FROM Lead WHERE Name LIKE '%${term}%' OR Company LIKE '%${term}%' LIMIT 10`;

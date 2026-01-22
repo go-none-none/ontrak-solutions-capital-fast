@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, Download, X, AlertCircle } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 
 export default function PDFViewer({ file, session, isOpen, onClose }) {
   const [pdfData, setPdfData] = useState(null);
@@ -24,36 +25,19 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
     try {
       console.log('Loading PDF for file:', file.ContentDocumentId);
       
-      // Direct fetch to avoid base44 auth check
-      const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          contentDocumentId: file.ContentDocumentId,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
+      const response = await base44.functions.invoke('getSalesforceFileContent', {
+        contentDocumentId: file.ContentDocumentId,
+        token: session.token,
+        instanceUrl: session.instanceUrl
       });
 
       console.log('Response status:', response.status);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Response error:', errorText);
-        throw new Error('Failed to fetch file content');
-      }
-
-      const data = await response.json();
-      console.log('Data received, has file:', !!data.file, 'file length:', data.file?.length);
-
-      if (!data || !data.file) {
+      if (!response.data || !response.data.file) {
         throw new Error('No file content received');
       }
 
-      // Use data URL instead of blob URL for better iframe compatibility
-      const base64 = data.file;
+      const base64 = response.data.file;
       const dataUrl = `data:application/pdf;base64,${base64}`;
       console.log('Data URL created, length:', dataUrl.length);
       

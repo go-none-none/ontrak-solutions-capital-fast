@@ -48,7 +48,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
 
     setSearchingRelated(true);
     try {
-      // Search both leads and opportunities
       const leadsQuery = `SELECT Id, Name, Company FROM Lead WHERE Name LIKE '%${searchTerm}%' OR Company LIKE '%${searchTerm}%' LIMIT 5`;
       const oppsQuery = `SELECT Id, Name, Account.Name FROM Opportunity WHERE Name LIKE '%${searchTerm}%' OR Account.Name LIKE '%${searchTerm}%' LIMIT 5`;
 
@@ -194,7 +193,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               />
             </div>
 
-            {/* Related To Search */}
             <div>
               <label className="text-sm font-medium text-slate-700 mb-1 block">Related To (Optional)</label>
               <div className="space-y-2">
@@ -263,7 +261,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               </div>
             </div>
 
-            {/* Display read-only fields */}
             {(task.WhoId || task.Owner) && (
               <div className="border-t pt-4 space-y-3">
                 <p className="text-sm font-semibold text-slate-700">Read-Only Information</p>
@@ -277,8 +274,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
                     <p className="text-slate-900 font-medium">{task.Owner.Name}</p>
                   </div>
                 )}
-
-
 
                 {task.WhoId && task.Who?.Name && (
                   <div>
@@ -314,7 +309,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
           </div>
         ) : (
           <div className="space-y-4 mt-4">
-            {/* Task Info */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-slate-500 mb-1">Status</p>
@@ -342,7 +336,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               </div>
             </div>
 
-            {/* Description */}
             {task.Description && (
               <div className="border-t pt-4">
                 <p className="text-xs text-slate-500 mb-2 font-semibold">Description</p>
@@ -350,7 +343,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               </div>
             )}
 
-            {/* Related To */}
             {task.WhatId && task.What?.Name && (
               <div className="border-t pt-4">
                 <p className="text-xs text-slate-500 mb-2 font-semibold">Related To</p>
@@ -387,7 +379,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               </div>
             )}
 
-            {/* Who (Contact) */}
             {task.WhoId && task.Who?.Name && (
               <div className="border-t pt-4">
                 <p className="text-xs text-slate-500 mb-2 font-semibold">Contact</p>
@@ -401,7 +392,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               </div>
             )}
 
-            {/* Timestamps */}
             <div className="border-t pt-4">
               <div className="grid grid-cols-2 gap-4 text-xs text-slate-500">
                 <div>
@@ -415,7 +405,6 @@ export default function TaskDetailsModal({ task, isOpen, onClose, session, onUpd
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex gap-2 pt-4 border-t">
               <Button variant="outline" onClick={() => setIsEditing(true)}>
                 <Edit className="w-4 h-4 mr-2" />
