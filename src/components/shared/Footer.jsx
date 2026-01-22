@@ -1,113 +1,75 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import { createPageUrl } from '@/utils';
-import { Phone, Mail, MapPin } from 'lucide-react';
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-slate-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          <div className="space-y-6">
-            <Link to={createPageUrl('Home')} className="inline-block">
-            <img 
-                src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png"
-                alt="OnTrak Solutions"
-                className="h-10 w-auto brightness-0 invert"
-            />
-            </Link>
-
-            <p className="text-slate-400 text-sm leading-relaxed">
-              OnTrak Solutions provides fast, flexible business funding and merchant cash advances 
-              for small to medium-sized businesses across all industries. From working capital and 
-              equipment financing to inventory purchases and business expansion, we offer customized 
-              funding solutions with quick approvals and same-day funding. Get the capital your business 
-              needs in as little as 24 hours with transparent terms, no hidden fees, and flexible 
-              repayment options that adapt to your cash flow.
-            </p>
-          </div>
-
+    <footer className="bg-slate-900 text-slate-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          {/* Company Info */}
           <div>
-            <h4 className="font-semibold mb-6 text-white">Quick Links</h4>
-            <ul className="space-y-3">
-              {[
-                { name: 'About', href: 'About' },
-                { name: 'How It Works', href: 'HowItWorks' },
-                { name: 'FAQ', href: 'FAQ' },
-                { name: 'Use Cases', href: 'UseCases' },
-                { name: 'Industries', href: 'Industries' },
-                { name: 'Blog', href: 'Blog' },
-                { name: 'Reviews', href: 'Reviews' },
-                { name: 'Contact', href: 'Contact' },
-              ].map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    to={createPageUrl(link.href)} 
-                    className="text-slate-400 hover:text-white transition-colors text-sm"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-6 text-white">Industries</h4>
-            <ul className="space-y-3">
-              {[
-                { name: 'Restaurants & Food Service', page: 'IndustryRestaurants' },
-                { name: 'Retail', page: 'IndustryRetail' },
-                { name: 'Healthcare & Medical', page: 'IndustryHealthcare' },
-                { name: 'Construction', page: 'IndustryConstruction' },
-                { name: 'Transportation & Logistics', page: 'IndustryTransportation' },
-                { name: 'Beauty & Wellness', page: 'IndustryBeauty' },
-                { name: 'Fitness & Recreation', page: 'IndustryFitness' },
-                { name: 'Auto Services', page: 'IndustryAuto' },
-                { name: 'Professional Services', page: 'IndustryProfessional' }
-              ].map((industry) => (
-                <li key={industry.name}>
-                  <Link 
-                    to={createPageUrl(industry.page)} 
-                    className="text-slate-400 hover:text-white transition-colors text-sm"
-                  >
-                    {industry.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-6 text-white">About OnTrak</h4>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <Phone className="w-4 h-4 text-[#08708E] mt-1" />
-                <a href="tel:+13025205200" className="text-slate-400 hover:text-white transition-colors text-sm">(302) 520-5200</a>
-              </li>
-              <li className="flex items-start gap-3">
-                <Mail className="w-4 h-4 text-[#08708E] mt-1" />
-                <a href="mailto:info@ontrak.co" className="text-slate-400 hover:text-white transition-colors text-sm">info@ontrak.co</a>
-              </li>
-            </ul>
-            <div className="mt-6 pt-6 border-t border-slate-800">
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Since our founding, OnTrak Solutions has funded over $50M to over 1,000+ small and 
-                medium-sized businesses nationwide. With a 95% approval rate and an A+ BBB rating, 
-                we've become a trusted partner for entrepreneurs seeking fast, flexible business funding. 
-                Our mission is to empower businesses with the capital they need to succeed.
-              </p>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 bg-[#08708E] rounded-lg flex items-center justify-center text-white text-sm font-bold">
+                FI
+              </div>
+              <span className="font-bold text-white text-lg">FastFund</span>
             </div>
+            <p className="text-sm">Fast, flexible small business funding solutions.</p>
+          </div>
+
+          {/* Product */}
+          <div>
+            <h4 className="font-semibold text-white mb-4">Product</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link to={createPageUrl('HowItWorks')} className="hover:text-white transition-colors">How It Works</Link></li>
+              <li><Link to={createPageUrl('Industries')} className="hover:text-white transition-colors">Industries</Link></li>
+              <li><Link to={createPageUrl('application')} className="hover:text-white transition-colors">Apply Now</Link></li>
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h4 className="font-semibold text-white mb-4">Company</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link to={createPageUrl('About')} className="hover:text-white transition-colors">About</Link></li>
+              <li><Link to={createPageUrl('Contact')} className="hover:text-white transition-colors">Contact</Link></li>
+              <li><Link to={createPageUrl('FAQ')} className="hover:text-white transition-colors">FAQ</Link></li>
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="font-semibold text-white mb-4">Contact</h4>
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                <a href="tel:+18005551234" className="hover:text-white transition-colors">(800) 555-1234</a>
+              </li>
+              <li className="flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                <a href="mailto:support@fastfund.com" className="hover:text-white transition-colors">support@fastfund.com</a>
+              </li>
+              <li className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <span>123 Business Ave, Suite 100<br/>New York, NY 10001</span>
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-slate-500 text-sm">
-            © {new Date().getFullYear()} OnTrak Solutions LLC. All rights reserved.
-          </p>
-          <div className="flex gap-6">
-            <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-500 hover:text-white text-sm transition-colors">Privacy Policy</Link>
-            <Link to={createPageUrl('TermsOfService')} className="text-slate-500 hover:text-white text-sm transition-colors">Terms of Service</Link>
+        <div className="border-t border-slate-700 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-slate-400">
+              © {currentYear} FastFund. All rights reserved.
+            </p>
+            <div className="flex gap-6 text-sm">
+              <Link to={createPageUrl('TermsOfService')} className="hover:text-white transition-colors">Terms of Service</Link>
+              <Link to={createPageUrl('PrivacyPolicy')} className="hover:text-white transition-colors">Privacy Policy</Link>
+            </div>
           </div>
         </div>
       </div>

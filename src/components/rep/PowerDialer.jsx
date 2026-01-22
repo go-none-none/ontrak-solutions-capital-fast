@@ -1,107 +1,149 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Phone, PhoneOff, X, CheckCircle2, Loader2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Phone, Loader2, ChevronDown, X, Play, Pause } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function PowerDialer({ phoneNumber, recordId, session, onCallComplete }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [calling, setCalling] = useState(false);
-  const [callId, setCallId] = useState(null);
-  const [disposition, setDisposition] = useState('');
-  const [notes, setNotes] = useState('');
-  const [saving, setSaving] = useState(false);
+export default function PowerDialer({ records = [], session, onCallComplete }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDialing, setIsDialing] = useState(false);
+  const [callDuration, setCallDuration] = useState(0);
+  const [showDetails, setShowDetails] = useState(false);
 
-  const handleCall = async () => {
-    if (!phoneNumber) return;
-    setCalling(true);
-    try {
-      const response = await base44.functions.invoke('dialpadMakeCall', { phoneNumber: phoneNumber.replace(/\D/g, '') });
-      setCallId(response.data.callId);
-    } catch (error) {
-      alert(`Failed to initiate call: ${error.response?.data?.error || error.message}`);
-      setCalling(false);
+  useEffect(() => {
+    let interval;
+    if (isDialing) {
+      interval = setInterval(() => {
+        setCallDuration(prev => prev + 1);
+      }, 1000);
     }
-  };
+    return () => clearInterval(interval);
+  }, [isDialing]);
 
-  const handleSaveDisposition = async () => {
-    if (!callId || !disposition) return;
-    setSaving(true);
+  const currentRecord = records[currentIndex];
+
+  const handleDial = async () => {
+    if (!currentRecord?.Phone && !currentRecord?.phone) {
+      alert('No phone number available');
+      return;
+    }
+
+    setIsDialing(true);
     try {
-      await base44.functions.invoke('dialpadUpdateDisposition', { callId, disposition, notes, recordId, token: session.token, instanceUrl: session.instanceUrl });
-      setIsOpen(false);
-      setCalling(false);
-      setCallId(null);
-      setDisposition('');
-      setNotes('');
-      if (onCallComplete) onCallComplete();
+      const phoneNumber = currentRecord?.Phone || currentRecord?.phone;
+      window.location.href = `tel:${phoneNumber}`;
     } catch (error) {
-      alert('Failed to save disposition');
-    } finally {
-      setSaving(false);
+      console.error('Dial error:', error);
     }
   };
 
   const handleEndCall = () => {
-    setCalling(false);
-    setCallId(null);
+    setIsDialing(false);
+    setCallDuration(0);
+    if (onCallComplete) {
+      onCallComplete(currentRecord);
+    }
+    if (currentIndex < records.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
   };
 
+  const handleSkip = () => {
+    if (currentIndex < records.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  if (!records || records.length === 0) {
+    return (
+      <Card>
+        <CardContent className="pt-6 text-center text-slate-500">
+          <Phone className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+          <p>No records to call</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <>
-      <Button onClick={() => setIsOpen(true)} className="bg-orange-600 hover:bg-orange-700 gap-2" size="sm">
-        <Phone className="w-4 h-4" />
-        Power Dial
-      </Button>
-
-      <AnimatePresence>
-        {isOpen && (
+    <Card className="border-2 border-blue-200">
+      <CardHeader className="bg-blue-50">
+        <CardTitle className="flex items-center gap-2">
+          <Phone className="w-5 h-5 text-blue-600" />
+          Power Dialer ({currentIndex + 1}/{records.length})
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-6 space-y-4">
+        {currentRecord && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50" onClick={() => !calling && setIsOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md z-50">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-slate-900">Power Dialer</h3>
-                <Button variant="ghost" size="icon" onClick={() => !calling && setIsOpen(false)} disabled={calling}><X className="w-5 h-5" /></Button>
-              </div>
-
-              {!calling ? (
-                <div className="space-y-4">
-                  <div><label className="text-sm font-medium text-slate-700 mb-2 block">Phone Number</label><Input value={phoneNumber} readOnly className="bg-slate-50" /></div>
-                  <Button onClick={handleCall} className="w-full h-12 bg-green-600 hover:bg-green-700 text-white text-lg font-semibold gap-2"><Phone className="w-5 h-5" />Start Call</Button>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="text-center py-6">
-                    <div className="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse"><Phone className="w-10 h-10 text-white" /></div>
-                    <p className="text-lg font-semibold text-slate-900 mb-1">Calling...</p>
-                    <p className="text-sm text-slate-600">{phoneNumber}</p>
-                  </div>
-
-                  {callId && (
-                    <>
-                      <div className="space-y-3">
-                        <div><label className="text-sm font-medium text-slate-700 mb-2 block">Call Disposition</label><Select value={disposition} onValueChange={setDisposition}><SelectTrigger><SelectValue placeholder="Select outcome" /></SelectTrigger><SelectContent><SelectItem value="Connected">Connected</SelectItem><SelectItem value="Left Voicemail">Left Voicemail</SelectItem><SelectItem value="No Answer">No Answer</SelectItem><SelectItem value="Busy">Busy</SelectItem><SelectItem value="Wrong Number">Wrong Number</SelectItem><SelectItem value="Callback Requested">Callback Requested</SelectItem></SelectContent></Select></div>
-                        <div><label className="text-sm font-medium text-slate-700 mb-2 block">Notes</label><Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Add call notes..." rows={3} /></div>
-                      </div>
-
-                      <div className="flex gap-3">
-                        <Button onClick={handleEndCall} variant="outline" className="flex-1"><PhoneOff className="w-4 h-4 mr-2" />End Call</Button>
-                        <Button onClick={handleSaveDisposition} disabled={!disposition || saving} className="flex-1 bg-orange-600 hover:bg-orange-700">
-                          {saving ? (<Loader2 className="w-4 h-4 mr-2 animate-spin" />) : (<CheckCircle2 className="w-4 h-4 mr-2" />)}
-                          Save & Complete
-                        </Button>
-                      </div>
-                    </>
-                  )}
+            <div className="bg-slate-50 p-4 rounded-lg">
+              <h3 className="font-bold text-lg text-slate-900">{currentRecord.Name}</h3>
+              <p className="text-sm text-slate-600">{currentRecord.Company || currentRecord.Industry}</p>
+              <p className="text-lg font-mono text-blue-600 mt-2">{currentRecord.Phone || currentRecord.phone}</p>
+              
+              {showDetails && (
+                <div className="mt-4 pt-4 border-t text-sm space-y-2">
+                  {currentRecord.Email && <p><span className="text-slate-600">Email:</span> {currentRecord.Email}</p>}
+                  {currentRecord.Status && <p><span className="text-slate-600">Status:</span> {currentRecord.Status}</p>}
+                  {currentRecord.funding_amount_requested && <p><span className="text-slate-600">Amount:</span> ${Number(currentRecord.funding_amount_requested).toLocaleString()}</p>}
                 </div>
               )}
-            </motion.div>
+
+              <button
+                onClick={() => setShowDetails(!showDetails)}
+                className="mt-3 text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              >
+                {showDetails ? 'Hide' : 'Show'} Details
+                <ChevronDown className={`w-3 h-3 transition-transform ${showDetails ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+
+            {isDialing && (
+              <div className="bg-green-50 border border-green-200 p-4 rounded-lg text-center">
+                <p className="text-2xl font-mono font-bold text-green-600">{formatDuration(callDuration)}</p>
+                <p className="text-sm text-green-600 mt-1">Call in progress</p>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              {!isDialing ? (
+                <>
+                  <Button
+                    onClick={handleDial}
+                    className="flex-1 bg-green-600 hover:bg-green-700"
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Dial
+                  </Button>
+                  <Button
+                    onClick={handleSkip}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Skip
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleEndCall}
+                    className="flex-1 bg-red-600 hover:bg-red-700"
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    End Call
+                  </Button>
+                </>
+              )}
+            </div>
           </>
         )}
-      </AnimatePresence>
-    </>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,120 +1,88 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X } from 'lucide-react';
+import { createPageUrl } from '@/utils';
 
 export default function Navigation() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { name: 'About', href: createPageUrl('About') },
-    { name: 'How It Works', href: createPageUrl('HowItWorks') },
-    { name: 'FAQ', href: createPageUrl('FAQ') },
-    { name: 'Use Cases', href: createPageUrl('UseCases') },
-    { name: 'Industries', href: createPageUrl('Industries') },
-    { name: 'Blog', href: createPageUrl('Blog') },
-    { name: 'Reviews', href: createPageUrl('Reviews') },
-    { name: 'Contact', href: createPageUrl('Contact') },
+    { label: 'Home', href: createPageUrl('Home') },
+    { label: 'How It Works', href: createPageUrl('HowItWorks') },
+    { label: 'Industries', href: createPageUrl('Industries') },
+    { label: 'About', href: createPageUrl('About') },
+    { label: 'Reviews', href: createPageUrl('Reviews') },
+    { label: 'FAQ', href: createPageUrl('FAQ') },
+    { label: 'Contact', href: createPageUrl('Contact') }
   ];
 
   return (
-    <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <Link to={createPageUrl('Home')} className="flex items-center">
-              <img 
-                src="https://ontrakcap.com/wp-content/uploads/2025/10/cropped-customcolor_logo_transparent_background-1-scaled-1-e1761864411651-1536x382.png"
-                alt="OnTrak Solutions"
-                className={`h-10 w-auto transition-all duration-300 ${
-                  isScrolled ? '' : 'brightness-0 invert'
-                }`}
-              />
-            </Link>
-
-            <div className="hidden lg:flex items-center gap-4 xl:gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className={`text-sm xl:text-base font-normal transition-all duration-300 hover:opacity-70 ${
-                    isScrolled ? 'text-slate-700' : 'text-white'
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
+    <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <Link to={createPageUrl('Home')} className="flex items-center gap-2 font-bold text-xl text-[#08708E]">
+            <div className="w-8 h-8 bg-[#08708E] rounded-lg flex items-center justify-center text-white text-sm font-bold">
+              FI
             </div>
+            <span className="hidden sm:inline">FastFund</span>
+          </Link>
 
-            <div className="hidden lg:block">
-              <Link to={createPageUrl('Application')}>
-                <Button 
-                  className={`px-6 py-2.5 rounded-full font-semibold transition-all duration-300 ${
-                    isScrolled 
-                      ? 'bg-[#08708E] hover:bg-[#065a72] text-white' 
-                      : 'bg-white text-[#08708E] hover:bg-white/90'
-                  }`}
-                >
-                  Get Funds Today
-                </Button>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map(link => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="text-slate-700 hover:text-[#08708E] transition-colors font-medium text-sm"
+              >
+                {link.label}
               </Link>
-            </div>
-
-            <button
-              className="lg:hidden p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? (
-                <X className={`w-6 h-6 ${isScrolled ? 'text-slate-700' : 'text-white'}`} />
-              ) : (
-                <Menu className={`w-6 h-6 ${isScrolled ? 'text-slate-700' : 'text-white'}`} />
-              )}
-            </button>
+            ))}
           </div>
-        </div>
-      </nav>
 
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-white pt-20 px-6 lg:hidden overflow-y-auto"
+          <div className="hidden md:flex items-center gap-4">
+            <Link to={createPageUrl('application')}>
+              <Button variant="outline" className="text-[#08708E] border-[#08708E] hover:bg-[#08708E] hover:text-white">
+                Apply Now
+              </Button>
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden text-slate-700"
           >
-            <div className="flex flex-col gap-2 py-4 pb-24">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-base font-medium text-slate-700 py-2.5 border-b border-slate-100"
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <Link to={createPageUrl('Application')} onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full mt-4 bg-[#08708E] hover:bg-[#065a72] text-white py-5 rounded-full text-base">
-                  Get Funds Today
-                </Button>
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isOpen && (
+          <div className="md:hidden pb-4 space-y-2">
+            {navLinks.map(link => (
+              <Link
+                key={link.href}
+                to={link.href}
+                onClick={() => setIsOpen(false)}
+                className="block px-4 py-2 text-slate-700 hover:bg-slate-50 rounded transition-colors"
+              >
+                {link.label}
               </Link>
-            </div>
-          </motion.div>
+            ))}
+            <Link
+              to={createPageUrl('application')}
+              onClick={() => setIsOpen(false)}
+              className="block"
+            >
+              <Button className="w-full bg-[#08708E] hover:bg-[#065a72]">
+                Apply Now
+              </Button>
+            </Link>
+          </div>
         )}
-      </AnimatePresence>
-    </>
+      </div>
+    </nav>
   );
 }

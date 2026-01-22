@@ -1,194 +1,77 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Zap, Clock, Shield } from 'lucide-react';
-import FundingCalculator from '../calculator/FundingCalculator';
-import SalesforceWebToLeadForm from '../forms/SalesforceWebToLeadForm';
-
-function HeroStatCounter({ stat, delay }) {
-  const [count, setCount] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isVisible) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
-      }
-    };
-  }, [isVisible]);
-
-  useEffect(() => {
-    if (!isVisible) return;
-
-    const duration = 2000;
-    const steps = 60;
-    const increment = duration / steps;
-    
-    let target;
-    if (stat.value.includes('M+')) {
-      target = parseFloat(stat.value.replace('$', '').replace('M+', ''));
-    } else if (stat.value.includes('K+')) {
-      target = parseFloat(stat.value.replace('K+', ''));
-    } else if (stat.value.includes('hrs')) {
-      target = parseFloat(stat.value.replace('hrs', ''));
-    } else {
-      target = parseFloat(stat.value.replace(/[^0-9.]/g, ''));
-    }
-
-    let current = 0;
-    const step = target / steps;
-
-    const timer = setInterval(() => {
-      current += step;
-      if (current >= target) {
-        current = target;
-        clearInterval(timer);
-      }
-      setCount(current);
-    }, increment);
-
-    return () => clearInterval(timer);
-  }, [isVisible, stat.value]);
-
-  const formatValue = (val) => {
-    if (stat.value.includes('M+')) {
-      return `$${val.toFixed(0)}M+`;
-    } else if (stat.value.includes('K+')) {
-      return `${val.toFixed(0)}K+`;
-    } else if (stat.value.includes('hrs')) {
-      return `${val.toFixed(0)}hrs`;
-    }
-    return val.toFixed(0);
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay }}
-      className="text-center"
-    >
-      <div className="text-3xl sm:text-5xl font-bold text-white" style={{ textShadow: '1px 1px 8px rgba(0,0,0,0.9)' }}>
-        {formatValue(count)}
-      </div>
-      <div className="text-sm text-white/50" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>{stat.label}</div>
-    </motion.div>
-  );
-}
+import React from 'react';
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function HeroSection() {
-  const benefits = [
-    { icon: Zap, text: 'Funding in 24 Hours' },
-    { icon: Shield, text: '95% Approval Rate' },
-    { icon: Clock, text: 'Simple Application' }
-  ];
-
   return (
-    <section className="relative min-h-screen overflow-hidden">
-      {/* Video Background */}
-      <div className="absolute inset-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover"
-        >
-          <source src="https://ontrakcap.com/wp-content/uploads/2025/10/2397246-hd_1920_1080_24fps-1.mp4" type="video/mp4" />
-        </video>
-        {/* Dark overlay to ensure text visibility */}
-        <div className="absolute inset-0 bg-black/50" />
+    <div className="relative overflow-hidden bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 py-20 md:py-32">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
-        <div className="space-y-12">
-          {/* Top Content - Headlines */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
-          >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-base mb-6" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>
-              <span className="w-2 h-2 bg-[#22d3ee] rounded-full animate-pulse" />
-              Trusted by 1,000+ Businesses
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6" style={{ textShadow: '2px 2px 12px rgba(0,0,0,0.9)' }}>
-              Your Business{' '}
-              <span className="relative">
-                <span className="relative z-10">Deserves</span>
-                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
-                  <path d="M2 10C60 3 140 3 198 10" stroke="#22d3ee" strokeWidth="4" strokeLinecap="round"/>
-                </svg>
-              </span>
-              {' '}More
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              Fast Funding for Your Business
             </h1>
-
-            <p className="text-lg sm:text-xl text-white/70 mb-8 leading-relaxed max-w-3xl mx-auto" style={{ textShadow: '1px 1px 8px rgba(0,0,0,0.9)' }}>
-              Fast, flexible funding solutions with no hidden fees. 
-              Apply in minutes, get approved the same day, and receive 
-              funds in as little as 24 hours.
+            <p className="text-lg md:text-xl text-blue-100 mb-8">
+              Get the capital you need in days, not months. Simple application, quick approval, real funding.
             </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link to={createPageUrl('application')}>
+                <Button size="lg" className="bg-white text-[#08708E] hover:bg-blue-50 font-semibold">
+                  Apply Now
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+              <Link to={createPageUrl('HowItWorks')}>
+                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 font-semibold">
+                  Learn More
+                </Button>
+              </Link>
+            </div>
+          </div>
 
-            {/* Benefits */}
-            <div className="flex flex-wrap justify-center gap-6 mb-8">
-              {benefits.map((benefit, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + i * 0.1 }}
-                  className="flex items-center gap-2 text-white/90"
-                >
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                    <benefit.icon className="w-4 h-4" />
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-2xl blur-2xl opacity-20"></div>
+            <div className="relative bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">⚡</span>
                   </div>
-                  <span className="text-sm font-medium" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8)' }}>{benefit.text}</span>
-                </motion.div>
-              ))}
+                  <div>
+                    <p className="font-semibold text-white">Fast Approval</p>
+                    <p className="text-sm text-blue-100">Within 24-48 hours</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">💰</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">Up to $500K</p>
+                    <p className="text-sm text-blue-100">Flexible amounts</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">📋</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">Simple Process</p>
+                    <p className="text-sm text-blue-100">5-minute application</p>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            {/* Stats */}
-            <div className="flex justify-center gap-12">
-              {[
-                { value: '$50M+', label: 'Funded' },
-                { value: '1K+', label: 'Businesses' },
-                { value: '24hrs', label: 'Avg. Funding' }
-              ].map((stat, i) => (
-                <HeroStatCounter key={i} stat={stat} delay={0.6 + i * 0.1} />
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Right - Calculator & Form Side by Side */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="grid md:grid-cols-2 gap-6"
-          >
-            <FundingCalculator compact />
-            <SalesforceWebToLeadForm />
-          </motion.div>
+          </div>
         </div>
       </div>
-
-    </section>
+    </div>
   );
 }
