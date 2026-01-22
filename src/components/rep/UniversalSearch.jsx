@@ -87,7 +87,7 @@ export default function UniversalSearch({ session }) {
               subtitle: contact.Title,
               type: 'Contact',
               category: 'Contact',
-              color: 'bg-purple-100 text-purple-800',
+              color: 'bg-cyan-100 text-cyan-800',
               icon: User,
               path: 'ContactDetail',
               record: contact
@@ -111,7 +111,7 @@ export default function UniversalSearch({ session }) {
               const recordTypeName = account.RecordType?.Name?.toLowerCase() || '';
               if (recordTypeName.includes('merchant')) {
                 accountCategory = 'Merchant';
-                color = 'bg-violet-100 text-violet-800';
+                color = 'bg-purple-100 text-purple-800';
               }
             }
 

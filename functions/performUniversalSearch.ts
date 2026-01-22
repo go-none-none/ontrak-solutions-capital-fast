@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
 
     // Build SOSL query for faster searching across multiple objects
     const soslQuery = `FIND {${searchTerm}*} IN NAME FIELDS RETURNING 
-      Lead(Id, Name, Company WHERE OwnerId = '${userId}'),
+      Lead(Id, Name, Company WHERE OwnerId = '${userId}' AND Status != 'Closed - Converted'),
       Opportunity(Id, Name, Account.Name WHERE OwnerId = '${userId}'),
       Contact(Id, Name, Title WHERE OwnerId = '${userId}'),
       Account(Id, Name, RecordType.Name, csbs__Active_Lender__c)`;
