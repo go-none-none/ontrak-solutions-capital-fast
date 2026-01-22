@@ -64,8 +64,9 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="border border-slate-200 rounded-lg p-3 bg-white transition-all hover:shadow-lg hover:border-[#08708E] flex gap-2"
+      className="border border-slate-200 rounded-lg bg-white transition-all hover:shadow-lg hover:border-[#08708E]"
     >
+      <div className="flex gap-2 p-3">
         {/* Left Action Buttons */}
         <div className="flex flex-col gap-1 flex-shrink-0">
           <Button
@@ -164,13 +165,14 @@ export default function LeadCard({ lead, session, onQuickView, isExpanded, onTog
           )}
         </div>
         </div>
+      </div>
 
         {isExpanded && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-4 pt-4 border-t border-slate-200 space-y-3"
+            className="px-3 pb-3 space-y-3"
           >
             {/* Quick Info */}
             <div className="space-y-2">

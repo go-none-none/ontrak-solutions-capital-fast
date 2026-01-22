@@ -96,12 +96,13 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`border rounded-lg p-3 bg-white transition-all flex gap-2 ${
+      className={`border rounded-lg bg-white transition-all ${
         isDeclined 
           ? 'border-red-200 bg-red-50/50 hover:shadow-lg hover:border-red-400' 
           : 'border-slate-200 hover:shadow-lg hover:border-orange-600'
       }`}
     >
+      <div className="flex gap-2 p-3">
         {/* Left Action Buttons */}
         <div className="flex flex-col gap-1 flex-shrink-0">
           <Button
@@ -195,13 +196,14 @@ export default function OpportunityCard({ opportunity, session, onUpdate, isExpa
           <span>Updated {formatDate(opportunity.LastModifiedDate)}</span>
         </div>
         </div>
+      </div>
 
         {isExpanded && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-4 pt-4 border-t border-slate-200"
+            className="px-3 pb-3 pt-0 border-t border-slate-200"
           >
             {loadingData && (
               <div className="flex justify-center py-4">
