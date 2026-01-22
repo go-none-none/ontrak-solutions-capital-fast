@@ -85,26 +85,18 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       let fileUrl;
       let fileId = file.ContentDocumentId;
       
-      // Check if it's a temp file
       if (file.tempFileUrl) {
         fileUrl = file.tempFileUrl;
       } else {
-        const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contentDocumentId: file.ContentDocumentId,
-            token: session.token,
-            instanceUrl: session.instanceUrl
-          })
+        const response = await base44.functions.invoke('getSalesforceFileContent', {
+          contentDocumentId: file.ContentDocumentId,
+          token: session.token,
+          instanceUrl: session.instanceUrl
         });
 
-        if (!response.ok) throw new Error('Failed to fetch file');
-
-        const data = await response.json();
+        const data = response.data;
         const base64Data = data.file;
 
-        // Create File from base64
         const binaryString = atob(base64Data);
         const bytes = new Uint8Array(binaryString.length);
         for (let i = 0; i < binaryString.length; i++) {
@@ -114,18 +106,18 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
 
         const uploadResponse = await base44.integrations.Core.UploadFile({ file: pdfFile });
         fileUrl = uploadResponse.file_url;
-        }
+      }
 
-        setFormData(prev => ({ 
+      setFormData(prev => ({ 
         ...prev, 
         tempFileUrl: file.tempFileUrl || null,
         csbs__Source_File_ID__c: file.isTemp ? null : fileId 
-        }));
+      }));
 
-        setParsedFileUrl(fileUrl);
+      setParsedFileUrl(fileUrl);
 
-        const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
-      
+      const parseResponse = await base44.functions.invoke('parseBankStatement', { fileUrl });
+    
       if (parseResponse.data.success && parseResponse.data.data) {
         const p = parseResponse.data.data;
         setFormData(prev => ({
@@ -160,8 +152,6 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       setParsingFile(false);
     }
   };
-
-
 
   useEffect(() => {
     if (fileToProcess && isOpen) {
@@ -233,7 +223,7 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
       setUploadingFile(false);
       setParsingFile(false);
     }
-    };
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -258,7 +248,6 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
           instanceUrl: session.instanceUrl
         });
         
-        // Clean up temp file from localStorage if it was used
         if (formData.tempFileUrl) {
           const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${opportunityId}`) || '[]');
           const filtered = tempFiles.filter(tf => tf.url !== formData.tempFileUrl);
@@ -268,7 +257,6 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
 
       onSuccess();
       
-      // Clear form and close modal
       setIsParsed(false);
       setFormData({
         accountNo: '',
@@ -392,370 +380,70 @@ export default function NewStatementModal({ isOpen, onClose, opportunityId, sess
           <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
             <h3 className="text-sm font-semibold text-green-900 mb-4">Extracted Data Preview</h3>
             <div className="grid grid-cols-4 gap-3 text-xs">
-              <div>
-                <p className="text-green-700 font-medium">Bank Name</p>
-                <p className="text-slate-900">{formData.bankName || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Account No</p>
-                <p className="text-slate-900">{formData.accountNo || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Account Title</p>
-                <p className="text-slate-900">{formData.accountTitle || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Company</p>
-                <p className="text-slate-900">{formData.company || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Starting Date</p>
-                <p className="text-slate-900">{formData.startingDate || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Ending Date</p>
-                <p className="text-slate-900">{formData.endingDate || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Starting Balance</p>
-                <p className="text-slate-900">{formData.startingBalance ? `$${Number(formData.startingBalance).toLocaleString()}` : '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Ending Balance</p>
-                <p className="text-slate-900">{formData.endingBalance ? `$${Number(formData.endingBalance).toLocaleString()}` : '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Reconciled</p>
-                <p className="text-slate-900">{formData.reconciled ? 'Yes' : 'No'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Unreconciled End Balance</p>
-                <p className="text-slate-900">{formData.unreconciledEndBalance ? `$${Number(formData.unreconciledEndBalance).toLocaleString()}` : '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Avg Daily Balance</p>
-                <p className="text-slate-900">{formData.avgDailyBalance ? `$${Number(formData.avgDailyBalance).toLocaleString()}` : '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Deposit Count</p>
-                <p className="text-slate-900">{formData.depositCount || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Deposit Amount</p>
-                <p className="text-slate-900">{formData.depositAmount ? `$${Number(formData.depositAmount).toLocaleString()}` : '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Withdrawals Count</p>
-                <p className="text-slate-900">{formData.withdrawalsCount || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Total Withdrawals</p>
-                <p className="text-slate-900">{formData.totalWithdrawals ? `$${Number(formData.totalWithdrawals).toLocaleString()}` : '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Transactions Count</p>
-                <p className="text-slate-900">{formData.transactionsCount || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Min Resolution</p>
-                <p className="text-slate-900">{formData.minResolution || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Max Resolution</p>
-                <p className="text-slate-900">{formData.maxResolution || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">NSFs</p>
-                <p className="text-slate-900">{formData.nsfs || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Negative Days</p>
-                <p className="text-slate-900">{formData.negativeDays || '—'}</p>
-              </div>
-              <div>
-                <p className="text-green-700 font-medium">Fraud Score</p>
-                <p className="text-slate-900">{formData.fraudScore || '—'}</p>
-              </div>
-              <div className="col-span-2">
-                <p className="text-green-700 font-medium">Fraud Reasons</p>
-                <p className="text-slate-900">{formData.fraudReasons || '—'}</p>
-              </div>
-              <div className="col-span-4">
-                <p className="text-green-700 font-medium">Notes</p>
-                <p className="text-slate-900">{formData.notes || '—'}</p>
-              </div>
+              <div><p className="text-green-700 font-medium">Bank Name</p><p className="text-slate-900">{formData.bankName || '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Account No</p><p className="text-slate-900">{formData.accountNo || '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Account Title</p><p className="text-slate-900">{formData.accountTitle || '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Company</p><p className="text-slate-900">{formData.company || '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Starting Date</p><p className="text-slate-900">{formData.startingDate || '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Ending Date</p><p className="text-slate-900">{formData.endingDate || '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Starting Balance</p><p className="text-slate-900">{formData.startingBalance ? `$${Number(formData.startingBalance).toLocaleString()}` : '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Ending Balance</p><p className="text-slate-900">{formData.endingBalance ? `$${Number(formData.endingBalance).toLocaleString()}` : '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Avg Daily Balance</p><p className="text-slate-900">{formData.avgDailyBalance ? `$${Number(formData.avgDailyBalance).toLocaleString()}` : '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Deposit Count</p><p className="text-slate-900">{formData.depositCount || '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Deposit Amount</p><p className="text-slate-900">{formData.depositAmount ? `$${Number(formData.depositAmount).toLocaleString()}` : '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Withdrawals Count</p><p className="text-slate-900">{formData.withdrawalsCount || '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Total Withdrawals</p><p className="text-slate-900">{formData.totalWithdrawals ? `$${Number(formData.totalWithdrawals).toLocaleString()}` : '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Transactions Count</p><p className="text-slate-900">{formData.transactionsCount || '—'}</p></div>
+              <div><p className="text-green-700 font-medium">NSFs</p><p className="text-slate-900">{formData.nsfs || '—'}</p></div>
+              <div><p className="text-green-700 font-medium">Negative Days</p><p className="text-slate-900">{formData.negativeDays || '—'}</p></div>
             </div>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-           {/* Information Section */}
           <div>
             <h3 className="text-sm font-semibold text-slate-700 mb-4 pb-2 border-b">Information</h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-              {/* Left Column */}
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="accountNo">Account No</Label>
-                  <Input
-                    id="accountNo"
-                    value={formData.accountNo}
-                    onChange={(e) => setFormData({ ...formData, accountNo: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="accountTitle">Account Title</Label>
-                  <Input
-                    id="accountTitle"
-                    value={formData.accountTitle}
-                    onChange={(e) => setFormData({ ...formData, accountTitle: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="company">Company</Label>
-                  <Input
-                    id="company"
-                    value={formData.company}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="bankName">Bank Name</Label>
-                  <Input
-                    id="bankName"
-                    value={formData.bankName}
-                    onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="startingDate">Starting Date</Label>
-                  <Input
-                    id="startingDate"
-                    type="date"
-                    value={formData.startingDate}
-                    onChange={(e) => setFormData({ ...formData, startingDate: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="startingBalance">Starting Balance</Label>
-                  <Input
-                    id="startingBalance"
-                    type="number"
-                    step="0.01"
-                    value={formData.startingBalance}
-                    onChange={(e) => setFormData({ ...formData, startingBalance: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="endingDate">Ending Date</Label>
-                  <Input
-                    id="endingDate"
-                    type="date"
-                    value={formData.endingDate}
-                    onChange={(e) => setFormData({ ...formData, endingDate: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="endingBalance">Ending Balance</Label>
-                  <Input
-                    id="endingBalance"
-                    type="number"
-                    step="0.01"
-                    value={formData.endingBalance}
-                    onChange={(e) => setFormData({ ...formData, endingBalance: e.target.value })}
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="reconciled"
-                    checked={formData.reconciled}
-                    onCheckedChange={(checked) => setFormData({ ...formData, reconciled: checked })}
-                  />
-                  <Label htmlFor="reconciled" className="cursor-pointer">Reconciled</Label>
-                </div>
-
-                <div>
-                  <Label htmlFor="unreconciledEndBalance">Unreconciled End Balance</Label>
-                  <Input
-                    id="unreconciledEndBalance"
-                    type="number"
-                    step="0.01"
-                    value={formData.unreconciledEndBalance}
-                    onChange={(e) => setFormData({ ...formData, unreconciledEndBalance: e.target.value })}
-                  />
-                </div>
+                <div><Label htmlFor="accountNo">Account No</Label><Input id="accountNo" value={formData.accountNo} onChange={(e) => setFormData({ ...formData, accountNo: e.target.value })} /></div>
+                <div><Label htmlFor="accountTitle">Account Title</Label><Input id="accountTitle" value={formData.accountTitle} onChange={(e) => setFormData({ ...formData, accountTitle: e.target.value })} /></div>
+                <div><Label htmlFor="company">Company</Label><Input id="company" value={formData.company} onChange={(e) => setFormData({ ...formData, company: e.target.value })} /></div>
+                <div><Label htmlFor="bankName">Bank Name</Label><Input id="bankName" value={formData.bankName} onChange={(e) => setFormData({ ...formData, bankName: e.target.value })} /></div>
+                <div><Label htmlFor="startingDate">Starting Date</Label><Input id="startingDate" type="date" value={formData.startingDate} onChange={(e) => setFormData({ ...formData, startingDate: e.target.value })} /></div>
+                <div><Label htmlFor="startingBalance">Starting Balance</Label><Input id="startingBalance" type="number" step="0.01" value={formData.startingBalance} onChange={(e) => setFormData({ ...formData, startingBalance: e.target.value })} /></div>
+                <div><Label htmlFor="endingDate">Ending Date</Label><Input id="endingDate" type="date" value={formData.endingDate} onChange={(e) => setFormData({ ...formData, endingDate: e.target.value })} /></div>
+                <div><Label htmlFor="endingBalance">Ending Balance</Label><Input id="endingBalance" type="number" step="0.01" value={formData.endingBalance} onChange={(e) => setFormData({ ...formData, endingBalance: e.target.value })} /></div>
+                <div className="flex items-center gap-2"><Checkbox id="reconciled" checked={formData.reconciled} onCheckedChange={(checked) => setFormData({ ...formData, reconciled: checked })} /><Label htmlFor="reconciled" className="cursor-pointer">Reconciled</Label></div>
+                <div><Label htmlFor="unreconciledEndBalance">Unreconciled End Balance</Label><Input id="unreconciledEndBalance" type="number" step="0.01" value={formData.unreconciledEndBalance} onChange={(e) => setFormData({ ...formData, unreconciledEndBalance: e.target.value })} /></div>
               </div>
-
-              {/* Right Column */}
               <div className="space-y-4">
-                <div>
-                  <Label>*Opportunity</Label>
-                  <div className="px-3 py-2 bg-slate-50 border rounded text-sm text-slate-600">
-                    Auto-filled
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="avgDailyBalance">Average Daily Balance</Label>
-                  <Input
-                    id="avgDailyBalance"
-                    type="number"
-                    step="0.01"
-                    value={formData.avgDailyBalance}
-                    onChange={(e) => setFormData({ ...formData, avgDailyBalance: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="depositCount">Deposit Count</Label>
-                  <Input
-                    id="depositCount"
-                    type="number"
-                    value={formData.depositCount}
-                    onChange={(e) => setFormData({ ...formData, depositCount: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="depositAmount">Deposit Amount</Label>
-                  <Input
-                    id="depositAmount"
-                    type="number"
-                    step="0.01"
-                    value={formData.depositAmount}
-                    onChange={(e) => setFormData({ ...formData, depositAmount: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="withdrawalsCount">Withdrawals Count</Label>
-                  <Input
-                    id="withdrawalsCount"
-                    type="number"
-                    value={formData.withdrawalsCount}
-                    onChange={(e) => setFormData({ ...formData, withdrawalsCount: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="totalWithdrawals">Total Withdrawals</Label>
-                  <Input
-                    id="totalWithdrawals"
-                    type="number"
-                    step="0.01"
-                    value={formData.totalWithdrawals}
-                    onChange={(e) => setFormData({ ...formData, totalWithdrawals: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="transactionsCount">Transactions Count</Label>
-                  <Input
-                    id="transactionsCount"
-                    type="number"
-                    value={formData.transactionsCount}
-                    onChange={(e) => setFormData({ ...formData, transactionsCount: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="minResolution">Min Resolution</Label>
-                  <Input
-                    id="minResolution"
-                    type="number"
-                    value={formData.minResolution}
-                    onChange={(e) => setFormData({ ...formData, minResolution: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="maxResolution">Max Resolution</Label>
-                  <Input
-                    id="maxResolution"
-                    type="number"
-                    value={formData.maxResolution}
-                    onChange={(e) => setFormData({ ...formData, maxResolution: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="nsfs">NSFs</Label>
-                  <Input
-                    id="nsfs"
-                    type="number"
-                    value={formData.nsfs}
-                    onChange={(e) => setFormData({ ...formData, nsfs: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="negativeDays">Negative Days</Label>
-                  <Input
-                    id="negativeDays"
-                    type="number"
-                    value={formData.negativeDays}
-                    onChange={(e) => setFormData({ ...formData, negativeDays: e.target.value })}
-                  />
-                </div>
+                <div><Label>*Opportunity</Label><div className="px-3 py-2 bg-slate-50 border rounded text-sm text-slate-600">Auto-filled</div></div>
+                <div><Label htmlFor="avgDailyBalance">Average Daily Balance</Label><Input id="avgDailyBalance" type="number" step="0.01" value={formData.avgDailyBalance} onChange={(e) => setFormData({ ...formData, avgDailyBalance: e.target.value })} /></div>
+                <div><Label htmlFor="depositCount">Deposit Count</Label><Input id="depositCount" type="number" value={formData.depositCount} onChange={(e) => setFormData({ ...formData, depositCount: e.target.value })} /></div>
+                <div><Label htmlFor="depositAmount">Deposit Amount</Label><Input id="depositAmount" type="number" step="0.01" value={formData.depositAmount} onChange={(e) => setFormData({ ...formData, depositAmount: e.target.value })} /></div>
+                <div><Label htmlFor="withdrawalsCount">Withdrawals Count</Label><Input id="withdrawalsCount" type="number" value={formData.withdrawalsCount} onChange={(e) => setFormData({ ...formData, withdrawalsCount: e.target.value })} /></div>
+                <div><Label htmlFor="totalWithdrawals">Total Withdrawals</Label><Input id="totalWithdrawals" type="number" step="0.01" value={formData.totalWithdrawals} onChange={(e) => setFormData({ ...formData, totalWithdrawals: e.target.value })} /></div>
+                <div><Label htmlFor="transactionsCount">Transactions Count</Label><Input id="transactionsCount" type="number" value={formData.transactionsCount} onChange={(e) => setFormData({ ...formData, transactionsCount: e.target.value })} /></div>
+                <div><Label htmlFor="minResolution">Min Resolution</Label><Input id="minResolution" type="number" value={formData.minResolution} onChange={(e) => setFormData({ ...formData, minResolution: e.target.value })} /></div>
+                <div><Label htmlFor="maxResolution">Max Resolution</Label><Input id="maxResolution" type="number" value={formData.maxResolution} onChange={(e) => setFormData({ ...formData, maxResolution: e.target.value })} /></div>
+                <div><Label htmlFor="nsfs">NSFs</Label><Input id="nsfs" type="number" value={formData.nsfs} onChange={(e) => setFormData({ ...formData, nsfs: e.target.value })} /></div>
+                <div><Label htmlFor="negativeDays">Negative Days</Label><Input id="negativeDays" type="number" value={formData.negativeDays} onChange={(e) => setFormData({ ...formData, negativeDays: e.target.value })} /></div>
               </div>
             </div>
           </div>
 
-          {/* Fraud Section */}
           <div>
             <h3 className="text-sm font-semibold text-slate-700 mb-4 pb-2 border-b">Fraud</h3>
             <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-              <div>
-                <Label htmlFor="fraudScore">Fraud Score</Label>
-                <Input
-                  id="fraudScore"
-                  type="number"
-                  value={formData.fraudScore}
-                  onChange={(e) => setFormData({ ...formData, fraudScore: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="fraudReasons">Fraud Reasons</Label>
-                <Textarea
-                  id="fraudReasons"
-                  value={formData.fraudReasons}
-                  onChange={(e) => setFormData({ ...formData, fraudReasons: e.target.value })}
-                  rows={3}
-                />
-              </div>
-
-              <div className="col-span-2">
-                <div className="flex items-center justify-between mb-1">
-                  <Label htmlFor="notes">Notes</Label>
-                  <span className="text-xs text-slate-500">{formData.notes.length}/255</span>
-                </div>
-                <Textarea
-                  id="notes"
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value.slice(0, 255) })}
-                  rows={3}
-                  maxLength="255"
-                />
-              </div>
+              <div><Label htmlFor="fraudScore">Fraud Score</Label><Input id="fraudScore" type="number" value={formData.fraudScore} onChange={(e) => setFormData({ ...formData, fraudScore: e.target.value })} /></div>
+              <div><Label htmlFor="fraudReasons">Fraud Reasons</Label><Textarea id="fraudReasons" value={formData.fraudReasons} onChange={(e) => setFormData({ ...formData, fraudReasons: e.target.value })} rows={3} /></div>
+              <div className="col-span-2"><div className="flex items-center justify-between mb-1"><Label htmlFor="notes">Notes</Label><span className="text-xs text-slate-500">{formData.notes.length}/255</span></div><Textarea id="notes" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value.slice(0, 255) })} rows={3} maxLength="255" /></div>
             </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save'}
-            </Button>
+            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>Cancel</Button>
+            <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700">{loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : 'Save'}</Button>
           </div>
         </form>
       </DialogContent>
