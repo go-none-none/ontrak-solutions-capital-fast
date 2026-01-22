@@ -18,24 +18,21 @@ export default function AdminPipeline() {
   const [refreshing, setRefreshing] = useState(false);
   const [repsData, setRepsData] = useState([]);
   const [expandedRep, setExpandedRep] = useState(null);
-  const [activeView, setActiveView] = useState('leads'); // 'leads', 'opportunities', or 'tasks'
-  const [stageFilter, setStageFilter] = useState({}); // {repUserId: stageName}
+  const [activeView, setActiveView] = useState('leads');
+  const [stageFilter, setStageFilter] = useState({});
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [allTasks, setAllTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
-  const [repSearch, setRepSearch] = useState({}); // {repUserId: searchTerm}
-  const [tableSort, setTableSort] = useState({ column: null, direction: 'asc' }); // {column, direction}
+  const [repSearch, setRepSearch] = useState({});
+  const [tableSort, setTableSort] = useState({ column: null, direction: 'asc' });
   const [universalSearch, setUniversalSearch] = useState('');
   const [searchResults, setSearchResults] = useState({ leads: [], opportunities: [], tasks: [] });
 
   useEffect(() => {
     checkSession();
-    
-    // Set admin portal flag when on admin pipeline
     sessionStorage.setItem('fromAdminPortal', 'true');
     
-    // Restore state from sessionStorage
     const savedState = sessionStorage.getItem('adminPipelineState');
     if (savedState) {
       const state = JSON.parse(savedState);
@@ -48,14 +45,7 @@ export default function AdminPipeline() {
   }, []);
 
   useEffect(() => {
-    // Save state to sessionStorage whenever it changes
-    const state = {
-      activeView,
-      expandedRep,
-      stageFilter,
-      repSearch,
-      tableSort
-    };
+    const state = { activeView, expandedRep, stageFilter, repSearch, tableSort };
     sessionStorage.setItem('adminPipelineState', JSON.stringify(state));
   }, [activeView, expandedRep, stageFilter, repSearch, tableSort]);
 
@@ -129,11 +119,9 @@ export default function AdminPipeline() {
 
       setRepsData(pipelineRes.data.reps || []);
       setAllTasks(tasksRes.data.tasks || []);
-      console.log('Users response:', usersRes);
       setAllUsers(usersRes.data.users || []);
     } catch (error) {
       console.error('Load error:', error);
-      console.error('Users error:', error.response?.data || error);
     } finally {
       if (isRefresh) {
         setRefreshing(false);
@@ -216,7 +204,6 @@ export default function AdminPipeline() {
       }
       return rep.opportunities?.filter(o => o.StageName === stageName).length || 0;
     } else {
-      // tasks view
       const repTasks = getRepTasks(rep.userId);
       const categorized = categorizeTasksByDueDate(repTasks);
       return categorized[stageName]?.length || 0;
@@ -225,10 +212,7 @@ export default function AdminPipeline() {
 
   const getStageAmount = (rep, stageName) => {
     if (activeView === 'leads') return 0;
-    
-    // Don't show amounts for declined stage
     if (stageName === 'Declined') return 0;
-    
     const opps = rep.opportunities?.filter(o => o.StageName === stageName) || [];
     return opps.reduce((sum, o) => sum + (o.Amount || 0), 0);
   };
@@ -283,7 +267,6 @@ export default function AdminPipeline() {
 
   const stages = activeView === 'leads' ? leadStages : activeView === 'opportunities' ? opportunityStages : taskCategories;
 
-  // Merge all users with reps data
   let allRepsData = allUsers.map(user => {
     const existingRep = repsData.find(r => r.userId === user.Id);
     return existingRep || {
@@ -295,20 +278,16 @@ export default function AdminPipeline() {
     };
   });
 
-  // Apply sorting
   if (tableSort.column) {
     allRepsData = [...allRepsData].sort((a, b) => {
       let aVal, bVal;
-
       if (tableSort.column === 'name') {
         aVal = a.name || '';
         bVal = b.name || '';
       } else {
-        // Sorting by stage/category count
         aVal = getStageCount(a, tableSort.column);
         bVal = getStageCount(b, tableSort.column);
       }
-
       const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
       return tableSort.direction === 'asc' ? comparison : -comparison;
     });
@@ -320,7 +299,6 @@ export default function AdminPipeline() {
   const totalTasks = allTasks.length;
   const openTasks = allTasks.filter(t => t.Status !== 'Completed').length;
 
-  // Universal Search
   const handleUniversalSearch = (searchTerm) => {
     setUniversalSearch(searchTerm);
     
@@ -332,7 +310,6 @@ export default function AdminPipeline() {
     const term = searchTerm.toLowerCase();
     const results = { leads: [], opportunities: [], tasks: [] };
 
-    // Search through all leads
     allRepsData.forEach(rep => {
       rep.leads?.forEach(lead => {
         if (
@@ -347,7 +324,6 @@ export default function AdminPipeline() {
       });
     });
 
-    // Search through all opportunities
     allRepsData.forEach(rep => {
       rep.opportunities?.forEach(opp => {
         if (
@@ -361,7 +337,6 @@ export default function AdminPipeline() {
       });
     });
 
-    // Search through all tasks
     allTasks.forEach(task => {
       if (
         task.Subject?.toLowerCase().includes(term) ||
@@ -379,7 +354,6 @@ export default function AdminPipeline() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -412,13 +386,8 @@ export default function AdminPipeline() {
       </div>
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-        {/* Summary Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm min-h-[120px]"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm min-h-[120px]">
             <div className="flex items-center justify-between h-full">
               <div>
                 <p className="text-xs sm:text-sm text-slate-600 mb-1">Total Users</p>
@@ -430,15 +399,7 @@ export default function AdminPipeline() {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            onClick={() => setActiveView('leads')}
-            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all hover:shadow-md min-h-[120px] ${
-              activeView === 'leads' ? 'ring-2 ring-[#08708E]' : ''
-            }`}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} onClick={() => setActiveView('leads')} className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all hover:shadow-md min-h-[120px] ${activeView === 'leads' ? 'ring-2 ring-[#08708E]' : ''}`}>
             <div className="flex items-center justify-between h-full">
               <div>
                 <p className="text-xs sm:text-sm text-slate-600 mb-1">Total Leads</p>
@@ -450,15 +411,7 @@ export default function AdminPipeline() {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            onClick={() => setActiveView('opportunities')}
-            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all hover:shadow-md min-h-[120px] ${
-              activeView === 'opportunities' ? 'ring-2 ring-[#08708E]' : ''
-            }`}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} onClick={() => setActiveView('opportunities')} className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all hover:shadow-md min-h-[120px] ${activeView === 'opportunities' ? 'ring-2 ring-[#08708E]' : ''}`}>
             <div className="flex items-center justify-between h-full">
               <div>
                 <p className="text-xs sm:text-sm text-slate-600 mb-1">Total Opportunities</p>
@@ -470,12 +423,7 @@ export default function AdminPipeline() {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl p-4 sm:p-6 shadow-sm min-h-[120px]"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-2xl p-4 sm:p-6 shadow-sm min-h-[120px]">
             <div className="flex items-center justify-between h-full">
               <div>
                 <p className="text-xs sm:text-sm text-white/80 mb-1">Total Pipeline</p>
@@ -487,15 +435,7 @@ export default function AdminPipeline() {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            onClick={() => setActiveView('tasks')}
-            className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all hover:shadow-md min-h-[120px] ${
-              activeView === 'tasks' ? 'ring-2 ring-[#08708E]' : ''
-            }`}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} onClick={() => setActiveView('tasks')} className={`bg-white rounded-2xl p-4 sm:p-6 shadow-sm cursor-pointer transition-all hover:shadow-md min-h-[120px] ${activeView === 'tasks' ? 'ring-2 ring-[#08708E]' : ''}`}>
             <div className="flex items-center justify-between h-full">
               <div>
                 <p className="text-xs sm:text-sm text-slate-600 mb-1">Open Tasks</p>
@@ -509,7 +449,6 @@ export default function AdminPipeline() {
           </motion.div>
         </div>
 
-        {/* Universal Search */}
         <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -520,42 +459,31 @@ export default function AdminPipeline() {
               className="pl-10 h-12 text-base"
             />
             {universalSearch && (
-              <button
-                onClick={() => handleUniversalSearch('')}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
-              >
+              <button onClick={() => handleUniversalSearch('')} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
             )}
           </div>
 
-          {/* Search Results */}
           {universalSearch && (
             <div className="mt-4 space-y-4 max-h-96 overflow-y-auto">
               {searchResults.leads.length === 0 && searchResults.opportunities.length === 0 && searchResults.tasks.length === 0 ? (
                 <p className="text-center text-slate-500 py-8">No results found</p>
               ) : (
                 <>
-                  {/* Leads Results */}
                   {searchResults.leads.length > 0 && (
                     <div>
                       <h4 className="text-sm font-semibold text-slate-700 mb-2">Leads ({searchResults.leads.length})</h4>
                       <div className="space-y-2">
                         {searchResults.leads.map(lead => (
-                          <button
-                            key={lead.Id}
-                            onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)}
-                            className="w-full bg-slate-50 hover:bg-slate-100 rounded-lg p-3 text-left transition-colors border border-slate-200"
-                          >
+                          <button key={lead.Id} onClick={() => navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`)} className="w-full bg-slate-50 hover:bg-slate-100 rounded-lg p-3 text-left transition-colors border border-slate-200">
                             <div className="flex justify-between items-start">
                               <div>
                                 <p className="font-medium text-slate-900">{lead.Name}</p>
                                 <p className="text-xs text-slate-500">{lead.Company}</p>
                                 <p className="text-xs text-slate-600 mt-1">Owner: {lead.ownerName}</p>
                               </div>
-                              <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
-                                {lead.Status}
-                              </span>
+                              <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">{lead.Status}</span>
                             </div>
                           </button>
                         ))}
@@ -563,17 +491,12 @@ export default function AdminPipeline() {
                     </div>
                   )}
 
-                  {/* Opportunities Results */}
                   {searchResults.opportunities.length > 0 && (
                     <div>
                       <h4 className="text-sm font-semibold text-slate-700 mb-2">Opportunities ({searchResults.opportunities.length})</h4>
                       <div className="space-y-2">
                         {searchResults.opportunities.map(opp => (
-                          <button
-                            key={opp.Id}
-                            onClick={() => navigate(createPageUrl('OpportunityDetail') + `?id=${opp.Id}`)}
-                            className="w-full bg-slate-50 hover:bg-slate-100 rounded-lg p-3 text-left transition-colors border border-slate-200"
-                          >
+                          <button key={opp.Id} onClick={() => navigate(createPageUrl('OpportunityDetail') + `?id=${opp.Id}`)} className="w-full bg-slate-50 hover:bg-slate-100 rounded-lg p-3 text-left transition-colors border border-slate-200">
                             <div className="flex justify-between items-start">
                               <div>
                                 <p className="font-medium text-slate-900">{opp.Name}</p>
@@ -582,9 +505,7 @@ export default function AdminPipeline() {
                               </div>
                               <div className="text-right">
                                 <p className="font-semibold text-[#08708E] text-sm">{formatCurrency(opp.Amount || 0)}</p>
-                                <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800">
-                                  {opp.StageName}
-                                </span>
+                                <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800">{opp.StageName}</span>
                               </div>
                             </div>
                           </button>
@@ -593,34 +514,21 @@ export default function AdminPipeline() {
                     </div>
                   )}
 
-                  {/* Tasks Results */}
                   {searchResults.tasks.length > 0 && (
                     <div>
                       <h4 className="text-sm font-semibold text-slate-700 mb-2">Tasks ({searchResults.tasks.length})</h4>
                       <div className="space-y-2">
                         {searchResults.tasks.map(task => (
-                          <button
-                            key={task.Id}
-                            onClick={() => setSelectedTask(task)}
-                            className="w-full bg-slate-50 hover:bg-slate-100 rounded-lg p-3 text-left transition-colors border border-slate-200"
-                          >
+                          <button key={task.Id} onClick={() => setSelectedTask(task)} className="w-full bg-slate-50 hover:bg-slate-100 rounded-lg p-3 text-left transition-colors border border-slate-200">
                             <div className="flex justify-between items-start">
                               <div className="flex-1">
                                 <p className="font-medium text-slate-900">{task.Subject}</p>
-                                {task.What?.Name && (
-                                  <p className="text-xs text-purple-600 mt-1">Related: {task.What.Name}</p>
-                                )}
+                                {task.What?.Name && <p className="text-xs text-purple-600 mt-1">Related: {task.What.Name}</p>}
                                 <p className="text-xs text-slate-600 mt-1">Owner: {task.ownerName}</p>
                               </div>
                               <div className="text-right ml-3">
-                                <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800">
-                                  {task.Status}
-                                </span>
-                                {task.ActivityDate && (
-                                  <p className="text-xs text-slate-500 mt-1">
-                                    {new Date(task.ActivityDate).toLocaleDateString()}
-                                  </p>
-                                )}
+                                <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800">{task.Status}</span>
+                                {task.ActivityDate && <p className="text-xs text-slate-500 mt-1">{new Date(task.ActivityDate).toLocaleDateString()}</p>}
                               </div>
                             </div>
                           </button>
@@ -634,44 +542,22 @@ export default function AdminPipeline() {
           )}
         </div>
 
-        {/* Reps Pipeline Table */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <table className="w-full min-w-[800px] md:min-w-[1200px]">
               <thead className="bg-slate-50 border-b border-slate-200">
                <tr>
-                 <th 
-                   className="text-left px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-semibold text-slate-700 min-w-[180px] md:min-w-[250px] cursor-pointer hover:bg-slate-100 transition-colors sticky left-0 bg-slate-50 z-10"
-                    onClick={() => {
-                      setTableSort(prev => ({
-                        column: 'name',
-                        direction: prev.column === 'name' && prev.direction === 'asc' ? 'desc' : 'asc'
-                      }));
-                    }}
-                  >
+                 <th className="text-left px-3 md:px-6 py-3 md:py-4 text-xs md:text-sm font-semibold text-slate-700 min-w-[180px] md:min-w-[250px] cursor-pointer hover:bg-slate-100 transition-colors sticky left-0 bg-slate-50 z-10" onClick={() => setTableSort(prev => ({ column: 'name', direction: prev.column === 'name' && prev.direction === 'asc' ? 'desc' : 'asc' }))}>
                     <div className="flex items-center gap-2">
                       Rep Name
-                      {tableSort.column === 'name' ? (
-                        tableSort.direction === 'asc' ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />
-                      ) : <ArrowUpDown className="w-4 h-4 text-slate-400" />}
+                      {tableSort.column === 'name' ? (tableSort.direction === 'asc' ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />) : <ArrowUpDown className="w-4 h-4 text-slate-400" />}
                     </div>
                   </th>
                   {stages.map((stage, idx) => (
-                    <th 
-                      key={idx} 
-                      className="text-center px-2 md:px-3 py-2 md:py-4 text-[10px] md:text-xs font-semibold text-slate-700 cursor-pointer hover:bg-slate-100 transition-colors"
-                      onClick={() => {
-                        setTableSort(prev => ({
-                          column: stage.name,
-                          direction: prev.column === stage.name && prev.direction === 'asc' ? 'desc' : 'asc'
-                        }));
-                      }}
-                    >
+                    <th key={idx} className="text-center px-2 md:px-3 py-2 md:py-4 text-[10px] md:text-xs font-semibold text-slate-700 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => setTableSort(prev => ({ column: stage.name, direction: prev.column === stage.name && prev.direction === 'asc' ? 'desc' : 'asc' }))}>
                       <div className="flex items-center justify-center gap-1">
                         {stage.label}
-                        {tableSort.column === stage.name ? (
-                          tableSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
-                        ) : <ArrowUpDown className="w-3 h-3 text-slate-400" />}
+                        {tableSort.column === stage.name ? (tableSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />) : <ArrowUpDown className="w-3 h-3 text-slate-400" />}
                       </div>
                     </th>
                   ))}
@@ -682,23 +568,13 @@ export default function AdminPipeline() {
               </thead>
               <tbody>
                 {allRepsData.map((rep, repIdx) => {
-                  const totalCount = activeView === 'leads' 
-                    ? rep.leads?.length || 0 
-                    : activeView === 'opportunities'
-                      ? rep.opportunities?.length || 0
-                      : getRepTasks(rep.userId).length;
+                  const totalCount = activeView === 'leads' ? rep.leads?.length || 0 : activeView === 'opportunities' ? rep.opportunities?.length || 0 : getRepTasks(rep.userId).length;
                   const pipelineValue = getTotalPipeline(rep);
                   const isExpanded = expandedRep === rep.userId;
 
                   return (
                     <React.Fragment key={rep.userId}>
-                      <motion.tr
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: repIdx * 0.05 }}
-                        className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer"
-                        onClick={() => setExpandedRep(isExpanded ? null : rep.userId)}
-                      >
+                      <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: repIdx * 0.05 }} className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => setExpandedRep(isExpanded ? null : rep.userId)}>
                         <td className="px-3 md:px-6 py-3 md:py-4 sticky left-0 bg-white z-10">
                           <div className="flex items-center gap-2 md:gap-3">
                             <button className="text-slate-400 hover:text-slate-600 flex-shrink-0">
@@ -715,29 +591,10 @@ export default function AdminPipeline() {
                           const amount = getStageAmount(rep, stage.name);
                           const isActiveFilter = stageFilter[rep.userId] === stage.name;
                           return (
-                            <td 
-                              key={idx} 
-                              className="px-2 md:px-3 py-2 md:py-4 text-center cursor-pointer hover:bg-slate-100 transition-colors"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (count > 0) {
-                                  setStageFilter(prev => ({
-                                    ...prev,
-                                    [rep.userId]: prev[rep.userId] === stage.name ? null : stage.name
-                                  }));
-                                  if (!isExpanded) {
-                                    setExpandedRep(rep.userId);
-                                  }
-                                }
-                              }}
-                            >
+                            <td key={idx} className="px-2 md:px-3 py-2 md:py-4 text-center cursor-pointer hover:bg-slate-100 transition-colors" onClick={(e) => { e.stopPropagation(); if (count > 0) { setStageFilter(prev => ({ ...prev, [rep.userId]: prev[rep.userId] === stage.name ? null : stage.name })); if (!isExpanded) setExpandedRep(rep.userId); }}}>
                               <div className="flex flex-col items-center gap-0.5 md:gap-1">
-                                <span className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-md md:rounded-lg ${count > 0 ? stage.color : 'bg-slate-200'} text-white font-semibold text-xs md:text-sm transition-all ${isActiveFilter ? 'ring-1 md:ring-2 ring-offset-1 md:ring-offset-2 ring-slate-900' : ''}`}>
-                                  {count}
-                                </span>
-                                {activeView === 'opportunities' && amount > 0 && (
-                                  <span className="text-[10px] md:text-xs text-slate-600 whitespace-nowrap">{formatCurrency(amount)}</span>
-                                )}
+                                <span className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-md md:rounded-lg ${count > 0 ? stage.color : 'bg-slate-200'} text-white font-semibold text-xs md:text-sm transition-all ${isActiveFilter ? 'ring-1 md:ring-2 ring-offset-1 md:ring-offset-2 ring-slate-900' : ''}`}>{count}</span>
+                                {activeView === 'opportunities' && amount > 0 && <span className="text-[10px] md:text-xs text-slate-600 whitespace-nowrap">{formatCurrency(amount)}</span>}
                               </div>
                             </td>
                           );
@@ -745,14 +602,11 @@ export default function AdminPipeline() {
                         <td className="px-3 md:px-6 py-3 md:py-4 text-right">
                           <div className="flex flex-col items-end">
                             <span className="font-bold text-slate-900 text-sm md:text-lg">{totalCount}</span>
-                            {activeView === 'opportunities' && pipelineValue > 0 && (
-                              <span className="text-xs md:text-sm text-[#08708E] font-semibold whitespace-nowrap">{formatCurrency(pipelineValue)}</span>
-                            )}
+                            {activeView === 'opportunities' && pipelineValue > 0 && <span className="text-xs md:text-sm text-[#08708E] font-semibold whitespace-nowrap">{formatCurrency(pipelineValue)}</span>}
                           </div>
                         </td>
                       </motion.tr>
 
-                      {/* Expanded Details */}
                       {isExpanded && (
                         <tr className="bg-slate-50">
                           <td colSpan={stages.length + 2} className="px-6 py-4">
@@ -760,167 +614,74 @@ export default function AdminPipeline() {
                               <div className="flex items-center justify-between mb-3">
                                 <h4 className="font-semibold text-slate-900">
                                   {activeView === 'leads' ? 'Leads' : activeView === 'opportunities' ? 'Opportunities' : 'Tasks'} Details
-                                  {stageFilter[rep.userId] && (
-                                    <span className="ml-2 text-sm font-normal text-slate-600">
-                                      (Filtered by: {stages.find(s => s.name === stageFilter[rep.userId])?.label})
-                                    </span>
-                                  )}
+                                  {stageFilter[rep.userId] && <span className="ml-2 text-sm font-normal text-slate-600">(Filtered by: {stages.find(s => s.name === stageFilter[rep.userId])?.label})</span>}
                                 </h4>
                                 {stageFilter[rep.userId] && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setStageFilter(prev => ({ ...prev, [rep.userId]: null }));
-                                    }}
-                                    className="text-xs"
-                                  >
-                                    Clear Filter
-                                  </Button>
+                                  <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setStageFilter(prev => ({ ...prev, [rep.userId]: null })); }} className="text-xs">Clear Filter</Button>
                                 )}
                               </div>
-                              {/* Search Input */}
                               <div className="relative mb-3">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <Input
-                                  placeholder={`Search ${activeView === 'leads' ? 'leads' : activeView === 'opportunities' ? 'opportunities' : 'tasks'}...`}
-                                  value={repSearch[rep.userId] || ''}
-                                  onChange={(e) => {
-                                    e.stopPropagation();
-                                    setRepSearch(prev => ({ ...prev, [rep.userId]: e.target.value }));
-                                  }}
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="pl-10"
-                                />
+                                <Input placeholder={`Search ${activeView === 'leads' ? 'leads' : activeView === 'opportunities' ? 'opportunities' : 'tasks'}...`} value={repSearch[rep.userId] || ''} onChange={(e) => { e.stopPropagation(); setRepSearch(prev => ({ ...prev, [rep.userId]: e.target.value })); }} onClick={(e) => e.stopPropagation()} className="pl-10" />
                               </div>
                               <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
-                                {activeView === 'leads' 
-                                  ? rep.leads?.filter(lead => {
-                                      const stageMatch = !stageFilter[rep.userId] || lead.Status === stageFilter[rep.userId];
-                                      const searchTerm = (repSearch[rep.userId] || '').toLowerCase();
-                                      const searchMatch = !searchTerm || 
-                                        lead.Name?.toLowerCase().includes(searchTerm) ||
-                                        lead.Company?.toLowerCase().includes(searchTerm) ||
-                                        lead.Email?.toLowerCase().includes(searchTerm) ||
-                                        lead.Status?.toLowerCase().includes(searchTerm);
-                                      return stageMatch && searchMatch;
-                                    }).map((lead, idx) => (
-                                      <button
-                                        key={idx}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          sessionStorage.setItem('fromAdminPortal', 'true');
-                                          navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`);
-                                        }}
-                                        className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full"
-                                      >
-                                        <div>
-                                          <p className="font-medium text-slate-900">{lead.Name}</p>
-                                          <div className="flex items-center gap-2 text-xs text-slate-500">
-                                            <span>{lead.Company}</span>
-                                            {lead.Phone && (
-                                              <>
-                                                <span>•</span>
-                                                <a href={`tel:${lead.Phone}`} className="text-[#08708E] hover:underline font-medium">
-                                                  {lead.Phone}
-                                                </a>
-                                              </>
-                                            )}
-                                            <span>•</span>
-                                            <span>{lead.Email}</span>
-                                          </div>
+                                {activeView === 'leads' ? rep.leads?.filter(lead => {
+                                  const stageMatch = !stageFilter[rep.userId] || lead.Status === stageFilter[rep.userId];
+                                  const searchTerm = (repSearch[rep.userId] || '').toLowerCase();
+                                  const searchMatch = !searchTerm || lead.Name?.toLowerCase().includes(searchTerm) || lead.Company?.toLowerCase().includes(searchTerm) || lead.Email?.toLowerCase().includes(searchTerm) || lead.Status?.toLowerCase().includes(searchTerm);
+                                  return stageMatch && searchMatch;
+                                }).map((lead, idx) => (
+                                  <button key={idx} onClick={(e) => { e.stopPropagation(); sessionStorage.setItem('fromAdminPortal', 'true'); navigate(createPageUrl('LeadDetail') + `?id=${lead.Id}`); }} className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full">
+                                    <div>
+                                      <p className="font-medium text-slate-900">{lead.Name}</p>
+                                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                                        <span>{lead.Company}</span>
+                                        {lead.Phone && (<><span>•</span><a href={`tel:${lead.Phone}`} className="text-[#08708E] hover:underline font-medium">{lead.Phone}</a></>)}
+                                        <span>•</span>
+                                        <span>{lead.Email}</span>
+                                      </div>
+                                    </div>
+                                    <span className="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-700">{lead.Status}</span>
+                                  </button>
+                                )) : activeView === 'opportunities' ? rep.opportunities?.filter(opp => {
+                                  const stageMatch = !stageFilter[rep.userId] || (stageFilter[rep.userId] === 'Declined' ? opp.StageName?.includes('Declined') : opp.StageName === stageFilter[rep.userId]);
+                                  const searchTerm = (repSearch[rep.userId] || '').toLowerCase();
+                                  const searchMatch = !searchTerm || opp.Name?.toLowerCase().includes(searchTerm) || opp.Account?.Name?.toLowerCase().includes(searchTerm) || opp.StageName?.toLowerCase().includes(searchTerm);
+                                  return stageMatch && searchMatch;
+                                }).map((opp, idx) => (
+                                  <button key={idx} onClick={(e) => { e.stopPropagation(); sessionStorage.setItem('fromAdminPortal', 'true'); navigate(createPageUrl('OpportunityDetail') + `?id=${opp.Id}`); }} className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full">
+                                    <div>
+                                      <p className="font-medium text-slate-900">{opp.Name}</p>
+                                      <p className="text-xs text-slate-500">{opp.Account?.Name}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <p className="font-semibold text-[#08708E]">{formatCurrency(opp.Amount || 0)}</p>
+                                      <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700">{opp.StageName}</span>
+                                    </div>
+                                  </button>
+                                )) : (() => {
+                                  const repTasks = getRepTasks(rep.userId);
+                                  const categorized = categorizeTasksByDueDate(repTasks);
+                                  let tasksToShow = repTasks;
+                                  if (stageFilter[rep.userId]) tasksToShow = categorized[stageFilter[rep.userId]] || [];
+                                  const searchTerm = (repSearch[rep.userId] || '').toLowerCase();
+                                  if (searchTerm) tasksToShow = tasksToShow.filter(task => task.Subject?.toLowerCase().includes(searchTerm) || task.Description?.toLowerCase().includes(searchTerm) || task.Status?.toLowerCase().includes(searchTerm) || task.What?.Name?.toLowerCase().includes(searchTerm));
+                                  return tasksToShow.map((task, idx) => (
+                                    <button key={idx} onClick={(e) => { e.stopPropagation(); setSelectedTask(task); }} className="w-full bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md hover:border-purple-500 transition-all text-left">
+                                      <div className="flex justify-between items-start">
+                                        <div className="flex-1">
+                                          <p className="font-medium text-slate-900">{task.Subject}</p>
+                                          {task.Description && <p className="text-xs text-slate-500 mt-1 line-clamp-1">{task.Description}</p>}
+                                          {task.What?.Name && <p className="text-xs text-purple-600 mt-1">Related: {task.What.Name}</p>}
                                         </div>
-                                        <span className="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-700">
-                                          {lead.Status}
-                                        </span>
-                                      </button>
-                                    ))
-                                  : activeView === 'opportunities'
-                                    ? rep.opportunities?.filter(opp => {
-                                        const stageMatch = !stageFilter[rep.userId] || 
-                                          (stageFilter[rep.userId] === 'Declined' ? opp.StageName?.includes('Declined') : opp.StageName === stageFilter[rep.userId]);
-                                        const searchTerm = (repSearch[rep.userId] || '').toLowerCase();
-                                        const searchMatch = !searchTerm ||
-                                          opp.Name?.toLowerCase().includes(searchTerm) ||
-                                          opp.Account?.Name?.toLowerCase().includes(searchTerm) ||
-                                          opp.StageName?.toLowerCase().includes(searchTerm);
-                                        return stageMatch && searchMatch;
-                                      }).map((opp, idx) => (
-                                        <button
-                                          key={idx}
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            sessionStorage.setItem('fromAdminPortal', 'true');
-                                            navigate(createPageUrl('OpportunityDetail') + `?id=${opp.Id}`);
-                                          }}
-                                          className="bg-white rounded-lg p-3 shadow-sm border border-slate-200 flex justify-between items-center hover:shadow-md hover:border-[#08708E] transition-all text-left w-full"
-                                        >
-                                          <div>
-                                            <p className="font-medium text-slate-900">{opp.Name}</p>
-                                            <p className="text-xs text-slate-500">{opp.Account?.Name}</p>
-                                          </div>
-                                          <div className="text-right">
-                                            <p className="font-semibold text-[#08708E]">{formatCurrency(opp.Amount || 0)}</p>
-                                            <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700">
-                                              {opp.StageName}
-                                            </span>
-                                          </div>
-                                        </button>
-                                      ))
-                                    : (() => {
-                                        const repTasks = getRepTasks(rep.userId);
-                                        const categorized = categorizeTasksByDueDate(repTasks);
-                                        let tasksToShow = repTasks;
-                                        
-                                        if (stageFilter[rep.userId]) {
-                                          tasksToShow = categorized[stageFilter[rep.userId]] || [];
-                                        }
-
-                                        const searchTerm = (repSearch[rep.userId] || '').toLowerCase();
-                                        if (searchTerm) {
-                                          tasksToShow = tasksToShow.filter(task =>
-                                            task.Subject?.toLowerCase().includes(searchTerm) ||
-                                            task.Description?.toLowerCase().includes(searchTerm) ||
-                                            task.Status?.toLowerCase().includes(searchTerm) ||
-                                            task.What?.Name?.toLowerCase().includes(searchTerm)
-                                          );
-                                        }
-
-                                        return tasksToShow.map((task, idx) => (
-                                          <button
-                                            key={idx}
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              setSelectedTask(task);
-                                            }}
-                                            className="w-full bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md hover:border-purple-500 transition-all text-left"
-                                          >
-                                            <div className="flex justify-between items-start">
-                                              <div className="flex-1">
-                                                <p className="font-medium text-slate-900">{task.Subject}</p>
-                                                {task.Description && (
-                                                  <p className="text-xs text-slate-500 mt-1 line-clamp-1">{task.Description}</p>
-                                                )}
-                                                {task.What?.Name && (
-                                                  <p className="text-xs text-purple-600 mt-1">Related: {task.What.Name}</p>
-                                                )}
-                                              </div>
-                                              <div className="text-right ml-3">
-                                                <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700 block mb-1">
-                                                  {task.Status}
-                                                </span>
-                                                {task.ActivityDate && (
-                                                  <span className="text-xs text-slate-500">
-                                                    {new Date(task.ActivityDate).toLocaleDateString()}
-                                                  </span>
-                                                )}
-                                              </div>
-                                            </div>
-                                          </button>
-                                        ));
-                                      })()
-                                }
+                                        <div className="text-right ml-3">
+                                          <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700 block mb-1">{task.Status}</span>
+                                          {task.ActivityDate && <span className="text-xs text-slate-500">{new Date(task.ActivityDate).toLocaleDateString()}</span>}
+                                        </div>
+                                      </div>
+                                    </button>
+                                  ));
+                                })()}
                               </div>
                             </div>
                           </td>
@@ -934,23 +695,8 @@ export default function AdminPipeline() {
           </div>
         </div>
 
-        {/* Create Task Modal */}
-      <CreateTaskModal
-        isOpen={showCreateTask}
-        onClose={() => setShowCreateTask(false)}
-        session={session}
-        repsData={repsData}
-        onSuccess={() => loadAllRepsData(session, true)}
-      />
-
-      {/* Task Details Modal */}
-      <TaskDetailsModal
-        task={selectedTask}
-        isOpen={!!selectedTask}
-        onClose={() => setSelectedTask(null)}
-        session={session}
-        onUpdate={() => loadAllRepsData(session, true)}
-      />
+        <CreateTaskModal isOpen={showCreateTask} onClose={() => setShowCreateTask(false)} session={session} repsData={repsData} onSuccess={() => loadAllRepsData(session, true)} />
+      <TaskDetailsModal task={selectedTask} isOpen={!!selectedTask} onClose={() => setSelectedTask(null)} session={session} onUpdate={() => loadAllRepsData(session, true)} />
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ export default function RepPortal() {
   const [opportunities, setOpportunities] = useState([]);
   const [tasks, setTasks] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('leads'); // 'leads', 'opportunities', 'tasks', or 'dispositions'
+  const [activeTab, setActiveTab] = useState('leads');
   const [stageFilter, setStageFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
@@ -47,7 +47,6 @@ export default function RepPortal() {
   const lastPollTime = useRef(new Date());
   const itemsPerPage = 100;
 
-  // Disposition color mapping
   const dispositionColorMap = {
     'Contacted': 'bg-green-500 text-white',
     'No Contact': 'bg-blue-500 text-white',
@@ -87,11 +86,8 @@ export default function RepPortal() {
 
   useEffect(() => {
     checkSession();
-    
-    // Clear admin portal flag when on rep portal
     sessionStorage.removeItem('fromAdminPortal');
     
-    // Restore state from sessionStorage
     const savedState = sessionStorage.getItem('repPortalState');
     if (savedState) {
       const state = JSON.parse(savedState);
@@ -103,7 +99,6 @@ export default function RepPortal() {
     }
   }, []);
 
-  // Poll for new SMS notifications globally (from contacts with phone numbers)
   useEffect(() => {
     if (!session || !contacts || contacts.length === 0) return;
     
@@ -111,7 +106,6 @@ export default function RepPortal() {
       const currentTime = new Date();
       
       try {
-        // Check contacts with phone numbers for SMS
         const contactsWithPhone = contacts.filter(c => c.MobilePhone || c.Phone);
         
         for (const contact of contactsWithPhone.slice(0, 5)) {
@@ -129,61 +123,36 @@ export default function RepPortal() {
             
             const messages = response.data.messages || [];
             const inboundMessages = messages.filter(m => {
-              // Only notify on messages received after the last poll
               const msgDate = new Date(m.date);
               return m.direction === 'inbound' && msgDate > lastPollTime.current;
             });
             
             inboundMessages.forEach(msg => {
-              // Find related lead or opportunity to link to
               const phone = (contact.MobilePhone || contact.Phone)?.replace(/\D/g, '');
               const email = contact.Email?.toLowerCase();
-
-              console.log('SMS Notification - Contact:', contact.Name, 'Phone:', phone, 'Email:', email, 'AccountId:', contact.AccountId);
 
               let link = createPageUrl('ContactDetail') + `?id=${contact.Id}`;
               let recordId = contact.Id;
               let recordType = 'Contact';
 
-              // Check for related lead first
               const relatedLead = leads.find(l => {
                 const leadPhone = l.MobilePhone?.replace(/\D/g, '');
                 const leadEmail = l.Email?.toLowerCase();
-                const phoneMatch = leadPhone === phone;
-                const emailMatch = leadEmail === email;
-                if (phoneMatch || emailMatch) {
-                  console.log('MATCH - Lead:', l.Name, 'phoneMatch:', phoneMatch, 'emailMatch:', emailMatch);
-                }
-                return phoneMatch || emailMatch;
+                return leadPhone === phone || leadEmail === email;
               });
 
               if (relatedLead) {
-                console.log('✓ Using Lead:', relatedLead.Name, relatedLead.Id);
                 link = createPageUrl('LeadDetail') + `?id=${relatedLead.Id}`;
                 recordId = relatedLead.Id;
                 recordType = 'Lead';
               } else {
-                console.log('No lead found, checking opportunities...');
-                // Check for related opportunity through account
-                const relatedOpp = opportunities.find(o => {
-                  const match = o.AccountId === contact.AccountId && contact.AccountId;
-                  if (match) {
-                    console.log('MATCH - Opportunity:', o.Name, 'AccountId:', o.AccountId);
-                  }
-                  return match;
-                });
-
+                const relatedOpp = opportunities.find(o => o.AccountId === contact.AccountId && contact.AccountId);
                 if (relatedOpp) {
-                  console.log('✓ Using Opportunity:', relatedOpp.Name, relatedOpp.Id);
                   link = createPageUrl('OpportunityDetail') + `?id=${relatedOpp.Id}`;
                   recordId = relatedOpp.Id;
                   recordType = 'Opportunity';
-                } else {
-                  console.log('✗ No lead or opportunity found, using Contact');
                 }
               }
-
-              console.log('Final notification:', { link, recordId, recordType });
 
               addNotification({
                 title: `New SMS from ${contact.Name}`,
@@ -195,7 +164,7 @@ export default function RepPortal() {
               });
             });
           } catch (err) {
-            // Silent fail for individual contacts
+            // Silent fail
           }
         }
       } catch (error) {
@@ -205,19 +174,12 @@ export default function RepPortal() {
       }
     };
 
-    const interval = setInterval(pollSms, 15000); // Poll every 15 seconds
+    const interval = setInterval(pollSms, 15000);
     return () => clearInterval(interval);
   }, [session, contacts, addNotification]);
 
   useEffect(() => {
-    // Save state to sessionStorage whenever it changes
-    const state = {
-      activeTab,
-      stageFilter,
-      searchTerm,
-      currentPage,
-      taskFilter
-    };
+    const state = { activeTab, stageFilter, searchTerm, currentPage, taskFilter };
     sessionStorage.setItem('repPortalState', JSON.stringify(state));
   }, [activeTab, stageFilter, searchTerm, currentPage, taskFilter]);
 
@@ -238,8 +200,6 @@ export default function RepPortal() {
       }
     }
   };
-
-
 
   const handleLogin = async () => {
     try {
@@ -270,7 +230,6 @@ export default function RepPortal() {
         timestamp: Date.now()
       };
 
-      console.log('Session stored:', { userId: sessionData.userId, email: sessionData.email, tokenType: typeof sessionData.token, tokenExists: !!sessionData.token });
       sessionStorage.setItem('sfSession', JSON.stringify(sessionData));
       setSession(sessionData);
       setIsAdmin(response.data.isAdmin || false);
@@ -282,8 +241,6 @@ export default function RepPortal() {
       setLoading(false);
     }
   };
-  
-
 
   const handleLogout = async () => {
     if (session?.token && session?.instanceUrl) {
@@ -313,14 +270,6 @@ export default function RepPortal() {
       setLoading(true);
     }
     try {
-      console.log('loadData - Session data:', { 
-        userId: sessionData.userId, 
-        hasToken: !!sessionData.token, 
-        tokenLength: sessionData.token?.length,
-        instanceUrl: sessionData.instanceUrl 
-      });
-
-      // Load ALL data in parallel
       const [leadsRes, oppsRes, tasksRes, contactsRes, dispositionRes] = await Promise.all([
         base44.functions.invoke('getRepLeads', {
           userId: sessionData.userId,
@@ -382,28 +331,6 @@ export default function RepPortal() {
     }
   };
 
-  const handleDispositionUpdate = async (leadId, newDisposition) => {
-    setUpdatingDisposition(leadId);
-    try {
-      await base44.functions.invoke('updateSalesforceRecord', {
-        objectType: 'Lead',
-        recordId: leadId,
-        data: { Call_Disposition__c: newDisposition },
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
-      
-      setLeads(leads.map(lead => 
-        lead.Id === leadId ? { ...lead, Call_Disposition__c: newDisposition } : lead
-      ));
-    } catch (error) {
-      console.error('Update error:', error);
-      alert('Failed to update call disposition');
-    } finally {
-      setUpdatingDisposition(null);
-    }
-  };
-
   const handleStageClick = (stageName) => {
     setStageFilter(stageName);
     setSearchTerm('');
@@ -444,7 +371,6 @@ export default function RepPortal() {
     return searchMatch && stageMatch;
   });
 
-  // Pagination
   const totalLeadPages = Math.ceil(filteredLeads.length / itemsPerPage);
   const totalOppPages = Math.ceil(filteredOpportunities.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
@@ -489,12 +415,6 @@ export default function RepPortal() {
     );
   }
 
-  const stats = [
-    { label: 'Active Leads', value: leads.length, icon: Users, color: 'from-blue-500 to-blue-600' },
-    { label: 'Open Opportunities', value: opportunities.length, icon: TrendingUp, color: 'from-green-500 to-green-600' },
-    { label: 'Total Pipeline', value: `$${opportunities.reduce((sum, o) => sum + (o.Amount || 0), 0).toLocaleString()}`, icon: TrendingUp, color: 'from-purple-500 to-purple-600' }
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <RepPortalHeader
@@ -508,7 +428,6 @@ export default function RepPortal() {
         session={session}
       />
 
-      {/* Stats */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
           <motion.div
@@ -580,11 +499,8 @@ export default function RepPortal() {
               </div>
             </div>
           </motion.div>
-          </div>
+        </div>
 
-
-
-        {/* Pipeline */}
         {activeTab !== 'tasks' && activeTab !== 'dispositions' && (
           <PipelineView 
             leads={leads} 
@@ -594,7 +510,6 @@ export default function RepPortal() {
           />
         )}
 
-        {/* Universal Search Box */}
         {(activeTab === 'leads' || activeTab === 'opportunities' || activeTab === 'dispositions') && (
           <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 sm:mt-6">
             <div className="relative flex-1 mb-4 sm:mb-6">
@@ -617,9 +532,7 @@ export default function RepPortal() {
           </div>
         )}
 
-        {/* Content */}
         <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mt-4 sm:mt-6">
-
           {activeTab === 'tasks' && (
             <div className="mb-4 sm:mb-6">
               <div className="flex flex-wrap gap-2">
@@ -691,54 +604,33 @@ export default function RepPortal() {
                     Showing {startIdx + 1}-{Math.min(endIdx, filteredLeads.length)} of {filteredLeads.length}
                   </p>
                   <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
                       Previous
                     </Button>
                     <div className="flex items-center gap-1">
                       {Array.from({ length: Math.min(5, totalLeadPages) }, (_, i) => {
                         let pageNum;
-                        if (totalLeadPages <= 5) {
-                          pageNum = i + 1;
-                        } else if (currentPage <= 3) {
-                          pageNum = i + 1;
-                        } else if (currentPage >= totalLeadPages - 2) {
-                          pageNum = totalLeadPages - 4 + i;
-                        } else {
-                          pageNum = currentPage - 2 + i;
-                        }
+                        if (totalLeadPages <= 5) pageNum = i + 1;
+                        else if (currentPage <= 3) pageNum = i + 1;
+                        else if (currentPage >= totalLeadPages - 2) pageNum = totalLeadPages - 4 + i;
+                        else pageNum = currentPage - 2 + i;
                         return (
-                          <Button
-                            key={pageNum}
-                            variant={currentPage === pageNum ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setCurrentPage(pageNum)}
-                            className="w-10"
-                          >
+                          <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => setCurrentPage(pageNum)} className="w-10">
                             {pageNum}
                           </Button>
                         );
                       })}
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(p => Math.min(totalLeadPages, p + 1))}
-                      disabled={currentPage === totalLeadPages}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalLeadPages, p + 1))} disabled={currentPage === totalLeadPages}>
                       Next
                     </Button>
                   </div>
                 </div>
               )}
             </div>
-            )}
+          )}
 
-            {activeTab === 'opportunities' && (
+          {activeTab === 'opportunities' && (
             <div className="space-y-4">
               {stageFilter && (
                 <div className="mb-4 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
@@ -763,7 +655,7 @@ export default function RepPortal() {
                       onToggleExpand={handleToggleExpand}
                     />
                   ))
-                  )}
+                )}
               </div>
               {totalOppPages > 1 && (
                 <div className="flex items-center justify-between mt-6 pt-6 border-t">
@@ -771,365 +663,236 @@ export default function RepPortal() {
                     Showing {startIdx + 1}-{Math.min(endIdx, filteredOpportunities.length)} of {filteredOpportunities.length}
                   </p>
                   <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
                       Previous
                     </Button>
                     <div className="flex items-center gap-1">
                       {Array.from({ length: Math.min(5, totalOppPages) }, (_, i) => {
                         let pageNum;
-                        if (totalOppPages <= 5) {
-                          pageNum = i + 1;
-                        } else if (currentPage <= 3) {
-                          pageNum = i + 1;
-                        } else if (currentPage >= totalOppPages - 2) {
-                          pageNum = totalOppPages - 4 + i;
-                        } else {
-                          pageNum = currentPage - 2 + i;
-                        }
+                        if (totalOppPages <= 5) pageNum = i + 1;
+                        else if (currentPage <= 3) pageNum = i + 1;
+                        else if (currentPage >= totalOppPages - 2) pageNum = totalOppPages - 4 + i;
+                        else pageNum = currentPage - 2 + i;
                         return (
-                          <Button
-                            key={pageNum}
-                            variant={currentPage === pageNum ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setCurrentPage(pageNum)}
-                            className="w-10"
-                          >
+                          <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => setCurrentPage(pageNum)} className="w-10">
                             {pageNum}
                           </Button>
                         );
                       })}
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(p => Math.min(totalOppPages, p + 1))}
-                      disabled={currentPage === totalOppPages}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalOppPages, p + 1))} disabled={currentPage === totalOppPages}>
                       Next
                     </Button>
                   </div>
                 </div>
               )}
             </div>
-            )}
+          )}
 
-        {activeTab === 'tasks' && (
-          <div>
-            <div className="space-y-3">
-              {(() => {
-                let filteredTasks = tasks?.tasks || [];
-                if (taskFilter === 'overdue') filteredTasks = tasks?.categorized?.overdue || [];
-                else if (taskFilter === 'today') filteredTasks = tasks?.categorized?.dueToday || [];
-                else if (taskFilter === 'week') filteredTasks = tasks?.categorized?.dueThisWeek || [];
-
-                const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
-                const startIdx = (currentPage - 1) * itemsPerPage;
-                const endIdx = startIdx + itemsPerPage;
-                const paginatedTasks = filteredTasks.slice(startIdx, endIdx);
-
-                return (
-                  <>
-                    {filteredTasks.length === 0 ? (
-                      <div className="text-center py-12">
-                        <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                        <p className="text-slate-600">No tasks found</p>
-                      </div>
-                    ) : (
-                      paginatedTasks.map(task => (
-                        <TaskItem 
-                          key={task.Id} 
-                          task={task} 
-                          session={session}
-                          onUpdate={() => loadData(session, true)}
-                          onOpenModal={(task) => setSelectedTask(task)}
-                        />
-                      ))
-                    )}
-                    {totalPages > 1 && (
-                      <div className="flex items-center justify-between mt-6 pt-6 border-t">
-                        <p className="text-sm text-slate-600">
-                          Showing {startIdx + 1}-{Math.min(endIdx, filteredTasks.length)} of {filteredTasks.length}
-                        </p>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                            disabled={currentPage === 1}
-                          >
-                            Previous
-                          </Button>
-                          <div className="flex items-center gap-1">
-                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                              let pageNum;
-                              if (totalPages <= 5) {
-                                pageNum = i + 1;
-                              } else if (currentPage <= 3) {
-                                pageNum = i + 1;
-                              } else if (currentPage >= totalPages - 2) {
-                                pageNum = totalPages - 4 + i;
-                              } else {
-                                pageNum = currentPage - 2 + i;
-                              }
-                              return (
-                                <Button
-                                  key={pageNum}
-                                  variant={currentPage === pageNum ? "default" : "outline"}
-                                  size="sm"
-                                  onClick={() => setCurrentPage(pageNum)}
-                                  className="w-10"
-                                >
-                                  {pageNum}
-                                </Button>
-                              );
-                            })}
-                          </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                            disabled={currentPage === totalPages}
-                          >
-                            Next
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'dispositions' && (
-          <div>
-            <div className="mb-4 sm:mb-6">
+          {activeTab === 'tasks' && (
+            <div>
               <div className="space-y-3">
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant={dispositionFilter.length === 0 ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => { setDispositionFilter([]); setCurrentPage(1); }}
-                    className={`text-xs sm:text-sm ${dispositionFilter.length === 0 ? 'bg-slate-600' : ''}`}
-                  >
-                    Clear All
-                  </Button>
-                  <Button
-                    variant={dispositionFilter.includes('set') ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => { 
-                      setDispositionFilter(prev => 
-                        prev.includes('set') 
-                          ? prev.filter(f => f !== 'set')
-                          : [...prev, 'set']
-                      ); 
-                      setCurrentPage(1); 
-                    }}
-                    className={`text-xs sm:text-sm ${dispositionFilter.includes('set') ? 'bg-green-600' : ''}`}
-                  >
-                    Set ({leads.filter(l => l.Call_Disposition__c).length})
-                  </Button>
-                  <Button
-                    variant={dispositionFilter.includes('unset') ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => { 
-                      setDispositionFilter(prev => 
-                        prev.includes('unset') 
-                          ? prev.filter(f => f !== 'unset')
-                          : [...prev, 'unset']
-                      ); 
-                      setCurrentPage(1); 
-                    }}
-                    className={`text-xs sm:text-sm ${dispositionFilter.includes('unset') ? 'bg-red-600' : ''}`}
-                  >
-                    Not Set ({leads.filter(l => !l.Call_Disposition__c).length})
-                  </Button>
-                </div>
-                
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-                  {dispositionOptions.map(option => (
-                    <Button
-                      key={option}
-                      variant={dispositionFilter.includes(option) ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => { 
-                        setDispositionFilter(prev => 
-                          prev.includes(option) 
-                            ? prev.filter(f => f !== option)
-                            : [...prev, option]
-                        ); 
-                        setCurrentPage(1); 
-                      }}
-                      className={`text-xs sm:text-sm truncate ${dispositionFilter.includes(option) ? 'bg-blue-600' : ''}`}
-                    >
-                      <span className="truncate">{option}</span>
-                      <span className="ml-1 opacity-75">({leads.filter(l => l.Call_Disposition__c === option).length})</span>
-                    </Button>
-                  ))}
-                </div>
+                {(() => {
+                  let filteredTasks = tasks?.tasks || [];
+                  if (taskFilter === 'overdue') filteredTasks = tasks?.categorized?.overdue || [];
+                  else if (taskFilter === 'today') filteredTasks = tasks?.categorized?.dueToday || [];
+                  else if (taskFilter === 'week') filteredTasks = tasks?.categorized?.dueThisWeek || [];
+
+                  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+                  const startIdx = (currentPage - 1) * itemsPerPage;
+                  const endIdx = startIdx + itemsPerPage;
+                  const paginatedTasks = filteredTasks.slice(startIdx, endIdx);
+
+                  return (
+                    <>
+                      {filteredTasks.length === 0 ? (
+                        <div className="text-center py-12">
+                          <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                          <p className="text-slate-600">No tasks found</p>
+                        </div>
+                      ) : (
+                        paginatedTasks.map(task => (
+                          <TaskItem 
+                            key={task.Id} 
+                            task={task} 
+                            session={session}
+                            onUpdate={() => loadData(session, true)}
+                            onOpenModal={(task) => setSelectedTask(task)}
+                          />
+                        ))
+                      )}
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-6 pt-6 border-t">
+                          <p className="text-sm text-slate-600">
+                            Showing {startIdx + 1}-{Math.min(endIdx, filteredTasks.length)} of {filteredTasks.length}
+                          </p>
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>Previous</Button>
+                            <div className="flex items-center gap-1">
+                              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                let pageNum;
+                                if (totalPages <= 5) pageNum = i + 1;
+                                else if (currentPage <= 3) pageNum = i + 1;
+                                else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
+                                else pageNum = currentPage - 2 + i;
+                                return <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => setCurrentPage(pageNum)} className="w-10">{pageNum}</Button>;
+                              })}
+                            </div>
+                            <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>Next</Button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
+          )}
 
-            <div className="space-y-3">
-              {(() => {
-                let filteredLeads = leads;
-                
-                // Apply disposition filters
-                if (dispositionFilter.length > 0) {
-                  filteredLeads = leads.filter(l => {
-                    if (dispositionFilter.includes('set') && l.Call_Disposition__c) return true;
-                    if (dispositionFilter.includes('unset') && !l.Call_Disposition__c) return true;
-                    if (dispositionFilter.includes(l.Call_Disposition__c)) return true;
-                    return false;
-                  });
-                }
+          {activeTab === 'dispositions' && (
+            <div>
+              <div className="mb-4 sm:mb-6">
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant={dispositionFilter.length === 0 ? 'default' : 'outline'} size="sm" onClick={() => { setDispositionFilter([]); setCurrentPage(1); }} className={`text-xs sm:text-sm ${dispositionFilter.length === 0 ? 'bg-slate-600' : ''}`}>Clear All</Button>
+                    <Button variant={dispositionFilter.includes('set') ? 'default' : 'outline'} size="sm" onClick={() => { setDispositionFilter(prev => prev.includes('set') ? prev.filter(f => f !== 'set') : [...prev, 'set']); setCurrentPage(1); }} className={`text-xs sm:text-sm ${dispositionFilter.includes('set') ? 'bg-green-600' : ''}`}>Set ({leads.filter(l => l.Call_Disposition__c).length})</Button>
+                    <Button variant={dispositionFilter.includes('unset') ? 'default' : 'outline'} size="sm" onClick={() => { setDispositionFilter(prev => prev.includes('unset') ? prev.filter(f => f !== 'unset') : [...prev, 'unset']); setCurrentPage(1); }} className={`text-xs sm:text-sm ${dispositionFilter.includes('unset') ? 'bg-red-600' : ''}`}>Not Set ({leads.filter(l => !l.Call_Disposition__c).length})</Button>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                    {dispositionOptions.map(option => (
+                      <Button key={option} variant={dispositionFilter.includes(option) ? 'default' : 'outline'} size="sm" onClick={() => { setDispositionFilter(prev => prev.includes(option) ? prev.filter(f => f !== option) : [...prev, option]); setCurrentPage(1); }} className={`text-xs sm:text-sm truncate ${dispositionFilter.includes(option) ? 'bg-blue-600' : ''}`}>
+                        <span className="truncate">{option}</span>
+                        <span className="ml-1 opacity-75">({leads.filter(l => l.Call_Disposition__c === option).length})</span>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
-                if (searchTerm) {
-                  const term = searchTerm.toLowerCase();
-                  filteredLeads = filteredLeads.filter(lead =>
-                    lead.Name?.toLowerCase().includes(term) ||
-                    lead.Company?.toLowerCase().includes(term) ||
-                    lead.Phone?.toLowerCase().includes(term)
-                  );
-                }
+              <div className="space-y-3">
+                {(() => {
+                  let filteredLeads = leads;
+                  
+                  if (dispositionFilter.length > 0) {
+                    filteredLeads = leads.filter(l => {
+                      if (dispositionFilter.includes('set') && l.Call_Disposition__c) return true;
+                      if (dispositionFilter.includes('unset') && !l.Call_Disposition__c) return true;
+                      if (dispositionFilter.includes(l.Call_Disposition__c)) return true;
+                      return false;
+                    });
+                  }
 
-                const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
-                const startIdx = (currentPage - 1) * itemsPerPage;
-                const endIdx = startIdx + itemsPerPage;
-                const paginatedLeads = filteredLeads.slice(startIdx, endIdx);
+                  if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    filteredLeads = filteredLeads.filter(lead =>
+                      lead.Name?.toLowerCase().includes(term) ||
+                      lead.Company?.toLowerCase().includes(term) ||
+                      lead.Phone?.toLowerCase().includes(term)
+                    );
+                  }
 
-                return (
-                  <>
-                    {filteredLeads.length === 0 ? (
-                      <div className="text-center py-12">
-                        <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                        <p className="text-slate-600">No leads found</p>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {paginatedLeads.map(lead => (
-                            <motion.div
-                              key={lead.Id}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className="bg-white rounded-xl border-2 border-slate-200 p-4 hover:border-slate-300 hover:shadow-md transition-all cursor-pointer"
-                              onClick={() => setSelectedLeadForDisposition(lead)}
-                            >
-                              <div className="mb-3">
-                                <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate hover:text-[#08708E]">
-                                  {lead.Name || '-'}
-                                </h3>
-                                {lead.Company && (
-                                  <p className="text-xs sm:text-sm text-slate-600 truncate mt-1">{lead.Company}</p>
-                                )}
-                              </div>
-                              
-                              <div className="space-y-2 mb-3 pb-3 border-b border-slate-100">
-                                {lead.Email && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleEmailClick(lead.Email, 'lead', lead.Id);
-                                    }}
-                                    className="text-xs text-[#08708E] hover:underline block text-left"
-                                  >
-                                    {lead.Email}
-                                  </button>
-                                )}
-                                {lead.MobilePhone && (
-                                  <a 
-                                    href={`tel:${lead.MobilePhone}`} 
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="text-xs text-[#08708E] hover:underline block"
-                                  >
-                                    {lead.MobilePhone}
-                                  </a>
-                                )}
-                                <div className="text-xs text-slate-500">{lead.Status}</div>
-                              </div>
+                  const totalPages = Math.ceil(filteredLeads.length / itemsPerPage);
+                  const startIdx = (currentPage - 1) * itemsPerPage;
+                  const endIdx = startIdx + itemsPerPage;
+                  const paginatedLeads = filteredLeads.slice(startIdx, endIdx);
 
-                              <div className="flex items-center justify-center">
-                                <span className={`px-3 py-2 rounded-lg text-xs sm:text-sm font-bold text-center w-full ${
-                                  lead.Call_Disposition__c 
-                                    ? getDispositionColor(lead.Call_Disposition__c)
-                                    : 'bg-gray-200 text-gray-700'
-                                }`}>
-                                  {lead.Call_Disposition__c || 'Not Set'}
-                                </span>
-                              </div>
-                            </motion.div>
-                          ))}
+                  return (
+                    <>
+                      {filteredLeads.length === 0 ? (
+                        <div className="text-center py-12">
+                          <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                          <p className="text-slate-600">No leads found</p>
                         </div>
-                        
-                        {totalPages > 1 && (
-                          <div className="flex items-center justify-between mt-6 pt-6 border-t">
-                            <p className="text-sm text-slate-600">
-                              Showing {startIdx + 1}-{Math.min(endIdx, filteredLeads.length)} of {filteredLeads.length}
-                            </p>
-                            <div className="flex gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                disabled={currentPage === 1}
+                      ) : (
+                        <>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {paginatedLeads.map(lead => (
+                              <motion.div
+                                key={lead.Id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="bg-white rounded-xl border-2 border-slate-200 p-4 hover:border-slate-300 hover:shadow-md transition-all cursor-pointer"
+                                onClick={() => setSelectedLeadForDisposition(lead)}
                               >
-                                Previous
-                              </Button>
-                              <div className="flex items-center gap-1">
-                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                  let pageNum;
-                                  if (totalPages <= 5) {
-                                    pageNum = i + 1;
-                                  } else if (currentPage <= 3) {
-                                    pageNum = i + 1;
-                                  } else if (currentPage >= totalPages - 2) {
-                                    pageNum = totalPages - 4 + i;
-                                  } else {
-                                    pageNum = currentPage - 2 + i;
-                                  }
-                                  return (
-                                    <Button
-                                      key={pageNum}
-                                      variant={currentPage === pageNum ? "default" : "outline"}
-                                      size="sm"
-                                      onClick={() => setCurrentPage(pageNum)}
-                                      className="w-10"
+                                <div className="mb-3">
+                                  <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate hover:text-[#08708E]">
+                                    {lead.Name || '-'}
+                                  </h3>
+                                  {lead.Company && (
+                                    <p className="text-xs sm:text-sm text-slate-600 truncate mt-1">{lead.Company}</p>
+                                  )}
+                                </div>
+                                
+                                <div className="space-y-2 mb-3 pb-3 border-b border-slate-100">
+                                  {lead.Email && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEmailClick(lead.Email, 'lead', lead.Id);
+                                      }}
+                                      className="text-xs text-[#08708E] hover:underline block text-left"
                                     >
-                                      {pageNum}
-                                    </Button>
-                                  );
-                                })}
-                              </div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                disabled={currentPage === totalPages}
-                              >
-                                Next
-                              </Button>
-                            </div>
+                                      {lead.Email}
+                                    </button>
+                                  )}
+                                  {lead.MobilePhone && (
+                                    <a 
+                                      href={`tel:${lead.MobilePhone}`} 
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="text-xs text-[#08708E] hover:underline block"
+                                    >
+                                      {lead.MobilePhone}
+                                    </a>
+                                  )}
+                                  <div className="text-xs text-slate-500">{lead.Status}</div>
+                                </div>
+
+                                <div className="flex items-center justify-center">
+                                  <span className={`px-3 py-2 rounded-lg text-xs sm:text-sm font-bold text-center w-full ${
+                                    lead.Call_Disposition__c 
+                                      ? getDispositionColor(lead.Call_Disposition__c)
+                                      : 'bg-gray-200 text-gray-700'
+                                  }`}>
+                                    {lead.Call_Disposition__c || 'Not Set'}
+                                  </span>
+                                </div>
+                              </motion.div>
+                            ))}
                           </div>
-                        )}
-                      </>
-                    )}
-                  </>
-                );
-              })()}
+                          
+                          {totalPages > 1 && (
+                            <div className="flex items-center justify-between mt-6 pt-6 border-t">
+                              <p className="text-sm text-slate-600">
+                                Showing {startIdx + 1}-{Math.min(endIdx, filteredLeads.length)} of {filteredLeads.length}
+                              </p>
+                              <div className="flex gap-2">
+                                <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>Previous</Button>
+                                <div className="flex items-center gap-1">
+                                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                    let pageNum;
+                                    if (totalPages <= 5) pageNum = i + 1;
+                                    else if (currentPage <= 3) pageNum = i + 1;
+                                    else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
+                                    else pageNum = currentPage - 2 + i;
+                                    return <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => setCurrentPage(pageNum)} className="w-10">{pageNum}</Button>;
+                                  })}
+                                </div>
+                                <Button variant="outline" size="sm" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>Next</Button>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
             </div>
-          </div>
-        )}
+          )}
         </div>
       </div>
 
-      {/* Create Task Modal */}
       <CreateTaskModal
         isOpen={showCreateTask}
         onClose={() => setShowCreateTask(false)}
@@ -1143,7 +906,6 @@ export default function RepPortal() {
         onSuccess={() => loadData(session, true)}
       />
 
-      {/* Task Details Modal */}
       <TaskDetailsModal
         task={selectedTask}
         isOpen={!!selectedTask}
@@ -1152,7 +914,6 @@ export default function RepPortal() {
         onUpdate={() => loadData(session, true)}
       />
 
-      {/* Lead Disposition Modal */}
       <RecordDetailsModal
         record={selectedLeadForDisposition}
         isOpen={!!selectedLeadForDisposition}
@@ -1165,7 +926,6 @@ export default function RepPortal() {
           navigate(createPageUrl('LeadDetail') + `?id=${selectedLeadForDisposition?.Id}`);
         }}
       />
-
-        </div>
-        );
-        }
+    </div>
+  );
+}
