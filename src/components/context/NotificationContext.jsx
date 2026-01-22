@@ -1,55 +1,25 @@
-import React, { createContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useState, useCallback } from 'react';
 
 export const NotificationContext = createContext();
 
 export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
-  const [notifiedSmsSids, setNotifiedSmsSids] = useState([]);
-
-  useEffect(() => {
-    const storedNotifs = localStorage.getItem('notifications');
-    if (storedNotifs) {
-      try {
-        const parsed = JSON.parse(storedNotifs);
-        const restored = parsed.map(notif => ({
-          ...notif,
-          timestamp: new Date(notif.timestamp)
-        }));
-        setNotifications(restored);
-      } catch (e) {
-        setNotifications([]);
-      }
-    }
-
-    const stored = localStorage.getItem('notifiedSmsSids');
-    if (stored) {
-      try {
-        setNotifiedSmsSids(JSON.parse(stored));
-      } catch (e) {
-        setNotifiedSmsSids([]);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('notifications', JSON.stringify(notifications));
-  }, [notifications]);
 
   const addNotification = useCallback((notification) => {
-    const id = Date.now();
-    const newNotif = {
+    const id = Date.now().toString();
+    const newNotification = {
       id,
       timestamp: new Date(),
       ...notification
     };
-    setNotifications(prev => [newNotif, ...prev]);
+    
+    setNotifications(prev => [newNotification, ...prev]);
 
-    if (notification.smsSid) {
-      setNotifiedSmsSids(prev => {
-        const updated = [...new Set([...prev, notification.smsSid])];
-        localStorage.setItem('notifiedSmsSids', JSON.stringify(updated));
-        return updated;
-      });
+    // Auto-remove after 5 seconds if not an important notification
+    if (!notification.persistent) {
+      setTimeout(() => {
+        removeNotification(id);
+      }, 5000);
     }
 
     return id;
@@ -59,22 +29,16 @@ export function NotificationProvider({ children }) {
     setNotifications(prev => prev.filter(n => n.id !== id));
   }, []);
 
-  const clearAllNotifications = useCallback(() => {
+  const clearAll = useCallback(() => {
     setNotifications([]);
   }, []);
-
-  const isSmsSidNotified = useCallback((smsSid) => {
-    return notifiedSmsSids.includes(smsSid);
-  }, [notifiedSmsSids]);
 
   return (
     <NotificationContext.Provider value={{
       notifications,
       addNotification,
       removeNotification,
-      clearAllNotifications,
-      isSmsSidNotified,
-      notifiedSmsSids
+      clearAll
     }}>
       {children}
     </NotificationContext.Provider>

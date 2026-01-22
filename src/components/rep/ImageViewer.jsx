@@ -1,74 +1,66 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, X, AlertCircle } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { Download, X, ZoomIn, ZoomOut } from 'lucide-react';
 
 export default function ImageViewer({ file, session, isOpen, onClose }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [zoom, setZoom] = useState(100);
 
   useEffect(() => {
-    if (isOpen && file) {
+    if (isOpen && file && session) {
       loadImage();
-    } else {
-      setImageUrl(null);
-      setError(null);
     }
-  }, [isOpen, file]);
+  }, [isOpen, file, session]);
 
   const loadImage = async () => {
     setLoading(true);
-    setError(null);
-    
+    setZoom(100);
     try {
-      const response = await base44.functions.invoke('getSalesforceFileContent', { contentDocumentId: file.ContentDocumentId, token: session.token, instanceUrl: session.instanceUrl });
-      if (!response.data || !response.data.file) throw new Error('No file content received');
-      const base64 = response.data.file;
-      const ext = file.ContentDocument.FileExtension?.toLowerCase();
-      const mimeTypes = { 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png', 'gif': 'image/gif', 'webp': 'image/webp', 'svg': 'image/svg+xml' };
-      const mimeType = mimeTypes[ext] || 'image/jpeg';
-      const dataUrl = `data:${mimeType};base64,${base64}`;
-      setImageUrl(dataUrl);
+      const url = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`;
+      setImageUrl(url);
     } catch (error) {
-      setError(error.message || 'Failed to load image');
+      console.error('Error loading image:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDownload = () => {
-    if (file && session) {
-      const doc = file.ContentDocument;
-      const link = document.createElement('a');
-      link.href = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`;
-      link.download = `${doc.Title}.${doc.FileExtension}`;
-      link.click();
-    }
-  };
-
-  if (!file) return null;
-  const doc = file.ContentDocument;
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden">
-        <DialogHeader className="p-4 border-b border-slate-200">
-          <div className="flex items-center justify-between w-full gap-4">
-            <DialogTitle className="truncate">{doc.Title}</DialogTitle>
-            <div className="flex gap-2">
-              {imageUrl && (<Button size="sm" variant="outline" onClick={handleDownload} className="gap-2"><Download className="w-4 h-4" />Download</Button>)}
-              <Button size="sm" variant="ghost" onClick={onClose}><X className="w-4 h-4" /></Button>
-            </div>
+      <DialogContent className="max-w-4xl">
+        <div className="flex items-center justify-between p-4 border-b bg-slate-50 sticky top-0">
+          <h2 className="font-semibold text-slate-900">
+            {file?.ContentDocument?.Title}.{file?.ContentDocument?.FileExtension}
+          </h2>
+          <div className="flex gap-2">
+            <Button variant="ghost" size="icon" onClick={() => setZoom(Math.max(50, zoom - 10))}>
+              <ZoomOut className="w-4 h-4" />
+            </Button>
+            <span className="text-sm text-slate-600 px-2 py-2">{zoom}%</span>
+            <Button variant="ghost" size="icon" onClick={() => setZoom(Math.min(200, zoom + 10))}>
+              <ZoomIn className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="w-4 h-4" />
+            </Button>
           </div>
-        </DialogHeader>
-        
-        <div className="flex items-center justify-center p-4 overflow-auto max-h-[calc(90vh-80px)] bg-slate-50">
-          {loading && (<div className="text-slate-500">Loading image...</div>)}
-          {error && (<div className="flex flex-col items-center"><AlertCircle className="w-12 h-12 text-red-500 mb-4" /><p className="text-slate-600">{error}</p></div>)}
-          {imageUrl && !loading && !error && (<motion.img src={imageUrl} alt={doc.Title} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-full max-h-full object-contain rounded-lg" />)}
+        </div>
+
+        <div className="flex items-center justify-center bg-slate-100 overflow-auto max-h-[calc(90vh-150px)]">
+          {loading ? (
+            <p className="text-slate-500">Loading image...</p>
+          ) : imageUrl ? (
+            <img 
+              src={imageUrl} 
+              alt={file?.ContentDocument?.Title} 
+              style={{ maxWidth: '100%', width: `${zoom}%` }}
+              className="object-contain"
+            />
+          ) : (
+            <p className="text-slate-500">Unable to load image</p>
+          )}
         </div>
       </DialogContent>
     </Dialog>
