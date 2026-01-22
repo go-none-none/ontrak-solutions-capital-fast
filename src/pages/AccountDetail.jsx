@@ -151,18 +151,21 @@ export default function AccountDetail() {
 
     setSaving(true);
     try {
+      // Remove system fields and prepare data
+      const { Id, CreatedBy, CreatedDate, LastModifiedBy, LastModifiedDate, Owner, RecordType, Parent, ...cleanData } = editData;
+      
       const dataToSend = {
-        ...editData,
+        ...cleanData,
         RecordTypeId: recordTypeId,
-        csbs__Restricted_States__c: Array.isArray(editData.csbs__Restricted_States__c)
-          ? editData.csbs__Restricted_States__c.join(';')
-          : editData.csbs__Restricted_States__c || '',
-        csbs__Restricted_Industries__c: Array.isArray(editData.csbs__Restricted_Industries__c)
-          ? editData.csbs__Restricted_Industries__c.join(';')
-          : editData.csbs__Restricted_Industries__c || '',
-        csbs__Seasonal_Peak_Months__c: Array.isArray(editData.csbs__Seasonal_Peak_Months__c)
-          ? editData.csbs__Seasonal_Peak_Months__c.join(';')
-          : editData.csbs__Seasonal_Peak_Months__c || ''
+        csbs__Restricted_States__c: Array.isArray(cleanData.csbs__Restricted_States__c)
+          ? cleanData.csbs__Restricted_States__c.join(';')
+          : cleanData.csbs__Restricted_States__c || '',
+        csbs__Restricted_Industries__c: Array.isArray(cleanData.csbs__Restricted_Industries__c)
+          ? cleanData.csbs__Restricted_Industries__c.join(';')
+          : cleanData.csbs__Restricted_Industries__c || '',
+        csbs__Seasonal_Peak_Months__c: Array.isArray(cleanData.csbs__Seasonal_Peak_Months__c)
+          ? cleanData.csbs__Seasonal_Peak_Months__c.join(';')
+          : cleanData.csbs__Seasonal_Peak_Months__c || ''
       };
 
       if (account?.Id) {
