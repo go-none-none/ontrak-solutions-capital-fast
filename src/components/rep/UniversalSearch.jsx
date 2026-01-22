@@ -32,124 +32,101 @@ export default function UniversalSearch({ session }) {
     const performSearch = async () => {
       setLoading(true);
       try {
-        const results = await Promise.allSettled([
-          base44.functions.invoke('getRepLeads', {
-            userId: session?.userId,
-            token: session?.token,
-            instanceUrl: session?.instanceUrl
-          }),
-          base44.functions.invoke('getRepOpportunities', {
-            userId: session?.userId,
-            token: session?.token,
-            instanceUrl: session?.instanceUrl
-          }),
-          base44.functions.invoke('getRepContacts', {
-            userId: session?.userId,
-            token: session?.token,
-            instanceUrl: session?.instanceUrl
-          }),
-          base44.functions.invoke('getSalesforceAccounts', {
-            token: session?.token,
-            instanceUrl: session?.instanceUrl
-          })
-        ]);
-
-        const leadsRes = results[0].status === 'fulfilled' ? results[0].value : { data: {} };
-        const oppsRes = results[1].status === 'fulfilled' ? results[1].value : { data: {} };
-        const contactsRes = results[2].status === 'fulfilled' ? results[2].value : { data: {} };
-        const accountsRes = results[3].status === 'fulfilled' ? results[3].value : { data: {} };
-
         const searchLower = searchTerm.toLowerCase();
+        
+        // Perform search via backend function
+        const response = await base44.functions.invoke('performUniversalSearch', {
+          searchTerm: searchLower,
+          userId: session?.userId,
+          token: session?.token,
+          instanceUrl: session?.instanceUrl
+        });
+
         const allResults = [];
 
-        // Filter leads
-        if (leadsRes.data?.leads) {
-          leadsRes.data.leads
-            .filter(l => l.Name?.toLowerCase().includes(searchLower) || l.Company?.toLowerCase().includes(searchLower))
-            .forEach(lead => {
-              allResults.push({
-                id: lead.Id,
-                name: lead.Name,
-                subtitle: lead.Company,
-                type: 'Lead',
-                category: 'Lead',
-                color: 'bg-blue-100 text-blue-800',
-                icon: Contact,
-                path: 'LeadDetail',
-                record: lead
-              });
+        // Process leads
+        if (response.data?.leads) {
+          response.data.leads.forEach(lead => {
+            allResults.push({
+              id: lead.Id,
+              name: lead.Name,
+              subtitle: lead.Company,
+              type: 'Lead',
+              category: 'Lead',
+              color: 'bg-blue-100 text-blue-800',
+              icon: Contact,
+              path: 'LeadDetail',
+              record: lead
             });
+          });
         }
 
-        // Filter opportunities
-        if (oppsRes.data?.opportunities) {
-          oppsRes.data.opportunities
-            .filter(o => o.Name?.toLowerCase().includes(searchLower) || o.Account?.Name?.toLowerCase().includes(searchLower))
-            .forEach(opp => {
-              allResults.push({
-                id: opp.Id,
-                name: opp.Name,
-                subtitle: opp.Account?.Name,
-                type: 'Opportunity',
-                category: 'Opportunity',
-                color: 'bg-orange-100 text-orange-800',
-                icon: Briefcase,
-                path: 'OpportunityDetail',
-                record: opp
-              });
+        // Process opportunities
+        if (response.data?.opportunities) {
+          response.data.opportunities.forEach(opp => {
+            allResults.push({
+              id: opp.Id,
+              name: opp.Name,
+              subtitle: opp.Account?.Name,
+              type: 'Opportunity',
+              category: 'Opportunity',
+              color: 'bg-orange-100 text-orange-800',
+              icon: Briefcase,
+              path: 'OpportunityDetail',
+              record: opp
             });
+          });
         }
 
-        // Filter contacts
-        if (contactsRes.data?.contacts) {
-          contactsRes.data.contacts
-            .filter(c => c.Name?.toLowerCase().includes(searchLower) || c.AccountId?.toLowerCase().includes(searchLower))
-            .forEach(contact => {
-              allResults.push({
-                id: contact.Id,
-                name: contact.Name,
-                subtitle: contact.Title,
-                type: 'Contact',
-                category: 'Contact',
-                color: 'bg-purple-100 text-purple-800',
-                icon: User,
-                path: 'ContactDetail',
-                record: contact
-              });
+        // Process contacts
+        if (response.data?.contacts) {
+          response.data.contacts.forEach(contact => {
+            allResults.push({
+              id: contact.Id,
+              name: contact.Name,
+              subtitle: contact.Title,
+              type: 'Contact',
+              category: 'Contact',
+              color: 'bg-purple-100 text-purple-800',
+              icon: User,
+              path: 'ContactDetail',
+              record: contact
             });
+          });
         }
 
-        // Filter all accounts by RecordType
-        if (accountsRes.data?.accounts) {
-        accountsRes.data.accounts
-        .filter(a => a.Name?.toLowerCase().includes(searchLower))
-        .forEach(account => {
-        // Check RecordType for lender/merchant categorization
-        const recordTypeName = account.RecordType?.Name?.toLowerCase() || '';
-        let accountCategory = 'Account';
-        let color = 'bg-slate-100 text-slate-800';
-        let icon = Building2;
+        // Process accounts - use Active Lender checkbox
+        if (response.data?.accounts) {
+          response.data.accounts.forEach(account => {
+            let accountCategory = 'Account';
+            let color = 'bg-slate-100 text-slate-800';
+            let icon = Building2;
 
-        if (recordTypeName.includes('lender')) {
-          accountCategory = 'Lender';
-          color = 'bg-emerald-100 text-emerald-800';
-        } else if (recordTypeName.includes('merchant')) {
-          accountCategory = 'Merchant';
-          color = 'bg-violet-100 text-violet-800';
-        }
+            // Check if Active Lender
+            if (account.csbs__Active_Lender__c) {
+              accountCategory = 'Lender';
+              color = 'bg-emerald-100 text-emerald-800';
+            } else {
+              // Default to Merchant if not a lender
+              const recordTypeName = account.RecordType?.Name?.toLowerCase() || '';
+              if (recordTypeName.includes('merchant')) {
+                accountCategory = 'Merchant';
+                color = 'bg-violet-100 text-violet-800';
+              }
+            }
 
-        allResults.push({
-          id: account.Id,
-          name: account.Name,
-          subtitle: account.RecordType?.Name,
-          type: accountCategory,
-          category: 'Account',
-          color: color,
-          icon: icon,
-          path: 'AccountDetail',
-          record: account
-        });
-        });
+            allResults.push({
+              id: account.Id,
+              name: account.Name,
+              subtitle: account.RecordType?.Name,
+              type: accountCategory,
+              category: 'Account',
+              color: color,
+              icon: icon,
+              path: 'AccountDetail',
+              record: account
+            });
+          });
         }
 
         setResults(allResults);
@@ -161,7 +138,7 @@ export default function UniversalSearch({ session }) {
       }
     };
 
-    const timer = setTimeout(performSearch, 300);
+    const timer = setTimeout(performSearch, 500);
     return () => clearTimeout(timer);
   }, [searchTerm, session]);
 
@@ -231,11 +208,6 @@ export default function UniversalSearch({ session }) {
                         <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${result.color}`}>
                           {result.type}
                         </span>
-                        {result.recordType && result.category === 'Account' && (
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${result.color}`}>
-                            {result.recordType}
-                          </span>
-                        )}
                         {result.subtitle && (
                           <span className="text-[11px] text-slate-500 truncate">{result.subtitle}</span>
                         )}
