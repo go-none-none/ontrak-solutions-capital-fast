@@ -17,9 +17,7 @@ const INDUSTRIES = ['Agriculture and Landscaping', 'Apparel and Accessories', 'A
 
 export default function CreateMerchantModal({ isOpen, onClose, session, onSuccess }) {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    Name: '', csbs__DBA__c: '', Phone: '', csbs__Email__c: '', csbs__Additional_Phone__c: '', Website: '', Fax: '', Description: '', BillingStreet: '', BillingCity: '', BillingState: '', BillingPostalCode: '', BillingCountry: '', csbs__Application_Industry__c: '', csbs__Business_Start_Date__c: '', Industry: '', csbs__Seasonal_Peak_Months__c: [], csbs__Entity_Type__c: '', csbs__Franchise__c: false, csbs__Type_of_Business__c: '', csbs__Home_Based_Business__c: false, csbs__Product_Service_Sold__c: '', csbs__Number_of_Locations__c: '', csbs__Federal_Tax_ID_Unencrypted__c: '', csbs__Open_Tax_Lien_Payment_Plan__c: false, csbs__State_of_Incorporation__c: '', csbs__Open_Tax_Liens_Balance__c: '', csbs__Seasonal_Business__c: false, csbs__E_Commerce__c: false, csbs__Business_Location_Occupancy__c: '', csbs__Business_Location_Monthly_Payment__c: '', csbs__Landlord_Mortgagee_Name__c: '', csbs__Landlord_Mortgagee_Phone__c: '', csbs__Business_Trade_Reference_1__c: '', csbs__Business_Trade_Reference_1_Phone__c: '', csbs__Business_Trade_Reference_2__c: '', csbs__Business_Trade_Reference_2_Phone__c: '', csbs__Business_Trade_Reference_3__c: '', csbs__Business_Trade_Reference_3_Phone__c: '', csbs__Business_Trade_Reference_Contact_Acct1__c: '', csbs__Business_Trade_Reference_Contact_Acct_2__c: '', csbs__Business_Trade_Reference_Contact_Acct_3__c: '', csbs__UTM_Source__c: '', csbs__UTM_Campaign__c: '', csbs__UTM_Content__c: '', csbs__UTM_Term__c: '', csbs__UTM_Medium__c: ''
-  });
+  const [formData, setFormData] = useState({ Name: '', csbs__DBA__c: '', Phone: '', csbs__Email__c: '', csbs__Additional_Phone__c: '', Website: '', Fax: '', Description: '', BillingStreet: '', BillingCity: '', BillingState: '', BillingPostalCode: '', BillingCountry: '', csbs__Application_Industry__c: '', csbs__Business_Start_Date__c: '', Industry: '', csbs__Seasonal_Peak_Months__c: [], csbs__Entity_Type__c: '', csbs__Franchise__c: false, csbs__Type_of_Business__c: '', csbs__Home_Based_Business__c: false, csbs__Product_Service_Sold__c: '', csbs__Number_of_Locations__c: '', csbs__Federal_Tax_ID_Unencrypted__c: '', csbs__Open_Tax_Lien_Payment_Plan__c: false, csbs__State_of_Incorporation__c: '', csbs__Open_Tax_Liens_Balance__c: '', csbs__Seasonal_Business__c: false, csbs__E_Commerce__c: false, csbs__Business_Location_Occupancy__c: '', csbs__Business_Location_Monthly_Payment__c: '', csbs__Landlord_Mortgagee_Name__c: '', csbs__Landlord_Mortgagee_Phone__c: '', csbs__Business_Trade_Reference_1__c: '', csbs__Business_Trade_Reference_1_Phone__c: '', csbs__Business_Trade_Reference_2__c: '', csbs__Business_Trade_Reference_2_Phone__c: '', csbs__Business_Trade_Reference_3__c: '', csbs__Business_Trade_Reference_3_Phone__c: '', csbs__Business_Trade_Reference_Contact_Acct1__c: '', csbs__Business_Trade_Reference_Contact_Acct_2__c: '', csbs__Business_Trade_Reference_Contact_Acct_3__c: '', csbs__UTM_Source__c: '', csbs__UTM_Campaign__c: '', csbs__UTM_Content__c: '', csbs__UTM_Term__c: '', csbs__UTM_Medium__c: '' });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,19 +28,8 @@ export default function CreateMerchantModal({ isOpen, onClose, session, onSucces
 
     setLoading(true);
     try {
-      const dataToSend = {
-        ...formData,
-        csbs__Seasonal_Peak_Months__c: formData.csbs__Seasonal_Peak_Months__c?.length > 0 
-          ? formData.csbs__Seasonal_Peak_Months__c.join(';') 
-          : ''
-      };
-
-      const response = await base44.functions.invoke('createSalesforceMerchant', {
-        data: dataToSend,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
-
+      const dataToSend = { ...formData, csbs__Seasonal_Peak_Months__c: formData.csbs__Seasonal_Peak_Months__c?.length > 0 ? formData.csbs__Seasonal_Peak_Months__c.join(';') : '' };
+      const response = await base44.functions.invoke('createSalesforceMerchant', { data: dataToSend, token: session.token, instanceUrl: session.instanceUrl });
       onSuccess(response.data.id);
       onClose();
     } catch (error) {
@@ -54,12 +41,7 @@ export default function CreateMerchantModal({ isOpen, onClose, session, onSucces
   };
 
   const toggleSeason = (season) => {
-    setFormData({
-      ...formData,
-      csbs__Seasonal_Peak_Months__c: formData.csbs__Seasonal_Peak_Months__c.includes(season)
-        ? formData.csbs__Seasonal_Peak_Months__c.filter(s => s !== season)
-        : [...formData.csbs__Seasonal_Peak_Months__c, season]
-    });
+    setFormData({ ...formData, csbs__Seasonal_Peak_Months__c: formData.csbs__Seasonal_Peak_Months__c.includes(season) ? formData.csbs__Seasonal_Peak_Months__c.filter(s => s !== season) : [...formData.csbs__Seasonal_Peak_Months__c, season] });
   };
 
   return (

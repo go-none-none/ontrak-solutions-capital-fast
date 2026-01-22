@@ -18,13 +18,7 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
   const [relatedRecords, setRelatedRecords] = useState(null);
   const [activeTab, setActiveTab] = useState('details');
   const [isEditing, setIsEditing] = useState(false);
-  const [editValues, setEditValues] = useState({
-    Subject: task.Subject,
-    Description: task.Description || '',
-    Priority: task.Priority,
-    Status: task.Status,
-    ActivityDate: task.ActivityDate || ''
-  });
+  const [editValues, setEditValues] = useState({ Subject: task.Subject, Description: task.Description || '', Priority: task.Priority, Status: task.Status, ActivityDate: task.ActivityDate || '' });
   const [saving, setSaving] = useState(false);
 
   const getTaskCategory = () => {
@@ -72,12 +66,7 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
   const handleMarkComplete = async () => {
     setSaving(true);
     try {
-      await base44.functions.invoke('updateSalesforceTask', {
-        taskId: task.Id,
-        updates: { Status: 'Completed' },
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
+      await base44.functions.invoke('updateSalesforceTask', { taskId: task.Id, updates: { Status: 'Completed' }, token: session.token, instanceUrl: session.instanceUrl });
       await onUpdate();
     } catch (error) {
       alert(`Failed to complete task: ${error.response?.data?.error || error.message}`);
@@ -89,12 +78,7 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await base44.functions.invoke('updateSalesforceTask', {
-        taskId: task.Id,
-        updates: editValues,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
+      await base44.functions.invoke('updateSalesforceTask', { taskId: task.Id, updates: editValues, token: session.token, instanceUrl: session.instanceUrl });
       setIsEditing(false);
       await onUpdate();
     } catch (error) {
@@ -113,16 +97,8 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
     
     try {
       const [accountRes, relatedRes] = await Promise.all([
-        base44.functions.invoke('getSalesforceAccount', {
-          accountId: task.Account.Id,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        }),
-        base44.functions.invoke('getSalesforceAccountRelated', {
-          accountId: task.Account.Id,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
+        base44.functions.invoke('getSalesforceAccount', { accountId: task.Account.Id, token: session.token, instanceUrl: session.instanceUrl }),
+        base44.functions.invoke('getSalesforceAccountRelated', { accountId: task.Account.Id, token: session.token, instanceUrl: session.instanceUrl })
       ]);
       setAccountData(accountRes.data.account);
       setRelatedRecords(relatedRes.data);
@@ -167,9 +143,7 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
                   <div className="border-t pt-4">
                     <p className="text-xs text-slate-500 mb-2 font-semibold">Billing Address</p>
                     {accountData.BillingStreet && <p className="text-slate-900">{accountData.BillingStreet}</p>}
-                    {accountData.BillingCity && (
-                      <p className="text-slate-900">{accountData.BillingCity}{accountData.BillingState ? `, ${accountData.BillingState}` : ''} {accountData.BillingPostalCode || ''}</p>
-                    )}
+                    {accountData.BillingCity && (<p className="text-slate-900">{accountData.BillingCity}{accountData.BillingState ? `, ${accountData.BillingState}` : ''} {accountData.BillingPostalCode || ''}</p>)}
                     {accountData.BillingCountry && <p className="text-slate-900">{accountData.BillingCountry}</p>}
                   </div>
                 ) : null}
@@ -185,11 +159,7 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
               <TabsContent value="leads" className="space-y-2">
                 {relatedRecords?.leads?.length > 0 ? (
                   relatedRecords.leads.map(lead => (
-                    <button
-                      key={lead.Id}
-                      onClick={() => window.location.href = `${createPageUrl('LeadDetail')}?id=${lead.Id}`}
-                      className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
-                    >
+                    <button key={lead.Id} onClick={() => window.location.href = `${createPageUrl('LeadDetail')}?id=${lead.Id}`} className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors">
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="font-semibold text-slate-900">{lead.Name}</p>
@@ -207,11 +177,7 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
               <TabsContent value="opportunities" className="space-y-2">
                 {relatedRecords?.opportunities?.length > 0 ? (
                   relatedRecords.opportunities.map(opp => (
-                    <button
-                      key={opp.Id}
-                      onClick={() => window.location.href = `${createPageUrl('OpportunityDetail')}?id=${opp.Id}`}
-                      className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
-                    >
+                    <button key={opp.Id} onClick={() => window.location.href = `${createPageUrl('OpportunityDetail')}?id=${opp.Id}`} className="block w-full text-left p-3 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors">
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="font-semibold text-slate-900">{opp.Name}</p>
@@ -230,12 +196,7 @@ export default function TaskItem({ task, session, onUpdate, onOpenModal }) {
         </DialogContent>
       </Dialog>
     
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        onClick={() => onOpenModal && onOpenModal(task)}
-        className={`border-l-4 rounded-lg p-4 transition-all cursor-pointer hover:shadow-md ${getCategoryColor()}`}
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} onClick={() => onOpenModal && onOpenModal(task)} className={`border-l-4 rounded-lg p-4 transition-all cursor-pointer hover:shadow-md ${getCategoryColor()}`}>
         {isEditing ? (
           <div className="space-y-3">
             <Input value={editValues.Subject} onChange={(e) => setEditValues({ ...editValues, Subject: e.target.value })} placeholder="Subject" />

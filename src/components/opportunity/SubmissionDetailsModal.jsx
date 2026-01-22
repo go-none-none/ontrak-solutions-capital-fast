@@ -18,15 +18,7 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
 
   useEffect(() => {
     if (submission) {
-      setFormData({
-        csbs__Status__c: submission.csbs__Status__c || '',
-        csbs__Status_Detail__c: submission.csbs__Status_Detail__c || '',
-        csbs__Type__c: submission.csbs__Type__c || '',
-        csbs__Notes__c: submission.csbs__Notes__c || '',
-        csbs__Email__c: submission.csbs__Email__c || '',
-        csbs__Email_to_CC__c: submission.csbs__Email_to_CC__c || '',
-        csbs__Email_to_BCC__c: submission.csbs__Email_to_BCC__c || ''
-      });
+      setFormData({ csbs__Status__c: submission.csbs__Status__c || '', csbs__Status_Detail__c: submission.csbs__Status_Detail__c || '', csbs__Type__c: submission.csbs__Type__c || '', csbs__Notes__c: submission.csbs__Notes__c || '', csbs__Email__c: submission.csbs__Email__c || '', csbs__Email_to_CC__c: submission.csbs__Email_to_CC__c || '', csbs__Email_to_BCC__c: submission.csbs__Email_to_BCC__c || '' });
     }
   }, [submission]);
 
@@ -39,18 +31,8 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
   const loadPicklistValues = async () => {
     try {
       const [statusRes, typeRes] = await Promise.all([
-        base44.functions.invoke('getSalesforcePicklistValues', {
-          objectType: 'csbs__Submission__c',
-          fieldName: 'csbs__Status__c',
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        }),
-        base44.functions.invoke('getSalesforcePicklistValues', {
-          objectType: 'csbs__Submission__c',
-          fieldName: 'csbs__Type__c',
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
+        base44.functions.invoke('getSalesforcePicklistValues', { objectType: 'csbs__Submission__c', fieldName: 'csbs__Status__c', token: session.token, instanceUrl: session.instanceUrl }),
+        base44.functions.invoke('getSalesforcePicklistValues', { objectType: 'csbs__Submission__c', fieldName: 'csbs__Type__c', token: session.token, instanceUrl: session.instanceUrl })
       ]);
       setStatusPicklist(statusRes.data.values || []);
       setTypePicklist(typeRes.data.values || []);
@@ -62,12 +44,7 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
   const handleSave = async () => {
     setLoading(true);
     try {
-      await base44.functions.invoke('updateSalesforceSubmission', {
-        submissionId: submission.Id,
-        data: formData,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
+      await base44.functions.invoke('updateSalesforceSubmission', { submissionId: submission.Id, data: formData, token: session.token, instanceUrl: session.instanceUrl });
       if (onSuccess) onSuccess();
       onClose();
     } catch (error) {
@@ -86,42 +63,21 @@ export default function SubmissionDetailsModal({ isOpen, onClose, submission, se
       <div>
         <div className="flex items-center justify-between mb-1">
           <Label className="text-xs text-slate-500">{label}</Label>
-          {!isEditing && (
-            <button
-              onClick={() => setEditingField(field)}
-              className="text-slate-400 hover:text-slate-600"
-            >
-              <Pencil className="w-3 h-3" />
-            </button>
-          )}
+          {!isEditing && (<button onClick={() => setEditingField(field)} className="text-slate-400 hover:text-slate-600"><Pencil className="w-3 h-3" /></button>)}
         </div>
         {isEditing ? (
           <div className="flex gap-1">
             {type === 'select' ? (
-              <Select
-                value={formData[field]}
-                onValueChange={(val) => setFormData({ ...formData, [field]: val })}
-              >
+              <Select value={formData[field]} onValueChange={(val) => setFormData({ ...formData, [field]: val })}>
                 <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {options.map(opt => (
-                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                  ))}
+                  {options.map(opt => (<SelectItem key={opt} value={opt}>{opt}</SelectItem>))}
                 </SelectContent>
               </Select>
             ) : type === 'textarea' ? (
-              <Textarea
-                value={formData[field]}
-                onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
-                className="min-h-[80px]"
-              />
+              <Textarea value={formData[field]} onChange={(e) => setFormData({ ...formData, [field]: e.target.value })} className="min-h-[80px]" />
             ) : (
-              <Input
-                type={type}
-                value={formData[field]}
-                onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
-                className="h-8"
-              />
+              <Input type={type} value={formData[field]} onChange={(e) => setFormData({ ...formData, [field]: e.target.value })} className="h-8" />
             )}
             <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditingField(null)}>
               <Check className="w-4 h-4" />

@@ -27,27 +27,13 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
   const loadFiles = async () => {
     setLoading(true);
     try {
-      const response = await base44.functions.invoke('getSalesforceFiles', {
-        recordId,
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
+      const response = await base44.functions.invoke('getSalesforceFiles', { recordId, token: session.token, instanceUrl: session.instanceUrl });
       const sfFiles = response.data.files || [];
       
       const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${recordId}`) || '[]');
       
       const combinedFiles = [
-        ...tempFiles.map(tf => ({
-          ContentDocumentId: tf.id,
-          ContentDocument: {
-            Title: tf.name.replace(/\.[^/.]+$/, ''),
-            FileExtension: tf.name.split('.').pop(),
-            ContentSize: tf.size,
-            CreatedDate: tf.uploadedAt
-          },
-          isTemp: true,
-          tempUrl: tf.url
-        })),
+        ...tempFiles.map(tf => ({ ContentDocumentId: tf.id, ContentDocument: { Title: tf.name.replace(/\.[^/.]+$/, ''), FileExtension: tf.name.split('.').pop(), ContentSize: tf.size, CreatedDate: tf.uploadedAt }, isTemp: true, tempUrl: tf.url })),
         ...sfFiles
       ];
       
@@ -75,14 +61,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
       const uploadResponse = await base44.integrations.Core.UploadFile({ file });
       
       const tempFiles = JSON.parse(localStorage.getItem(`temp_files_${recordId}`) || '[]');
-      tempFiles.push({
-        id: `temp_${Date.now()}`,
-        name: file.name,
-        url: uploadResponse.file_url,
-        size: file.size,
-        type: file.type,
-        uploadedAt: new Date().toISOString()
-      });
+      tempFiles.push({ id: `temp_${Date.now()}`, name: file.name, url: uploadResponse.file_url, size: file.size, type: file.type, uploadedAt: new Date().toISOString() });
       localStorage.setItem(`temp_files_${recordId}`, JSON.stringify(tempFiles));
       
       await loadFiles();
@@ -109,11 +88,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
 
   const formatDate = (dateString) => {
     if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
+    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   const getFileIcon = (extension) => {
@@ -133,12 +108,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
     
     if (isPdf) {
       try {
-        const response = await base44.functions.invoke('getSalesforceFileContent', {
-          contentDocumentId: file.ContentDocumentId,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        });
-
+        const response = await base44.functions.invoke('getSalesforceFileContent', { contentDocumentId: file.ContentDocumentId, token: session.token, instanceUrl: session.instanceUrl });
         const base64 = response.data.file;
         const binaryString = atob(base64);
         const bytes = new Uint8Array(binaryString.length);
@@ -172,11 +142,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
   };
 
   const toggleFileSelection = (fileId) => {
-    setSelectedFiles(prev => 
-      prev.includes(fileId) 
-        ? prev.filter(id => id !== fileId)
-        : [...prev, fileId]
-    );
+    setSelectedFiles(prev => prev.includes(fileId) ? prev.filter(id => id !== fileId) : [...prev, fileId]);
   };
 
   const toggleSelectAll = () => {
@@ -217,11 +183,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
         const filtered = tempFiles.filter(tf => tf.id !== contentDocumentId);
         localStorage.setItem(`temp_files_${recordId}`, JSON.stringify(filtered));
       } else {
-        await base44.functions.invoke('deleteSalesforceFile', {
-          contentDocumentId,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        });
+        await base44.functions.invoke('deleteSalesforceFile', { contentDocumentId, token: session.token, instanceUrl: session.instanceUrl });
       }
       
       await loadFiles();
@@ -247,13 +209,7 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
     }
 
     try {
-      await base44.functions.invoke('renameSalesforceFile', {
-        contentDocumentId,
-        newTitle: newTitle.trim(),
-        token: session.token,
-        instanceUrl: session.instanceUrl
-      });
-      
+      await base44.functions.invoke('renameSalesforceFile', { contentDocumentId, newTitle: newTitle.trim(), token: session.token, instanceUrl: session.instanceUrl });
       await loadFiles();
       setRenamingId(null);
       setNewTitle('');
@@ -269,51 +225,18 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-slate-900">Files & Attachments</h2>
         <div className="flex gap-2">
-          {selectedFiles.length > 0 && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={downloadSelectedFiles}
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Download ({selectedFiles.length})
-            </Button>
-          )}
-          <input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleFileUpload}
-            className="hidden"
-            disabled={uploading}
-          />
-          <Button
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="bg-orange-600 hover:bg-orange-700"
-          >
-            {uploading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <>
-                <Upload className="w-4 h-4 mr-2" />
-                Upload
-              </>
-            )}
+          {selectedFiles.length > 0 && (<Button size="sm" variant="outline" onClick={downloadSelectedFiles}><Download className="w-4 h-4 mr-2" />Download ({selectedFiles.length})</Button>)}
+          <input ref={fileInputRef} type="file" onChange={handleFileUpload} className="hidden" disabled={uploading} />
+          <Button size="sm" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="bg-orange-600 hover:bg-orange-700">
+            {uploading ? (<Loader2 className="w-4 h-4 animate-spin" />) : (<><Upload className="w-4 h-4 mr-2" />Upload</>)}
           </Button>
         </div>
       </div>
 
       {files.length > 0 && (
         <div className="flex items-center gap-2 mb-3 pb-3 border-b border-slate-200">
-          <Checkbox
-            checked={selectedFiles.length === files.length}
-            onCheckedChange={toggleSelectAll}
-            id="select-all"
-          />
-          <label htmlFor="select-all" className="text-sm text-slate-700 cursor-pointer">
-            Select All ({files.length})
-          </label>
+          <Checkbox checked={selectedFiles.length === files.length} onCheckedChange={toggleSelectAll} id="select-all" />
+          <label htmlFor="select-all" className="text-sm text-slate-700 cursor-pointer">Select All ({files.length})</label>
         </div>
       )}
 
@@ -333,133 +256,41 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
             const Icon = getFileIcon(doc.FileExtension);
             
             return (
-              <motion.div
-                key={file.ContentDocumentId}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="p-3 rounded-lg hover:bg-slate-50 border border-slate-100"
-              >
+              <motion.div key={file.ContentDocumentId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="p-3 rounded-lg hover:bg-slate-50 border border-slate-100">
                 <div className="flex items-center gap-3 mb-3">
-                  <Checkbox
-                    checked={selectedFiles.includes(file.ContentDocumentId)}
-                    onCheckedChange={() => toggleFileSelection(file.ContentDocumentId)}
-                  />
+                  <Checkbox checked={selectedFiles.includes(file.ContentDocumentId)} onCheckedChange={() => toggleFileSelection(file.ContentDocumentId)} />
                   <div className="w-10 h-10 rounded-lg bg-orange-600/10 flex items-center justify-center flex-shrink-0">
                     <Icon className="w-5 h-5 text-orange-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     {renamingId === file.ContentDocumentId ? (
-                      <input
-                        type="text"
-                        value={newTitle}
-                        onChange={(e) => setNewTitle(e.target.value)}
-                        autoFocus
-                        className="w-full px-2 py-1 border border-slate-300 rounded text-sm font-medium"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') submitRename(file.ContentDocumentId, doc.Title);
-                          if (e.key === 'Escape') {
-                            setRenamingId(null);
-                            setNewTitle('');
-                          }
-                        }}
-                      />
+                      <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} autoFocus className="w-full px-2 py-1 border border-slate-300 rounded text-sm font-medium" onKeyDown={(e) => { if (e.key === 'Enter') submitRename(file.ContentDocumentId, doc.Title); if (e.key === 'Escape') { setRenamingId(null); setNewTitle(''); } }} />
                     ) : (
-                      <p className="font-medium text-slate-900 text-sm" title={`${doc.Title}.${doc.FileExtension}`}>
-                        {doc.Title}.{doc.FileExtension}
-                      </p>
+                      <p className="font-medium text-slate-900 text-sm" title={`${doc.Title}.${doc.FileExtension}`}>{doc.Title}.{doc.FileExtension}</p>
                     )}
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between gap-2 pl-14">
-                  <p className="text-xs text-slate-500">
-                    {formatFileSize(doc.ContentSize)} • {formatDate(doc.CreatedDate)}
-                  </p>
+                  <p className="text-xs text-slate-500">{formatFileSize(doc.ContentSize)} • {formatDate(doc.CreatedDate)}</p>
                   <div className="flex gap-1 flex-shrink-0">
                   {renamingId === file.ContentDocumentId ? (
                     <>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => submitRename(file.ContentDocumentId, doc.Title)}
-                        title="Confirm rename"
-                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                      >
-                        <CheckSquare className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => {
-                          setRenamingId(null);
-                          setNewTitle('');
-                        }}
-                        title="Cancel"
-                        className="text-slate-600 hover:text-slate-700"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => submitRename(file.ContentDocumentId, doc.Title)} title="Confirm rename" className="text-green-600 hover:text-green-700 hover:bg-green-50"><CheckSquare className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => { setRenamingId(null); setNewTitle(''); }} title="Cancel" className="text-slate-600 hover:text-slate-700"><X className="w-4 h-4" /></Button>
                     </>
                   ) : (
                     <>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleRenameFile(file.ContentDocumentId, doc.Title)}
-                        title="Rename file"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleViewFile(file)}
-                        title="View file"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleRenameFile(file.ContentDocumentId, doc.Title)} title="Rename file"><Edit2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleViewFile(file)} title="View file"><Eye className="w-4 h-4" /></Button>
                       {doc.FileExtension?.toLowerCase() === 'pdf' && (() => {
                           const matchingStatement = statements.find(stmt => stmt.csbs__Source_File_ID__c === file.ContentDocumentId);
-                          return matchingStatement ? (
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => setPreviewingStatement(matchingStatement)}
-                              title="View parsed data"
-                              className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                            >
-                              <Zap className="w-4 h-4" />
-                            </Button>
-                          ) : null;
+                          return matchingStatement ? (<Button variant="ghost" size="sm" onClick={() => setPreviewingStatement(matchingStatement)} title="View parsed data" className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"><Zap className="w-4 h-4" /></Button>) : null;
                         })()
                       }
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => {
-                          const link = document.createElement('a');
-                          link.href = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`;
-                          link.download = `${doc.Title}.${doc.FileExtension}`;
-                          link.click();
-                        }}
-                        title="Download file"
-                      >
-                        <Download className="w-4 h-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleDeleteFile(file, doc.Title)}
-                        disabled={deleting === file.ContentDocumentId}
-                        title="Delete file"
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        {deleting === file.ContentDocumentId ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
+                      <Button variant="ghost" size="sm" onClick={() => { const link = document.createElement('a'); link.href = `${session.instanceUrl}/sfc/servlet.shepherd/document/download/${file.ContentDocumentId}`; link.download = `${doc.Title}.${doc.FileExtension}`; link.click(); }} title="Download file"><Download className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleDeleteFile(file, doc.Title)} disabled={deleting === file.ContentDocumentId} title="Delete file" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                        {deleting === file.ContentDocumentId ? (<Loader2 className="w-4 h-4 animate-spin" />) : (<Trash2 className="w-4 h-4" />)}
                       </Button>
                     </>
                     )}
@@ -471,106 +302,38 @@ export default function FileManager({ recordId, session, onFileUploaded, onParse
         </div>
       )}
 
-      <PDFViewer 
-      file={viewingFile}
-      session={session}
-      isOpen={!!viewingFile}
-      onClose={closeViewer}
-      />
-      <ImageViewer 
-      file={viewingImage}
-      session={session}
-      isOpen={!!viewingImage}
-      onClose={closeImageViewer}
-      />
+      <PDFViewer file={viewingFile} session={session} isOpen={!!viewingFile} onClose={closeViewer} />
+      <ImageViewer file={viewingImage} session={session} isOpen={!!viewingImage} onClose={closeImageViewer} />
 
       {previewingStatement && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 shadow-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-slate-900">Parsed Data</h3>
-              <button
-                onClick={() => setPreviewingStatement(null)}
-                className="text-slate-500 hover:text-slate-700"
-              >
-                ✕
-              </button>
+              <button onClick={() => setPreviewingStatement(null)} className="text-slate-500 hover:text-slate-700">✕</button>
             </div>
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
               <div className="grid grid-cols-3 gap-3 text-sm">
-                <div>
-                  <p className="text-blue-700 font-medium">Bank Name</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Bank_Name__c || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Account No</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Account_No__c || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Account Title</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Account_Title__c || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Company</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Company__c || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Starting Date</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Starting_Date__c || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Ending Date</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Ending_Date__c || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Starting Balance</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Starting_Balance__c ? `$${Number(previewingStatement.csbs__Starting_Balance__c).toLocaleString()}` : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Ending Balance</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Ending_Balance__c ? `$${Number(previewingStatement.csbs__Ending_Balance__c).toLocaleString()}` : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Avg Daily Balance</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Average_Daily_Balance__c ? `$${Number(previewingStatement.csbs__Average_Daily_Balance__c).toLocaleString()}` : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Deposit Count</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Deposit_Count__c || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Deposit Amount</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Deposit_Amount__c ? `$${Number(previewingStatement.csbs__Deposit_Amount__c).toLocaleString()}` : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Withdrawals Count</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Withdrawals_Count__c || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Total Withdrawals</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Total_Withdrawals__c ? `$${Number(previewingStatement.csbs__Total_Withdrawals__c).toLocaleString()}` : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Transactions Count</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Transactions_Count__c || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">NSFs</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__NSFs__c || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-blue-700 font-medium">Negative Days</p>
-                  <p className="text-slate-900">{previewingStatement.csbs__Negative_Days__c || '—'}</p>
-                </div>
+                <div><p className="text-blue-700 font-medium">Bank Name</p><p className="text-slate-900">{previewingStatement.csbs__Bank_Name__c || '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Account No</p><p className="text-slate-900">{previewingStatement.csbs__Account_No__c || '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Account Title</p><p className="text-slate-900">{previewingStatement.csbs__Account_Title__c || '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Company</p><p className="text-slate-900">{previewingStatement.csbs__Company__c || '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Starting Date</p><p className="text-slate-900">{previewingStatement.csbs__Starting_Date__c || '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Ending Date</p><p className="text-slate-900">{previewingStatement.csbs__Ending_Date__c || '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Starting Balance</p><p className="text-slate-900">{previewingStatement.csbs__Starting_Balance__c ? `$${Number(previewingStatement.csbs__Starting_Balance__c).toLocaleString()}` : '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Ending Balance</p><p className="text-slate-900">{previewingStatement.csbs__Ending_Balance__c ? `$${Number(previewingStatement.csbs__Ending_Balance__c).toLocaleString()}` : '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Avg Daily Balance</p><p className="text-slate-900">{previewingStatement.csbs__Average_Daily_Balance__c ? `$${Number(previewingStatement.csbs__Average_Daily_Balance__c).toLocaleString()}` : '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Deposit Count</p><p className="text-slate-900">{previewingStatement.csbs__Deposit_Count__c || '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Deposit Amount</p><p className="text-slate-900">{previewingStatement.csbs__Deposit_Amount__c ? `$${Number(previewingStatement.csbs__Deposit_Amount__c).toLocaleString()}` : '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Withdrawals Count</p><p className="text-slate-900">{previewingStatement.csbs__Withdrawals_Count__c || '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Total Withdrawals</p><p className="text-slate-900">{previewingStatement.csbs__Total_Withdrawals__c ? `$${Number(previewingStatement.csbs__Total_Withdrawals__c).toLocaleString()}` : '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Transactions Count</p><p className="text-slate-900">{previewingStatement.csbs__Transactions_Count__c || '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">NSFs</p><p className="text-slate-900">{previewingStatement.csbs__NSFs__c || '—'}</p></div>
+                <div><p className="text-blue-700 font-medium">Negative Days</p><p className="text-slate-900">{previewingStatement.csbs__Negative_Days__c || '—'}</p></div>
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">
-              <Button
-                onClick={() => setPreviewingStatement(null)}
-                variant="outline"
-              >
-                Close
-              </Button>
+              <Button onClick={() => setPreviewingStatement(null)} variant="outline">Close</Button>
             </div>
           </div>
         </div>
