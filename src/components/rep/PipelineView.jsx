@@ -24,31 +24,23 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
   const stages = activeTab === 'leads' ? leadStages : opportunityStages;
 
   const getPipelineData = () => {
-  if (activeTab === 'leads') {
-    return stages.map(stage => {
-      const stageLeads = leads.filter(l => l.Status === stage.name);
-      return {
-        ...stage,
-        count: stageLeads.length,
-        amount: 0
-      };
-    });
-  } else {
-    return stages.map(stage => {
-      let stageOpps;
-      if (stage.name === 'Declined') {
-        stageOpps = opportunities.filter(o => o.StageName && o.StageName.includes('Declined'));
-      } else {
-        stageOpps = opportunities.filter(o => o.StageName === stage.name);
-      }
-      const totalAmount = stageOpps.reduce((sum, o) => sum + (o.Amount || 0), 0);
-      return {
-        ...stage,
-        count: stageOpps.length,
-        amount: totalAmount
-      };
-    });
-  }
+    if (activeTab === 'leads') {
+      return stages.map(stage => {
+        const stageLeads = leads.filter(l => l.Status === stage.name);
+        return { ...stage, count: stageLeads.length, amount: 0 };
+      });
+    } else {
+      return stages.map(stage => {
+        let stageOpps;
+        if (stage.name === 'Declined') {
+          stageOpps = opportunities.filter(o => o.StageName && o.StageName.includes('Declined'));
+        } else {
+          stageOpps = opportunities.filter(o => o.StageName === stage.name);
+        }
+        const totalAmount = stageOpps.reduce((sum, o) => sum + (o.Amount || 0), 0);
+        return { ...stage, count: stageOpps.length, amount: totalAmount };
+      });
+    }
   };
 
   const pipelineData = getPipelineData();
@@ -71,7 +63,7 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
         <div className="flex flex-wrap gap-3">
           <div className="bg-white rounded-lg px-3 py-1.5 shadow-sm border border-slate-200">
             <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-[#08708E]" />
+              <Target className="w-4 h-4 text-orange-600" />
               <div>
                 <p className="text-xs text-slate-500">Total {activeTab === 'leads' ? 'Leads' : 'Deals'}</p>
                 <p className="text-lg font-bold text-slate-900">{totalDeals}</p>
@@ -79,7 +71,7 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
             </div>
           </div>
           {activeTab === 'opportunities' && (
-            <div className="bg-gradient-to-br from-[#08708E] to-[#065a72] rounded-lg px-3 py-1.5 shadow-sm">
+            <div className="bg-gradient-to-br from-orange-600 to-orange-700 rounded-lg px-3 py-1.5 shadow-sm">
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-white" />
                 <div>
@@ -94,13 +86,7 @@ export default function PipelineView({ leads, opportunities, activeTab, onStageC
 
       <div className={`grid gap-2 ${activeTab === 'leads' ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-7'}`}>
         {pipelineData.map((stage, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05 }}
-            className="relative group"
-          >
+          <motion.div key={idx} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }} className="relative group">
             <button
               onClick={() => onStageClick && onStageClick(stage.name)}
               className={`w-full bg-gradient-to-br ${stage.color} rounded-lg p-3 text-white shadow-md hover:shadow-xl hover:scale-105 transition-all text-left relative overflow-hidden flex flex-col justify-between`}
