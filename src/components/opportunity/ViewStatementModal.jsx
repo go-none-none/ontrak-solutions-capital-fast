@@ -7,20 +7,12 @@ export default function ViewStatementModal({ isOpen, onClose, statement }) {
 
   const formatCurrency = (amount) => {
     if (!amount && amount !== 0) return '-';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2
-    }).format(amount);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(amount);
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'numeric',
-      day: 'numeric',
-      year: 'numeric'
-    });
+    return new Date(dateString).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
   };
 
   return (
@@ -29,9 +21,7 @@ export default function ViewStatementModal({ isOpen, onClose, statement }) {
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle>Statement Details</DialogTitle>
-            {statement.csbs__Reconciled__c && (
-              <Badge className="bg-green-600">Reconciled</Badge>
-            )}
+            {statement.csbs__Reconciled__c && (<Badge className="bg-green-600">Reconciled</Badge>)}
           </div>
         </DialogHeader>
 
@@ -60,9 +50,7 @@ export default function ViewStatementModal({ isOpen, onClose, statement }) {
               <div><p className="text-slate-500 mb-1">Starting Balance</p><p className="font-bold text-lg text-slate-900">{formatCurrency(statement.csbs__Starting_Balance__c)}</p></div>
               <div><p className="text-slate-500 mb-1">Ending Balance</p><p className="font-bold text-lg text-slate-900">{formatCurrency(statement.csbs__Ending_Balance__c)}</p></div>
               <div><p className="text-slate-500 mb-1">Average Daily Balance</p><p className="font-bold text-lg text-orange-600">{formatCurrency(statement.csbs__Average_Daily_Balance__c)}</p></div>
-              {statement.csbs__Reconciled__c && (
-                <div><p className="text-slate-500 mb-1">Unreconciled End Balance</p><p className="font-medium text-slate-900">{formatCurrency(statement.csbs__Unreconciled_End_Balance__c)}</p></div>
-              )}
+              {statement.csbs__Reconciled__c && (<div><p className="text-slate-500 mb-1">Unreconciled End Balance</p><p className="font-medium text-slate-900">{formatCurrency(statement.csbs__Unreconciled_End_Balance__c)}</p></div>)}
             </div>
           </div>
 
@@ -74,12 +62,8 @@ export default function ViewStatementModal({ isOpen, onClose, statement }) {
               <div><p className="text-slate-500 mb-1">Withdrawals Count</p><p className="font-medium text-red-600">{statement.csbs__Withdrawals_Count__c || 0}</p></div>
               <div><p className="text-slate-500 mb-1">Total Withdrawals</p><p className="font-medium text-red-600">{formatCurrency(statement.csbs__Total_Withdrawals__c)}</p></div>
               <div><p className="text-slate-500 mb-1">Total Transactions</p><p className="font-medium text-slate-900">{statement.csbs__Transactions_Count__c || 0}</p></div>
-              {statement.csbs__Min_Resolution__c && (
-                <div><p className="text-slate-500 mb-1">Min Resolution</p><p className="font-medium text-slate-900">{statement.csbs__Min_Resolution__c}</p></div>
-              )}
-              {statement.csbs__Max_Resolution__c && (
-                <div><p className="text-slate-500 mb-1">Max Resolution</p><p className="font-medium text-slate-900">{statement.csbs__Max_Resolution__c}</p></div>
-              )}
+              {statement.csbs__Min_Resolution__c && (<div><p className="text-slate-500 mb-1">Min Resolution</p><p className="font-medium text-slate-900">{statement.csbs__Min_Resolution__c}</p></div>)}
+              {statement.csbs__Max_Resolution__c && (<div><p className="text-slate-500 mb-1">Max Resolution</p><p className="font-medium text-slate-900">{statement.csbs__Max_Resolution__c}</p></div>)}
             </div>
           </div>
 
@@ -88,12 +72,8 @@ export default function ViewStatementModal({ isOpen, onClose, statement }) {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div><p className="text-slate-500 mb-1">NSFs</p><p className={`font-bold text-lg ${statement.csbs__NSFs__c > 0 ? 'text-red-600' : 'text-green-600'}`}>{statement.csbs__NSFs__c || 0}</p></div>
               <div><p className="text-slate-500 mb-1">Negative Days</p><p className={`font-bold text-lg ${statement.csbs__Negative_Days__c > 0 ? 'text-red-600' : 'text-green-600'}`}>{statement.csbs__Negative_Days__c || 0}</p></div>
-              {statement.csbs__Fraud_Score__c && (
-                <div><p className="text-slate-500 mb-1">Fraud Score</p><p className="font-bold text-lg text-slate-900">{statement.csbs__Fraud_Score__c}</p></div>
-              )}
-              {statement.csbs__Fraud_Reasons__c && (
-                <div className="col-span-2"><p className="text-slate-500 mb-1">Fraud Reasons</p><p className="text-sm text-slate-700 bg-slate-50 p-2 rounded">{statement.csbs__Fraud_Reasons__c}</p></div>
-              )}
+              {statement.csbs__Fraud_Score__c && (<div><p className="text-slate-500 mb-1">Fraud Score</p><p className="font-bold text-lg text-slate-900">{statement.csbs__Fraud_Score__c}</p></div>)}
+              {statement.csbs__Fraud_Reasons__c && (<div className="col-span-2"><p className="text-slate-500 mb-1">Fraud Reasons</p><p className="text-sm text-slate-700 bg-slate-50 p-2 rounded">{statement.csbs__Fraud_Reasons__c}</p></div>)}
             </div>
           </div>
 
