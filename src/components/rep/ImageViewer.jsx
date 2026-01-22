@@ -37,12 +37,7 @@ export default function ImageViewer({ file, session, isOpen, onClose }) {
       const base64 = response.data.file;
       const ext = file.ContentDocument.FileExtension?.toLowerCase();
       const mimeTypes = {
-        'jpg': 'image/jpeg',
-        'jpeg': 'image/jpeg',
-        'png': 'image/png',
-        'gif': 'image/gif',
-        'webp': 'image/webp',
-        'svg': 'image/svg+xml'
+        'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png', 'gif': 'image/gif', 'webp': 'image/webp', 'svg': 'image/svg+xml'
       };
       const mimeType = mimeTypes[ext] || 'image/jpeg';
       const dataUrl = `data:${mimeType};base64,${base64}`;

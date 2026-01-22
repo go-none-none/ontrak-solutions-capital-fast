@@ -14,25 +14,15 @@ const US_STATES = [
 ];
 
 const ENTITY_TYPES = [
-  "Corporation",
-  "LLC",
-  "Partnership",
-  "Sole Proprietorship",
-  "S-Corporation",
-  "Non-Profit"
+  "Corporation", "LLC", "Partnership", "Sole Proprietorship", "S-Corporation", "Non-Profit"
 ];
 
 const PAYMENT_FREQUENCIES = [
-  "Daily",
-  "Weekly",
-  "Bi-Weekly",
-  "Monthly"
+  "Daily", "Weekly", "Bi-Weekly", "Monthly"
 ];
 
 const PAYMENT_METHODS = [
-  "ACH",
-  "Check",
-  "Wire Transfer"
+  "ACH", "Check", "Wire Transfer"
 ];
 
 const FIELD_CONFIG = {
@@ -140,7 +130,7 @@ export default function EditableField({
               type="checkbox"
               checked={displayValue || false}
               onChange={(e) => handleEdit(e.target.checked)}
-              className="w-5 h-5 rounded border-slate-300 text-[#08708E] focus:ring-[#08708E]"
+              className="w-5 h-5 rounded border-slate-300 text-orange-600 focus:ring-orange-600"
             />
             <span className="text-sm text-slate-700">
               {displayValue ? 'Yes' : 'No'}

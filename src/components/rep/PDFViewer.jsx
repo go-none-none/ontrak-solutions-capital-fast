@@ -23,15 +23,11 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
     setError(null);
     
     try {
-      console.log('Loading PDF for file:', file.ContentDocumentId);
-      
       const response = await base44.functions.invoke('getSalesforceFileContent', {
         contentDocumentId: file.ContentDocumentId,
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-
-      console.log('Response status:', response.status);
 
       if (!response.data || !response.data.file) {
         throw new Error('No file content received');
@@ -39,7 +35,6 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
 
       const base64 = response.data.file;
       const dataUrl = `data:application/pdf;base64,${base64}`;
-      console.log('Data URL created, length:', dataUrl.length);
       
       setPdfData(dataUrl);
     } catch (error) {
@@ -90,7 +85,7 @@ export default function PDFViewer({ file, session, isOpen, onClose }) {
         <div className="flex-1 overflow-hidden min-h-0">
           {loading && (
             <div className="flex flex-col items-center justify-center h-full">
-              <Loader2 className="w-12 h-12 text-[#08708E] animate-spin mb-4" />
+              <Loader2 className="w-12 h-12 text-orange-600 animate-spin mb-4" />
               <p className="text-slate-600">Loading PDF...</p>
             </div>
           )}

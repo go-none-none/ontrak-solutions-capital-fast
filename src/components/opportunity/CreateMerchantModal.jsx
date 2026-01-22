@@ -83,10 +83,7 @@ export default function CreateMerchantModal({ isOpen, onClose, session, onSucces
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <Textarea id="description" value={formData.Description} onChange={(e) => setFormData({ ...formData, Description: e.target.value })} rows={3} />
-          </div>
+          <div><Label htmlFor="description">Description</Label><Textarea id="description" value={formData.Description} onChange={(e) => setFormData({ ...formData, Description: e.target.value })} rows={3} /></div>
 
           <div className="space-y-4">
             <h3 className="font-semibold text-slate-900 border-b pb-2">Address Information</h3>
