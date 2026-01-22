@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, Download, X } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 
 export default function StatementPdfViewer({ statement, session, isOpen, onClose }) {
   const [loading, setLoading] = useState(true);
@@ -24,19 +25,13 @@ export default function StatementPdfViewer({ statement, session, isOpen, onClose
     setError(null);
 
     try {
-      const response = await fetch('/api/apps/6932157da76cc7fc545d1203/functions/getSalesforceFileContent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contentDocumentId: statement.csbs__Source_File_ID__c,
-          token: session.token,
-          instanceUrl: session.instanceUrl
-        })
+      const response = await base44.functions.invoke('getSalesforceFileContent', {
+        contentDocumentId: statement.csbs__Source_File_ID__c,
+        token: session.token,
+        instanceUrl: session.instanceUrl
       });
 
-      if (!response.ok) throw new Error('Failed to fetch file');
-
-      const data = await response.json();
+      const data = response.data;
       const base64 = data.file;
       const binaryString = atob(base64);
       const bytes = new Uint8Array(binaryString.length);

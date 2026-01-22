@@ -6,18 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import ReactQuill from 'react-quill';
-
-const modules = {
-  toolbar: [
-    ['bold', 'italic', 'underline', 'strike'],
-    ['blockquote', 'code-block'],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    [{ 'indent': '-1'}, { 'indent': '+1' }],
-    ['link'],
-    ['clean']
-  ]
-};
 
 const formatCurrency = (amount) => {
   if (!amount) return '$0';
@@ -26,15 +14,6 @@ const formatCurrency = (amount) => {
     currency: 'USD',
     minimumFractionDigits: 0
   }).format(amount);
-};
-
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric'
-  });
 };
 
 export default function OfferProposalModal({ isOpen, onClose, offers = [], contactEmail = '', opportunity = {}, session = {}, onSuccess = () => {} }) {
@@ -87,21 +66,20 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
     }
 
     if (step === 2) {
-    // Auto-generate email body based on selected offers
-        const selected = offers.filter(o => selectedOffers.includes(o.Id));
-        let bodyContent = 'Review the offers below:';
+      const selected = offers.filter(o => selectedOffers.includes(o.Id));
+      let bodyContent = 'Review the offers below:';
 
-        selected.forEach((offer, idx) => {
-          bodyContent += `\n\nOffer ${idx + 1}: ${formatCurrency(offer.csbs__Funded__c)}`;
-          bodyContent += `\nPayment: ${formatCurrency(offer.csbs__Payment_Amount__c)} ${offer.csbs__Payment_Frequency__c}`;
-          bodyContent += `\nTerm: ${offer.csbs__Term__c} months`;
-        });
+      selected.forEach((offer, idx) => {
+        bodyContent += `\n\nOffer ${idx + 1}: ${formatCurrency(offer.csbs__Funded__c)}`;
+        bodyContent += `\nPayment: ${formatCurrency(offer.csbs__Payment_Amount__c)} ${offer.csbs__Payment_Frequency__c}`;
+        bodyContent += `\nTerm: ${offer.csbs__Term__c} months`;
+      });
 
-        setEmailData(prev => ({
-          ...prev,
-          body: bodyContent
-        }));
-      }
+      setEmailData(prev => ({
+        ...prev,
+        body: bodyContent
+      }));
+    }
     
     setStep(step + 1);
   };
@@ -116,9 +94,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
     try {
       const selected = offers.filter(o => selectedOffers.includes(o.Id));
 
-      // Send email with session data included in payload
-      console.log('Sending proposal with session:', { hasToken: !!session.token, hasInstanceUrl: !!session.instanceUrl });
-      
       const response = await base44.functions.invoke('sendClientEmail', {
         recipientEmail: emailData.to,
         recipientName: opportunity.Account?.Name || 'Valued Customer',
@@ -130,8 +105,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
         sessionToken: session.token,
         sessionInstanceUrl: session.instanceUrl
       });
-
-      console.log('Send proposal response:', response.data);
 
       if (!response.data.pdfUploaded) {
         console.warn('PDF was not uploaded to Salesforce');
@@ -157,7 +130,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
           <DialogTitle>Offer Proposal</DialogTitle>
         </DialogHeader>
 
-        {/* Progress Indicator */}
         <div className="mb-6">
           <div className="flex items-center gap-4 mb-4">
             <div className={`w-2 h-2 rounded-full ${step >= 1 ? 'bg-blue-600' : 'bg-slate-200'}`} />
@@ -168,7 +140,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
           </div>
         </div>
 
-        {/* Step 1: Select Offers */}
         {step === 1 && (
           <div className="space-y-4">
             <h3 className="font-semibold text-slate-900">Select Offers to Include</h3>
@@ -186,18 +157,9 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
                     <label htmlFor={offer.Id} className="flex-1 cursor-pointer">
                       <p className="font-medium text-slate-900">{offer.csbs__Lender__c || 'Unknown Lender'}</p>
                       <div className="grid grid-cols-3 gap-4 mt-2 text-sm text-slate-600">
-                        <div>
-                          <p className="text-xs text-slate-500">Funded</p>
-                          <p className="font-semibold">{formatCurrency(offer.csbs__Funded__c)}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500">Payment</p>
-                          <p className="font-semibold">{formatCurrency(offer.csbs__Payment_Amount__c)}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500">Term</p>
-                          <p className="font-semibold">{offer.csbs__Term__c} mo</p>
-                        </div>
+                        <div><p className="text-xs text-slate-500">Funded</p><p className="font-semibold">{formatCurrency(offer.csbs__Funded__c)}</p></div>
+                        <div><p className="text-xs text-slate-500">Payment</p><p className="font-semibold">{formatCurrency(offer.csbs__Payment_Amount__c)}</p></div>
+                        <div><p className="text-xs text-slate-500">Term</p><p className="font-semibold">{offer.csbs__Term__c} mo</p></div>
                       </div>
                     </label>
                   </div>
@@ -207,88 +169,34 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
           </div>
         )}
 
-        {/* Step 2: PDF & Email Details */}
         {step === 2 && (
           <div className="space-y-4">
             <h3 className="font-semibold text-slate-900">Email Details</h3>
-
             <div className="border-t pt-4">
               <h4 className="font-medium text-slate-900 mb-4">Email Recipients</h4>
-              
-              <div>
-                <Label htmlFor="to">*To</Label>
-                <Input
-                  id="to"
-                  type="email"
-                  value={emailData.to}
-                  onChange={(e) => setEmailData({ ...emailData, to: e.target.value })}
-                  placeholder="recipient@example.com"
-                />
-              </div>
-
+              <div><Label htmlFor="to">*To</Label><Input id="to" type="email" value={emailData.to} onChange={(e) => setEmailData({ ...emailData, to: e.target.value })} placeholder="recipient@example.com" /></div>
               <div className="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                  <Label htmlFor="cc">CC</Label>
-                  <Input
-                    id="cc"
-                    type="email"
-                    value={emailData.cc}
-                    onChange={(e) => setEmailData({ ...emailData, cc: e.target.value })}
-                    placeholder="cc@example.com"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="bcc">BCC</Label>
-                  <Input
-                    id="bcc"
-                    type="email"
-                    value={emailData.bcc}
-                    onChange={(e) => setEmailData({ ...emailData, bcc: e.target.value })}
-                    placeholder="bcc@example.com"
-                  />
-                </div>
+                <div><Label htmlFor="cc">CC</Label><Input id="cc" type="email" value={emailData.cc} onChange={(e) => setEmailData({ ...emailData, cc: e.target.value })} placeholder="cc@example.com" /></div>
+                <div><Label htmlFor="bcc">BCC</Label><Input id="bcc" type="email" value={emailData.bcc} onChange={(e) => setEmailData({ ...emailData, bcc: e.target.value })} placeholder="bcc@example.com" /></div>
               </div>
-
-              <div className="mt-4">
-                <Label htmlFor="subject">*Subject</Label>
-                <Input
-                  id="subject"
-                  value={emailData.subject}
-                  onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
-                />
-              </div>
+              <div className="mt-4"><Label htmlFor="subject">*Subject</Label><Input id="subject" value={emailData.subject} onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })} /></div>
             </div>
           </div>
         )}
 
-        {/* Step 3: Review & Send */}
         {step === 3 && (
           <div className="space-y-4">
             <h3 className="font-semibold text-slate-900">Review & Send</h3>
-
             <div className="space-y-3 text-sm">
-              <div>
-                <p className="text-slate-600 font-medium">To</p>
-                <p className="text-slate-900">{emailData.to}</p>
-              </div>
-              {emailData.cc && (
-                <div>
-                  <p className="text-slate-600 font-medium">CC</p>
-                  <p className="text-slate-900">{emailData.cc}</p>
-                </div>
-              )}
-              <div>
-                <p className="text-slate-600 font-medium">Subject</p>
-                <p className="text-slate-900">{emailData.subject}</p>
-              </div>
+              <div><p className="text-slate-600 font-medium">To</p><p className="text-slate-900">{emailData.to}</p></div>
+              {emailData.cc && (<div><p className="text-slate-600 font-medium">CC</p><p className="text-slate-900">{emailData.cc}</p></div>)}
+              <div><p className="text-slate-600 font-medium">Subject</p><p className="text-slate-900">{emailData.subject}</p></div>
             </div>
-
             <div className="bg-slate-50 border rounded-lg p-4">
               <p className="text-slate-600 font-medium text-sm mb-3">Preview:</p>
               <p className="text-slate-900 text-sm whitespace-pre-wrap">{emailData.body}</p>
               <p className="text-slate-600 text-xs mt-4 pt-4 border-t">Your offers and PDF link will be included in the email automatically.</p>
             </div>
-
             <div>
               <Label htmlFor="customMessage" className="mb-2 block font-medium">Add Custom Message (Optional)</Label>
               <textarea
@@ -305,7 +213,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
           </div>
         )}
 
-        {/* Success State */}
         {sent && (
           <div className="flex flex-col items-center justify-center py-8">
             <CheckCircle2 className="w-16 h-16 text-green-600 mb-3" />
@@ -314,7 +221,6 @@ export default function OfferProposalModal({ isOpen, onClose, offers = [], conta
           </div>
         )}
 
-        {/* Action Buttons */}
         {!sent && (
           <div className="flex justify-between pt-4 border-t">
             <Button
