@@ -12,8 +12,8 @@ import { base44 } from '@/api/base44Client';
 export default function NewOfferModal({ isOpen, onClose, opportunityId, session, onSuccess, offer = null }) {
   const [step, setStep] = useState(1);
   const [recordType, setRecordType] = useState('');
-  const [submissions, setSubmissions] = useState([]);
-  const [selectedSubmission, setSelectedSubmission] = useState('');
+  const [lenders, setLenders] = useState([]);
+  const [selectedLender, setSelectedLender] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingPicklists, setLoadingPicklists] = useState(true);
   
@@ -45,12 +45,12 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
 
   useEffect(() => {
     if (isOpen) {
-      loadSubmissions();
+      loadLenders();
       loadPicklists();
       if (offer) {
         // Pre-populate form with offer data
         setStep(3);
-        setSelectedSubmission(offer.csbs__Submission__c);
+        setSelectedLender(offer.csbs__Lender__c);
         setFormData({
           csbs__Funded__c: offer.csbs__Funded__c || '',
           csbs__Product__c: offer.csbs__Product__c || '',
@@ -82,7 +82,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
   const resetForm = () => {
     setStep(1);
     setRecordType('');
-    setSelectedSubmission('');
+    setSelectedLender('');
     setLoading(false);
     setFormData({
       csbs__Funded__c: '',
@@ -107,16 +107,15 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
     });
   };
 
-  const loadSubmissions = async () => {
+  const loadLenders = async () => {
     try {
-      const response = await base44.functions.invoke('getOpportunitySubmissions', {
-        opportunityId,
+      const response = await base44.functions.invoke('getSalesforceLenders', {
         token: session.token,
         instanceUrl: session.instanceUrl
       });
-      setSubmissions(response.data.submissions || []);
+      setLenders(response.data.lenders || []);
     } catch (error) {
-      console.error('Load submissions error:', error);
+      console.error('Load lenders error:', error);
     }
   };
 
@@ -155,8 +154,8 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
   };
 
   const handleSubmit = async () => {
-    if (!selectedSubmission && !offer) {
-      alert('Please select a submission');
+    if (!selectedLender && !offer) {
+      alert('Please select a lender');
       return;
     }
 
@@ -185,7 +184,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
         // Create new offer
         await base44.functions.invoke('createSalesforceOffer', {
           opportunityId,
-          submissionId: selectedSubmission,
+          lenderId: selectedLender,
           offerData: cleanedData,
           token: session.token,
           instanceUrl: session.instanceUrl
@@ -244,15 +243,15 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
         {step === 2 && (
           <div className="space-y-4">
             <div>
-              <Label>Select Submission / Lender</Label>
-              <Select value={selectedSubmission} onValueChange={setSelectedSubmission}>
+              <Label>Select Lender</Label>
+              <Select value={selectedLender} onValueChange={setSelectedLender}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose submission..." />
+                  <SelectValue placeholder="Choose lender..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {submissions.map(sub => (
-                    <SelectItem key={sub.Id} value={sub.Id}>
-                      {sub.csbs__Lender__r?.Name || 'Unknown Lender'} - {sub.Name}
+                  {lenders.map(lender => (
+                    <SelectItem key={lender.Id} value={lender.Id}>
+                      {lender.Name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -260,7 +259,7 @@ export default function NewOfferModal({ isOpen, onClose, opportunityId, session,
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
-              <Button onClick={() => setStep(3)} disabled={!selectedSubmission}>Next</Button>
+              <Button onClick={() => setStep(3)} disabled={!selectedLender}>Next</Button>
             </div>
           </div>
         )}
