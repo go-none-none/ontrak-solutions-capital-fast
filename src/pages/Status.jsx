@@ -429,7 +429,7 @@ export default function Status() {
                 <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-green-600" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900">Your Approved Offer{data.offers.length > 1 ? 's' : ''}</h3>
+                <h3 className="text-xl font-bold text-slate-900">Your Offer{data.offers.length > 1 ? 's' : ''}</h3>
               </div>
               <div className="grid gap-4">
                 {data.offers.map((offer) => (
@@ -439,9 +439,7 @@ export default function Status() {
                         <h4 className="text-lg font-semibold text-slate-900">{offer.Name}</h4>
                         <p className="text-sm text-slate-600 mt-1">{offer.csbs__Lender__c}</p>
                       </div>
-                      <div className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-                        Approved
-                      </div>
+
                     </div>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
