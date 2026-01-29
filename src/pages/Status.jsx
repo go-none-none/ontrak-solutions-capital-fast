@@ -8,7 +8,9 @@ import {
   Upload, 
   AlertCircle,
   CheckCircle,
-  Loader2
+  Loader2,
+  DollarSign,
+  TrendingUp
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import StatusTracker from '../components/status/StatusTracker';
@@ -415,8 +417,57 @@ export default function Status() {
             <FileUploadSection recordId={recordId} showActions={false} />
           )}
 
-
-
+          {/* Approved Offers - Show when status is Approved */}
+          {data.recordType === 'Opportunity' && data.stageName?.toLowerCase() === 'approved' && data.offers && data.offers.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="bg-white rounded-3xl shadow-xl p-8 mb-6"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">Your Approved Offer{data.offers.length > 1 ? 's' : ''}</h3>
+              </div>
+              <div className="grid gap-4">
+                {data.offers.map((offer) => (
+                  <div key={offer.Id} className="border border-slate-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h4 className="text-lg font-semibold text-slate-900">{offer.Name}</h4>
+                        <p className="text-sm text-slate-600 mt-1">{offer.csbs__Lender__c}</p>
+                      </div>
+                      <div className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                        Approved
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-xs text-slate-500 mb-1">Funded Amount</p>
+                        <p className="text-lg font-semibold text-slate-900">
+                          ${Number(offer.csbs__Funded__c || 0).toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500 mb-1">Payment Amount</p>
+                        <p className="text-lg font-semibold text-slate-900">
+                          ${Number(offer.csbs__Payment_Amount__c || 0).toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500 mb-1">Term</p>
+                        <p className="text-lg font-semibold text-slate-900">
+                          {offer.csbs__Term__c || '-'} months
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
           {/* Next Steps */}
           <motion.div

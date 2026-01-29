@@ -161,6 +161,22 @@ Deno.serve(async (req) => {
                 }
             }
 
+            // Fetch approved offers if stage is Approved
+            let offers = [];
+            if (opp.StageName?.toLowerCase() === 'approved') {
+                const offerQuery = `SELECT Id, Name, csbs__Lender__c, csbs__Funded__c, csbs__Payment_Amount__c, csbs__Term__c FROM csbs__Offer__c WHERE csbs__Opportunity__c = '${opp.Id}' AND csbs__Selected__c = true ORDER BY CreatedDate DESC`;
+                const offersResponse = await fetch(`${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(offerQuery)}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (offersResponse.ok) {
+                    const offersData = await offersResponse.json();
+                    offers = offersData.records || [];
+                }
+            }
+
             return Response.json({
                 recordType: 'Opportunity',
                 id: opp.Id,
@@ -180,6 +196,7 @@ Deno.serve(async (req) => {
                 ownerAlias: ownerAlias,
                 token: accessToken,
                 instanceUrl: instanceUrl,
+                offers: offers,
                 // Include debug info
                 allFields: Object.keys(opp)
             });
