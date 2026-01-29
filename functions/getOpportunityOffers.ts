@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
              csbs__Selected__c, csbs__Accepted_with_Lender__c, csbs__Notes__c, csbs__URL__c,
              CreatedDate, LastModifiedDate
       FROM csbs__Offer__c
-      WHERE csbs__Opportunity__c = '${opportunityId}'
+      WHERE csbs__Opportunity__c = '${opportunityId}' AND csbs__Selected__c = true
       ORDER BY CreatedDate DESC
     `;
 
