@@ -164,7 +164,8 @@ Deno.serve(async (req) => {
             // Fetch approved offers if stage is Approved
             let offers = [];
             if (opp.StageName?.toLowerCase() === 'approved') {
-                const offerQuery = `SELECT Id, Name, csbs__Lender__c, csbs__Funded__c, csbs__Payment_Amount__c, csbs__Term__c FROM csbs__Offer__c WHERE csbs__Opportunity__c = '${opp.Id}' AND csbs__Selected__c = true ORDER BY CreatedDate DESC`;
+                const offerQuery = `SELECT Id, Name, csbs__Lender__c, csbs__Funded__c, csbs__Payment_Amount__c, csbs__Term__c, csbs__Selected__c FROM csbs__Offer__c WHERE csbs__Opportunity__c = '${opp.Id}' ORDER BY CreatedDate DESC`;
+                console.log('Fetching offers with query:', offerQuery);
                 const offersResponse = await fetch(`${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(offerQuery)}`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -173,7 +174,13 @@ Deno.serve(async (req) => {
                 });
                 if (offersResponse.ok) {
                     const offersData = await offersResponse.json();
-                    offers = offersData.records || [];
+                    console.log('Offers response:', offersData);
+                    // Filter for selected offers
+                    offers = (offersData.records || []).filter(offer => offer.csbs__Selected__c === true);
+                    console.log('Filtered selected offers:', offers);
+                } else {
+                    const errorText = await offersResponse.text();
+                    console.error('Error fetching offers:', errorText);
                 }
             }
 
