@@ -433,7 +433,7 @@ export default function Status() {
                       <div>
                         <p className="text-xs text-slate-500 mb-1">Term</p>
                         <p className="text-lg font-semibold text-slate-900">
-                          {offer.csbs__Term__c || '-'} {offer.csbs__Term_Unit__c || offer.csbs__Payment_Frequency__c || 'months'}
+                          {offer.csbs__Term__c || '-'} {offer.csbs__Payment_Frequency__c?.toLowerCase() || 'months'}
                         </p>
                       </div>
                     </div>

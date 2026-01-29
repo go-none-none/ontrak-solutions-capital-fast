@@ -164,7 +164,7 @@ Deno.serve(async (req) => {
             // Fetch all offers if stage is Approved
             let offers = [];
             if (opp.StageName?.toLowerCase() === 'approved') {
-                const offerQuery = `SELECT Id, Name, csbs__Lender__c, csbs__Funded__c, csbs__Payment_Amount__c, csbs__Term__c, csbs__Term_Unit__c, csbs__Payment_Frequency__c FROM csbs__Offer__c WHERE csbs__Opportunity__c = '${opp.Id}' ORDER BY CreatedDate DESC`;
+                const offerQuery = `SELECT Id, Name, csbs__Lender__c, csbs__Funded__c, csbs__Payment_Amount__c, csbs__Term__c, csbs__Payment_Frequency__c FROM csbs__Offer__c WHERE csbs__Opportunity__c = '${opp.Id}' ORDER BY CreatedDate DESC`;
                 const offersResponse = await fetch(`${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(offerQuery)}`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
