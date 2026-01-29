@@ -394,8 +394,7 @@ export default function Status() {
           </motion.div>
 
           {/* Offers - Show for Approved, Contracts Out, or Contracts In */}
-          {data.recordType === 'Opportunity' && data.offers && data.offers.length > 0 && (
-            ['approved', 'contracts out', 'contracts in'].includes(data.stageName?.toLowerCase()) && (
+          {data.recordType === 'Opportunity' && data.offers && data.offers.length > 0 && ['approved', 'contracts out', 'contracts in'].includes(data.stageName?.toLowerCase()) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -460,7 +459,6 @@ export default function Status() {
                 ))}
               </div>
             </motion.div>
-          ))
           )}
 
           {/* Application Form for Contact Initiated & Application Sent */}
