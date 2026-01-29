@@ -393,36 +393,12 @@ export default function Status() {
                 />
           </motion.div>
 
-          {/* Application Form for Contact Initiated & Application Sent */}
-          {showApplicationForm && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white rounded-3xl shadow-xl p-8 mb-6"
-            >
-              <h3 className="text-xl font-bold text-slate-900 mb-4">Complete Your Application</h3>
-              <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
-              <div id="jotform-container">
-                <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
-                  Loading application form...
-                </p>
-              </div>
-            </motion.div>
-          )}
-
-          {/* File Upload Section - Show for all Opportunities OR Leads with Missing Info status */}
-          {(data.recordType === 'Opportunity' || 
-            (data.recordType === 'Lead' && data.status?.toLowerCase() === 'application missing info')) && (
-            <FileUploadSection recordId={recordId} showActions={false} />
-          )}
-
           {/* Approved Offers - Show when status is Approved */}
           {data.recordType === 'Opportunity' && data.stageName?.toLowerCase() === 'approved' && data.offers && data.offers.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
+              transition={{ delay: 0.1 }}
               className="bg-white rounded-3xl shadow-xl p-8 mb-6"
             >
               <div className="flex items-center gap-3 mb-6">
@@ -465,6 +441,30 @@ export default function Status() {
                 ))}
               </div>
             </motion.div>
+          )}
+
+          {/* Application Form for Contact Initiated & Application Sent */}
+          {showApplicationForm && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="bg-white rounded-3xl shadow-xl p-8 mb-6"
+            >
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Complete Your Application</h3>
+              <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
+              <div id="jotform-container">
+                <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                  Loading application form...
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* File Upload Section - Show for all Opportunities OR Leads with Missing Info status */}
+          {(data.recordType === 'Opportunity' || 
+            (data.recordType === 'Lead' && data.status?.toLowerCase() === 'application missing info')) && (
+            <FileUploadSection recordId={recordId} showActions={false} />
           )}
 
           {/* Next Steps */}
