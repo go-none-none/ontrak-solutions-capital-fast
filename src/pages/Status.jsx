@@ -393,8 +393,8 @@ export default function Status() {
                 />
           </motion.div>
 
-          {/* Offers - Show for Approved, Contracts Out, or Contracts In */}
-          {data.recordType === 'Opportunity' && data.offers && data.offers.length > 0 && ['approved', 'contracts out', 'contracts in'].includes(data.stageName?.toLowerCase()) && (
+          {/* Offers - Show for Contracts Out or Contracts In (selected offers only) */}
+          {data.recordType === 'Opportunity' && data.offers && data.offers.length > 0 && ['contracts out', 'contracts in'].includes(data.stageName?.toLowerCase()) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -405,15 +405,10 @@ export default function Status() {
                 <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-green-600" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900">
-                  {['contracts out', 'contracts in'].includes(data.stageName?.toLowerCase()) ? 'Your Selected Offer' : `Your Offer${data.offers.length > 1 ? 's' : ''}`}
-                </h3>
+                <h3 className="text-xl font-bold text-slate-900">Your Selected Offer</h3>
               </div>
               <div className="grid gap-4">
-                {(data.stageName?.toLowerCase() === 'approved' 
-                  ? data.offers 
-                  : data.offers.filter(o => o.csbs__Selected__c === true)
-                ).map((offer) => (
+                {data.offers.filter(o => o.csbs__Selected__c === true).map((offer) => (
                   <div 
                     key={offer.Id} 
                     className={`border rounded-xl p-6 transition-all ${
