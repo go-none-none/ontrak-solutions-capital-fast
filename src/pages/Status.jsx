@@ -393,8 +393,9 @@ export default function Status() {
                 />
           </motion.div>
 
-          {/* Approved Offers - Show when status is Approved */}
-          {data.recordType === 'Opportunity' && data.stageName?.toLowerCase() === 'approved' && data.offers && data.offers.length > 0 && (
+          {/* Offers - Show for Approved, Contracts Out, or Contracts In */}
+          {data.recordType === 'Opportunity' && data.offers && data.offers.length > 0 && (
+            ['approved', 'contracts out', 'contracts in'].includes(data.stageName?.toLowerCase()) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -405,17 +406,35 @@ export default function Status() {
                 <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-green-600" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900">Your Offer{data.offers.length > 1 ? 's' : ''}</h3>
+                <h3 className="text-xl font-bold text-slate-900">
+                  {['contracts out', 'contracts in'].includes(data.stageName?.toLowerCase()) ? 'Your Selected Offer' : `Your Offer${data.offers.length > 1 ? 's' : ''}`}
+                </h3>
               </div>
               <div className="grid gap-4">
-                {data.offers.map((offer) => (
-                  <div key={offer.Id} className="border border-slate-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                {(data.stageName?.toLowerCase() === 'approved' 
+                  ? data.offers 
+                  : data.offers.filter(o => o.csbs__Selected__c === true)
+                ).map((offer) => (
+                  <div 
+                    key={offer.Id} 
+                    className={`border rounded-xl p-6 transition-all ${
+                      offer.csbs__Selected__c 
+                        ? 'border-green-500 bg-green-50 shadow-md ring-2 ring-green-200' 
+                        : 'border-slate-200 hover:shadow-md'
+                    }`}
+                  >
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h4 className="text-lg font-semibold text-slate-900">{offer.Name}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-lg font-semibold text-slate-900">{offer.Name}</h4>
+                          {offer.csbs__Selected__c && (
+                            <span className="px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded-full">
+                              SELECTED
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-slate-600 mt-1">{offer.csbs__Lender__c}</p>
                       </div>
-
                     </div>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
@@ -441,6 +460,7 @@ export default function Status() {
                 ))}
               </div>
             </motion.div>
+          ))
           )}
 
           {/* Application Form for Contact Initiated & Application Sent */}
