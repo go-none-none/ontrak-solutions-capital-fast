@@ -93,7 +93,7 @@ export default function Status() {
     }
 
     const status = data ? (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase() : '';
-    const applicationCompleted = data?.ssn && data?.birthday && data?.ein;
+    const applicationCompleted = data?.csbs__Social_Security_Number_Unencrypted__c && data?.csbs__Birthdate__c && data?.csbs__Federal_Tax_ID_Unencrypted__c;
     const showApplicationForm = (status === 'working - contacted' || status === 'working - application out') && !applicationCompleted;
     
     if (showApplicationForm && data) {
@@ -328,7 +328,7 @@ export default function Status() {
 
   // Show application form for early statuses
   const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
-  const applicationCompleted = data?.ssn && data?.birthday && data?.ein;
+  const applicationCompleted = data?.csbs__Social_Security_Number_Unencrypted__c && data?.csbs__Birthdate__c && data?.csbs__Federal_Tax_ID_Unencrypted__c;
   const showApplicationForm = (status === 'working - contacted' || status === 'working - application out') && !applicationCompleted;
 
   return (
