@@ -13,6 +13,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 import StatusTracker from '../components/status/StatusTracker';
 import FileUploadSection from '../components/status/FileUploadSection';
 import { createPageUrl } from '@/utils';
@@ -180,7 +181,8 @@ export default function Status() {
         fileInputRef.current.value = '';
       }
       
-      window.location.reload();
+      toast.success('Document uploaded successfully!');
+      setTimeout(() => window.location.reload(), 1500);
     } catch (error) {
       console.error('Upload error:', error);
       alert('Failed to upload file. Please try again.');
