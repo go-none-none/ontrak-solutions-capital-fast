@@ -361,6 +361,8 @@ export default function Status() {
                             return `${firstName}, great news! Your application is currently being reviewed by our underwriting team.`;
                           } else if (status === 'approved') {
                             return `${firstName}, congratulations! Your application has been approved. We'll be sending your contracts shortly.`;
+                          } else if (status === 'additional docs') {
+                            return `${firstName}, we're almost there! Just need a couple more documents to complete your funding.`;
                           } else if (status === 'contracts out') {
                             return `${firstName}, your contracts are ready! Please review and sign them to proceed with funding.`;
                           } else if (status === 'contracts in' || status === 'renewal processing') {
