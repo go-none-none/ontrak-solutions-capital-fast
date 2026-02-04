@@ -476,6 +476,35 @@ export default function Status() {
             </motion.div>
           )}
 
+          {/* Missing Stipulations - Show for Approved or Add'l Docs stages */}
+          {data.recordType === 'Opportunity' && data.missingStipulations && data.missingStipulations.length > 0 && 
+           ['approved', 'additional docs'].includes(data.stageName?.toLowerCase()) && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-3xl p-8 shadow-xl mb-6"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-amber-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">Missing Stipulations</h3>
+              </div>
+              <p className="text-slate-600 text-sm mb-4">
+                We need the following items to proceed with your application:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {data.missingStipulations.map((item, index) => (
+                  <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-red-300 shadow-sm">
+                    <span className="text-2xl animate-pulse">❌</span>
+                    <span className="text-sm font-semibold text-red-700">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
           {/* File Upload Section - Show for all Opportunities OR Leads with Missing Info status */}
           {(data.recordType === 'Opportunity' || 
             (data.recordType === 'Lead' && data.status?.toLowerCase() === 'application missing info')) && (

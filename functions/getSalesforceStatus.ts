@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
         }
 
         // Try Opportunity
-        let oppResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Opportunity/${recordId}`, {
+        let oppResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Opportunity/${recordId}?fields=Id,Name,StageName,Stage_Detail__c,StageDetail__c,Decline_Reason__c,DeclineReason__c,Missing_Docs__c,Bank_Statement_Checklist__c,LastModifiedDate,FirstName__c,LastName__c,Phone__c,Email__c,ContactId,OwnerId,Voided_Check__c,Driver_s_License_Valid__c,Month_to_Date_Activity__c,Proof_of_Ownership__c,Proof_of_EIN__c,Signed_RPA__c`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
@@ -178,6 +178,15 @@ Deno.serve(async (req) => {
                 }
             }
 
+            // Collect missing stipulations
+            const missingStipulations = [];
+            if (!opp.Voided_Check__c) missingStipulations.push('Voided Check');
+            if (!opp.Driver_s_License_Valid__c) missingStipulations.push("Driver's License (Valid)");
+            if (!opp.Month_to_Date_Activity__c) missingStipulations.push('Month-to-Date Activity');
+            if (!opp.Proof_of_Ownership__c) missingStipulations.push('Proof of Ownership');
+            if (!opp.Proof_of_EIN__c) missingStipulations.push('Proof of EIN');
+            if (!opp.Signed_RPA__c) missingStipulations.push('Signed RPA');
+
             return Response.json({
                 recordType: 'Opportunity',
                 id: opp.Id,
@@ -187,6 +196,7 @@ Deno.serve(async (req) => {
                 missingDocsFlag: missingDocsFlag,
                 missingDocs: opp.Missing_Docs__c || null,
                 bankStatementChecklist: opp.Bank_Statement_Checklist__c || null,
+                missingStipulations: missingStipulations.length > 0 ? missingStipulations : null,
                 lastModifiedDate: opp.LastModifiedDate,
                 firstName: firstName,
                 lastName: opp.LastName__c || '',
