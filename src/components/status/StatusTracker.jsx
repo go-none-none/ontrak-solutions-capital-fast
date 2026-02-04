@@ -64,14 +64,14 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
     <div className="space-y-6">
       {/* Status Tracker */}
       {!isLeadDeclined && (
-        <div className="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 sm:gap-2 sm:overflow-x-auto sm:pb-4">
+        <div className="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 sm:gap-2">
           {steps.map((step, index) => {
             const isCompleted = statusInfo.step > step.step;
             const isCurrent = statusInfo.step === step.step;
             const StepIcon = step.icon;
 
             return (
-              <div key={index} className="flex sm:flex-col items-center sm:items-center flex-1 sm:min-w-[120px] relative gap-4 sm:gap-0">
+              <div key={index} className="flex sm:flex-col items-center sm:items-center flex-1 relative gap-4 sm:gap-0">
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
