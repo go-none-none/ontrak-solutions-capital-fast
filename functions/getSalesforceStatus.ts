@@ -73,7 +73,8 @@ Deno.serve(async (req) => {
                 ownerPhone: ownerPhone,
                 ownerAlias: ownerAlias,
                 token: accessToken,
-                instanceUrl: instanceUrl
+                instanceUrl: instanceUrl,
+                applicationComplete: !!(lead.SSN__c && lead.DOB__c && lead.EIN__c)
             });
         }
 
