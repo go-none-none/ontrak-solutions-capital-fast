@@ -325,9 +325,9 @@ export default function Status() {
   const recordId = urlParams.get('rid');
   const uploadUrl = `${createPageUrl('MissingDocs')}?id149=${recordId}&cn=${encodeURIComponent(data.businessName)}&ln=${encodeURIComponent(data.lastName || '')}`;
 
-  // Show application form for early statuses (only if application not yet complete)
+  // Show application form for early statuses
   const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
-  const showApplicationForm = (status === 'working - contacted' || status === 'working - application out') && !data.applicationComplete;
+  const showApplicationForm = status === 'working - contacted' || status === 'working - application out';
 
   return (
     <div className="min-h-screen bg-slate-50">
