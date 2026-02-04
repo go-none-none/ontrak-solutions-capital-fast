@@ -178,14 +178,14 @@ Deno.serve(async (req) => {
                 }
             }
 
-            // Collect missing stipulations
+            // Collect missing stipulations (checked = missing)
             const missingStipulations = [];
-            if (!opp.Voided_Check__c) missingStipulations.push('Voided Check');
-            if (!opp.Driver_s_License_Valid__c) missingStipulations.push("Driver's License (Valid)");
-            if (!opp.Month_to_Date_Activity__c) missingStipulations.push('Month-to-Date Activity');
-            if (!opp.Proof_of_Ownership__c) missingStipulations.push('Proof of Ownership');
-            if (!opp.Proof_of_EIN__c) missingStipulations.push('Proof of EIN');
-            if (!opp.Signed_RPA__c) missingStipulations.push('Signed RPA');
+            if (opp.Voided_Check__c) missingStipulations.push('Voided Check');
+            if (opp.Driver_s_License_Valid__c) missingStipulations.push("Driver's License (Valid)");
+            if (opp.Month_to_Date_Activity__c) missingStipulations.push('Month-to-Date Activity');
+            if (opp.Proof_of_Ownership__c) missingStipulations.push('Proof of Ownership');
+            if (opp.Proof_of_EIN__c) missingStipulations.push('Proof of EIN');
+            if (opp.Signed_RPA__c) missingStipulations.push('Signed RPA');
 
             return Response.json({
                 recordType: 'Opportunity',
