@@ -103,8 +103,8 @@ export default function FileUploadSection({ recordId, showActions = true }) {
     >
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-bold text-slate-900">Upload Documents</h3>
-          <p className="text-sm text-slate-600 mt-1">Upload any missing documents or additional information</p>
+          <h3 className="text-xl font-bold text-slate-900">Documents</h3>
+          <p className="text-sm text-slate-600 mt-1">Track submitted documents & upload new ones</p>
         </div>
         <div>
           <input
