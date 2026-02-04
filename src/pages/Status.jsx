@@ -22,6 +22,8 @@ export default function Status() {
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = React.useRef(null);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -149,6 +151,42 @@ export default function Status() {
       month: 'long',
       day: 'numeric'
     });
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const reader = new FileReader();
+      const base64Promise = new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      
+      const base64Data = await base64Promise;
+      const urlParams = new URLSearchParams(window.location.search);
+      const recordId = urlParams.get('rid');
+      
+      await base44.functions.invoke('uploadRecordFile', {
+        recordId,
+        fileName: file.name,
+        fileData: base64Data
+      });
+      
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      
+      window.location.reload();
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload file. Please try again.');
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (loading) {
@@ -494,13 +532,40 @@ export default function Status() {
               <p className="text-slate-600 text-sm mb-4">
                 We need the following items to proceed with your application:
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
                 {data.missingStipulations.map((item, index) => (
                   <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-red-300 shadow-sm">
                     <span className="text-2xl animate-pulse">❌</span>
                     <span className="text-sm font-semibold text-red-700">{item}</span>
                   </div>
                 ))}
+              </div>
+              <div className="flex justify-center">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  disabled={uploading}
+                />
+                <Button
+                  size="lg"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg shadow-lg"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5 mr-2" />
+                      Upload Missing Documents
+                    </>
+                  )}
+                </Button>
               </div>
             </motion.div>
           )}
