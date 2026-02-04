@@ -93,7 +93,8 @@ export default function Status() {
     }
 
     const status = data ? (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase() : '';
-    const showApplicationForm = status === 'working - contacted' || status === 'working - application out';
+    const applicationCompleted = data?.ssn && data?.birthday && data?.ein;
+    const showApplicationForm = (status === 'working - contacted' || status === 'working - application out') && !applicationCompleted;
     
     if (showApplicationForm && data) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -327,7 +328,8 @@ export default function Status() {
 
   // Show application form for early statuses
   const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
-  const showApplicationForm = status === 'working - contacted' || status === 'working - application out';
+  const applicationCompleted = data?.ssn && data?.birthday && data?.ein;
+  const showApplicationForm = (status === 'working - contacted' || status === 'working - application out') && !applicationCompleted;
 
   return (
     <div className="min-h-screen bg-slate-50">
