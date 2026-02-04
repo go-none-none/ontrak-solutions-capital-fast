@@ -508,7 +508,7 @@ export default function Status() {
                         <p className="text-sm text-slate-600 mt-1">{offer.csbs__Lender__c}</p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       <div>
                         <p className="text-xs text-slate-500 mb-1">Funded Amount</p>
                         <p className="text-lg font-semibold text-slate-900">
@@ -524,7 +524,13 @@ export default function Status() {
                       <div>
                         <p className="text-xs text-slate-500 mb-1">Term</p>
                         <p className="text-lg font-semibold text-slate-900">
-                          {offer.csbs__Term__c || '-'} {offer.csbs__Payment_Frequency__c?.toLowerCase() || 'months'}
+                          {offer.csbs__Term__c || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500 mb-1">Frequency</p>
+                        <p className="text-lg font-semibold text-slate-900">
+                          {offer.csbs__Payment_Frequency__c ? offer.csbs__Payment_Frequency__c.charAt(0).toUpperCase() + offer.csbs__Payment_Frequency__c.slice(1).toLowerCase() : '-'}
                         </p>
                       </div>
                     </div>
