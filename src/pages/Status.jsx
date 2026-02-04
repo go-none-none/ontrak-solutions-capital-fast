@@ -24,33 +24,34 @@ export default function Status() {
   const [data, setData] = useState(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [fileUploadKey, setFileUploadKey] = useState(0);
   const fileInputRef = React.useRef(null);
 
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const recordId = urlParams.get('rid');
-        
-        if (!recordId) {
-          setLoading(false);
-          return;
-        }
-
-        const response = await base44.functions.invoke('getSalesforceStatus', { recordId });
-        
-        if (response.data.error) {
-          setError(response.data.error);
-        } else {
-          setData(response.data);
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
+  const fetchStatus = async () => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const recordId = urlParams.get('rid');
+      
+      if (!recordId) {
         setLoading(false);
+        return;
       }
-    };
 
+      const response = await base44.functions.invoke('getSalesforceStatus', { recordId });
+      
+      if (response.data.error) {
+        setError(response.data.error);
+      } else {
+        setData(response.data);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchStatus();
   }, []);
 
@@ -182,7 +183,8 @@ export default function Status() {
       }
       
       toast.success('Document uploaded successfully!');
-      setTimeout(() => window.location.reload(), 1500);
+      setFileUploadKey(prev => prev + 1);
+      await fetchStatus();
     } catch (error) {
       console.error('Upload error:', error);
       alert('Failed to upload file. Please try again.');
@@ -575,7 +577,7 @@ export default function Status() {
           {/* File Upload Section - Show for all Opportunities OR Leads with Missing Info status */}
           {(data.recordType === 'Opportunity' || 
             (data.recordType === 'Lead' && data.status?.toLowerCase() === 'application missing info')) && (
-            <FileUploadSection recordId={recordId} showActions={false} />
+            <FileUploadSection key={fileUploadKey} recordId={recordId} showActions={false} />
           )}
 
           {/* Next Steps */}
