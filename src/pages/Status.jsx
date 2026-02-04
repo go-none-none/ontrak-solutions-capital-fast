@@ -10,10 +10,11 @@ import {
   CheckCircle,
   Loader2,
   DollarSign,
-  TrendingUp
+  TrendingUp,
+  Check
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { toast } from 'sonner';
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import StatusTracker from '../components/status/StatusTracker';
 import FileUploadSection from '../components/status/FileUploadSection';
 import { createPageUrl } from '@/utils';
@@ -25,6 +26,7 @@ export default function Status() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [fileUploadKey, setFileUploadKey] = useState(0);
+  const [showUploadConfirmation, setShowUploadConfirmation] = useState(false);
   const fileInputRef = React.useRef(null);
 
   const fetchStatus = async () => {
@@ -182,9 +184,9 @@ export default function Status() {
         fileInputRef.current.value = '';
       }
       
-      toast.success('Document uploaded successfully!');
       setFileUploadKey(prev => prev + 1);
       await fetchStatus();
+      setShowUploadConfirmation(true);
     } catch (error) {
       console.error('Upload error:', error);
       alert('Failed to upload file. Please try again.');
@@ -329,6 +331,38 @@ export default function Status() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {/* Upload Confirmation Dialog */}
+      <Dialog open={showUploadConfirmation} onOpenChange={setShowUploadConfirmation}>
+        <DialogContent className="sm:max-w-md">
+          <div className="flex flex-col items-center text-center py-6">
+            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+              <Check className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Document Uploaded!</h3>
+            <p className="text-slate-600 mb-6">Your document has been successfully uploaded.</p>
+            <div className="flex gap-3 w-full">
+              <Button
+                variant="outline"
+                onClick={() => setShowUploadConfirmation(false)}
+                className="flex-1"
+              >
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowUploadConfirmation(false);
+                  fileInputRef.current?.click();
+                }}
+                className="flex-1 bg-[#08708E] hover:bg-[#065a72]"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Upload Another
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Hero */}
       <section className="relative h-[300px] bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
         <div className="absolute inset-0">
