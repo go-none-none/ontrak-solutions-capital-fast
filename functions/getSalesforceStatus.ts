@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
         }
 
         // Try Opportunity
-        let oppResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Opportunity/${recordId}?fields=Id,Name,StageName,Stage_Detail__c,StageDetail__c,Decline_Reason__c,DeclineReason__c,Missing_Docs__c,Bank_Statement_Checklist__c,LastModifiedDate,FirstName__c,LastName__c,Phone__c,Email__c,ContactId,OwnerId,Voided_Check__c,Driver_s_License_Valid__c,Month_to_Date_Activity__c,Proof_of_Ownership__c,Proof_of_EIN__c,Signed_RPA__c`, {
+        let oppResponse = await fetch(`${instanceUrl}/services/data/v59.0/sobjects/Opportunity/${recordId}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
