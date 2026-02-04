@@ -542,6 +542,38 @@ export default function Status() {
             </motion.div>
           )}
 
+          {/* Application Received Confirmation - Show when app is completed */}
+          {status === 'working - application out' && applicationCompleted && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15 }}
+              className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-3xl shadow-xl p-8 mb-6 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-64 h-64 bg-green-200/20 rounded-full blur-3xl -mr-32 -mt-32" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-200/20 rounded-full blur-3xl -ml-24 -mb-24" />
+              
+              <div className="relative">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center shadow-lg animate-pulse">
+                    <CheckCircle className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 text-center mb-3">
+                  🎉 Application Received!
+                </h3>
+                <p className="text-center text-slate-700 text-lg leading-relaxed mb-4">
+                  Your application has been received—thank you! We're carefully reviewing it and will reach out to you soon with the next steps.
+                </p>
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-green-200">
+                  <p className="text-sm text-slate-600 text-center">
+                    💼 Our team is working hard to get you the best funding options available
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* Application Form for Contact Initiated & Application Sent */}
           {showApplicationForm && (
             <motion.div
