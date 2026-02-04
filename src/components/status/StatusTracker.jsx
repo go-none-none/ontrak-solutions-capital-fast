@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Clock, XCircle, FileText, Search, BadgeCheck, FileSignature, PenTool, DollarSign, Upload } from 'lucide-react';
+import { CheckCircle, Clock, XCircle, FileText, Search, BadgeCheck, FileSignature, PenTool, DollarSign, Upload, FileQuestion } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { createPageUrl } from '@/utils';
 
@@ -17,13 +17,14 @@ const opportunityStatusMap = {
   'application in': { display: 'Application In', step: 1 },
   'underwriting': { display: 'Under Review', step: 2 },
   'approved': { display: 'Approved', step: 3 },
-  'contracts out': { display: 'Contracts Out', step: 4 },
-  'contracts in': { display: 'Contracts In', step: 5 },
-  'renewal processing': { display: 'Renewal Processing', step: 5 },
-  'closed - funded': { display: 'Funded', step: 6 },
-  'funded': { display: 'Funded', step: 6 },
-  'closed - declined': { display: 'Declined', step: 6 },
-  'declined': { display: 'Declined', step: 6 }
+  'additional docs': { display: "Add'l Docs", step: 4 },
+  'contracts out': { display: 'Contracts Out', step: 5 },
+  'contracts in': { display: 'Contracts In', step: 6 },
+  'renewal processing': { display: 'Renewal Processing', step: 6 },
+  'closed - funded': { display: 'Funded', step: 7 },
+  'funded': { display: 'Funded', step: 7 },
+  'closed - declined': { display: 'Declined', step: 7 },
+  'declined': { display: 'Declined', step: 7 }
 };
 
 export default function StatusTracker({ recordType, status, stageName, stageDetail, recordId, businessName, lastName, bankStatementChecklist }) {
@@ -51,9 +52,10 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
     { label: 'Application Received', step: 1, icon: FileText },
     { label: 'Under Review', step: 2, icon: Search },
     { label: 'Approved', step: 3, icon: BadgeCheck },
-    { label: 'Contracts Sent', step: 4, icon: FileSignature },
-    { label: 'Contracts Signed', step: 5, icon: PenTool },
-    { label: 'Funded', step: 6, icon: DollarSign }
+    { label: "Add'l Docs", step: 4, icon: FileQuestion },
+    { label: 'Contracts Sent', step: 5, icon: FileSignature },
+    { label: 'Contracts Signed', step: 6, icon: PenTool },
+    { label: 'Funded', step: 7, icon: DollarSign }
   ];
   
   const isMissingInfo = currentStatus?.toLowerCase() === 'application missing info';
