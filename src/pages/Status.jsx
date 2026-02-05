@@ -594,7 +594,7 @@ export default function Status() {
 
           {/* Missing Stipulations - Show for Approved or Add'l Docs stages */}
           {data.recordType === 'Opportunity' && data.missingStipulations && data.missingStipulations.length > 0 && 
-           ['approved', 'application missing info'].includes(data.stageName?.toLowerCase()) && (
+           ['approved', 'application missing info', 'application in'].includes(data.stageName?.toLowerCase()) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
