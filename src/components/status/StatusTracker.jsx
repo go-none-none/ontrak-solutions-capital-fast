@@ -17,7 +17,7 @@ const opportunityStatusMap = {
   'application in': { display: 'Application In', step: 1 },
   'underwriting': { display: 'Under Review', step: 2 },
   'approved': { display: 'Approved', step: 3 },
-  'additional docs': { display: "Add'l Docs", step: 4 },
+  'application missing info': { display: "Add'l Docs", step: 4 },
   'contracts out': { display: 'Contracts Out', step: 5 },
   'contracts in': { display: 'Contracts In', step: 6 },
   'renewal processing': { display: 'Renewal Processing', step: 6 },
