@@ -48,12 +48,9 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import About from './pages/About';
-import AccountDetail from './pages/AccountDetail';
-import AdminPipeline from './pages/AdminPipeline';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Contact from './pages/Contact';
-import ContactDetail from './pages/ContactDetail';
 import FAQ from './pages/FAQ';
 import Home from './pages/Home';
 import HowItWorks from './pages/HowItWorks';
@@ -67,15 +64,12 @@ import IndustryProfessional from './pages/IndustryProfessional';
 import IndustryRestaurants from './pages/IndustryRestaurants';
 import IndustryRetail from './pages/IndustryRetail';
 import IndustryTransportation from './pages/IndustryTransportation';
-import LeadDetail from './pages/LeadDetail';
 import LenderDetail from './pages/LenderDetail';
 import MerchantDetail from './pages/MerchantDetail';
 import MissingDocs from './pages/MissingDocs';
-import OpportunityDetail from './pages/OpportunityDetail';
 import OwnerContact from './pages/OwnerContact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RecordHistory from './pages/RecordHistory';
-import RepPortal from './pages/RepPortal';
 import Reviews from './pages/Reviews';
 import Status from './pages/Status';
 import TermsOfService from './pages/TermsOfService';
@@ -87,12 +81,9 @@ import __Layout from './Layout.jsx';
 
 export const PAGES = {
     "About": About,
-    "AccountDetail": AccountDetail,
-    "AdminPipeline": AdminPipeline,
     "Blog": Blog,
     "BlogPost": BlogPost,
     "Contact": Contact,
-    "ContactDetail": ContactDetail,
     "FAQ": FAQ,
     "Home": Home,
     "HowItWorks": HowItWorks,
@@ -106,15 +97,12 @@ export const PAGES = {
     "IndustryRestaurants": IndustryRestaurants,
     "IndustryRetail": IndustryRetail,
     "IndustryTransportation": IndustryTransportation,
-    "LeadDetail": LeadDetail,
     "LenderDetail": LenderDetail,
     "MerchantDetail": MerchantDetail,
     "MissingDocs": MissingDocs,
-    "OpportunityDetail": OpportunityDetail,
     "OwnerContact": OwnerContact,
     "PrivacyPolicy": PrivacyPolicy,
     "RecordHistory": RecordHistory,
-    "RepPortal": RepPortal,
     "Reviews": Reviews,
     "Status": Status,
     "TermsOfService": TermsOfService,
