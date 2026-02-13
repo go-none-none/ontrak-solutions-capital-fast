@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
-import CookieConsent from './components/shared/CookieConsent';
 import { NotificationProvider } from './components/context/NotificationContext';
 
 export default function Layout({ children, currentPageName }) {
@@ -37,7 +36,6 @@ export default function Layout({ children, currentPageName }) {
           {children}
         </main>
         <Footer />
-        <CookieConsent />
       </div>
     </NotificationProvider>
   );
