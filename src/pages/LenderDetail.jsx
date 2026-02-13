@@ -8,7 +8,6 @@ import { Loader2, Save, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
-import RepPortalHeader from '../components/rep/RepPortalHeader';
 import { MultiSelect } from '@/components/ui/multi-select';
 
 const US_STATES = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'];
@@ -130,21 +129,6 @@ export default function LenderDetail() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <RepPortalHeader
-        isAdmin={session?.isAdmin || false}
-        refreshing={false}
-        onRefresh={() => loadLender()}
-        onLogout={() => {
-          sessionStorage.removeItem('sfSession');
-          window.location.reload();
-        }}
-        userName={session?.name}
-        showCreateTask={false}
-        showBackButton={true}
-        onBackClick={() => navigate(-1)}
-        session={session}
-      />
-
       {/* Detail Header */}
       <div className="bg-white border-b border-slate-200 shadow-sm sticky top-[73px] z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
