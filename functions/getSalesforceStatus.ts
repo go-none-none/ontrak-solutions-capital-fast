@@ -164,10 +164,10 @@ Deno.serve(async (req) => {
                 }
             }
 
-            // Fetch all offers for Approved, Contracts Out, or Contracts In stages
+            // Fetch all offers for Approved, Contracts Out, Contracts In, or Missing Info stages
             let offers = [];
             const stageLower = opp.StageName?.toLowerCase();
-            if (stageLower === 'approved' || stageLower === 'contracts out' || stageLower === 'contracts in') {
+            if (stageLower === 'approved' || stageLower === 'contracts out' || stageLower === 'contracts in' || stageLower === 'application missing info') {
                 const offerQuery = `SELECT Id, Name, csbs__Lender__c, csbs__Funded__c, csbs__Payment_Amount__c, csbs__Term__c, csbs__Payment_Frequency__c, csbs__Selected__c FROM csbs__Offer__c WHERE csbs__Opportunity__c = '${opp.Id}' ORDER BY CreatedDate DESC`;
                 const offersResponse = await fetch(`${instanceUrl}/services/data/v59.0/query?q=${encodeURIComponent(offerQuery)}`, {
                     headers: {
