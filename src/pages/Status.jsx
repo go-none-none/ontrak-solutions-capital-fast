@@ -488,6 +488,35 @@ export default function Status() {
                 />
           </motion.div>
 
+          {/* New Application Card - Show when Funded */}
+          {(data.stageName?.toLowerCase() === 'funded' || data.stageName?.toLowerCase() === 'closed - funded') && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-300 rounded-3xl shadow-xl p-8 mb-6"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2">Ready for More Funding?</h3>
+                  <p className="text-slate-600">Start a new application to explore additional funding opportunities for your business.</p>
+                </div>
+                <div className="hidden sm:flex w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <ArrowRight className="w-8 h-8 text-blue-600" />
+                </div>
+              </div>
+              <div className="flex justify-end pt-4">
+                <Button
+                  onClick={() => window.open(createPageUrl('application'), '_blank')}
+                  className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg shadow-lg"
+                >
+                  Start New Application
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
           {/* Offers - Show for Contracts Out, Contracts In, or Missing Info (selected offers only) */}
           {data.recordType === 'Opportunity' && data.offers && data.offers.length > 0 && ['contracts out', 'contracts in', 'application missing info', 'funded', 'closed - funded'].includes(data.stageName?.toLowerCase()) && (
             <motion.div
