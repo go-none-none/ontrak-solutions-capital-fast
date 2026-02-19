@@ -93,6 +93,7 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
                     ) : (
                       <StepIcon className={`w-7 h-7 ${
                         isCurrent && isOpportunityDeclined && step.step === 6 ? 'text-red-600' :
+                        isCurrent && isFunded ? 'text-green-600' :
                         isCurrent ? 'text-[#08708E]' : 'text-slate-400'
                       }`} />
                     )}
