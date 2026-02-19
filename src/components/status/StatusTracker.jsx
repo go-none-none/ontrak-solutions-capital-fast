@@ -100,7 +100,7 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
                 <div className="flex-1">
                   <p className={`sm:mt-3 text-sm sm:text-center font-medium transition-all duration-300 ${
                     isCurrent && isOpportunityDeclined && step.step === 6 ? 'text-red-600 font-bold' :
-                    isCurrent ? 'text-[#08708E] font-bold' :
+                    isCurrent ? 'text-green-600 font-bold' :
                     isCompleted ? 'text-slate-700' :
                     'text-slate-400'
                   }`}>
