@@ -58,325 +58,682 @@ export default function Status() {
     fetchStatus();
   }, []);
 
-  // Trigger confetti when opportunity is funded
+   // Confetti effect when funded
+   useEffect(() => {
+     if (data && (data.stageName?.toLowerCase() === 'funded' || data.stageName?.toLowerCase() === 'closed - funded')) {
+       setTimeout(() => {
+         confetti({
+           particleCount: 100,
+           spread: 70,
+           origin: { y: 0.6 }
+         });
+       }, 500);
+     }
+   }, [data]);
+
+
   useEffect(() => {
-    if (data && (data.stageName?.toLowerCase() === 'funded' || data.stageName?.toLowerCase() === 'closed - funded')) {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
+    // Handle form when no record ID
+    if (!data && isFlipped) {
+      setTimeout(() => {
+        const container = document.getElementById('jotform-container-norecord');
+        if (container) {
+          let iframeSrc = 'https://form.jotform.com/252957146872065';
+          
+          container.innerHTML = `
+            <iframe
+              id="JotFormIFrame-norecord"
+              title="Application Form"
+              allowtransparency="true"
+              allow="geolocation; microphone; camera; fullscreen"
+              src="${iframeSrc}"
+              frameborder="0"
+              style="min-width:100%;max-width:100%;height:539px;border:none;"
+              scrolling="no"
+            >
+            </iframe>
+          `;
+          
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+          script.onload = () => {
+            if (window.jotformEmbedHandler) {
+              window.jotformEmbedHandler("iframe[id='JotFormIFrame-norecord']", "https://form.jotform.com/");
+            }
+          };
+          document.body.appendChild(script);
+        }
+      }, 100);
+      return;
     }
-  }, [data]);
+
+    const status = data ? (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase() : '';
+    const applicationCompleted = data?.csbs__Social_Security_Number_Unencrypted__c && data?.csbs__Birthdate__c && data?.csbs__Federal_Tax_ID_Unencrypted__c;
+    const showApplicationForm = (status === 'working - contacted' || status === 'working - application out') && !applicationCompleted;
+    
+    if (showApplicationForm && data) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const repId = urlParams.get('repId') || data.ownerAlias;
+      const recordId = urlParams.get('rid') || data.id;
+      
+      let iframeSrc = 'https://form.jotform.com/252957146872065';
+      const params = [];
+      if (repId) params.push(`rep=${encodeURIComponent(repId)}`);
+      if (recordId) params.push(`rid=${encodeURIComponent(recordId)}`);
+      if (data.businessName) params.push(`input_7=${encodeURIComponent(data.businessName)}`);
+      if (data.firstName) params.push(`first_21=${encodeURIComponent(data.firstName)}`);
+      if (data.lastName) params.push(`last_21=${encodeURIComponent(data.lastName)}`);
+      if (data.phone) params.push(`input_14_full=${encodeURIComponent(data.phone)}`);
+      if (data.email) params.push(`input_15=${encodeURIComponent(data.email)}`);
+      
+      if (params.length > 0) {
+        iframeSrc += `?${params.join('&')}`;
+      }
+      
+      const container = document.getElementById('jotform-container');
+      if (container) {
+        container.innerHTML = `
+          <iframe
+            id="JotFormIFrame-252957146872065"
+            title="Application Form"
+            allowtransparency="true"
+            allow="geolocation; microphone; camera; fullscreen"
+            src="${iframeSrc}"
+            frameborder="0"
+            style="min-width:100%;max-width:100%;height:539px;border:none;"
+            scrolling="no"
+          >
+          </iframe>
+        `;
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js';
+        script.onload = () => {
+          if (window.jotformEmbedHandler) {
+            window.jotformEmbedHandler("iframe[id='JotFormIFrame-252957146872065']", "https://form.jotform.com/");
+          }
+        };
+        document.body.appendChild(script);
+        
+        return () => {
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+        };
+      }
+    }
+  }, [data, isFlipped]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const reader = new FileReader();
+      const base64Promise = new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      
+      const base64Data = await base64Promise;
+      const urlParams = new URLSearchParams(window.location.search);
+      const recordId = urlParams.get('rid');
+      
+      await base44.functions.invoke('uploadRecordFile', {
+        recordId,
+        fileName: file.name,
+        fileData: base64Data
+      });
+      
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      
+      setFileUploadKey(prev => prev + 1);
+      await fetchStatus();
+      setShowUploadConfirmation(true);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload file. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-[#08708E]" />
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-[#08708E] animate-spin mx-auto mb-4" />
+          <p className="text-slate-600">Loading your application status...</p>
+        </div>
       </div>
     );
   }
 
-  const recordId = new URLSearchParams(window.location.search).get('rid');
-
-  if (!recordId && !data) {
+  // No record ID provided - show flip card
+  if (!data) {
     return (
-      <div className="min-h-screen bg-slate-50 px-4 py-12">
-        <div className="max-w-2xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl shadow-xl p-8 text-center"
-          >
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">No Application Found</h2>
-            <p className="text-slate-600 mb-8">We couldn't find your application. Let's get started!</p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Button 
-                className="bg-[#08708E] hover:bg-[#065a73] text-white px-8 py-2 rounded-lg"
-                onClick={() => window.location.href = createPageUrl('Home')}
+      <div className="min-h-screen bg-slate-50">
+        <section className="relative h-[300px] bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
+          <div className="absolute inset-0">
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
+          </div>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center w-full"
+            >
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+                Application Status
+              </h1>
+              <p className="text-white/70">
+                Track your funding application in real-time
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="py-12 -mt-16 relative z-10">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8" style={{ perspective: '1000px' }}>
+            <motion.div
+              initial={false}
+              animate={{ rotateY: isFlipped ? 180 : 0 }}
+              transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
+              style={{ 
+                transformStyle: 'preserve-3d',
+                position: 'relative',
+                width: '100%'
+              }}
+            >
+              {/* Front - No Application Found */}
+              <motion.div
+                style={{
+                  backfaceVisibility: 'hidden',
+                  position: isFlipped ? 'absolute' : 'relative',
+                  width: '100%',
+                  top: 0,
+                  left: 0
+                }}
+                className="bg-white rounded-3xl shadow-xl p-8 text-center"
               >
-                Start Quick Form
-              </Button>
-              <Button 
-                variant="outline"
-                className="px-8 py-2 rounded-lg"
-                onClick={() => window.location.href = createPageUrl('Home')}
+                <FileText className="w-16 h-16 text-[#08708E] mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-slate-900 mb-3">No Application Found</h2>
+                <p className="text-slate-600 mb-6">
+                  We don't have a record for you yet. Start your funding application today and track it here!
+                </p>
+                <Button 
+                  onClick={() => setIsFlipped(true)}
+                  className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg"
+                >
+                  Start Your Application
+                </Button>
+              </motion.div>
+
+              {/* Back - Application Form */}
+              <motion.div
+                style={{
+                  backfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)',
+                  position: !isFlipped ? 'absolute' : 'relative',
+                  width: '100%',
+                  top: 0,
+                  left: 0
+                }}
+                className="bg-white rounded-3xl shadow-xl p-8"
               >
-                Return Home
-              </Button>
-            </div>
-          </motion.div>
-        </div>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-bold text-slate-900">Complete Your Application</h3>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setIsFlipped(false)}
+                  >
+                    Back
+                  </Button>
+                </div>
+                <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
+                <div id="jotform-container-norecord">
+                  <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                    Loading application form...
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 px-4 py-12">
-        <div className="max-w-2xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl shadow-xl p-8"
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md text-center">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Unable to Load Status</h2>
+          <p className="text-slate-600 mb-6">{error}</p>
+          <Button 
+            onClick={() => window.location.href = createPageUrl('Contact')}
+            className="bg-[#08708E] hover:bg-[#065a72]"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <AlertCircle className="w-6 h-6 text-red-500" />
-              <h2 className="text-2xl font-bold text-slate-900">Error Loading Application</h2>
-            </div>
-            <p className="text-slate-600 mb-8">{error}</p>
-            <Button 
-              className="bg-[#08708E] hover:bg-[#065a73] text-white"
-              onClick={() => window.location.href = createPageUrl('Home')}
-            >
-              Return Home
-            </Button>
-          </motion.div>
+            Contact Support
+          </Button>
         </div>
       </div>
     );
   }
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const recordId = urlParams.get('rid');
+  const uploadUrl = `${createPageUrl('MissingDocs')}?id149=${recordId}&cn=${encodeURIComponent(data.businessName)}&ln=${encodeURIComponent(data.lastName || '')}`;
+
+  // Show application form for early statuses
+  const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
+  const applicationCompleted = data?.csbs__Social_Security_Number_Unencrypted__c && data?.csbs__Birthdate__c && data?.csbs__Federal_Tax_ID_Unencrypted__c;
+  const showApplicationForm = (status === 'working - contacted' || status === 'working - application out') && !applicationCompleted;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 px-4 py-12">
-      <section className="max-w-4xl mx-auto">
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-            Your Application Status
-          </h1>
-          <p className="text-xl text-slate-600">
-            Track your funding journey with us
-          </p>
-        </motion.div>
+    <div className="min-h-screen bg-slate-50">
+      {/* Upload Confirmation Dialog */}
+      <Dialog open={showUploadConfirmation} onOpenChange={setShowUploadConfirmation}>
+        <DialogContent className="sm:max-w-md">
+          <div className="flex flex-col items-center text-center py-6">
+            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
+              <Check className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Document Uploaded!</h3>
+            <p className="text-slate-600 mb-6">Your document has been successfully uploaded.</p>
+            <div className="flex gap-3 w-full">
+              <Button
+                variant="outline"
+                onClick={() => setShowUploadConfirmation(false)}
+                className="flex-1"
+              >
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowUploadConfirmation(false);
+                  fileInputRef.current?.click();
+                }}
+                className="flex-1 bg-[#08708E] hover:bg-[#065a72]"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Upload Another
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-        <div className="space-y-8">
-          {/* Business Information */}
-          {data && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-3xl shadow-xl p-8"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <p className="text-slate-600 text-sm mb-2">Business Name</p>
-                  <h2 className="text-2xl font-bold text-slate-900">{data.accountName || 'N/A'}</h2>
-                </div>
-                <div>
-                  <p className="text-slate-600 text-sm mb-2">Contact Person</p>
-                  <h3 className="text-2xl font-bold text-slate-900">{data.contactName || 'N/A'}</h3>
-                </div>
-              </div>
-            </motion.div>
-          )}
+      {/* Hero */}
+      <section className="relative h-[300px] bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
+        </div>
 
-          {/* Status Tracker */}
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-3xl shadow-xl p-8"
+            className="text-center w-full"
           >
-            {data && <StatusTracker data={data} />}
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+              Application Status
+            </h1>
+            <p className="text-white/70">
+              Track your funding application in real-time
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="py-12 -mt-16 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Business Info Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-3xl shadow-xl p-8 mb-6"
+          >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center">
+                    <Building2 className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-900">{data.businessName}</h2>
+                    <p className="text-sm text-slate-500">Application ID: {data.id.slice(-8)}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <Calendar className="w-4 h-4" />
+                    <span>Last Updated: {formatDate(data.lastModifiedDate)}</span>
+                  </div>
+                  {data.firstName && (
+                    <div className="bg-gradient-to-r from-[#08708E]/10 to-cyan-50 border-l-4 border-[#08708E] rounded-r-lg p-4">
+                      <p className="text-slate-700 font-medium">
+                        {(() => {
+                          const firstName = data.firstName;
+                          const status = (data.recordType === 'Lead' ? data.status : data.stageName)?.toLowerCase();
+                          
+                          // Lead statuses
+                          if (status === 'open - not contacted') {
+                            return `${firstName}, thank you for your interest! We'll be reaching out to you shortly to discuss your funding needs.`;
+                          } else if (status === 'working - contacted') {
+                            return `${firstName}, great connecting with you! We're excited to help you with your funding application.`;
+                          } else if (status === 'working - application out') {
+                            return `${firstName}, we've sent your application. Please complete it at your earliest convenience so we can move forward!`;
+                          } else if (status === 'application missing info') {
+                            return `${firstName}, we're almost there! Just need a few more documents to move forward with your application.`;
+                          } else if (status === 'converted') {
+                            return `${firstName}, excellent news! Your application has been converted and is moving through our approval process.`;
+                          }
+                          
+                          // Opportunity statuses
+                          else if (status === 'application in') {
+                            return `${firstName}, we received your application and our team is reviewing it now. We'll have an update for you soon!`;
+                          } else if (status === 'underwriting') {
+                            return `${firstName}, great news! Your application is currently being reviewed by our underwriting team.`;
+                          } else if (status === 'approved') {
+                            return `${firstName}, congratulations! Your application has been approved. We'll be sending your contracts shortly.`;
+                          } else if (status === 'application missing info') {
+                            return `${firstName}, we're almost there! Just need a couple more documents to complete your funding.`;
+                          } else if (status === 'contracts out') {
+                            return `${firstName}, your contracts are ready! Please review and sign them to proceed with funding.`;
+                          } else if (status === 'contracts in' || status === 'renewal processing') {
+                            return `${firstName}, we received your signed contracts. Your funding is being processed and will be on its way soon!`;
+                          } else if (status === 'closed - funded' || status === 'funded') {
+                            return `${firstName}, congratulations! Your funding has been successfully processed. Thank you for choosing OnTrak!`;
+                          } else if (status === 'closed - declined' || status === 'declined') {
+                            return `${firstName}, unfortunately we're unable to approve your application at this time. Please contact us to discuss alternative options.`;
+                          }
+                          
+                          // Default fallback
+                          else {
+                            return `${firstName}, thank you for choosing OnTrak. We're working on your request!`;
+                          }
+                        })()}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <StatusTracker 
+                  recordType={data.recordType}
+                  status={data.status}
+                  stageName={data.stageName}
+                  stageDetail={data.stageDetail}
+                  recordId={data.id}
+                  businessName={data.businessName}
+                  lastName={data.lastName}
+                  bankStatementChecklist={data.bankStatementChecklist}
+                />
           </motion.div>
 
-          {/* Offer Details */}
-          {data?.recordType === 'Opportunity' && data?.offerAmount && (
+          {/* Offers - Show for Contracts Out, Contracts In, or Missing Info (selected offers only) */}
+          {data.recordType === 'Opportunity' && data.offers && data.offers.length > 0 && ['contracts out', 'contracts in', 'application missing info', 'funded', 'closed - funded'].includes(data.stageName?.toLowerCase()) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-3xl shadow-xl p-8 mb-6"
             >
-              <div className="bg-white rounded-3xl shadow-xl p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <DollarSign className="w-6 h-6 text-[#08708E]" />
-                  <h3 className="text-xl font-bold text-slate-900">Offer Amount</h3>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-green-600" />
                 </div>
-                <p className="text-3xl font-bold text-[#08708E]">
-                  ${data.offerAmount?.toLocaleString() || 'N/A'}
-                </p>
+                <h3 className="text-xl font-bold text-slate-900">Your Selected Offer</h3>
               </div>
-
-              <div className="bg-white rounded-3xl shadow-xl p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <TrendingUp className="w-6 h-6 text-[#08708E]" />
-                  <h3 className="text-xl font-bold text-slate-900">Term</h3>
-                </div>
-                <p className="text-3xl font-bold text-[#08708E]">
-                  {data.term || 'N/A'}
-                </p>
+              <div className="grid gap-4">
+                {data.offers.filter(o => o.csbs__Selected__c === true).map((offer) => (
+                  <div 
+                    key={offer.Id} 
+                    className={`border rounded-xl p-6 transition-all ${
+                      offer.csbs__Selected__c 
+                        ? 'border-green-500 bg-green-50 shadow-md ring-2 ring-green-200' 
+                        : 'border-slate-200 hover:shadow-md'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-lg font-semibold text-slate-900">{offer.Name}</h4>
+                          {offer.csbs__Selected__c && (
+                            <span className="px-2 py-1 bg-green-600 text-white text-xs font-semibold rounded-full">
+                              SELECTED
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-slate-600 mt-1">{offer.csbs__Lender__c}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-xs text-slate-500 mb-1">Funded Amount</p>
+                        <p className="text-lg font-semibold text-slate-900">
+                          ${Number(offer.csbs__Funded__c || 0).toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500 mb-1">Payment Amount</p>
+                        <p className="text-lg font-semibold text-slate-900">
+                          ${Number(offer.csbs__Payment_Amount__c || 0).toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500 mb-1">Term</p>
+                        <p className="text-lg font-semibold text-slate-900">
+                          {offer.csbs__Term__c || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500 mb-1">Frequency</p>
+                        <p className="text-lg font-semibold text-slate-900">
+                          {offer.csbs__Payment_Frequency__c ? offer.csbs__Payment_Frequency__c.charAt(0).toUpperCase() + offer.csbs__Payment_Frequency__c.slice(1).toLowerCase() : '-'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </motion.div>
           )}
 
-          {/* Application Confirmation */}
-          {data?.recordType === 'Opportunity' && (
+          {/* Application Received Confirmation - Show when app is completed */}
+          {status === 'working - application out' && applicationCompleted && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.12 }}
-              className="bg-white rounded-3xl shadow-xl p-8"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15 }}
+              className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-3xl shadow-xl p-8 mb-6 relative overflow-hidden"
             >
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
-                  <CheckCircle className="w-6 h-6 text-green-500 mt-1" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-green-200/20 rounded-full blur-3xl -mr-32 -mt-32" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-200/20 rounded-full blur-3xl -ml-24 -mb-24" />
+              
+              <div className="relative">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center shadow-lg animate-pulse">
+                    <CheckCircle className="w-8 h-8 text-white" />
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">Application Received</h3>
-                  <p className="text-slate-600">
-                    Thank you for submitting your application! Our team is reviewing your information and will be in touch shortly.
+                <h3 className="text-2xl font-bold text-slate-900 text-center mb-3">
+                  🎉 Application Received!
+                </h3>
+                <p className="text-center text-slate-700 text-lg leading-relaxed mb-4">
+                  Your application has been received—thank you! We're carefully reviewing it and will reach out to you soon with the next steps.
+                </p>
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-green-200">
+                  <p className="text-sm text-slate-600 text-center">
+                    💼 Our team is working hard to get you the best funding options available
                   </p>
                 </div>
               </div>
             </motion.div>
           )}
 
-          {/* Dynamic Form Sections */}
-          {data?.recordType === 'Opportunity' && (
-            <>
-              {/* Jotform - Application Not Yet Sent */}
-              {data.applicationSentDate === null && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.13 }}
-                  className="bg-white rounded-3xl shadow-xl p-8"
-                >
-                  <h3 className="text-xl font-bold text-slate-900 mb-4">Complete Your Application</h3>
-                  <div id="jotform_container"></div>
-                  <script>
-                    {`
-                      (function(){
-                        var d = document.createElement('div');
-                        d.innerHTML = '<iframe allow="payment" src="https://form.jotform.com/232451906980968?opportunityId=${data.id}" frameborder="0" style="min-width: 100%; height: 500px; border: none;" scrolling="no"></iframe>';
-                        document.getElementById('jotform_container').appendChild(d.firstChild);
-                      }());
-                    `}
-                  </script>
-                </motion.div>
-              )}
-
-              {/* Jotform - Application Sent but Not Completed */}
-              {data.applicationSentDate !== null && !data.applicationCompletedDate && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.13 }}
-                  className="bg-white rounded-3xl shadow-xl p-8"
-                >
-                  <h3 className="text-xl font-bold text-slate-900 mb-4">Complete Your Application</h3>
-                  <div id="jotform_container"></div>
-                  <script>
-                    {`
-                      (function(){
-                        var d = document.createElement('div');
-                        d.innerHTML = '<iframe allow="payment" src="https://form.jotform.com/232451906980968?opportunityId=${data.id}" frameborder="0" style="min-width: 100%; height: 500px; border: none;" scrolling="no"></iframe>';
-                        document.getElementById('jotform_container').appendChild(d.firstChild);
-                      }());
-                    `}
-                  </script>
-                </motion.div>
-              )}
-
-              {/* Jotform - Missing Documents */}
-              {data.missingDocumentsIdentified && !data.missingDocumentsUploadedDate && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.13 }}
-                  className="bg-white rounded-3xl shadow-xl p-8"
-                >
-                  <h3 className="text-xl font-bold text-slate-900 mb-4">Upload Missing Documents</h3>
-                  <div id="jotform_missing_docs_container"></div>
-                  <script>
-                    {`
-                      (function(){
-                        var d = document.createElement('div');
-                        d.innerHTML = '<iframe allow="payment" src="https://form.jotform.com/232451933651961?opportunityId=${data.id}" frameborder="0" style="min-width: 100%; height: 500px; border: none;" scrolling="no"></iframe>';
-                        document.getElementById('jotform_missing_docs_container').appendChild(d.firstChild);
-                      }());
-                    `}
-                  </script>
-                </motion.div>
-              )}
-            </>
+          {/* Application Form for Contact Initiated & Application Sent */}
+          {showApplicationForm && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="bg-white rounded-3xl shadow-xl p-8 mb-6"
+            >
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Complete Your Application</h3>
+              <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
+              <div id="jotform-container">
+                <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                  Loading application form...
+                </p>
+              </div>
+            </motion.div>
           )}
 
-          {/* File Upload Section - Hide when Funded or Closed - Funded */}
-          {!(data.stageName?.toLowerCase() === 'funded' || data.stageName?.toLowerCase() === 'closed - funded') && (data.recordType === 'Opportunity' || 
-             (data.recordType === 'Lead' && data.status?.toLowerCase() === 'application missing info')) && (
-             <FileUploadSection key={fileUploadKey} recordId={recordId} showActions={false} />
-           )}
+          {/* Missing Stipulations - Show for Approved or Add'l Docs stages */}
+          {data.recordType === 'Opportunity' && data.missingStipulations && data.missingStipulations.length > 0 && 
+           ['approved', 'application missing info'].includes(data.stageName?.toLowerCase()) && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-3xl p-8 shadow-xl mb-6"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-amber-600" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">Missing Stipulations</h3>
+              </div>
+              <p className="text-slate-600 text-sm mb-4">
+                We need the following items to proceed with your application:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                {data.missingStipulations.map((item, index) => (
+                  <div key={index} className="flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-red-300 shadow-sm">
+                    <span className="text-2xl animate-pulse">❌</span>
+                    <span className="text-sm font-semibold text-red-700">{item}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-center">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  disabled={uploading}
+                />
+                <Button
+                  size="lg"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg shadow-lg"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5 mr-2" />
+                      Upload Missing Documents
+                    </>
+                  )}
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* File Upload Section - Show for all Opportunities OR Leads with Missing Info status */}
+          {(data.recordType === 'Opportunity' || 
+            (data.recordType === 'Lead' && data.status?.toLowerCase() === 'application missing info')) && (
+            <FileUploadSection key={fileUploadKey} recordId={recordId} showActions={false} />
+          )}
 
            {/* Start New Application Card - Show when Funded */}
            {(data.stageName?.toLowerCase() === 'funded' || data.stageName?.toLowerCase() === 'closed - funded') && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.15 }}
-                className="bg-gradient-to-br from-emerald-50 to-green-50 border-2 border-green-300 rounded-3xl shadow-xl p-8 mb-6"
-              >
-                <div className="text-center">
-                  <div className="flex justify-center mb-4">
-                    <div className="bg-green-200 rounded-full p-4">
-                      <Check className="w-8 h-8 text-green-600" />
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-bold text-green-700 mb-3">Congratulations!</h3>
-                  <p className="text-green-600 mb-6">Your application has been funded!</p>
-                  <Button 
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                    onClick={() => window.location.href = createPageUrl('Home')}
-                  >
-                    Start a New Application
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-
-           {/* Next Steps - Hide when Funded */}
-           {!(data.stageName?.toLowerCase() === 'funded' || data.stageName?.toLowerCase() === 'closed - funded') && (
-           <motion.div
-             initial={{ opacity: 0, y: 20 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ delay: 0.2 }}
-             className="bg-white rounded-3xl shadow-xl p-8"
-           >
-             <h3 className="text-xl font-bold text-slate-900 mb-4">What's Next?</h3>
-             <div className="space-y-3">
-               <div className="flex items-start gap-3">
-                 <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
-                 <div>
-                   <p className="text-slate-700 font-medium">Keep an eye on your email</p>
-                   <p className="text-sm text-slate-500">We'll notify you of any status changes</p>
+             <motion.div
+               initial={{ opacity: 0, scale: 0.95 }}
+               animate={{ opacity: 1, scale: 1 }}
+               transition={{ delay: 0.15 }}
+               className="bg-gradient-to-br from-emerald-50 to-green-50 border-2 border-green-300 rounded-3xl shadow-xl p-8 mb-6"
+             >
+               <div className="text-center">
+                 <div className="flex items-center justify-center mb-4">
+                   <div className="w-16 h-16 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
+                     <DollarSign className="w-8 h-8 text-white" />
+                   </div>
                  </div>
+                 <h3 className="text-2xl font-bold text-slate-900 mb-3">
+                   🎉 You're Funded!
+                 </h3>
+                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
+                   Congratulations on receiving your funding! Ready for another round of financing? Start a new application to explore additional funding opportunities.
+                 </p>
+                 <a href={createPageUrl('Home')} className="inline-block">
+                   <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-6 text-lg shadow-lg">
+                     Start New Application
+                   </Button>
+                 </a>
                </div>
-               <div className="flex items-start gap-3">
-                 <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
-                 <div>
-                   <p className="text-slate-700 font-medium">Respond promptly to requests</p>
-                   <p className="text-sm text-slate-500">Quick responses help speed up the process</p>
-                 </div>
-               </div>
-               <div className="flex items-start gap-3">
-                 <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
-                 <div>
-                   <p className="text-slate-700 font-medium">Questions? We're here to help</p>
-                   <p className="text-sm text-slate-500">
-                     Call us at <a href="tel:+13025205200" className="text-[#08708E] hover:underline">(302) 520-5200</a>
-                   </p>
-                 </div>
-               </div>
-             </div>
-           </motion.div>
+             </motion.div>
            )}
+           )}
+
+
+          {/* Next Steps */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-3xl shadow-xl p-8"
+          >
+            <h3 className="text-xl font-bold text-slate-900 mb-4">What's Next?</h3>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-slate-700 font-medium">Keep an eye on your email</p>
+                  <p className="text-sm text-slate-500">We'll notify you of any status changes</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-slate-700 font-medium">Respond promptly to requests</p>
+                  <p className="text-sm text-slate-500">Quick responses help speed up the process</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-slate-700 font-medium">Questions? We're here to help</p>
+                  <p className="text-sm text-slate-500">
+                    Call us at <a href="tel:+13025205200" className="text-[#08708E] hover:underline">(302) 520-5200</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>
