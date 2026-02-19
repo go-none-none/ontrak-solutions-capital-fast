@@ -406,6 +406,26 @@ export default function Status() {
       {/* Main Content */}
       <section className="py-12 -mt-16 relative z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* New Application Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-3xl shadow-xl p-8 mb-6"
+          >
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">Ready to Apply?</h3>
+                <p className="text-slate-600">Start a new funding application and get connected with the best rates for your business.</p>
+              </div>
+              <Button 
+                onClick={() => setIsFlipped(true)}
+                className="bg-green-600 hover:bg-green-700 px-8 py-6 text-lg whitespace-nowrap flex-shrink-0"
+              >
+                New Application
+              </Button>
+            </div>
+          </motion.div>
+        
           {/* Business Info Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
