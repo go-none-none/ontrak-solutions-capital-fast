@@ -669,37 +669,6 @@ export default function Status() {
             <FileUploadSection key={fileUploadKey} recordId={recordId} showActions={false} />
           )}
 
-           {/* Start New Application Card - Show when Funded */}
-           {(data.stageName?.toLowerCase() === 'funded' || data.stageName?.toLowerCase() === 'closed - funded') && (
-             <motion.div
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               transition={{ delay: 0.15 }}
-               className="bg-gradient-to-br from-emerald-50 to-green-50 border-2 border-green-300 rounded-3xl shadow-xl p-8 mb-6"
-             >
-               <div className="text-center">
-                 <div className="flex items-center justify-center mb-4">
-                   <div className="w-16 h-16 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
-                     <DollarSign className="w-8 h-8 text-white" />
-                   </div>
-                 </div>
-                 <h3 className="text-2xl font-bold text-slate-900 mb-3">
-                   🎉 You're Funded!
-                 </h3>
-                 <p className="text-slate-700 text-lg leading-relaxed mb-6">
-                   Congratulations on receiving your funding! Ready for another round of financing? Start a new application to explore additional funding opportunities.
-                 </p>
-                 <a href={createPageUrl('Home')} className="inline-block">
-                   <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-6 text-lg shadow-lg">
-                     Start New Application
-                   </Button>
-                 </a>
-               </div>
-             </motion.div>
-           )}
-           )}
-
-
           {/* Next Steps */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
