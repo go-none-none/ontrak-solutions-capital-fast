@@ -71,11 +71,11 @@ import OwnerContact from './pages/OwnerContact';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RecordHistory from './pages/RecordHistory';
 import Reviews from './pages/Reviews';
-import Status from './pages/Status';
 import TermsOfService from './pages/TermsOfService';
 import ThankYou from './pages/ThankYou';
 import UseCases from './pages/UseCases';
 import application from './pages/application';
+import Status from './pages/Status';
 import __Layout from './Layout.jsx';
 
 
@@ -104,11 +104,11 @@ export const PAGES = {
     "PrivacyPolicy": PrivacyPolicy,
     "RecordHistory": RecordHistory,
     "Reviews": Reviews,
-    "Status": Status,
     "TermsOfService": TermsOfService,
     "ThankYou": ThankYou,
     "UseCases": UseCases,
     "application": application,
+    "Status": Status,
 }
 
 export const pagesConfig = {
