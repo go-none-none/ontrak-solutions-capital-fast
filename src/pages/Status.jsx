@@ -448,7 +448,7 @@ export default function Status() {
                     <span>Last Updated: {formatDate(data.lastModifiedDate)}</span>
                   </div>
                   {data.firstName && (
-                    <div className="bg-gradient-to-r from-[#08708E]/10 to-cyan-50 border-l-4 border-[#08708E] rounded-r-lg p-4">
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-600 rounded-r-lg p-4">
                       <p className="text-slate-700 font-medium">
                         {(() => {
                           const firstName = data.firstName;
