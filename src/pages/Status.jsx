@@ -713,11 +713,11 @@ export default function Status() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-slate-700 font-medium">Questions? We're here to help</p>
                   <p className="text-sm text-slate-500">
-                    Call us at <a href="tel:+13025205200" className="text-[#08708E] hover:underline">(302) 520-5200</a>
+                    Call us at <a href="tel:+13025205200" className="text-green-600 hover:underline">(302) 520-5200</a>
                   </p>
                 </div>
               </div>
