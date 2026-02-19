@@ -489,7 +489,7 @@ export default function Status() {
           </motion.div>
 
           {/* Offers - Show for Contracts Out, Contracts In, or Missing Info (selected offers only) */}
-          {data.recordType === 'Opportunity' && data.offers && data.offers.length > 0 && ['contracts out', 'contracts in', 'application missing info'].includes(data.stageName?.toLowerCase()) && (
+          {data.recordType === 'Opportunity' && data.offers && data.offers.length > 0 && ['contracts out', 'contracts in', 'application missing info', 'funded', 'closed - funded'].includes(data.stageName?.toLowerCase()) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
