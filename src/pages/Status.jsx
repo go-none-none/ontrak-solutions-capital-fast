@@ -307,7 +307,7 @@ export default function Status() {
                 </div>
                 <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
                 <div id="jotform-container-norecord">
-                  <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
+                  <p style={{textAlign: 'center', padding: '40px', color: '#16a34a', fontSize: '18px'}}>
                     Loading application form...
                   </p>
                 </div>
