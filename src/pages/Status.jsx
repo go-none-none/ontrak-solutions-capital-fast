@@ -699,14 +699,14 @@ export default function Status() {
             <h3 className="text-xl font-bold text-slate-900 mb-4">What's Next?</h3>
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-slate-700 font-medium">Keep an eye on your email</p>
                   <p className="text-sm text-slate-500">We'll notify you of any status changes</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-slate-700 font-medium">Respond promptly to requests</p>
                   <p className="text-sm text-slate-500">Quick responses help speed up the process</p>
