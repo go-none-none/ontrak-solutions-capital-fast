@@ -118,11 +118,11 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
                   <>
                     {/* Mobile: Vertical line */}
                     <div className={`sm:hidden absolute left-8 top-[72px] w-1 h-6 rounded-full transition-all duration-500 ${
-                      statusInfo.step > step.step ? 'bg-gradient-to-b from-[#08708E] to-[#065a72]' : 'bg-slate-200'
+                      statusInfo.step > step.step ? 'bg-gradient-to-b from-green-600 to-emerald-700' : 'bg-slate-200'
                     }`} />
                     {/* Desktop: Horizontal line */}
                     <div className={`hidden sm:block absolute top-8 left-[60%] w-full h-1 rounded-full transition-all duration-500 ${
-                      statusInfo.step > step.step ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' : 'bg-slate-200'
+                      statusInfo.step > step.step ? 'bg-gradient-to-r from-green-600 to-emerald-700' : 'bg-slate-200'
                     }`} />
                   </>
                 )}
