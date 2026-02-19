@@ -697,6 +697,7 @@ export default function Status() {
                </div>
              </motion.div>
            )}
+           )}
 
 
           {/* Next Steps */}
