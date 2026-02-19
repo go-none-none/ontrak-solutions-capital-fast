@@ -270,14 +270,14 @@ export default function Status() {
                 }}
                 className="bg-white rounded-3xl shadow-xl p-8 text-center"
               >
-                <FileText className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                <FileText className="w-16 h-16 text-[#08708E] mx-auto mb-4" />
                 <h2 className="text-2xl font-bold text-slate-900 mb-3">No Application Found</h2>
                 <p className="text-slate-600 mb-6">
                   We don't have a record for you yet. Start your funding application today and track it here!
                 </p>
                 <Button 
                   onClick={() => setIsFlipped(true)}
-                  className="bg-green-600 hover:bg-green-700 px-8 py-6 text-lg"
+                  className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg"
                 >
                   Start Your Application
                 </Button>
@@ -307,7 +307,7 @@ export default function Status() {
                 </div>
                 <p className="text-slate-600 mb-6">Fill out the application below to get started with your funding request.</p>
                 <div id="jotform-container-norecord">
-                  <p style={{textAlign: 'center', padding: '40px', color: '#16a34a', fontSize: '18px'}}>
+                  <p style={{textAlign: 'center', padding: '40px', color: '#08708E', fontSize: '18px'}}>
                     Loading application form...
                   </p>
                 </div>
@@ -328,7 +328,7 @@ export default function Status() {
           <p className="text-slate-600 mb-6">{error}</p>
           <Button 
             onClick={() => window.location.href = createPageUrl('Contact')}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-[#08708E] hover:bg-[#065a72]"
           >
             Contact Support
           </Button>
@@ -381,10 +381,10 @@ export default function Status() {
       </Dialog>
 
       {/* Hero */}
-      <section className="relative h-[300px] bg-gradient-to-br from-green-600 via-green-700 to-slate-900 overflow-hidden">
+      <section className="relative h-[300px] bg-gradient-to-br from-[#08708E] via-[#065a72] to-slate-900 overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-72 h-72 bg-green-600/30 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#08708E]/30 rounded-full blur-3xl" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
@@ -406,26 +406,6 @@ export default function Status() {
       {/* Main Content */}
       <section className="py-12 -mt-16 relative z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* New Application Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-3xl shadow-xl p-8 mb-6"
-          >
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">Ready to Apply?</h3>
-                <p className="text-slate-600">Start a new funding application and get connected with the best rates for your business.</p>
-              </div>
-              <Button 
-                onClick={() => setIsFlipped(true)}
-                className="bg-green-600 hover:bg-green-700 px-8 py-6 text-lg whitespace-nowrap flex-shrink-0"
-              >
-                New Application
-              </Button>
-            </div>
-          </motion.div>
-        
           {/* Business Info Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -433,7 +413,7 @@ export default function Status() {
             className="bg-white rounded-3xl shadow-xl p-8 mb-6"
           >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-green-600 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center">
                     <Building2 className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -448,7 +428,7 @@ export default function Status() {
                     <span>Last Updated: {formatDate(data.lastModifiedDate)}</span>
                   </div>
                   {data.firstName && (
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-600 rounded-r-lg p-4">
+                    <div className="bg-gradient-to-r from-[#08708E]/10 to-cyan-50 border-l-4 border-[#08708E] rounded-r-lg p-4">
                       <p className="text-slate-700 font-medium">
                         {(() => {
                           const firstName = data.firstName;
@@ -699,25 +679,25 @@ export default function Status() {
             <h3 className="text-xl font-bold text-slate-900 mb-4">What's Next?</h3>
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-slate-700 font-medium">Keep an eye on your email</p>
                   <p className="text-sm text-slate-500">We'll notify you of any status changes</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-slate-700 font-medium">Respond promptly to requests</p>
                   <p className="text-sm text-slate-500">Quick responses help speed up the process</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-[#08708E] flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-slate-700 font-medium">Questions? We're here to help</p>
                   <p className="text-sm text-slate-500">
-                    Call us at <a href="tel:+13025205200" className="text-green-600 hover:underline">(302) 520-5200</a>
+                    Call us at <a href="tel:+13025205200" className="text-[#08708E] hover:underline">(302) 520-5200</a>
                   </p>
                 </div>
               </div>

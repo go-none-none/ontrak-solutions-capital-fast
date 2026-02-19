@@ -82,8 +82,8 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
                 >
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 ${
                     isCurrent && isOpportunityDeclined && step.step === 6 ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-500 shadow-2xl ring-4 ring-red-500/20' :
-                    isCurrent ? 'bg-gradient-to-r from-green-50 to-emerald-100 border-green-600 shadow-2xl ring-4 ring-green-600/20' :
-                    isCompleted ? 'bg-gradient-to-br from-green-600 to-emerald-700 border-green-600' :
+                    isCurrent ? 'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] shadow-2xl ring-4 ring-[#08708E]/20' :
+                    isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E]' :
                     'bg-slate-50 border-slate-200 opacity-40'
                   }`}>
                     {isCompleted && !(isOpportunityDeclined && step.step === 6) ? (
@@ -91,7 +91,7 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
                     ) : (
                       <StepIcon className={`w-7 h-7 ${
                         isCurrent && isOpportunityDeclined && step.step === 6 ? 'text-red-600' :
-                        isCurrent ? 'text-green-600' : 'text-slate-400'
+                        isCurrent ? 'text-[#08708E]' : 'text-slate-400'
                       }`} />
                     )}
                   </div>
@@ -100,7 +100,7 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
                 <div className="flex-1">
                   <p className={`sm:mt-3 text-sm sm:text-center font-medium transition-all duration-300 ${
                     isCurrent && isOpportunityDeclined && step.step === 6 ? 'text-red-600 font-bold' :
-                    isCurrent ? 'text-green-600 font-bold' :
+                    isCurrent ? 'text-[#08708E] font-bold' :
                     isCompleted ? 'text-slate-700' :
                     'text-slate-400'
                   }`}>
@@ -118,11 +118,11 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
                   <>
                     {/* Mobile: Vertical line */}
                     <div className={`sm:hidden absolute left-8 top-[72px] w-1 h-6 rounded-full transition-all duration-500 ${
-                      statusInfo.step > step.step ? 'bg-gradient-to-b from-green-600 to-emerald-700' : 'bg-slate-200'
+                      statusInfo.step > step.step ? 'bg-gradient-to-b from-[#08708E] to-[#065a72]' : 'bg-slate-200'
                     }`} />
                     {/* Desktop: Horizontal line */}
                     <div className={`hidden sm:block absolute top-8 left-[60%] w-full h-1 rounded-full transition-all duration-500 ${
-                      statusInfo.step > step.step ? 'bg-gradient-to-r from-green-600 to-emerald-700' : 'bg-slate-200'
+                      statusInfo.step > step.step ? 'bg-gradient-to-r from-[#08708E] to-[#065a72]' : 'bg-slate-200'
                     }`} />
                   </>
                 )}
