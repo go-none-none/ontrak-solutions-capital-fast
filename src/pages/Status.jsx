@@ -58,6 +58,20 @@ export default function Status() {
     fetchStatus();
   }, []);
 
+   // Confetti effect when funded
+   useEffect(() => {
+     if (data && (data.stageName?.toLowerCase() === 'funded' || data.stageName?.toLowerCase() === 'closed - funded')) {
+       setTimeout(() => {
+         confetti({
+           particleCount: 100,
+           spread: 70,
+           origin: { y: 0.6 }
+         });
+       }, 500);
+     }
+   }, [data]);
+
+
   useEffect(() => {
     // Handle form when no record ID
     if (!data && isFlipped) {
