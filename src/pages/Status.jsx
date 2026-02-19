@@ -270,14 +270,14 @@ export default function Status() {
                 }}
                 className="bg-white rounded-3xl shadow-xl p-8 text-center"
               >
-                <FileText className="w-16 h-16 text-[#08708E] mx-auto mb-4" />
+                <FileText className="w-16 h-16 text-green-600 mx-auto mb-4" />
                 <h2 className="text-2xl font-bold text-slate-900 mb-3">No Application Found</h2>
                 <p className="text-slate-600 mb-6">
                   We don't have a record for you yet. Start your funding application today and track it here!
                 </p>
                 <Button 
                   onClick={() => setIsFlipped(true)}
-                  className="bg-[#08708E] hover:bg-[#065a72] px-8 py-6 text-lg"
+                  className="bg-green-600 hover:bg-green-700 px-8 py-6 text-lg"
                 >
                   Start Your Application
                 </Button>
