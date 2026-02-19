@@ -12,7 +12,8 @@ import {
   Loader2,
   DollarSign,
   TrendingUp,
-  Check
+  Check,
+  ArrowRight
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
