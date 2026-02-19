@@ -328,7 +328,7 @@ export default function Status() {
           <p className="text-slate-600 mb-6">{error}</p>
           <Button 
             onClick={() => window.location.href = createPageUrl('Contact')}
-            className="bg-[#08708E] hover:bg-[#065a72]"
+            className="bg-green-600 hover:bg-green-700"
           >
             Contact Support
           </Button>
