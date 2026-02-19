@@ -82,7 +82,9 @@ export default function StatusTracker({ recordType, status, stageName, stageDeta
                 >
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 ${
                     isCurrent && isOpportunityDeclined && step.step === 6 ? 'bg-gradient-to-r from-red-50 to-red-100 border-red-500 shadow-2xl ring-4 ring-red-500/20' :
+                    isCurrent && isFunded ? 'bg-gradient-to-r from-green-50 to-emerald-100 border-green-500 shadow-2xl ring-4 ring-green-500/20' :
                     isCurrent ? 'bg-gradient-to-r from-blue-50 to-cyan-100 border-[#08708E] shadow-2xl ring-4 ring-[#08708E]/20' :
+                    isCompleted && isFunded ? 'bg-gradient-to-br from-green-500 to-emerald-600 border-green-500' :
                     isCompleted ? 'bg-gradient-to-br from-[#08708E] to-[#065a72] border-[#08708E]' :
                     'bg-slate-50 border-slate-200 opacity-40'
                   }`}>
