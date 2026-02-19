@@ -433,7 +433,7 @@ export default function Status() {
             className="bg-white rounded-3xl shadow-xl p-8 mb-6"
           >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-[#08708E] flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-green-600 flex items-center justify-center">
                     <Building2 className="w-6 h-6 text-white" />
                   </div>
                   <div>
