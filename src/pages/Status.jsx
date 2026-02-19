@@ -663,9 +663,10 @@ export default function Status() {
             </motion.div>
           )}
 
-          {/* File Upload Section - Show for all Opportunities OR Leads with Missing Info status */}
+          {/* File Upload Section - Show for all Opportunities OR Leads with Missing Info status, but NOT when Funded */}
           {(data.recordType === 'Opportunity' || 
-            (data.recordType === 'Lead' && data.status?.toLowerCase() === 'application missing info')) && (
+            (data.recordType === 'Lead' && data.status?.toLowerCase() === 'application missing info')) &&
+            !(data.stageName?.toLowerCase() === 'funded' || data.stageName?.toLowerCase() === 'closed - funded') && (
             <FileUploadSection key={fileUploadKey} recordId={recordId} showActions={false} />
           )}
 
