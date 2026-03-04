@@ -5,6 +5,15 @@ import Footer from './components/shared/Footer';
 import { NotificationProvider } from './components/context/NotificationContext';
 
 export default function Layout({ children, currentPageName }) {
+  useEffect(() => {
+    var s1 = document.createElement("script");
+    var s0 = document.getElementsByTagName("script")[0];
+    s1.async = true;
+    s1.src = 'https://embed.tawk.to/69a88ada9e1af81c3555c969/1jit5spv0';
+    s1.charset = 'UTF-8';
+    s1.setAttribute('crossorigin', '*');
+    s0.parentNode.insertBefore(s1, s0);
+  }, []);
   const { pathname } = useLocation();
 
   useEffect(() => {
