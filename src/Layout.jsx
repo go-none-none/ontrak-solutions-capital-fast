@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
 import { useLocation } from 'react-router-dom';
 import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
