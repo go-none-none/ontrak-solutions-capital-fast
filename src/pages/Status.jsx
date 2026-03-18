@@ -16,6 +16,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { trackEvent } from '../utils/tracking';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import StatusTracker from '../components/status/StatusTracker';
 import FileUploadSection from '../components/status/FileUploadSection';
