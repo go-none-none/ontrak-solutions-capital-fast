@@ -4,8 +4,6 @@ import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
 import { NotificationProvider } from './components/context/NotificationContext';
 
-const WEB_TRACKING_API_KEY = "YOUR_WEB_TRACKING_SECRET"; // Replace with actual key
-
 export default function Layout({ children, currentPageName }) {
   // Save email from URL or sessionStorage on first load
   useEffect(() => {
