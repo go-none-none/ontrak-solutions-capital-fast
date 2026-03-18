@@ -12,8 +12,15 @@
     <script type="module" src="/src/main.jsx"></script>
     <script>
       const urlParams = new URLSearchParams(window.location.search);
-      const email = urlParams.get('email');
+      let email = urlParams.get('email');
       const apiKey = 'a8F3kL9xQ2mZ7vP1rT6wYc4HjN5uD0sB';
+      
+      // Use email from URL or localStorage
+      if (email) {
+        localStorage.setItem('campaignEmail', email);
+      } else {
+        email = localStorage.getItem('campaignEmail');
+      }
       
       if (email) {
         // Auto-track page view on load
