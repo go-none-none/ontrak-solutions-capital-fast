@@ -3,7 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
-    const apiKey = Deno.env.get('WEB_TRACKING_API_KEY');
+    const apiKey = Deno.env.get('WEB_TRACKING_SECRET');
 
     const response = await fetch('https://app.base44.com/apps/69b997d063541d627aa671c2/api/functions/trackWebEvent', {
       method: 'POST',
