@@ -4,7 +4,16 @@ import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
 import { NotificationProvider } from './components/context/NotificationContext';
 
+const WEB_TRACKING_API_KEY = "YOUR_WEB_TRACKING_SECRET"; // Replace with actual key
+
 export default function Layout({ children, currentPageName }) {
+  // Save email from URL or sessionStorage on first load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get('email') || sessionStorage.getItem('crm_email');
+    if (email) sessionStorage.setItem('crm_email', email);
+  }, []);
+
   useEffect(() => {
     var s1 = document.createElement("script");
     var s0 = document.getElementsByTagName("script")[0];
