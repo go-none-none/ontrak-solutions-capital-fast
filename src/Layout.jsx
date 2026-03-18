@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { trackEvent } from './utils/tracking';
-import { base44 } from '@/api/base44Client';
 import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
 import { NotificationProvider } from './components/context/NotificationContext';
@@ -20,11 +18,6 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    base44.auth.me().then(user => {
-      if (user?.email) {
-        trackEvent(user.email, 'page_view', { page: pathname });
-      }
-    }).catch(() => {});
   }, [pathname]);
 
   useEffect(() => {
