@@ -27,6 +27,16 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+
+    // Fire page view tracking event on every route change
+    const email = sessionStorage.getItem('crm_email');
+    if (email) {
+      fetch("https://api.base44.com/api/apps/69b997d063541d627aa671c2/functions/trackWebEvent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-api-key": WEB_TRACKING_API_KEY },
+        body: JSON.stringify({ email, event_type: "page_view", metadata: { page: window.location.pathname } })
+      }).catch(() => {}); // Fail silently
+    }
   }, [pathname]);
 
   useEffect(() => {
