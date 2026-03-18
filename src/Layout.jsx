@@ -1,18 +1,10 @@
 import React, { useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
 import { useLocation } from 'react-router-dom';
 import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
 import { NotificationProvider } from './components/context/NotificationContext';
 
 export default function Layout({ children, currentPageName }) {
-  // Save email from URL or sessionStorage on first load
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const email = params.get('email') || sessionStorage.getItem('crm_email');
-    if (email) sessionStorage.setItem('crm_email', email);
-  }, []);
-
   useEffect(() => {
     var s1 = document.createElement("script");
     var s0 = document.getElementsByTagName("script")[0];
@@ -26,12 +18,6 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-
-    // Fire page view tracking event on every route change
-    const email = sessionStorage.getItem('crm_email');
-    if (email) {
-      base44.functions.invoke('trackWebEvent', { email, event_type: "page_view", metadata: { page: window.location.pathname } }).catch(() => {}); // Fail silently
-    }
   }, [pathname]);
 
   useEffect(() => {
