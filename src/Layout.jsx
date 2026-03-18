@@ -20,6 +20,11 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    base44.auth.me().then(user => {
+      if (user?.email) {
+        trackEvent(user.email, 'page_view', { page: pathname });
+      }
+    }).catch(() => {});
   }, [pathname]);
 
   useEffect(() => {

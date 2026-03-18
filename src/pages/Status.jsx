@@ -48,6 +48,9 @@ export default function Status() {
         setError(response.data.error);
       } else {
         setData(response.data);
+        if (response.data.email) {
+          trackEvent(response.data.email, 'page_view', { page: 'status', recordId, stageName: response.data.stageName || response.data.status });
+        }
       }
     } catch (err) {
       setError(err.message);
