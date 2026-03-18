@@ -13,31 +13,22 @@
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       const email = urlParams.get('email');
+      const apiKey = 'a8F3kL9xQ2mZ7vP1rT6wYc4HjN5uD0sB';
       
       if (email) {
         // Auto-track page view on load
-        const trackForm = document.createElement('form');
-        trackForm.method = 'POST';
-        trackForm.action = 'https://app.base44.com/apps/69b997d063541d627aa671c2/api/functions/trackWebEvent';
-        trackForm.style.display = 'none';
-        
-        const fields = {
-          'x-api-key': 'a8F3kL9xQ2mZ7vP1rT6wYc4HjN5uD0sB',
-          email: email,
-          event_type: 'page_view',
-          page: window.location.pathname
-        };
-        
-        Object.entries(fields).forEach(([key, value]) => {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = value;
-          trackForm.appendChild(input);
-        });
-        
-        document.body.appendChild(trackForm);
-        trackForm.submit();
+        fetch('https://app.base44.com/apps/69b997d063541d627aa671c2/api/functions/trackWebEvent', {
+          method: 'POST',
+          headers: {
+            'x-api-key': apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            event_type: 'page_view',
+            page: window.location.pathname
+          })
+        }).catch(e => console.log('Tracking error:', e));
         
         // Make email available for manual tracking
         window.campaignEmail = email;
@@ -46,28 +37,18 @@
       // Manual tracking function
       function trackEvent(eventType, page) {
         if (!window.campaignEmail) return;
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'https://app.base44.com/apps/69b997d063541d627aa671c2/api/functions/trackWebEvent';
-        form.style.display = 'none';
-        
-        const fields = {
-          'x-api-key': 'a8F3kL9xQ2mZ7vP1rT6wYc4HjN5uD0sB',
-          email: window.campaignEmail,
-          event_type: eventType,
-          page: page || window.location.pathname
-        };
-        
-        Object.entries(fields).forEach(([key, value]) => {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = value;
-          form.appendChild(input);
-        });
-        
-        document.body.appendChild(form);
-        form.submit();
+        fetch('https://app.base44.com/apps/69b997d063541d627aa671c2/api/functions/trackWebEvent', {
+          method: 'POST',
+          headers: {
+            'x-api-key': apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: window.campaignEmail,
+            event_type: eventType,
+            page: page || window.location.pathname
+          })
+        }).catch(e => console.log('Tracking error:', e));
       }
     </script>
   </body>
