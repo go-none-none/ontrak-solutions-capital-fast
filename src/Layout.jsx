@@ -65,6 +65,8 @@ import Footer from './components/shared/Footer';
 import { NotificationProvider } from './components/context/NotificationContext';
 
 export default function Layout({ children, currentPageName }) {
+  useWebTracker();
+
   useEffect(() => {
     var s1 = document.createElement("script");
     var s0 = document.getElementsByTagName("script")[0];
