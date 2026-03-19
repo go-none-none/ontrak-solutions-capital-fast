@@ -5,50 +5,66 @@ import { useLocation } from 'react-router-dom';
 const TRACKER_ENDPOINT = 'https://flow-mail-pulse.base44.app/api/functions/trackWebBehavior';
 const TRACKING_SECRET = 'a8F3kL9xQ2mZ7vP1rT6wYc4HjN5uD0sB';
 
-function getTrackedEmail() {
+function getSession() {
   const params = new URLSearchParams(window.location.search);
   const emailFromUrl = params.get('email');
-  if (emailFromUrl) {
-    sessionStorage.setItem('tracked_email', emailFromUrl.toLowerCase().trim());
-  }
-  return sessionStorage.getItem('tracked_email');
+  const campaignFromUrl = params.get('campaign_id');
+  if (emailFromUrl && !sessionStorage.getItem('mf_email'))
+    sessionStorage.setItem('mf_email', emailFromUrl.toLowerCase().trim());
+  if (campaignFromUrl && !sessionStorage.getItem('mf_campaign_id'))
+    sessionStorage.setItem('mf_campaign_id', campaignFromUrl);
+  return {
+    email: sessionStorage.getItem('mf_email'),
+    campaignId: sessionStorage.getItem('mf_campaign_id') || undefined,
+  };
 }
 
-function sendEvent(event_type, metadata = {}) {
-  const email = getTrackedEmail();
+function track(eventType, meta) {
+  const { email, campaignId } = getSession();
   if (!email) return;
   fetch(TRACKER_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Tracking-Secret': TRACKING_SECRET },
-    body: JSON.stringify({ email, event_type, metadata }),
+    body: JSON.stringify({ email, event_type: eventType, campaign_id: campaignId, metadata: meta }),
   }).catch(() => {});
 }
 
 function useWebTracker() {
   const { pathname } = useLocation();
   useEffect(() => {
-    sendEvent('page_view', { page: pathname });
+    const { email } = getSession();
+    if (!email) return;
 
+    // Page view — once per session per page
+    const pvKey = 'mf_pv_' + pathname;
+    if (!sessionStorage.getItem(pvKey)) {
+      sessionStorage.setItem(pvKey, '1');
+      track('page_view', { page: pathname });
+    }
+
+    // Click tracking
     const handleClick = (e) => {
-      const el = e.target.closest('button, a, [data-track]');
+      const el = e.target.closest('a, button');
       if (!el) return;
-      sendEvent(el.tagName === 'BUTTON' ? 'button_click' : 'click', {
-        label: el.innerText?.trim().slice(0, 100) || '',
-        tag: el.tagName,
-        id: el.id || '',
-        href: el.href || '',
+      const tag = el.tagName.toLowerCase();
+      track(tag === 'button' ? 'button_click' : 'click', {
+        label: el.innerText?.trim().slice(0, 50) || '',
+        href: el.href || undefined,
         page: pathname,
       });
     };
     document.addEventListener('click', handleClick);
 
-    const milestones = new Set();
+    // Scroll depth — 25%, 50%, 75%, 90%
+    const scrollFired = {};
     const handleScroll = () => {
       const pct = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
-      [25, 50, 75, 100].forEach(m => {
-        if (pct >= m && !milestones.has(m)) {
-          milestones.add(m);
-          sendEvent('scroll', { depth_percent: m, page: pathname });
+      [25, 50, 75, 90].forEach(d => {
+        const key = 'mf_scroll_' + pathname + '_' + d;
+        if (pct >= d && !scrollFired[d] && !sessionStorage.getItem(key)) {
+          scrollFired[d] = true;
+          sessionStorage.setItem(key, '1');
+          track('scroll_depth', { depth: d, page: pathname });
         }
       });
     };
