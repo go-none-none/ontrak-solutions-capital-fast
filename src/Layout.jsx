@@ -1,5 +1,65 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+
+// ─── WEB BEHAVIOR TRACKER ────────────────────────────────────
+const TRACKER_ENDPOINT = 'https://flow-mail-pulse.base44.app/api/functions/trackWebBehavior';
+const TRACKING_SECRET = 'a8F3kL9xQ2mZ7vP1rT6wYc4HjN5uD0sB';
+
+function getTrackedEmail() {
+  const params = new URLSearchParams(window.location.search);
+  const emailFromUrl = params.get('email');
+  if (emailFromUrl) {
+    sessionStorage.setItem('tracked_email', emailFromUrl.toLowerCase().trim());
+  }
+  return sessionStorage.getItem('tracked_email');
+}
+
+function sendEvent(event_type, metadata = {}) {
+  const email = getTrackedEmail();
+  if (!email) return;
+  fetch(TRACKER_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Tracking-Secret': TRACKING_SECRET },
+    body: JSON.stringify({ email, event_type, metadata }),
+  }).catch(() => {});
+}
+
+function useWebTracker() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    sendEvent('page_view', { page: pathname });
+
+    const handleClick = (e) => {
+      const el = e.target.closest('button, a, [data-track]');
+      if (!el) return;
+      sendEvent(el.tagName === 'BUTTON' ? 'button_click' : 'click', {
+        label: el.innerText?.trim().slice(0, 100) || '',
+        tag: el.tagName,
+        id: el.id || '',
+        href: el.href || '',
+        page: pathname,
+      });
+    };
+    document.addEventListener('click', handleClick);
+
+    const milestones = new Set();
+    const handleScroll = () => {
+      const pct = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+      [25, 50, 75, 100].forEach(m => {
+        if (pct >= m && !milestones.has(m)) {
+          milestones.add(m);
+          sendEvent('scroll', { depth_percent: m, page: pathname });
+        }
+      });
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [pathname]);
+}
 import Navigation from './components/shared/Navigation';
 import Footer from './components/shared/Footer';
 import { NotificationProvider } from './components/context/NotificationContext';
