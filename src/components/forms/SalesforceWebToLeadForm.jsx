@@ -154,7 +154,7 @@ export default function SalesforceWebToLeadForm() {
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
           <h3 className="text-2xl font-bold text-slate-900">Thank You!</h3>
-          <p className="text-slate-600">We'll get back to you within 24 hours.</p>
+          <p className="text-slate-600">We'll get back to you shortly.</p>
         </div>
       )}
     </div>

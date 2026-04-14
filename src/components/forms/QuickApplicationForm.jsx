@@ -60,7 +60,7 @@ export default function QuickApplicationForm({ variant = 'default' }) {
           Application Received!
         </h3>
         <p className={`${variant === 'dark' ? 'text-slate-300' : 'text-slate-500'}`}>
-          Thank you for your interest. Our team will contact you within 24 hours with your funding options.
+          Thank you for your interest. Our team will contact you shortly with your funding options.
         </p>
       </motion.div>
     );
