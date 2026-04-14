@@ -48,7 +48,7 @@ export default function SalesforceWebToLeadForm() {
           >
             {/* Salesforce hidden fields */}
             <input type="hidden" name="oid" value="00Dam00001TLTFV" />
-            <input type="hidden" name="retURL" value="" />
+            <input type="hidden" name="retURL" value="https://ontrakcap.com/thank-you" />
             
             {/* Lead Source for Salesforce routing */}
             <input type="hidden" name="lead_source" value="Website Lead" />

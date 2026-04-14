@@ -176,7 +176,7 @@ export default function Contact() {
                   className="bg-white rounded-3xl shadow-xl p-10 space-y-6 w-full flex flex-col"
                 >
                   <input type="hidden" name="oid" value="00Dam00001TLTFV" />
-                  <input type="hidden" name="retURL" value="" />
+                  <input type="hidden" name="retURL" value="https://ontrakcap.com/thank-you" />
                 
                 {/* Lead Source for Salesforce routing */}
                 <input type="hidden" name="lead_source" value="Website" />
