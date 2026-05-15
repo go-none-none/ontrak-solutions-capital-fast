@@ -1,0 +1,9 @@
+{
+  "type": "salesforce",
+  "scopes": [
+    "refresh_token",
+    "openid",
+    "api",
+    "id"
+  ]
+}
